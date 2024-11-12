@@ -1,45 +1,88 @@
-import React, { useState } from 'react'
-import { Users, Search, Filter, Download } from 'lucide-react'
-import AssignRoomModal from './AssignRoomModal'
-import { useModal } from '../../../components/Modal';
-
-interface Resident {
-    id: string;
-    name: string;
-    room: string;
-    status: 'Active' | 'Pending' | 'Inactive';
-    checkInDate: string;
-    checkOutDate: string;
-}
+import React from 'react'
+import { Users, Search, Filter, Download, Plus, Edit } from 'lucide-react'
+import { useModal } from '../../../components/Modal'
+import DataTable from 'react-data-table-component'
+import AddResidentModal from './AddResidentModal'
+import { useResidentStore } from '../../../stores/residentStore'
+import { HousePlus,Trash2 } from 'lucide-react'
 
 const ResidentManagement = () => {
-    const {open:openAssignModal,close:closeAssignModal} = useModal('assign_room_modal')
-    const [residents] = useState<Resident[]>([
+    const { open: openAddResidentModal, close: closeAddResidentModal } = useModal('add_resident_modal')
+    const residents = useResidentStore((state) => state.residents)
+
+    const columns = [
         {
-            id: '1',
-            name: 'John Doe',
-            room: 'A-101',
-            status: 'Active',
-            checkInDate: '2024-09-01',
-            checkOutDate: '2024-12-20'
+            name: 'Name',
+            selector: (row: Resident) => row.fullName,
+            sortable: true,
         },
         {
-            id: '2',
-            name: 'Jane Smith',
-            room: 'B-203',
-            status: 'Pending',
-            checkInDate: '2024-09-01',
-            checkOutDate: '2024-12-20'
+            name: 'Student ID',
+            selector: (row: Resident) => row.studentId,
+            sortable: true,
         },
-        // Add more mock data as needed
-    ])
+        {
+            name: 'Phone',
+            selector: (row: Resident) => row.phone,
+            sortable: true,
+        },
+        {
+            name: 'Room',
+            selector: (row: Resident) => row.roomNumber || 'Not Assigned',
+        },
+        {
+            name: 'Status',
+            selector: (row: Resident) => row.status,
+            sortable: true,
+            cell: (row: Resident) => (
+                <span className={`px-2 py-1 rounded-full text-xs ${
+                    row.status === 'Active' ? 'bg-green-100 text-green-800' :
+                    row.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                    'bg-red-100 text-red-800'
+                }`}>
+                    {row.status}
+                </span>
+            ),
+        },
+        {
+            name: 'Action',
+            cell: (row: Resident) => (
+                <div className="flex gap-2">
+                    {!row.roomNumber && (
+                        <button
+                            title='Assign Room'
+                            className="text-blue-600 hover:text-blue-800"
+                            onClick={() => handleAssignRoom(row)}
+                        >
+                            <HousePlus className="w-4 h-4" />
+                        </button>
+                    )}
+                    <button
+                        title='Edit'
+                        className="text-blue-600 hover:text-blue-800"
+                        onClick={() => handleDeleteResident(row.id)}
+                    >
+                        <Edit className="w-4 h-4" />
+                    </button>
+                    <button
+                        title='Delete'
+                        className="text-red-600 hover:text-red-800"
+                        onClick={() => handleDeleteResident(row.id)}
+                    >
+                        <Trash2 className="w-4 h-4" />
+                    </button>
+                </div>
+            ),
+        },
+    ]
 
-    const [selectedResidentId, setSelectedResidentId] = useState<string | null>(null);
+    const handleAssignRoom = (resident: Resident) => {
+        // Implement room assignment logic
+    }
 
-    const handleAssignRoom = (residentId: string) => {
-        setSelectedResidentId(residentId);
-        openAssignModal()
-    };
+    const handleDeleteResident = (id: string) => {
+        // Implement delete logic using Zustand store
+    }
 
     return (
         <div className="p-6">
@@ -49,6 +92,13 @@ const ResidentManagement = () => {
                     <h1 className="text-2xl font-bold">Resident Management</h1>
                 </div>
                 <div className="flex gap-2">
+                    <button 
+                        className="px-4 py-2 bg-primary text-white rounded-md flex items-center gap-2" 
+                        onClick={openAddResidentModal}
+                    >
+                        <Plus className="w-4 h-4" />
+                        <span>Resident</span>
+                    </button>
                     <button className="px-4 py-2 bg-primary text-white rounded-md flex items-center gap-2">
                         <Download className="w-4 h-4" />
                         Export
@@ -72,83 +122,18 @@ const ResidentManagement = () => {
                     </button>
                 </div>
 
-                <div className="overflow-x-auto">
-                    <table className="min-w-full">
-                        <thead>
-                            <tr className="bg-gray-50">
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Name
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Room
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Status
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Check In
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Check Out
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Actions
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {residents.map((resident) => (
-                                <tr key={resident.id}>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        {resident.name}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        {resident.room}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`px-2 py-1 rounded-full text-xs ${
-                                            resident.status === 'Active' ? 'bg-green-100 text-green-800' :
-                                            resident.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-                                            'bg-red-100 text-red-800'
-                                        }`}>
-                                            {resident.status}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        {new Date(resident.checkInDate).toLocaleDateString()}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        {new Date(resident.checkOutDate).toLocaleDateString()}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <button 
-                                            onClick={() => handleAssignRoom(resident.id)}
-                                            className="px-4 py-2 bg-primary text-white rounded-md"
-                                        >
-                                            Assign Room
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div className="flex justify-between items-center mt-4">
-                    <div className="text-sm text-gray-500">
-                        Showing {residents.length} residents
-                    </div>
-                    <div className="flex gap-2">
-                        <button className="px-4 py-2 border rounded-md">Previous</button>
-                        <button className="px-4 py-2 border rounded-md">Next</button>
-                    </div>
-                </div>
+                <DataTable
+                    columns={columns}
+                    data={residents}
+                    pagination
+                    paginationPerPage={10}
+                    paginationRowsPerPageOptions={[10, 20, 30]}
+                    highlightOnHover
+                    pointerOnHover
+                    responsive
+                />
             </div>
-
-            <AssignRoomModal
-                residentId={selectedResidentId!}
-                onClose={closeAssignModal}
-            />
+            <AddResidentModal onClose={closeAddResidentModal} />
         </div>
     )
 }

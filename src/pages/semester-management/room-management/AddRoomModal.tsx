@@ -100,7 +100,7 @@ const AddRoomModal = ({
     }
 
     return (
-        <Modal modalId="add_room_modal" onClose={onClose}>
+        <Modal modalId="add_room_modal" onClose={onClose} size='large'>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
                 <div className="flex items-center justify-between">
                     <h2 className="text-2xl font-bold">Add New Room</h2>
