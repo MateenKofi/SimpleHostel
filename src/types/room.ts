@@ -1,9 +1,16 @@
-export type Room = {
+export interface Room {
     id: string
-    number: string
+    roomNumber: string
+    price: number
+    capacity: number
     block: string
     type: string
-    status: 'Available' | 'Occupied' | 'Maintenance'
+    status: string
     maxOccupancy: number
     basePrice: number
+    amenities: string[]
+    isAvailable: boolean
+    resident?: {
+        id: string
+    }
 } 

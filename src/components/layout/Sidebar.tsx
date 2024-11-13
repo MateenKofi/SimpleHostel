@@ -20,7 +20,7 @@ const Sidebar = () => {
   const menuItems = [
     { title: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { title: 'Semester Management', icon: LayoutDashboard, path: '/semester-management' },
-    { title: 'Booking & Reservation', icon: BookOpenCheck, path: '/bookings' },
+    { title: 'Resident Management', icon: BookOpenCheck, path: '/resident-management' },
     { title: 'Room & Occupancy', icon: BedDouble, path: '/rooms' },
     { title: 'Check-in & Check-out', icon: CalendarCheck, path: '/check-in-out' },
     { title: 'Payment & Billing', icon: CreditCard, path: '/payments' },

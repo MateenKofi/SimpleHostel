@@ -14,30 +14,42 @@ const RoomManagement = () => {
     const dummyRooms: Room[] = [
         {
             id: '1',
-            number: '101',
+            roomNumber: '101',
             block: 'A',
             type: 'Single',
             status: 'Available',
             maxOccupancy: 1,
-            basePrice: 500
+            basePrice: 500,
+            price: 500,
+            capacity: 1,
+            amenities: [],
+            isAvailable: true
         },
         {
             id: '2', 
-            number: '102',
+            roomNumber: '102',
             block: 'A',
             type: 'Double',
             status: 'Occupied',
             maxOccupancy: 2,
-            basePrice: 800
+            basePrice: 800,
+            price: 800,
+            capacity: 2,
+            amenities: [],
+            isAvailable: false
         },
         {
             id: '3',
-            number: '201',
+            roomNumber: '201',
             block: 'B', 
             type: 'Single',
             status: 'Maintenance',
             maxOccupancy: 1,
-            basePrice: 600
+            basePrice: 600,
+            price: 600,
+            capacity: 1,
+            amenities: [],
+            isAvailable: false
         }
     ]
 
@@ -159,7 +171,7 @@ const RoomManagement = () => {
                             {allRooms.map((room) => (
                                 <tr key={room.id}>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        {room.number}
+                                        {room.roomNumber}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         Block {room.block}

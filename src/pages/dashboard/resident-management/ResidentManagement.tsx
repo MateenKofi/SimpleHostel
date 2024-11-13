@@ -4,11 +4,15 @@ import { useModal } from '../../../components/Modal'
 import DataTable from 'react-data-table-component'
 import AddResidentModal from './AddResidentModal'
 import { useResidentStore } from '../../../stores/residentStore'
-import { HousePlus,Trash2 } from 'lucide-react'
+import { HousePlus, Trash2 } from 'lucide-react'
+import { Resident } from '../../../types/resident'
+import { useNavigate } from 'react-router-dom'
 
 const ResidentManagement = () => {
+    const navigate = useNavigate()
     const { open: openAddResidentModal, close: closeAddResidentModal } = useModal('add_resident_modal')
     const residents = useResidentStore((state) => state.residents)
+    const deleteResident = useResidentStore((state) => state.deleteResident)
 
     const columns = [
         {
@@ -36,11 +40,11 @@ const ResidentManagement = () => {
             sortable: true,
             cell: (row: Resident) => (
                 <span className={`px-2 py-1 rounded-full text-xs ${
-                    row.status === 'Active' ? 'bg-green-100 text-green-800' :
-                    row.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
+                    row.status === 'active' ? 'bg-green-100 text-green-800' :
+                    row.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                     'bg-red-100 text-red-800'
                 }`}>
-                    {row.status}
+                    {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
                 </span>
             ),
         },
@@ -77,11 +81,13 @@ const ResidentManagement = () => {
     ]
 
     const handleAssignRoom = (resident: Resident) => {
-        // Implement room assignment logic
+        navigate(`/room-assignment/${resident.id}`)
     }
 
     const handleDeleteResident = (id: string) => {
-        // Implement delete logic using Zustand store
+        if (window.confirm('Are you sure you want to delete this resident?')) {
+            deleteResident(id)
+        }
     }
 
     return (

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Planning from './Planning';
-import ResidentManagement from './resident-management/ResidentManagement';
 import RoomManagement from './room-management/RoomManagement';
 import ReportAnalysis from './reports/ReportAnalysis';
 
@@ -17,11 +16,7 @@ const SemesterManagement = () => {
       title: 'Semester Planning',
       content: <Planning />,
     },
-    {
-      id: 'residents',
-      title: 'Resident Management',
-      content: <ResidentManagement />,
-    },
+   
     {
       id: 'rooms',
       title: 'Room Management',
