@@ -18,14 +18,17 @@ const Sidebar = () => {
   const [isExpanded, setIsExpanded] = useState(true);
 
   const menuItems = [
-    { title: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+    { title: 'Dashboard', icon: LayoutDashboard, path: '/' },
     { title: 'Semester Management', icon: LayoutDashboard, path: '/semester-management' },
     { title: 'Resident Management', icon: BookOpenCheck, path: '/resident-management' },
     { title: 'Room & Occupancy', icon: BedDouble, path: '/rooms' },
     { title: 'Check-in & Check-out', icon: CalendarCheck, path: '/check-in-out' },
+    { title: 'Visitor Management', icon: CalendarCheck, path: '/visitor-management' },
     { title: 'Payment & Billing', icon: CreditCard, path: '/payments' },
     { title: 'Maintenance & Tracking', icon: Wrench, path: '/maintenance' },
     { title: 'Reports & Analytics', icon: BarChart3, path: '/analytics' },
+    { title: 'Test', icon: BarChart3, path: '/test' },
+
   ];
 
   return (
