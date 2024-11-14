@@ -10,7 +10,8 @@ import {
   CalendarCheck,
   CreditCard,
   Wrench,
-  BarChart3
+  BarChart3,
+  Users
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -28,7 +29,11 @@ const Sidebar = () => {
     { title: 'Maintenance & Tracking', icon: Wrench, path: '/maintenance' },
     { title: 'Reports & Analytics', icon: BarChart3, path: '/analytics' },
     { title: 'Test', icon: BarChart3, path: '/test' },
-
+    {
+      title: 'Staff Management',
+      icon: Users,
+      path: '/staff-management',
+    },
   ];
 
   return (

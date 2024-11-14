@@ -3,50 +3,40 @@ import Modal from '../../../components/Modal'
 import { useForm, Controller } from 'react-hook-form'
 import { useVisitorStore } from '../../../stores/visitorStore'
 import { useResidentStore } from '../../../stores/residentStore'
-import { X } from 'lucide-react'
 import Select from 'react-select'
 
 interface AddVisitorModalProps {
   onClose: () => void
 }
 
-interface ResidentOption {
-  value: string
-  label: string
-}
-
 const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
   const addVisitor = useVisitorStore((state) => state.addVisitor)
   const residents = useResidentStore((state) => state.residents)
   
-  const { control, handleSubmit, register, reset, formState: { errors } } = useForm()
-
-  const residentOptions: ResidentOption[] = residents.map((resident) => ({
-    value: resident.id,
-    label: `${resident.fullName} - Room ${resident.roomNumber || 'Not Assigned'}`
-  }))
+  const { register, handleSubmit, reset, control, formState: { errors } } = useForm()
 
   const onSubmit = (data: any) => {
     addVisitor({
       name: data.name,
       phone: data.phone,
       purpose: data.purpose,
-      residentId: data.residentId,
+      residentId: data.residentId.value,
     })
     reset()
     onClose()
   }
 
+  const residentOptions = residents.map(resident => ({
+    value: resident.id,
+    label: `${resident.fullName} - Room ${resident.roomNumber || 'Not Assigned'}`
+  }))
+
   return (
     <Modal modalId='add_visitor_modal' onClose={onClose}>
-      <div className="fixed inset-0 bg-black/50 z-50">
-        <div className="fixed inset-y-0 right-0 w-full sm:w-3/4 lg:w-1/2 bg-white shadow-lg">
           <div className="h-full flex flex-col">
             <div className="flex items-center justify-between px-6 py-4 border-b">
               <h2 className="text-xl font-semibold">New Visitor</h2>
-              <button onClick={onClose}>
-                <X className="w-6 h-6" />
-              </button>
+            
             </div>
 
             <div className="flex-1 overflow-y-auto p-6">
@@ -84,11 +74,8 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
                         {...field}
                         options={residentOptions}
                         className="w-full"
-                        classNamePrefix="select"
                         placeholder="Search for a resident..."
                         isClearable
-                        value={residentOptions.find(option => option.value === field.value)}
-                        onChange={(option) => field.onChange(option?.value)}
                       />
                     )}
                   />
@@ -127,8 +114,7 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
               </form>
             </div>
           </div>
-        </div>
-      </div>
+       
     </Modal>
   )
 }

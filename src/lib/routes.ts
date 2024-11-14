@@ -1,4 +1,6 @@
 import { LayoutDashboard, Users, Building, Calendar, Settings, FileText } from 'lucide-react';
+import StaffManagement from '../pages/dashboard/staff-management/StaffManagement';
+import AddStaff from '../pages/dashboard/staff-management/AddStaff';
 
 export const routes = [
   {
@@ -31,4 +33,5 @@ export const routes = [
     icon: Settings,
     href: '/settings',
   },
+  
 ]; 

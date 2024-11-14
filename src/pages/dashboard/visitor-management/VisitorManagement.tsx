@@ -36,6 +36,13 @@ const VisitorManagement = () => {
       },
     },
     {
+      name: 'Room',
+      selector: (row: Visitor) => {
+        const resident = residents.find(r => r.id === row.residentId)
+        return resident?.roomNumber || 'Not Assigned'
+      },
+    },
+    {
       name: 'Purpose',
       selector: (row: Visitor) => row.purpose,
     },

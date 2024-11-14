@@ -6,6 +6,8 @@ import RoomAssignmentAndPayment from './pages/dashboard/resident-management/room
 import ResidentManagement from './pages/dashboard/resident-management/ResidentManagement';
 import Test from './pages/livetest/Test';
 import VisitorManagement from './pages/dashboard/visitor-management/VisitorManagement';
+import StaffManagement from './pages/dashboard/staff-management/StaffManagement';
+import AddStaff from './pages/dashboard/staff-management/AddStaff';
 
 
 
@@ -19,6 +21,8 @@ function App() {
         <Route path="/resident-management" element={<ResidentManagement />} />
         <Route path='/test' element={<Test/>}/>
         <Route path="/visitor-management" element={<VisitorManagement />} />
+        <Route path="/staff-management" element={<StaffManagement />} />
+        <Route path="/staff-management/add" element={<AddStaff />} />
       </Route>
     </Routes>
   );
