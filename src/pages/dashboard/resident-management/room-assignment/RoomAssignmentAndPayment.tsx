@@ -1,5 +1,4 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { useResidentStore } from '../../../../stores/residentStore'
 import RoomAssignment from './RoomAssignment'
@@ -8,7 +7,7 @@ import { ChevronLeft } from 'lucide-react'
 
 const RoomAssignmentAndPayment = () => {
     const navigate = useNavigate()
-    const { residentId } = useParams()
+    const residentId = localStorage.getItem('resident_id')
     const resident = useResidentStore(state => 
         state.residents.find(r => r.id === residentId)
     )
@@ -32,7 +31,7 @@ const RoomAssignmentAndPayment = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-[2fr_1fr] gap-6">
+            <div className="w-full grid grid-cols-[2fr_1fr] gap-6">
                 {/* Left Column - Room Assignment */}
                 <RoomAssignment />
 

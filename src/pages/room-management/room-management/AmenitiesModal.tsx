@@ -4,18 +4,16 @@ import { Plus, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useAmenityStore } from '../../../stores/amenityStore'
 import Modal from '../../../components/Modal'
+import {Amenity} from '../../../types/types'
 
 interface AmenitiesModalProps {
     onClose: () => void
 }
 
-interface AmenityInput {
-    name: string;
-    price: number;
-}
+
 
 const AmenitiesModal = ({ onClose }: AmenitiesModalProps) => {
-    const [newAmenity, setNewAmenity] = useState<AmenityInput>({ name: '', price: 0 })
+    const [newAmenity, setNewAmenity] = useState<Amenity>({ name: '', price: 0 })
     const { amenities, addAmenity, removeAmenity } = useAmenityStore()
 
     const handleSubmit = (e: React.FormEvent) => {

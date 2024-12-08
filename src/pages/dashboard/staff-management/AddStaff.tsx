@@ -1,40 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStaffStore } from '../../../stores/staffStore';
+import { Edit, ImageUp, Trash } from 'lucide-react';
+import { useForm } from 'react-hook-form';
 
 const AddStaff: React.FC = () => {
   const navigate = useNavigate();
   const { addStaff } = useStaffStore();
+  const [image, setImage] = useState<string | null>(null);
+  const { register, handleSubmit, formState: { errors } } = useForm();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const onSubmit = (data: any) => {
     addStaff({
       id: Date.now().toString(),
-      firstName: formData.get('firstName') as string,
-      middleName: formData.get('middleName') as string,
-      lastName: formData.get('lastName') as string,
-      dateOfBirth: formData.get('dateOfBirth') as string,
-      nationality: formData.get('nationality') as string,
-      gender: formData.get('gender') as string,
-      religion: formData.get('religion') as string,
-      maritalStatus: formData.get('maritalStatus') as string,
-      staffStatus: formData.get('staffStatus') as "Active" | "Inactive",
-      phoneNumber: formData.get('phoneNumber') as string,
-      email: formData.get('email') as string,
-      residence: formData.get('residence') as string,
-      qualification: formData.get('qualification') as string,
-      staffType: formData.get('staffType') as string,
-      dateOfAppointment: formData.get('dateOfAppointment') as string,
+      ...data,
+      staffStatus: data.staffStatus as "Active" | "Inactive",
     });
     
-    navigate('/dashboard/staff-management');
+    navigate('/staff-management');
   };
 
   return (
    <div className='w-full h-screen flex justify-cente'>
- <div className="w-[90%] ">
+    <div className="w-[90%] ">
       <div className="flex items-center justify-between mb-6 mt-6 bg-white p-4 rounded-lg">
         <h1 className="text-2xl font-bold">Add Staff</h1>
         <button 
@@ -45,17 +44,52 @@ const AddStaff: React.FC = () => {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="w-full space-y-6  p-6  rounded-lg shadow-sm bg-white">
-        <div className="mb-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-6 p-6 rounded-lg shadow-sm bg-white">
+        <div className='w-52 h-52'>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Upload Image
+          </label>
+          {image ? (
+            <div className="relative ">
+              <img
+                src={typeof image === 'string' ? image : ''}
+                alt="Nominee"
+                className="w-full h-full object-cover rounded-md"
+              />
+              <div className="absolute top-2 right-2 space-x-2">
+                <button
+                  type="button"
+                  onClick={() => document.getElementById('imageUpload')?.click()}
+                  title="Edit Image"
+                  className="bg-white p-1 rounded-full"
+                >
+                  <Edit className="h-4 w-4 text-gray-600" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setImage(null)}
+                  title="Remove Image"
+                  className="bg-white p-1 rounded-full"
+                >
+                  <Trash className="h-4 w-4 text-gray-600" />
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div
+              className="border-2 border-dashed border-gray-300 rounded-md p-4 text-center cursor-pointer"
+              onClick={() => document.getElementById('imageUpload')?.click()}
+            >
+              <ImageUp className="mx-auto h-12 w-12 text-gray-400" />
+              <p>Click to upload image</p>
+            </div>
+          )}
           <input
+            id="imageUpload"
             type="file"
             accept="image/*"
-            className="block w-full text-sm text-gray-500
-              file:mr-4 file:py-2 file:px-4
-              file:rounded-md file:border-0
-              file:text-sm file:font-semibold
-              file:bg-primary file:text-white
-              hover:file:bg-primary/80"
+            className="hidden"
+            onChange={handleImageUpload}
           />
         </div>
 
@@ -63,19 +97,19 @@ const AddStaff: React.FC = () => {
           <div>
             <label className="block text-sm font-medium mb-1">First Name</label>
             <input
+              {...register("firstName", { required: "First name is required" })}
               type="text"
-              name="firstName"
-              required
               className="w-full p-2 border rounded-md"
               placeholder="Enter your first name"
             />
+            {errors.firstName && <span className="text-red-500 text-sm">{errors.firstName.message?.toString()}</span>}
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1">Middle Name</label>
             <input
+              {...register("middleName")}
               type="text"
-              name="middleName"
               className="w-full p-2 border rounded-md"
               placeholder="Enter your middle name"
             />
@@ -84,67 +118,67 @@ const AddStaff: React.FC = () => {
           <div>
             <label className="block text-sm font-medium mb-1">Last Name</label>
             <input
+              {...register("lastName", { required: "Last name is required" })}
               type="text"
-              name="lastName"
-              required
               className="w-full p-2 border rounded-md"
               placeholder="Enter your last name"
             />
+            {errors.lastName && <span className="text-red-500 text-sm">{errors.lastName.message?.toString()}</span>}
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1">Date of Birth</label>
             <input
+              {...register("dateOfBirth", { required: "Date of birth is required" })}
               type="date"
-              name="dateOfBirth"
-              required
               className="w-full p-2 border rounded-md"
             />
+            {errors.dateOfBirth && <span className="text-red-500 text-sm">{errors.dateOfBirth.message?.toString()}</span>}
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1">Nationality</label>
-            <select name="nationality" required className="w-full p-2 border rounded-md">
-              <option value="">Select Nationality</option>
-              <option value="Filipino">Filipino</option>
-            </select>
+          <input type="text" {...register("nationality", { required: "Nationality is required" })} className="w-full p-2 border rounded-md" placeholder='Enter Nationality'/>
+            {errors.nationality && <span className="text-red-500 text-sm">{errors.nationality.message?.toString()}</span>}
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1">Gender</label>
-            <select name="gender" required className="w-full p-2 border rounded-md">
-              <option value="">Select Gender</option>
+            <select {...register("gender", { required: "Gender is required" })} className="w-full p-2 border rounded-md">
+              <option value="">-- Select Gender --</option>
               <option value="Male">Male</option>
               <option value="Female">Female</option>
             </select>
+            {errors.gender && <span className="text-red-500 text-sm">{errors.gender.message?.toString()}</span>}
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1">Religion</label>
-            <select name="religion" required className="w-full p-2 border rounded-md">
-              <option value="">Select Religion</option>
-              <option value="Catholic">Catholic</option>
+            <select {...register("religion", { required: "Religion is required" })} className="w-full p-2 border rounded-md">
+              <option value="">-- Select Religion --</option>
+              <option value="Christian">Christian</option>
+              <option value="Muslim">Muslim</option>
+              <option value="Traditionalist">Traditionalist</option>
             </select>
+            {errors.religion && <span className="text-red-500 text-sm">{errors.religion.message?.toString()}</span>}
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1">Marital Status</label>
-            <select name="maritalStatus" required className="w-full p-2 border rounded-md">
-              <option value="">Select Marital Status</option>
+            <select {...register("maritalStatus", { required: "Marital status is required" })} className="w-full p-2 border rounded-md">
+              <option value="">-- Select Marital Status -- </option>
               <option value="Single">Single</option>
               <option value="Married">Married</option>
               <option value="Divorced">Divorced</option>
               <option value="Widowed">Widowed</option>
             </select>
+            {errors.maritalStatus && <span className="text-red-500 text-sm">{errors.maritalStatus.message?.toString()}</span>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Staff Status</label>
-            <select name="staffStatus" required className="w-full p-2 border rounded-md">
-              <option value="">Select Staff Status</option>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-            </select>
+            <label className="block text-sm font-medium mb-1">Ghana Card Number</label>
+           <input type="text" {...register("ghanaCardNumber", { required: "Ghana card number is required" })} className="w-full p-2 border rounded-md" placeholder='GHA-XXXX-XXXX-XXXX'/>
+            {errors.ghanaCardNumber && <span className="text-red-500 text-sm">{errors.ghanaCardNumber.message?.toString()}</span>}
           </div>
         </div>
 
@@ -155,29 +189,38 @@ const AddStaff: React.FC = () => {
             <div>
               <label className="block text-sm font-medium mb-1">Phone Number</label>
               <input
+                {...register("phoneNumber", { required: "Phone number is required" })}
                 type="tel"
-                name="phoneNumber"
                 className="w-full p-2 border rounded-md"
                 placeholder="Enter Phone Number"
               />
+              {errors.phoneNumber && <span className="text-red-500 text-sm">{errors.phoneNumber.message?.toString()}</span>}
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Email</label>
               <input
+                {...register("email", { 
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Invalid email address"
+                  }
+                })}
                 type="email"
-                name="email"
                 className="w-full p-2 border rounded-md"
                 placeholder="someone@something.com"
               />
+              {errors.email && <span className="text-red-500 text-sm">{errors.email.message?.toString()}</span>}
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Residence</label>
               <input
+                {...register("residence", { required: "Residence is required" })}
                 type="text"
-                name="residence"
                 className="w-full p-2 border rounded-md"
                 placeholder="Enter Residence"
               />
+              {errors.residence && <span className="text-red-500 text-sm">{errors.residence.message?.toString()}</span>}
             </div>
           </div>
         </div>
@@ -188,23 +231,46 @@ const AddStaff: React.FC = () => {
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">Qualification</label>
-              <select name="qualification" className="w-full p-2 border rounded-md">
+              <select {...register("qualification", { required: "Qualification is required" })} className="w-full p-2 border rounded-md">
                 <option value="">--Select Qualification--</option>
+                <option value="BECE">BECE</option>
+                <option value="WASSCE">WASSCE</option>
+                <option value="HND">HND</option>
+                <option value="BSC">BSC</option>
+                <option value="MSC">MSC</option>
               </select>
+              {errors.qualification && <span className="text-red-500 text-sm">{errors.qualification.message?.toString()}</span>}
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Staff Type</label>
-              <select name="staffType" className="w-full p-2 border rounded-md">
-                <option value="">Select Staff Type</option>
+              <select {...register("staffType", { required: "Staff type is required" })} className="w-full p-2 border rounded-md">
+                <option value="">--Select Staff Type--</option>
+                <option value="Chief Warden">Chief Warden</option>
+                <option value="Warden">Warden</option>
+                <option value="Superintendent">Superintendent</option>
+                <option value="Clearance Clerk">Clearance Clerk</option>
               </select>
+              {errors.staffType && <span className="text-red-500 text-sm">{errors.staffType.message?.toString()}</span>}
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-1">Block</label>
+              <select {...register("block", { required: "Block is required" })} className="w-full p-2 border rounded-md">
+                <option value="">--Select Block--</option>
+                <option value="Block A">Block A</option>
+                <option value="Block B">Block B</option>
+                <option value="Block C">Block C</option>
+                <option value="Block D">Block D</option>
+              </select>
+              {errors.staffType && <span className="text-red-500 text-sm">{errors.staffType.message?.toString()}</span>}
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Date of Appointment</label>
               <input
+                {...register("dateOfAppointment", { required: "Date of appointment is required" })}
                 type="date"
-                name="dateOfAppointment"
                 className="w-full p-2 border rounded-md"
               />
+              {errors.dateOfAppointment && <span className="text-red-500 text-sm">{errors.dateOfAppointment.message?.toString()}</span>}
             </div>
           </div>
         </div>

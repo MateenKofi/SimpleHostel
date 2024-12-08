@@ -15,6 +15,9 @@ interface Staff {
   phoneNumber: string;
   email: string;
   residence: string;
+  qualification: string;
+  staffType: string;
+  dateOfAppointment: string;
 }
 
 interface StaffStore {

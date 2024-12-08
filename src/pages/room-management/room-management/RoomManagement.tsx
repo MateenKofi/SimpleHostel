@@ -82,7 +82,7 @@ const RoomManagement = () => {
                     <h1 className="text-2xl font-bold">Room Management</h1>
                 </div>
                 <div className="flex gap-2">
-                    <button className="flex gap-2 px-4 py-2 bg-primary text-white rounded-md"
+                    <button className="flex gap-2 px-4 py-2 bg-black text-white rounded-md"
                     onClick={()=>openAddRoomModal()}
                         >
                             <Plus/>
@@ -90,7 +90,7 @@ const RoomManagement = () => {
                         Room
                             </span>
                     </button>
-                    <button className="flex gap-2 px-4 py-2 bg-primary text-white rounded-md"
+                    <button className="flex gap-2 px-4 py-2 bg-black text-white rounded-md"
                     onClick={()=>openAmenitiesModal()}
                         >
                             <Plus/>
@@ -100,7 +100,7 @@ const RoomManagement = () => {
                     </button>
                     <AddRoomModal onClose={closeAddRoomModal}/>
                     <AmenitiesModal onClose={closeAmenitiesModal}/>
-                    <button className="px-4 py-2 bg-primary text-white rounded-md flex items-center gap-2">
+                    <button className="px-4 py-2 bg-black text-white rounded-md flex items-center gap-2">
                         <Download className="w-4 h-4" />
                         Export
                     </button>

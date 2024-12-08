@@ -1,12 +1,12 @@
-import React from 'react'
-import { useRoomStore } from '../../../../stores/roomStore'
-import { Bed, Fan, House } from 'lucide-react'
+import { useRoomStore } from '../../../../stores/roomStore';
+import { Bed, House } from 'lucide-react';
+import { Amenity } from '../../../../types/types';
 
 const RoomAssignment = () => {
-  const rooms = useRoomStore(state => state.rooms)
-  const selectedRoom = useRoomStore(state => state.selectedRoom)
-  const setSelectedRoom = useRoomStore(state => state.setSelectedRoom)
-  console.log(selectedRoom)
+  const rooms = useRoomStore(state => state.rooms);
+  const selectedRoom = useRoomStore(state => state.selectedRoom);
+  const setSelectedRoom = useRoomStore(state => state.setSelectedRoom);
+  console.log(selectedRoom);
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-4">
@@ -22,14 +22,12 @@ const RoomAssignment = () => {
             onClick={() => setSelectedRoom(room)}
           >
             <div className="flex justify-between items-start mb-3">
-                <div>
-              <h5 className="text-lg font-medium flex items-center gap-2">
-                <House className="w-4 h-4" /> 
-                <span>
-                {room.roomNumber}
-                </span>
+              <div>
+                <h5 className="text-lg font-medium flex items-center gap-2">
+                  <House className="w-4 h-4" /> 
+                  <span>{room.roomNumber}</span>
                 </h5>
-                </div>
+              </div>
               <span className="text-primary font-semibold">
                 GH{room.price.toLocaleString()}
               </span>
@@ -43,12 +41,12 @@ const RoomAssignment = () => {
               
               {/* Amenities */}
               <div className="flex flex-wrap gap-2">
-                {room.amenities.map((amenity, index) => (
+                {room.amenities.map((amenity: Amenity, index: number) => (
                   <span 
                     key={index}
                     className="text-xs bg-gray-100 px-2 py-1 rounded-full"
                   >
-                    {amenity}
+                    {amenity.toString()}
                   </span>
                 ))}
               </div>
@@ -68,7 +66,7 @@ const RoomAssignment = () => {
         ))}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default RoomAssignment
+export default RoomAssignment;

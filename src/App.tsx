@@ -1,29 +1,31 @@
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import Dashboard from './pages/dashboard/Dashboard';
-import SemesterManagement from './pages/semester-management/SemesterManagement';
+import SemesterManagement from './pages/room-management/RoomManagement';
 import RoomAssignmentAndPayment from './pages/dashboard/resident-management/room-assignment/RoomAssignmentAndPayment';
 import ResidentManagement from './pages/dashboard/resident-management/ResidentManagement';
-import Test from './pages/livetest/Test';
 import VisitorManagement from './pages/dashboard/visitor-management/VisitorManagement';
 import StaffManagement from './pages/dashboard/staff-management/StaffManagement';
 import AddStaff from './pages/dashboard/staff-management/AddStaff';
-
-
+import RoomBooking from './pages/roombooking/RoomBooking';
+import BookingForms from './pages/roombooking/BookingForms';
+import RoomVerification from './pages/roombooking/RoomVerification';
 
 function App() {
   return (
     <Routes>
       <Route path='/' element={<Layout />}>
         <Route index element={<Dashboard />} />
-        <Route path="/semester-management" element={<SemesterManagement />} />
+        <Route path="/room-management" element={<SemesterManagement />} />
         <Route path='/room-assignment/:residentId' element={<RoomAssignmentAndPayment />} />
         <Route path="/resident-management" element={<ResidentManagement />} />
-        <Route path='/test' element={<Test/>}/>
         <Route path="/visitor-management" element={<VisitorManagement />} />
         <Route path="/staff-management" element={<StaffManagement />} />
         <Route path="/staff-management/add" element={<AddStaff />} />
       </Route>
+      <Route path='/room-booking-form' element={<BookingForms />} />
+      <Route path='/room-selection' element={<RoomBooking />} />
+      <Route path='/room-verification' element={<RoomVerification/>} />
     </Routes>
   );
 }

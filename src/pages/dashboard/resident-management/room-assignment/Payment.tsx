@@ -1,12 +1,12 @@
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import { useRoomStore } from '../../../../stores/roomStore'
 import { Trash2, Banknote, SmartphoneCharging, Check } from 'lucide-react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 
 const Payment = () => {
   const navigate = useNavigate()
-  const { residentId } = useParams()
+const residentId = localStorage.getItem('resident_id')
   
   const { 
     selectedRoom, 
@@ -32,6 +32,7 @@ const Payment = () => {
       setTimeout(() => {
         navigate('/resident-management')
       }, 2000)
+      localStorage.removeItem('residentId')
     } catch (error) {
       console.error('Payment failed:', error)
       toast.error('Payment failed. Please try again.')
