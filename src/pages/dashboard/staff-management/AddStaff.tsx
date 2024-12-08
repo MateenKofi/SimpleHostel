@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStaffStore } from '../../../stores/staffStore';
-import { Edit, ImageUp, Trash } from 'lucide-react';
+import { ChevronLeft, Edit, ImageUp, Trash } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { Staff } from '../../../types/types';
+import { v4 as uuidv4 } from 'uuid';
 const AddStaff: React.FC = () => {
   const navigate = useNavigate();
   const { addStaff } = useStaffStore();
@@ -22,12 +23,14 @@ const AddStaff: React.FC = () => {
   };
 
   const onSubmit = (data: Staff) => {
-    addStaff({
-      id: Date.now().toString(),
+    const staffData = {
       ...data,
+      id: uuidv4(),
       middleName: data.middleName || "",
-      staffStatus: data.staffStatus as "Active" | "Inactive",
-    });
+      staffStatus: data.staffStatus = 'Active' as "Active" | "Inactive",
+    };
+    addStaff(staffData);
+    console.log(staffData);
     
     navigate('/staff-management');
   };
@@ -39,9 +42,12 @@ const AddStaff: React.FC = () => {
         <h1 className="text-2xl font-bold">Add Staff</h1>
         <button 
           onClick={() => navigate('/staff-management')}
-          className="px-4 py-2 bg-gray-200 rounded-md"
+          className="flex gap-2 px-4 py-2 bg-primary text-white rounded-md"
         >
+          <ChevronLeft/>
+          <span>
           Back
+          </span>
         </button>
       </div>
 

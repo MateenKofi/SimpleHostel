@@ -2,7 +2,8 @@ import React from 'react';
 import DataTable from 'react-data-table-component';
 import { useNavigate } from 'react-router-dom';
 import { useStaffStore } from '../../../stores/staffStore';
-
+import { Staff } from '../../../types/types';
+import { Edit, Trash2 } from 'lucide-react';
 const StaffManagement: React.FC = () => {
   const navigate = useNavigate();
   const { staffList } = useStaffStore();
@@ -10,25 +11,52 @@ const StaffManagement: React.FC = () => {
   const columns = [
     {
       name: 'Name',
-      selector: (row: any) => 
+      grow: 2,
+      selector: (row: Staff) => 
         `${row.firstName} ${row.middleName} ${row.lastName}`,
       sortable: true,
     },
     {
       name: 'Gender',
-      selector: (row: any) => row.gender,
+      selector: (row: Staff) => row.gender,
       sortable: true,
     },
     {
       name: 'Nationality', 
-      selector: (row: any) => row.nationality,
+      selector: (row: Staff) => row.nationality,
       sortable: true,
     },
     {
       name: 'Status',
-      selector: (row: any) => row.staffStatus,
+      selector: (row: Staff) => row.staffStatus,
       sortable: true,
     },
+    {
+      name: 'Actions',
+      grow:2,
+      cell: (row: Staff) => (
+        <div className="flex space-x-2">
+          <button
+            className="flex gap-2 items-center px-2 py-1 bg-primary text-white rounded-md"
+            onClick={() => navigate(`/staff-management/${row.id}`)}
+          >
+            <Edit size={14}/>
+            <span>
+            Edit
+            </span>
+          </button>
+          <button
+            className="flex gap-2 items-center px-2 py-1 bg-red-500 text-white rounded-md"
+            onClick={() => navigate(`/staff-management/${row.id}`)}
+          >
+            <Trash2 size={14}/>
+            <span>
+            Delete
+            </span>
+          </button>
+        </div>
+      ),
+    }
   ];
 
   return (

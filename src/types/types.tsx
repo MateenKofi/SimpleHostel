@@ -34,6 +34,7 @@ export type Amenity = {
 }
 
 export type Staff = {
+    id: string
     firstName: string;
     middleName?: string;
     lastName: string;

@@ -1,25 +1,5 @@
 import { create } from 'zustand';
-
-interface Staff {
-  id: string;
-  firstName: string;
-  middleName: string;
-  lastName: string;
-  dateOfBirth: string;
-  nationality: string;
-  gender: string;
-  religion: string;
-  maritalStatus: string;
-  staffStatus: 'Active' | 'Inactive';
-  imageUrl?: string;
-  phoneNumber: string;
-  email: string;
-  residence: string;
-  qualification: string;
-  staffType: string;
-  dateOfAppointment: string;
-}
-
+import { Staff } from '../types/types';
 interface StaffStore {
   staffList: Staff[];
   addStaff: (staff: Staff) => void;
