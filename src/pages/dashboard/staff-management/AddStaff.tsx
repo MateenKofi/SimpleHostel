@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useStaffStore } from '../../../stores/staffStore';
 import { Edit, ImageUp, Trash } from 'lucide-react';
 import { useForm } from 'react-hook-form';
-
+import { Staff } from '../../../types/types';
 const AddStaff: React.FC = () => {
   const navigate = useNavigate();
   const { addStaff } = useStaffStore();
   const [image, setImage] = useState<string | null>(null);
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm<Staff>();
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -21,10 +21,11 @@ const AddStaff: React.FC = () => {
     }
   };
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: Staff) => {
     addStaff({
       id: Date.now().toString(),
       ...data,
+      middleName: data.middleName || "",
       staffStatus: data.staffStatus as "Active" | "Inactive",
     });
     

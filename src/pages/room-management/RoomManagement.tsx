@@ -9,7 +9,7 @@ interface TabData {
   content: React.ReactNode;
 }
 
-const SemesterManagement = () => {
+const RoomManagementTab = () => {
   const tabData: TabData[] = [
     {
       id: 'rooms',
@@ -62,4 +62,4 @@ const SemesterManagement = () => {
   );
 };
 
-export default SemesterManagement;
+export default RoomManagementTab;

@@ -32,3 +32,23 @@ export type Amenity = {
     name: string;
     price: number;
 }
+
+export type Staff = {
+    firstName: string;
+    middleName?: string;
+    lastName: string;
+    dateOfBirth: string;
+    nationality: string;
+    gender: string;
+    religion: string;
+    maritalStatus: string;
+    ghanaCardNumber: string;
+    phoneNumber: string;
+    email: string;
+    residence: string;
+    qualification: string;
+    staffType: string;
+    block: string;
+    dateOfAppointment: string;
+    staffStatus: "Active" | "Inactive";
+  }

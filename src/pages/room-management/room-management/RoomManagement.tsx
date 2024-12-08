@@ -3,7 +3,7 @@ import { useModal } from '../../../components/Modal';
 import AddRoomModal from './AddRoomModal';
 import AmenitiesModal from './AmenitiesModal';
 import { useRoomStore } from '../../../stores/roomStore'
-import { Room } from '../../../types/room'
+import { Room } from '../../../types/types'
 
 const RoomManagement = () => {
     const {open:openAddRoomModal,close:closeAddRoomModal} = useModal('add_room_modal')

@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import Dashboard from './pages/dashboard/Dashboard';
-import SemesterManagement from './pages/room-management/RoomManagement';
+import RoomManagement from './pages/room-management/RoomManagement';
 import RoomAssignmentAndPayment from './pages/dashboard/resident-management/room-assignment/RoomAssignmentAndPayment';
 import ResidentManagement from './pages/dashboard/resident-management/ResidentManagement';
 import VisitorManagement from './pages/dashboard/visitor-management/VisitorManagement';
@@ -16,7 +16,7 @@ function App() {
     <Routes>
       <Route path='/' element={<Layout />}>
         <Route index element={<Dashboard />} />
-        <Route path="/room-management" element={<SemesterManagement />} />
+        <Route path="/room-management" element={<RoomManagement />} />
         <Route path='/room-assignment/:residentId' element={<RoomAssignmentAndPayment />} />
         <Route path="/resident-management" element={<ResidentManagement />} />
         <Route path="/visitor-management" element={<VisitorManagement />} />

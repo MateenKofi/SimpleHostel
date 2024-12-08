@@ -1,37 +1,14 @@
-import React from 'react'
 import Modal from '../../../components/Modal'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { useResidentStore } from '../../../stores/residentStore'
+import { Resident } from '../../../types/types'
 
-interface ResidentForm {
-    fullName: string;
-    studentId: string;
-    email: string;
-    phone: string;
-    course: string;
-    emergencyContactName: string;
-    emergencyContactPhone: string;
-    emergencyContactRelation: string;
-}
 
-interface AddResidentModalProps {
+type AddResidentModalProps = {
     onClose: () => void;
 }
-
-interface Resident {
-    id: string;
-    fullName: string;
-    studentId: string;
-    email: string;
-    phone: string;
-    course: string;
-    emergencyContactName: string;
-    emergencyContactPhone: string;
-    emergencyContactRelation: string;
-    status: 'Pending' | 'Active' | 'Inactive';
-    roomNumber?: string;
-}
+type ResidentForm = Omit<Resident, 'paymentMethod'>
 
 const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
     const addResident = useResidentStore((state) => state.addResident)
@@ -48,7 +25,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
             emergencyContactName: formData.emergencyContactName,
             emergencyContactPhone: formData.emergencyContactPhone,
             emergencyContactRelation: formData.emergencyContactRelation,
-            status: 'Pending',
+            status: 'pending',
             roomNumber: undefined
         }
         

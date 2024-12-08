@@ -1,11 +1,10 @@
-import React from 'react'
 import { Users, Search, Filter, Download, Plus, Edit } from 'lucide-react'
 import { useModal } from '../../../components/Modal'
 import DataTable from 'react-data-table-component'
 import AddResidentModal from './AddResidentModal'
 import { useResidentStore } from '../../../stores/residentStore'
 import { HousePlus, Trash2 } from 'lucide-react'
-import { Resident } from '../../../types/resident'
+import { Resident } from '../../../types/types'
 import { useNavigate } from 'react-router-dom'
 
 const ResidentManagement = () => {
