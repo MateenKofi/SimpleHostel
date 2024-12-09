@@ -3,6 +3,7 @@ import { useResidentStore } from '../../stores/residentStore';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Resident } from '../../types/types';
+
 type ResidentForm = Omit<Resident, "paymentMethod">;
 
 const BookingForms = () => {

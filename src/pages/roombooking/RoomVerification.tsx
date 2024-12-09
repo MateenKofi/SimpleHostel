@@ -1,7 +1,10 @@
+import { ChevronLeft } from 'lucide-react';
 import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const RoomVerification = () => {
+  const navigate = useNavigate();
   const [enteredCode, setEnteredCode] = useState('');
 
   const handleVerify = () => {
@@ -18,7 +21,19 @@ const RoomVerification = () => {
 
   return (
     <div className="p-6 bg-gray-100">
+      <div className='w-full flex justify-between items-start'>
       <h1 className="text-2xl font-bold mb-4">Room Verification</h1>
+      <button
+      className='flex gap-2 items-center bg-primary px-4 py-2 text-white rounded-md'
+      onClick={()=>{
+        navigate('/resident-management')
+      }}>
+      <ChevronLeft/>
+      <span>
+        Back
+      </span>
+      </button>
+      </div>
       <input
         type="text"
         value={enteredCode}

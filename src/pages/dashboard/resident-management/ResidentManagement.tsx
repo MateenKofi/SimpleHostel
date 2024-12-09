@@ -97,6 +97,14 @@ const ResidentManagement = () => {
                     <h1 className="text-2xl font-bold">Resident Management</h1>
                 </div>
                 <div className="flex gap-2">
+                    <button
+                    onClick={()=>{
+                        navigate('/room-verification')
+                    }}
+                    className='px-4 py-2 bg-primary text-white rounded-md'
+                    >
+                        Verify Resident
+                    </button>
                     <button 
                         className="px-4 py-2 bg-primary text-white rounded-md flex items-center gap-2" 
                         onClick={openAddResidentModal}
