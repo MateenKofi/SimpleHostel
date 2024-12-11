@@ -1,6 +1,6 @@
 import { useRoomStore } from '../../../../stores/roomStore';
 import { Bed, House } from 'lucide-react';
-import { Amenity } from '../../../../types/types';
+// import { Amenity } from '../../../../types/types';
 
 const RoomAssignment = () => {
   const rooms = useRoomStore(state => state.rooms);
@@ -13,7 +13,7 @@ const RoomAssignment = () => {
       <h2 className="text-xl font-semibold mb-4">Room Assignment</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {rooms.map(room => (
+        {rooms?.map(room => (
           <div 
             key={room.id}
             className={`border rounded-lg p-4 hover:border-primary cursor-pointer transition-all ${
@@ -29,24 +29,24 @@ const RoomAssignment = () => {
                 </h5>
               </div>
               <span className="text-primary font-semibold">
-                GH{room.price.toLocaleString()}
+                GH{room?.price?.toLocaleString()}
               </span>
             </div>
 
             <div className="space-y-2">
               <div className="flex gap-2 text-gray-600 text-sm">
                 <Bed className="w-4 h-4" />
-                <span>{room.capacity} Beds</span>
+                <span>{room?.capacity} Beds</span>
               </div>
               
               {/* Amenities */}
               <div className="flex flex-wrap gap-2">
-                {room.amenities.map((amenity: Amenity, index: number) => (
+                {room.amenities.map((amenity: string, index: number) => (
                   <span 
                     key={index}
                     className="text-xs bg-gray-100 px-2 py-1 rounded-full"
                   >
-                    {amenity.toString()}
+                    {amenity}
                   </span>
                 ))}
               </div>

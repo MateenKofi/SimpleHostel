@@ -18,7 +18,14 @@ const ResidentManagement = () => {
             name: 'Name',
             selector: (row: Resident) => row.fullName,
             sortable: true,
-            grow:2,
+            grow:1,
+        },
+        {
+            name:'Verification',
+            selector:(row:Resident)=>row.verificationCode ?? 
+            '',
+            sortable:true,
+            grow:3,
         },
         {
             name: 'Student ID',
@@ -32,7 +39,7 @@ const ResidentManagement = () => {
         },
         {
             name: 'Room',
-            selector: (row: Resident) => row.roomNumber || 'Not Assigned',
+            selector: (row: Resident) => row?.roomNumber ? row?.roomNumber : 'Not Assigned',
         },
         {
             name: 'Status',
