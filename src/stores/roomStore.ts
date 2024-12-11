@@ -1,28 +1,16 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
-import { Room } from '../types/room'
-import { useResidentStore } from './residentStore'
-import { toast } from 'react-hot-toast'
-
-interface RoomStore {
-  rooms: Room[]
-  setRooms: (rooms: Room[]) => void
-  selectedRoom: Room | null
-  setSelectedRoom: (room: Room | null) => void
-  paymentMethod: 'cash' | 'momo' | ''
-  setPaymentMethod: (method: 'cash' | 'momo' | '') => void
-  removeSelectedRoom: () => void
-  processPayment: (residentId: string) => Promise<void>
-}
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import { Room } from '../types/types';
 
 const dummyRooms: Room[] = [
   {
     id: '1',
-    roomNumber: '101',
+    roomNumber: 'A101',
     price: 5000,
+    floor: 1,
     capacity: 1,
     block: 'A',
-    type: 'Single',
+    roomType: 'Single',
     status: 'Available',
     maxOccupancy: 1,
     basePrice: 5000,
@@ -31,11 +19,12 @@ const dummyRooms: Room[] = [
   },
   {
     id: '2',
-    roomNumber: '102', 
+    roomNumber: 'A102',
     price: 4500,
     capacity: 2,
+    floor: 1,
     block: 'A',
-    type: 'Double',
+    roomType: 'Double',
     status: 'Occupied',
     maxOccupancy: 2,
     basePrice: 4500,
@@ -46,9 +35,10 @@ const dummyRooms: Room[] = [
     id: '3',
     roomNumber: '201',
     price: 6000,
+    floor: 2,
     capacity: 3,
     block: 'B',
-    type: 'Suite',
+    roomType: 'Suite',
     status: 'Available',
     maxOccupancy: 3,
     basePrice: 6000,
@@ -60,9 +50,10 @@ const dummyRooms: Room[] = [
     roomNumber: '202',
     price: 5500,
     capacity: 4,
+    floor: 1,
     block: 'B',
-    type: 'Suite',
-    status: 'Available', 
+    roomType: 'Suite',
+    status: 'Available',
     maxOccupancy: 4,
     basePrice: 5500,
     amenities: ['Air Conditioning', 'WiFi', 'Study Area'],
@@ -73,8 +64,9 @@ const dummyRooms: Room[] = [
     roomNumber: '301',
     price: 4000,
     capacity: 2,
+    floor: 3,
     block: 'C',
-    type: 'Double',
+    roomType: 'Double',
     status: 'Available',
     maxOccupancy: 2,
     basePrice: 4000,
@@ -87,65 +79,47 @@ const dummyRooms: Room[] = [
     price: 7000,
     capacity: 2,
     block: 'C',
-    type: 'Double',
+    roomType: 'Double',
     status: 'Occupied',
     maxOccupancy: 2,
+    floor: 3,
     basePrice: 7000,
     amenities: ['Air Conditioning', 'WiFi', 'Private Bathroom', 'Balcony'],
-    isAvailable: false,
+    isAvailable: true,
   },
-]
+];
+
+interface RoomStore {
+  rooms: Room[];
+  setRooms: (rooms: Room[]) => void;
+  selectedRoom: Room | null;
+  setSelectedRoom: (room: Room) => void;
+  removeSelectedRoom: () => void;
+  updateRoomAvailability: (roomId: string, isAvailable: boolean) => void;
+  addRoom: (room: Room) => void;
+}
 
 export const useRoomStore = create<RoomStore>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       rooms: dummyRooms,
       setRooms: (rooms) => set({ rooms }),
       selectedRoom: null,
       setSelectedRoom: (room) => set({ selectedRoom: room }),
-      paymentMethod: '',
-      setPaymentMethod: (method) => set({ paymentMethod: method }),
-      removeSelectedRoom: () => set({ 
-        selectedRoom: null, 
-        paymentMethod: '' 
-      }),
-      processPayment: async (residentId: string) => {
-        const { selectedRoom, paymentMethod } = get()
-        if (!selectedRoom) return
-
-        try {
-          // Update resident status to active and add room number
-          const updateResident = useResidentStore.getState().updateResidentStatus
-          updateResident(residentId, 'active', selectedRoom.roomNumber)
-
-          // Update room availability
-          set((state) => ({
-            rooms: state.rooms.map(room =>
-              room.id === selectedRoom.id
-                ? { 
-                    ...room, 
-                    isAvailable: false,
-                    status: 'Occupied',
-                    resident: {
-                      id: residentId
-                    }
-                  }
-                : room
-            ),
-            selectedRoom: null,
-            paymentMethod: ''
-          }))
-
-          toast.success('Room assigned and payment processed successfully!')
-        } catch (error) {
-          console.error('Payment processing failed:', error)
-          toast.error('Payment processing failed. Please try again.')
-          throw error
-        }
-      }
+      removeSelectedRoom: () => set({ selectedRoom: null }),
+      updateRoomAvailability: (roomId, isAvailable) =>
+        set((state) => ({
+          rooms: state.rooms.map((room) =>
+            room.id === roomId ? { ...room, isAvailable } : room
+          ),
+        })),
+      addRoom: (room) =>
+        set((state) => ({
+          rooms: [...state.rooms, room],
+        })),
     }),
     {
       name: 'room-storage',
     }
   )
-)
+);

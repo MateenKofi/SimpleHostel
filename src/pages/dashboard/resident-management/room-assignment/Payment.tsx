@@ -1,45 +1,51 @@
-import  { useState } from 'react'
-import { useRoomStore } from '../../../../stores/roomStore'
-import { Trash2, Banknote, SmartphoneCharging, Check } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
-import { toast } from 'react-hot-toast'
+import { useState } from 'react';
+import { useRoomStore } from '../../../../stores/roomStore';
+import { useResidentStore } from '../../../../stores/residentStore';
+import { Trash2, Banknote, SmartphoneCharging, Check } from 'lucide-react';
+import { v4 as uuidv4 } from 'uuid';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
 
 const Payment = () => {
-  const navigate = useNavigate()
-const residentId = localStorage.getItem('resident_id')
-  
-  const { 
-    selectedRoom, 
-    paymentMethod, 
-    setPaymentMethod, 
+  const navigate = useNavigate();
+  const residentId = localStorage.getItem('resident_id');
+
+  const {
+    selectedRoom,
     removeSelectedRoom,
-    processPayment 
-  } = useRoomStore()
-  
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [isSuccess, setIsSuccess] = useState(false)
+  } = useRoomStore();
+
+  const { processPayment } = useResidentStore();
+
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [verificationCode, setVerificationCode] = useState<string | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'momo' | null>(null);
 
   const handlePayment = async () => {
-    if (!residentId || !selectedRoom) {
-      toast.error('Please select a room first')
-      return
+    if (!residentId || !selectedRoom || !paymentMethod) {
+      toast.error('Please select a room and payment method first');
+      return;
     }
 
-    setIsProcessing(true)
+    const verificationToken = uuidv4();
+    setVerificationCode(verificationToken);
+
+    setIsProcessing(true);
     try {
-      await processPayment(residentId)
-      setIsSuccess(true)
+      await processPayment(residentId, paymentMethod, verificationToken);
+      setIsSuccess(true);
       setTimeout(() => {
-        navigate('/resident-management')
-      }, 2000)
-      localStorage.removeItem('residentId')
+        navigate('/resident-management');
+        localStorage.removeItem('resident_id');
+      }, 2000);
     } catch (error) {
-      console.error('Payment failed:', error)
-      toast.error('Payment failed. Please try again.')
+      console.error('Payment failed:', error);
+      toast.error('Payment failed. Please try again.');
     } finally {
-      setIsProcessing(false)
+      setIsProcessing(false);
     }
-  }
+  };
 
   return (
     <div>
@@ -48,51 +54,52 @@ const residentId = localStorage.getItem('resident_id')
         <div className="space-y-4">
           {/* Display Room Details */}
           <div>
-            {
-              !selectedRoom ? (
-                <div className='flex justify-center items-center py-10'>
-                  <p className="text-sm font-medium">No room selected</p>
+            {!selectedRoom ? (
+              <div className="flex justify-center items-center py-10">
+                <p className="text-sm font-medium">No room selected</p>
+              </div>
+            ) : (
+              <>
+                <p className="text-sm font-medium">
+                  Room: {selectedRoom.roomNumber}
+                </p>
+                <p className="text-sm font-medium">
+                  Price: ₵{selectedRoom.price}
+                </p>
+                {/* Remove Room Button */}
+                <div>
+                  <button
+                    onClick={removeSelectedRoom}
+                    className="text-red-500 rounded-md px-4 py-2 bg-red-500/10 flex items-center gap-2">
+                    <Trash2 className="w-4 h-4" />
+                    <span>Remove Room</span>
+                  </button>
                 </div>
-              ) : (
-                <>
-                  <p className="text-sm font-medium">Room: {selectedRoom.roomNumber}</p>
-                  <p className="text-sm font-medium">Price: ₵{selectedRoom.price}</p>
-                  {/* Remove Room Button */}
-                  <div>
-                    <button 
-                      onClick={removeSelectedRoom}
-                      className="text-red-500 rounded-md px-4 py-2 bg-red-500/10 flex items-center gap-2"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                      <span>Remove Room</span>
-                    </button>
-                  </div>  
-                </>
-              )
-            }
+              </>
+            )}
           </div>
 
           {/* Payment Method Selection */}
           <div>
-            <label className="block text-sm font-medium mb-2">Select Payment Method</label>
+            <label className="block text-sm font-medium mb-2">
+              Select Payment Method
+            </label>
             <div className="flex gap-4">
-              <button 
-                className={`p-8 border rounded-md flex justify-center items-center gap-2 ${paymentMethod === 'cash' ? 'bg-primary text-white' : ''}`}
-                onClick={() => setPaymentMethod('cash')}
-              >
-                <Banknote size={40}/>
-                <span className='text-3xl font-semibold'>
-                  Cash
-                </span>
+              <button
+                className={`p-8 border rounded-md flex justify-center items-center gap-2 ${
+                  paymentMethod === 'cash' ? 'bg-primary text-white' : ''
+                }`}
+                onClick={() => setPaymentMethod('cash')}>
+                <Banknote size={40} />
+                <span className="text-3xl font-semibold">Cash</span>
               </button>
-              <button 
-                className={`p-8 border rounded-md flex justify-center items-center gap-2 ${paymentMethod === 'momo' ? 'bg-primary text-white' : ''}`}
-                onClick={() => setPaymentMethod('momo')}
-              >
-                <SmartphoneCharging size={40}/>
-                <span className='text-3xl font-semibold'>
-                  MoMo
-                </span>
+              <button
+                className={`p-8 border rounded-md flex justify-center items-center gap-2 ${
+                  paymentMethod === 'momo' ? 'bg-primary text-white' : ''
+                }`}
+                onClick={() => setPaymentMethod('momo')}>
+                <SmartphoneCharging size={40} />
+                <span className="text-3xl font-semibold">MoMo</span>
               </button>
             </div>
           </div>
@@ -100,7 +107,9 @@ const residentId = localStorage.getItem('resident_id')
           {/* MoMo Phone Number Field */}
           {paymentMethod === 'momo' && (
             <div>
-              <label className="block text-sm font-medium mb-2">MoMo Phone Number</label>
+              <label className="block text-sm font-medium mb-2">
+                MoMo Phone Number
+              </label>
               <input
                 type="tel"
                 placeholder="Enter MoMo phone number"
@@ -112,11 +121,10 @@ const residentId = localStorage.getItem('resident_id')
           )}
         </div>
         <div className="mt-4">
-          <button 
+          <button
             className="w-full px-4 py-2 bg-primary text-white rounded-md disabled:opacity-50"
             onClick={handlePayment}
-            disabled={!selectedRoom || !paymentMethod || isProcessing}
-          >
+            disabled={!selectedRoom || !paymentMethod || isProcessing}>
             {isProcessing ? 'Processing...' : 'Make Payment'}
           </button>
         </div>
@@ -129,12 +137,17 @@ const residentId = localStorage.getItem('resident_id')
               <Check className="w-8 h-8 text-green-500" />
             </div>
             <h3 className="text-xl font-semibold mb-2">Payment Successful!</h3>
-            <p className="text-gray-600">Room has been assigned successfully.</p>
+            <p className="text-gray-600">
+              Room has been assigned successfully.
+            </p>
+            {verificationCode && (
+              <p className="text-gray-600 mt-2">Your verification code is: <strong>{verificationCode}</strong></p>
+            )}
           </div>
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Payment
+export default Payment;

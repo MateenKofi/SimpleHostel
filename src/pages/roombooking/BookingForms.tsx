@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Resident } from '../../types/types';
 
-type ResidentForm = Omit<Resident, "paymentMethod">;
+type ResidentForm = Omit<Resident, "paymentMethod"| "verificationCode">;
 
 const BookingForms = () => {
     

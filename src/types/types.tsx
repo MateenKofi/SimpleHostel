@@ -11,21 +11,24 @@ export type Resident = {
     status: 'pending' | 'active' | 'inactive';
     roomNumber?: string;
     paymentMethod?: 'cash' | 'momo';
+    verificationCode?: string;
 } 
 
 export type Room = {
     id: string
     roomNumber: string
     price: number
+    floor: number
     capacity: number
     block: string
-    type: string
-    status: string
+    roomType: 'Single'|'Double'|'Suite'|'Quad'
+    status: 'Available' | 'Maintenance' | 'Occupied';
     maxOccupancy: number
     basePrice: number
     amenities: string[]
     isAvailable: boolean
     resident?: Resident
+    description?: string
 } 
 
 export type Amenity = {

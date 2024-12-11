@@ -5,9 +5,8 @@ import {
   X,
   LogOut,
   BookOpenCheck,
-  BedDouble,
   CalendarCheck,
-  CreditCard,
+  BedDouble,
   Wrench,
   BarChart3,
   Users
@@ -18,11 +17,9 @@ const Sidebar = () => {
   const [isExpanded, setIsExpanded] = useState(true);
   const menuItems = [
     { title: 'Dashboard', icon: LayoutDashboard, path: '/' },
-    { title: 'Room Management', icon: LayoutDashboard, path: '/room-management' },
+    { title: 'Room Management', icon: BedDouble, path: '/room-management' },
     { title: 'Resident Management', icon: BookOpenCheck, path: '/resident-management' },
-    { title: 'Check-in & Check-out', icon: CalendarCheck, path: '/check-in-out' },
     { title: 'Visitor Management', icon: CalendarCheck, path: '/visitor-management' },
-    { title: 'Payment & Billing', icon: CreditCard, path: '/payments' },
     { title: 'Maintenance & Tracking', icon: Wrench, path: '/maintenance' },
     { title: 'Reports & Analytics', icon: BarChart3, path: '/analytics' },
     {

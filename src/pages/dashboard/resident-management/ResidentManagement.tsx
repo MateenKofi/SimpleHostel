@@ -18,6 +18,7 @@ const ResidentManagement = () => {
             name: 'Name',
             selector: (row: Resident) => row.fullName,
             sortable: true,
+            grow:2,
         },
         {
             name: 'Student ID',
