@@ -16,14 +16,14 @@ export type Resident = {
 
 export type Room = {
     id: string
+    gender: string
     roomNumber: string
-    price: number
-    floor: number
-    capacity: number
+    floor?: number
     block: string
     roomType: 'Single'|'Double'|'Suite'|'Quad'
     status: 'Available' | 'Maintenance' | 'Occupied';
     maxOccupancy: number
+    currentCapacity: number
     basePrice: number
     amenities: string[]
     isAvailable: boolean

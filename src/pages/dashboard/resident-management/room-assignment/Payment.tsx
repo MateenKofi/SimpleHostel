@@ -64,7 +64,7 @@ const Payment = () => {
                   Room: {selectedRoom.roomNumber}
                 </p>
                 <p className="text-sm font-medium">
-                  Price: ₵{selectedRoom.price}
+                  Price: ₵{selectedRoom.basePrice}
                 </p>
                 {/* Remove Room Button */}
                 <div>

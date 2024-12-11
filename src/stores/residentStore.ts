@@ -51,7 +51,7 @@ export const useResidentStore = create<ResidentStore>()(
             'residents/updateStatus'
           ),
         processPayment: async (residentId, paymentMethod, verificationCode) => {
-          const { selectedRoom, updateRoomAvailability } = useRoomStore.getState();
+          const { selectedRoom, updateRoomCapacity } = useRoomStore.getState();
           if (!selectedRoom) return;
 
           // Update resident status and verification code
@@ -63,8 +63,8 @@ export const useResidentStore = create<ResidentStore>()(
             ),
           }));
 
-          // Update room availability
-          updateRoomAvailability(selectedRoom.id, false);
+          // Update room capacity
+          updateRoomCapacity(selectedRoom.id, selectedRoom.currentCapacity + 1);
         },
         deleteResident: (id) =>
           set((state) => ({

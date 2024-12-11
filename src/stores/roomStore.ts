@@ -6,9 +6,9 @@ const dummyRooms: Room[] = [
   {
     id: '1',
     roomNumber: 'A101',
-    price: 5000,
     floor: 1,
-    capacity: 1,
+    currentCapacity: 0,
+    gender: 'female',
     block: 'A',
     roomType: 'Single',
     status: 'Available',
@@ -20,8 +20,8 @@ const dummyRooms: Room[] = [
   {
     id: '2',
     roomNumber: 'A102',
-    price: 4500,
-    capacity: 2,
+    currentCapacity: 0,
+    gender: 'male',
     floor: 1,
     block: 'A',
     roomType: 'Double',
@@ -34,9 +34,9 @@ const dummyRooms: Room[] = [
   {
     id: '3',
     roomNumber: '201',
-    price: 6000,
     floor: 2,
-    capacity: 3,
+    currentCapacity: 1,
+    gender: 'male',
     block: 'B',
     roomType: 'Suite',
     status: 'Available',
@@ -47,9 +47,9 @@ const dummyRooms: Room[] = [
   },
   {
     id: '4',
-    roomNumber: '202',
-    price: 5500,
-    capacity: 4,
+    roomNumber: 'B202',
+    currentCapacity: 2,
+    gender: 'female',
     floor: 1,
     block: 'B',
     roomType: 'Suite',
@@ -61,9 +61,9 @@ const dummyRooms: Room[] = [
   },
   {
     id: '5',
-    roomNumber: '301',
-    price: 4000,
-    capacity: 2,
+    roomNumber: 'C301',
+    currentCapacity: 0,
+    gender: 'female',
     floor: 3,
     block: 'C',
     roomType: 'Double',
@@ -75,9 +75,9 @@ const dummyRooms: Room[] = [
   },
   {
     id: '6',
-    roomNumber: '302',
-    price: 7000,
-    capacity: 2,
+    roomNumber: 'C302',
+    currentCapacity: 2,
+    gender: 'male',
     block: 'C',
     roomType: 'Double',
     status: 'Occupied',
@@ -97,6 +97,7 @@ interface RoomStore {
   removeSelectedRoom: () => void;
   updateRoomAvailability: (roomId: string, isAvailable: boolean) => void;
   addRoom: (room: Room) => void;
+  updateRoomCapacity: (roomId: string, newCapacity: number) => void;
 }
 
 export const useRoomStore = create<RoomStore>()(
@@ -116,6 +117,21 @@ export const useRoomStore = create<RoomStore>()(
       addRoom: (room) =>
         set((state) => ({
           rooms: [...state.rooms, room],
+        })),
+      updateRoomCapacity: (roomId, newCapacity) =>
+        set((state) => ({
+          rooms: state.rooms.map((room) => {
+            if (room.id === roomId) {
+              const updatedRoom = {
+                ...room,
+                currentCapacity: newCapacity,
+                status: newCapacity >= room.maxOccupancy ? 'Occupied' : 'Available' as 'Available' | 'Occupied',
+                isAvailable: newCapacity < room.maxOccupancy,
+              };
+              return updatedRoom;
+            }
+            return room;
+          }),
         })),
     }),
     {

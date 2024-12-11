@@ -14,40 +14,43 @@ const RoomManagement = () => {
     const dummyRooms: Room[] = [
         {
             id: '1',
-            roomNumber: '101',
+            gender: 'male',
+            roomNumber: 'A101',
             block: 'A',
-            type: 'Single',
+            roomType: 'Single',
+            floor:1,
             status: 'Available',
             maxOccupancy: 1,
             basePrice: 500,
-            price: 500,
-            capacity: 1,
+            currentCapacity: 1,
             amenities: [],
-            isAvailable: true
+            isAvailable: false,
         },
         {
             id: '2', 
-            roomNumber: '102',
+            roomNumber: 'A102',
+            gender: 'male',
             block: 'A',
-            type: 'Double',
+            roomType: 'Double',
+            floor:2,
             status: 'Occupied',
             maxOccupancy: 2,
             basePrice: 800,
-            price: 800,
-            capacity: 2,
+            currentCapacity: 1,
             amenities: [],
             isAvailable: false
         },
         {
             id: '3',
-            roomNumber: '201',
+            roomNumber: 'B201',
             block: 'B', 
-            type: 'Single',
+            roomType: 'Single',
+            floor:3,
             status: 'Maintenance',
             maxOccupancy: 1,
             basePrice: 600,
-            price: 600,
-            capacity: 1,
+            currentCapacity: 0,
+            gender:'female',
             amenities: [],
             isAvailable: false
         }
@@ -145,7 +148,7 @@ const RoomManagement = () => {
                         <thead>
                             <tr className="bg-gray-50">
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Room Number
+                                    Room 
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Block
@@ -160,7 +163,7 @@ const RoomManagement = () => {
                                     Occupancy
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Price/Month
+                                    Price
                                 </th>
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Actions
@@ -177,7 +180,7 @@ const RoomManagement = () => {
                                         Block {room.block}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        {room.type}
+                                        {room.roomType}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(room.status)}`}>
@@ -185,10 +188,10 @@ const RoomManagement = () => {
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        0/{room.maxOccupancy}
+                                        {room.currentCapacity}/{room.maxOccupancy}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
-                                        ${calculateTotalPrice(room)}
+                                    ₵{calculateTotalPrice(room)}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <button className="text-blue-600 hover:text-blue-900">
