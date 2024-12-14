@@ -1,6 +1,6 @@
 
-import RoomAssignment from '../dashboard/resident-management/room-assignment/RoomAssignment';
-import Payment from '../dashboard/resident-management/room-assignment/Payment';
+import RoomAssignment from './online-room-assignment/RoomAssignment';
+import Payment from './online-room-assignment/Payment'
 
 const RoomBooking = () => {
   return (

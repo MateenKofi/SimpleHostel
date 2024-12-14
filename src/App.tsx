@@ -1,15 +1,15 @@
 import { Routes, Route } from 'react-router-dom';
-import Layout from './components/layout/Layout';
-import Dashboard from './pages/dashboard/Dashboard';
-import RoomManagement from './pages/room-management/RoomManagement';
-import RoomAssignmentAndPayment from './pages/dashboard/resident-management/room-assignment/RoomAssignmentAndPayment';
-import ResidentManagement from './pages/dashboard/resident-management/ResidentManagement';
-import VisitorManagement from './pages/dashboard/visitor-management/VisitorManagement';
-import StaffManagement from './pages/dashboard/staff-management/StaffManagement';
-import AddStaff from './pages/dashboard/staff-management/AddStaff';
-import RoomBooking from './pages/roombooking/RoomBooking';
-import BookingForms from './pages/roombooking/BookingForms';
-import RoomVerification from './pages/roombooking/RoomVerification';
+import Layout from '@components/layout/Layout';
+import Dashboard from '@pages/dashboard/Dashboard';
+import RoomManagement from '@pages/room-management/RoomManagement';
+import RoomAssignmentAndPayment from '@pages/dashboard/resident-management/room-assignment/RoomAssignmentAndPayment';
+import ResidentManagement from '@pages/dashboard/resident-management/ResidentManagement';
+import VisitorManagement from '@pages/dashboard/visitor-management/VisitorManagement';
+import StaffManagement from '@pages/dashboard/staff-management/StaffManagement';
+import AddStaff from '@pages/dashboard/staff-management/AddStaff';
+import RoomBooking from '@pages/roombooking/RoomBooking';
+import BookingForms from '@pages/roombooking/BookingForms';
+import RoomVerification from '@pages/roombooking/RoomVerification';
 
 function App() {
   return (
@@ -23,6 +23,7 @@ function App() {
         <Route path="/staff-management" element={<StaffManagement />} />
         <Route path="/staff-management/add" element={<AddStaff />} />
       </Route>
+      
       <Route path='/room-booking-form' element={<BookingForms />} />
       <Route path='/room-selection' element={<RoomBooking />} />
       <Route path='/room-verification' element={<RoomVerification/>} />

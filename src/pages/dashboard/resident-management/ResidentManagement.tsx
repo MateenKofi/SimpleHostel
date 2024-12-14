@@ -25,7 +25,7 @@ const ResidentManagement = () => {
             selector:(row:Resident)=>row.verificationCode ?? 
             '',
             sortable:true,
-            grow:3,
+            grow:4,
         },
         {
             name: 'Student ID',

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import RoomManagement from './room-management/RoomManagement';
 import ReportAnalysis from './reports/ReportAnalysis';
-import { Link } from 'react-router-dom';
 
 interface TabData {
   id: string;
@@ -32,11 +31,7 @@ const RoomManagementTab = () => {
        <h1 className="text-2xl font-bold text-gray-800">Room Management</h1>
        <p className="text-gray-600">Manage and plan your room for the semesters</p>
        </div>
-       <Link to={'/room-verification'}>
-       <button className=' px-4 py-2 bg-primary text-white rounded-md disabled:opacity-50'>
-        Verify Room
-       </button>
-       </Link>
+      
       </div>
 
       <div className="space-y-4">

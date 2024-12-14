@@ -1,14 +1,15 @@
-import { Building, Search, Filter, Download, Plus } from 'lucide-react'
+import { Building, Search, Filter, Download, Plus, EyeClosed, Edit, Trash2 } from 'lucide-react';
 import { useModal } from '../../../components/Modal';
 import AddRoomModal from './AddRoomModal';
 import AmenitiesModal from './AmenitiesModal';
-import { useRoomStore } from '../../../stores/roomStore'
-import { Room } from '../../../types/types'
+import { useRoomStore } from '../../../stores/roomStore';
+import { Room } from '../../../types/types';
+import DataTable from 'react-data-table-component';
 
 const RoomManagement = () => {
-    const {open:openAddRoomModal,close:closeAddRoomModal} = useModal('add_room_modal')
-    const {open: openAmenitiesModal, close: closeAmenitiesModal} = useModal('amenities_modal')
-    const rooms = useRoomStore(state => state.rooms)
+    const { open: openAddRoomModal, close: closeAddRoomModal } = useModal('add_room_modal');
+    const { open: openAmenitiesModal, close: closeAmenitiesModal } = useModal('amenities_modal');
+    const rooms = useRoomStore(state => state.rooms);
 
     // Dummy data
     const dummyRooms: Room[] = [
@@ -18,7 +19,7 @@ const RoomManagement = () => {
             roomNumber: 'A101',
             block: 'A',
             roomType: 'Single',
-            floor:1,
+            floor: 1,
             status: 'Available',
             maxOccupancy: 1,
             basePrice: 500,
@@ -27,12 +28,12 @@ const RoomManagement = () => {
             isAvailable: false,
         },
         {
-            id: '2', 
+            id: '2',
             roomNumber: 'A102',
             gender: 'male',
             block: 'A',
             roomType: 'Double',
-            floor:2,
+            floor: 2,
             status: 'Occupied',
             maxOccupancy: 2,
             basePrice: 800,
@@ -43,39 +44,103 @@ const RoomManagement = () => {
         {
             id: '3',
             roomNumber: 'B201',
-            block: 'B', 
+            block: 'B',
             roomType: 'Single',
-            floor:3,
+            floor: 3,
             status: 'Maintenance',
             maxOccupancy: 1,
             basePrice: 600,
             currentCapacity: 0,
-            gender:'female',
+            gender: 'female',
             amenities: [],
             isAvailable: false
         }
-    ]
+    ];
 
     // Combine dummy data with rooms from store
-    const allRooms = [...dummyRooms, ...rooms]
+    const allRooms = [...dummyRooms, ...rooms];
 
     const getStatusColor = (status: Room['status']) => {
         switch (status) {
             case 'Occupied':
-                return 'bg-blue-100 text-blue-800'
+                return 'bg-blue-100 text-blue-800';
             case 'Available':
-                return 'bg-green-100 text-green-800'
+                return 'bg-green-100 text-green-800';
             case 'Maintenance':
-                return 'bg-red-100 text-red-800'
+                return 'bg-red-100 text-red-800';
             default:
-                return 'bg-gray-100 text-gray-800'
+                return 'bg-gray-100 text-gray-800';
         }
-    }
+    };
 
     const calculateTotalPrice = (room: Room) => {
         const totalPrice = room.basePrice;
         return totalPrice;
-    }
+    };
+
+    const columns = [
+        {
+            name: 'Room',
+            selector: (row: Room) => row.roomNumber,
+            sortable: true,
+        },
+        {
+            name: 'Block',
+            selector: (row: Room) => `Block ${row.block}`,
+            sortable: true,
+        },
+        {
+            name: 'Type',
+            selector: (row: Room) => row.roomType,
+            sortable: true,
+        },
+        {
+            name:'Gender',
+            cell: (row: Room) => (
+                <span className={`px-2 py-1 rounded-full text-xs capitalize`}>
+                    {row.gender}
+                </span>
+            ),
+            sortable: true,
+        },
+        {
+            name: 'Status',
+            cell: (row: Room) => (
+                <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(row.status)}`}>
+                    {row.status}
+                </span>
+            ),
+            sortable: true,
+        },
+        {
+            name: 'Occupancy',
+            selector: (row: Room) => `${row.currentCapacity}/${row.maxOccupancy}`,
+            sortable: true,
+        },
+        {
+            name: 'Price',
+            selector: (row: Room) => `₵${calculateTotalPrice(row)}`,
+            sortable: true,
+        },
+        {
+            name: 'Actions',
+            grow:2,
+            cell: (row: Room) => (
+             <div className=' flex gap-2'>
+                   <button className="text-white bg-primary p-1 rounded-sm">
+                  <EyeClosed size={18} />
+                </button>
+                <button className="text-white bg-primary p-1 rounded-sm">
+                  <Edit size={18}/>
+                </button>
+                <button className="text-white bg-primary p-1 rounded-sm">
+                  <Trash2 size={18}/>
+                </button>
+             </div>
+
+            ),
+        },
+    ];
 
     return (
         <div className="p-6">
@@ -86,23 +151,19 @@ const RoomManagement = () => {
                 </div>
                 <div className="flex gap-2">
                     <button className="flex gap-2 px-4 py-2 bg-black text-white rounded-md"
-                    onClick={()=>openAddRoomModal()}
-                        >
-                            <Plus/>
-                            <span>
-                        Room
-                            </span>
+                        onClick={() => openAddRoomModal()}
+                    >
+                        <Plus />
+                        <span>Room</span>
                     </button>
                     <button className="flex gap-2 px-4 py-2 bg-black text-white rounded-md"
-                    onClick={()=>openAmenitiesModal()}
-                        >
-                            <Plus/>
-                            <span>
-                         Amenities
-                            </span>
+                        onClick={() => openAmenitiesModal()}
+                    >
+                        <Plus />
+                        <span>Amenities</span>
                     </button>
-                    <AddRoomModal onClose={closeAddRoomModal}/>
-                    <AmenitiesModal onClose={closeAmenitiesModal}/>
+                    <AddRoomModal onClose={closeAddRoomModal} />
+                    <AmenitiesModal onClose={closeAmenitiesModal} />
                     <button className="px-4 py-2 bg-black text-white rounded-md flex items-center gap-2">
                         <Download className="w-4 h-4" />
                         Export
@@ -143,79 +204,14 @@ const RoomManagement = () => {
                     </div>
                 </div>
 
-                <div className="overflow-x-auto">
-                    <table className="min-w-full">
-                        <thead>
-                            <tr className="bg-gray-50">
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Room 
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Block
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Type
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Status
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Occupancy
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Price
-                                </th>
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Actions
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {allRooms.map((room) => (
-                                <tr key={room.id}>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        {room.roomNumber}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        Block {room.block}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        {room.roomType}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <span className={`px-2 py-1 rounded-full text-xs ${getStatusColor(room.status)}`}>
-                                            {room.status}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        {room.currentCapacity}/{room.maxOccupancy}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                    ₵{calculateTotalPrice(room)}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <button className="text-blue-600 hover:text-blue-900">
-                                            View Details
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div className="flex justify-between items-center mt-4">
-                    <div className="text-sm text-gray-500">
-                        Showing {allRooms.length} rooms
-                    </div>
-                    <div className="flex gap-2">
-                        <button className="px-4 py-2 border rounded-md">Previous</button>
-                        <button className="px-4 py-2 border rounded-md">Next</button>
-                    </div>
-                </div>
+                <DataTable
+                    columns={columns}
+                    data={allRooms}
+                    pagination
+                />
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default RoomManagement 
+export default RoomManagement;
