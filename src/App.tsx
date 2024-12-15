@@ -10,6 +10,7 @@ import AddStaff from '@pages/dashboard/staff-management/AddStaff';
 import RoomBooking from '@pages/roombooking/RoomBooking';
 import BookingForms from '@pages/roombooking/BookingForms';
 import RoomVerification from '@pages/roombooking/RoomVerification';
+import Maintenance from '@pages/maintenance&Tracking/maintenace';
 
 function App() {
   return (
@@ -18,14 +19,16 @@ function App() {
         <Route index element={<Dashboard />} />
         <Route path="/room-management" element={<RoomManagement />} />
         <Route path='/room-assignment/:residentId' element={<RoomAssignmentAndPayment />} />
+        {/* <Route path="/online-resident-booking" element={<RoomBooking />} /> */}
         <Route path="/resident-management" element={<ResidentManagement />} />
         <Route path="/visitor-management" element={<VisitorManagement />} />
         <Route path="/staff-management" element={<StaffManagement />} />
+        <Route path="/maintenance-and-tracking" element={<Maintenance />}/>
         <Route path="/staff-management/add" element={<AddStaff />} />
       </Route>
       
       <Route path='/room-booking-form' element={<BookingForms />} />
-      <Route path='/room-selection' element={<RoomBooking />} />
+      <Route path='/online-resident-booking' element={<RoomBooking />} />
       <Route path='/room-verification' element={<RoomVerification/>} />
     </Routes>
   );

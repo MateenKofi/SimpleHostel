@@ -3,12 +3,14 @@ import { useRoomStore } from '../../../../stores/roomStore';
 import { useResidentStore } from '../../../../stores/residentStore';
 import { Trash2, Banknote, SmartphoneCharging, Check } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 const Payment = () => {
   const navigate = useNavigate();
-  const residentId = localStorage.getItem('resident_id');
+const { residentId } = useParams<{ residentId: string }>();
+console.log('residentId from manual payment', residentId);
+  // const residentId = localStorage.getItem('resident_id');
 
   const {
     selectedRoom,
@@ -33,7 +35,7 @@ const Payment = () => {
 
     setIsProcessing(true);
     try {
-      await processPayment(residentId, paymentMethod, verificationToken);
+      await processPayment(residentId!, paymentMethod, verificationToken);
       setIsSuccess(true);
       setTimeout(() => {
         navigate('/resident-management');

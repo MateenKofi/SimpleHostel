@@ -31,7 +31,7 @@ const BookingForms = () => {
         console.log('Current residents:', useResidentStore.getState().residents)
         localStorage.setItem('resident_id', newResident.id)
         toast.success('Resident added successfully')
-        navigate('/room-selection')
+        navigate('/online-resident-booking')
     }
   return (
     <div className='max-h-screen w-full flex'>

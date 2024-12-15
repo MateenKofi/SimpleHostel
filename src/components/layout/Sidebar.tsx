@@ -20,7 +20,7 @@ const Sidebar = () => {
     { title: 'Room Management', icon: BedDouble, path: '/room-management' },
     { title: 'Resident Management', icon: BookOpenCheck, path: '/resident-management' },
     { title: 'Visitor Management', icon: CalendarCheck, path: '/visitor-management' },
-    { title: 'Maintenance & Tracking', icon: Wrench, path: '/maintenance' },
+    { title: 'Maintenance & Tracking', icon: Wrench, path: '/maintenance-and-tracking' },
     { title: 'Reports & Analytics', icon: BarChart3, path: '/analytics' },
     {
       title: 'Staff Management',

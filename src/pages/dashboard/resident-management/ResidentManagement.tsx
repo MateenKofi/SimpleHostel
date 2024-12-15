@@ -1,31 +1,29 @@
-import { Users, Search, Filter, Download, Plus, Edit } from 'lucide-react'
-import { useModal } from '../../../components/Modal'
-import DataTable from 'react-data-table-component'
-import AddResidentModal from './AddResidentModal'
-import { useResidentStore } from '../../../stores/residentStore'
-import { HousePlus, Trash2 } from 'lucide-react'
-import { Resident } from '../../../types/types'
-import { useNavigate } from 'react-router-dom'
+import DataTable from 'react-data-table-component';
+import AddResidentModal from './AddResidentModal';
+import { useResidentStore } from '@stores/residentStore';
+import { Download, Edit, Filter, HousePlus, Plus, Search, Trash2, Users } from 'lucide-react';
+import type { Resident } from '../../../types/types'; // Use 'import type' for type imports
+import { useNavigate } from 'react-router-dom';
+import { useModal } from '@components/Modal';
 
 const ResidentManagement = () => {
-    const navigate = useNavigate()
-    const { open: openAddResidentModal, close: closeAddResidentModal } = useModal('add_resident_modal')
-    const residents = useResidentStore((state) => state.residents)
-    const deleteResident = useResidentStore((state) => state.deleteResident)
+    const navigate = useNavigate();
+    const { open: openAddResidentModal, close: closeAddResidentModal } = useModal('add_resident_modal');
+    const residents = useResidentStore((state) => state.residents);
+    const deleteResident = useResidentStore((state) => state.deleteResident);
 
     const columns = [
         {
             name: 'Name',
             selector: (row: Resident) => row.fullName,
             sortable: true,
-            grow:1,
+            grow: 1,
         },
         {
-            name:'Verification',
-            selector:(row:Resident)=>row.verificationCode ?? 
-            '',
-            sortable:true,
-            grow:4,
+            name: 'Verification',
+            selector: (row: Resident) => row.verificationCode ?? '',
+            sortable: true,
+            grow: 4,
         },
         {
             name: 'Student ID',
@@ -85,17 +83,17 @@ const ResidentManagement = () => {
                 </div>
             ),
         },
-    ]
+    ];
 
     const handleAssignRoom = (resident: Resident) => {
-        navigate(`/room-assignment/${resident.id}`)
-    }
+        navigate(`/room-assignment/${resident.id}`);
+    };
 
     const handleDeleteResident = (id: string) => {
         if (window.confirm('Are you sure you want to delete this resident?')) {
-            deleteResident(id)
+            deleteResident(id);
         }
-    }
+    };
 
     return (
         <div className="p-6">
@@ -106,10 +104,10 @@ const ResidentManagement = () => {
                 </div>
                 <div className="flex gap-2">
                     <button
-                    onClick={()=>{
-                        navigate('/room-verification')
-                    }}
-                    className='px-4 py-2 bg-primary text-white rounded-md'
+                        onClick={() => {
+                            navigate('/room-verification');
+                        }}
+                        className='px-4 py-2 bg-primary text-white rounded-md'
                     >
                         Verify Resident
                     </button>
@@ -156,7 +154,7 @@ const ResidentManagement = () => {
             </div>
             <AddResidentModal onClose={closeAddResidentModal} />
         </div>
-    )
-}
+    );
+};
 
-export default ResidentManagement 
+export default ResidentManagement;
