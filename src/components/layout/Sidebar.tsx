@@ -21,7 +21,7 @@ const Sidebar = () => {
     { title: 'Resident Management', icon: BookOpenCheck, path: '/resident-management' },
     { title: 'Visitor Management', icon: CalendarCheck, path: '/visitor-management' },
     { title: 'Maintenance & Tracking', icon: Wrench, path: '/maintenance-and-tracking' },
-    { title: 'Reports & Analytics', icon: BarChart3, path: '/analytics' },
+    { title: 'Reports & Analytics', icon: BarChart3, path: '/report-and-analytics' },
     {
       title: 'Staff Management',
       icon: Users,

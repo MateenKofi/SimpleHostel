@@ -11,6 +11,7 @@ import RoomBooking from '@pages/roombooking/RoomBooking';
 import BookingForms from '@pages/roombooking/BookingForms';
 import RoomVerification from '@pages/roombooking/RoomVerification';
 import Maintenance from '@pages/maintenance&Tracking/maintenace';
+import AnalyticsDashboard from './pages/reportAndAnalytics/analytics-dashboard';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/visitor-management" element={<VisitorManagement />} />
         <Route path="/staff-management" element={<StaffManagement />} />
         <Route path="/maintenance-and-tracking" element={<Maintenance />}/>
+        <Route path="/report-and-analytics" element={<AnalyticsDashboard />} />  {/* Edit staff */}
         <Route path="/staff-management/add" element={<AddStaff />} />
       </Route>
       
