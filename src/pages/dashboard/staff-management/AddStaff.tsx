@@ -28,6 +28,7 @@ const AddStaff: React.FC = () => {
       id: uuidv4(),
       middleName: data.middleName || "",
       staffStatus: data.staffStatus = 'Active' as "Active" | "Inactive",
+      image:image,
     };
     addStaff(staffData);
     console.log(staffData);

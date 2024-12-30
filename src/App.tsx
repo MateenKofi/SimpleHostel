@@ -12,6 +12,7 @@ import BookingForms from '@pages/roombooking/BookingForms';
 import RoomVerification from '@pages/roombooking/RoomVerification';
 import Maintenance from '@pages/maintenance&Tracking/maintenace';
 import AnalyticsDashboard from './pages/reportAndAnalytics/analytics-dashboard';
+import DeptorListTable from './pages/deptors-list/DeptorListTable';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path='/room-assignment/:residentId' element={<RoomAssignmentAndPayment />} />
         {/* <Route path="/online-resident-booking" element={<RoomBooking />} /> */}
         <Route path="/resident-management" element={<ResidentManagement />} />
+        <Route path='/deptors-list' element={<DeptorListTable/>}/>
         <Route path="/visitor-management" element={<VisitorManagement />} />
         <Route path="/staff-management" element={<StaffManagement />} />
         <Route path="/maintenance-and-tracking" element={<Maintenance />}/>

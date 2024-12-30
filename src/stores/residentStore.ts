@@ -3,8 +3,16 @@ import { devtools, persist } from 'zustand/middleware';
 import { Resident } from '../types/types';
 import { useRoomStore } from './roomStore';
 
+interface Debtor {
+  residentId: string;
+  originalAmount: number;
+  partialPayment: number;
+}
+
 interface ResidentStore {
   residents: Resident[];
+  debtorsList: Debtor[];
+  
   addResident: (resident: Resident) => void;
   updateResidentStatus: (
     id: string,
@@ -14,7 +22,8 @@ interface ResidentStore {
     verificationCode?: string
   ) => void;
   deleteResident: (id: string) => void;
-  processPayment: (residentId: string, paymentMethod: 'cash' | 'momo', verificationCode: string) => Promise<void>;
+  processPayment: (residentId: string, paymentMethod: 'cash' | 'momo', verificationCode: string, paymentAmount: number) => Promise<void>;
+  addToDebtorsList: (residentId: string, originalAmount: number, partialPayment: number) => void;
 }
 
 export const useResidentStore = create<ResidentStore>()(
@@ -22,6 +31,7 @@ export const useResidentStore = create<ResidentStore>()(
     persist(
       (set) => ({
         residents: [],
+        debtorsList: [],
         addResident: (resident) =>
           set(
             (state) => ({
@@ -50,7 +60,7 @@ export const useResidentStore = create<ResidentStore>()(
             false,
             'residents/updateStatus'
           ),
-        processPayment: async (residentId, paymentMethod, verificationCode) => {
+        processPayment: async (residentId, paymentMethod, verificationCode, paymentAmount) => {
           const { selectedRoom, updateRoomCapacity } = useRoomStore.getState();
           if (!selectedRoom) return;
 
@@ -65,6 +75,11 @@ export const useResidentStore = create<ResidentStore>()(
 
           // Update room capacity
           updateRoomCapacity(selectedRoom.id, selectedRoom.currentCapacity + 1);
+        },
+        addToDebtorsList: (residentId, originalAmount, partialPayment) => {
+          set((state) => ({
+            debtorsList: [...state.debtorsList, { residentId, originalAmount, partialPayment }],
+          }));
         },
         deleteResident: (id) =>
           set((state) => ({

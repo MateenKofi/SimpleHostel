@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useRoomStore } from '../../../stores/roomStore';
 import { useResidentStore } from '../../../stores/residentStore';
-import { Trash2, Banknote, SmartphoneCharging, Check } from 'lucide-react';
+import { Trash2, SmartphoneCharging, Check } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
@@ -15,12 +15,13 @@ const Payment = () => {
     removeSelectedRoom,
   } = useRoomStore();
 
-  const { processPayment } = useResidentStore();
+  const { processPayment, addToDebtorsList } = useResidentStore();
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [verificationCode, setVerificationCode] = useState<string | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<'cash' | 'momo' | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<'momo' | null>(null);
+  const [isPartialPayment, setIsPartialPayment] = useState(false);
 
   const handlePayment = async () => {
     if (!residentId || !selectedRoom || !paymentMethod) {
@@ -33,10 +34,15 @@ const Payment = () => {
 
     setIsProcessing(true);
     try {
-      await processPayment(residentId, paymentMethod, verificationToken);
+      const originalAmount = selectedRoom.basePrice;
+      const paymentAmount = isPartialPayment ? originalAmount * 0.7 : originalAmount;
+      await processPayment(residentId, paymentMethod, verificationToken, paymentAmount);
+      if (isPartialPayment) {
+        addToDebtorsList(residentId, originalAmount, paymentAmount);
+      }
       setIsSuccess(true);
       setTimeout(() => {
-        navigate('/resident-management');
+        navigate('/room-booking-form');
         localStorage.removeItem('resident_id');
       }, 2000);
     } catch (error) {
@@ -64,13 +70,13 @@ const Payment = () => {
                   Room: {selectedRoom.roomNumber}
                 </p>
                 <p className="text-sm font-medium">
-                  Price: ₵{selectedRoom.basePrice}
+                  Price: ₵{isPartialPayment ? (selectedRoom.basePrice * 0.7).toFixed(2) : (selectedRoom.basePrice).toFixed(2)}
                 </p>
                 {/* Remove Room Button */}
                 <div>
                   <button
                     onClick={removeSelectedRoom}
-                    className="text-red-500 rounded-md px-4 py-2 bg-red-500/10 flex items-center gap-2">
+                    className="text-red-500 rounded-md px-2 py-1 bg-red-500/10 flex items-center gap-2">
                     <Trash2 className="w-4 h-4" />
                     <span>Remove Room</span>
                   </button>
@@ -79,20 +85,26 @@ const Payment = () => {
             )}
           </div>
 
+          {/* 70% Payment Option */}
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="partialPayment"
+              checked={isPartialPayment}
+              onChange={() => setIsPartialPayment(!isPartialPayment)}
+              className="h-4 w-4 text-primary border-gray-300 rounded"
+            />
+            <label htmlFor="partialPayment" className="text-sm font-medium">
+              Pay 70% now
+            </label>
+          </div>
+
           {/* Payment Method Selection */}
           <div>
             <label className="block text-sm font-medium mb-2">
               Select Payment Method
             </label>
             <div className="flex gap-4">
-              <button
-                className={`p-8 border rounded-md flex justify-center items-center gap-2 ${
-                  paymentMethod === 'cash' ? 'bg-primary text-white' : ''
-                }`}
-                onClick={() => setPaymentMethod('cash')}>
-                <Banknote size={40} />
-                <span className="text-3xl font-semibold">Cash</span>
-              </button>
               <button
                 className={`p-8 border rounded-md flex justify-center items-center gap-2 ${
                   paymentMethod === 'momo' ? 'bg-primary text-white' : ''

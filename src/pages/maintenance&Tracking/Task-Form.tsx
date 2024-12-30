@@ -4,6 +4,11 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
+import { Button } from "@/components/ui/button"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -18,7 +23,7 @@ const formSchema = z.object({
   }),
 })
 
-const TaskForm = () => {
+const TaskForm =()=> {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -42,55 +47,91 @@ const TaskForm = () => {
   }
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-      <div>
-        <label htmlFor="title">Task Title</label>
-        <input
-          id="title"
-          placeholder="Enter task title"
-          {...form.register("title")}
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Task Title</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter task title" {...field} />
+              </FormControl>
+              <FormDescription>
+                Provide a clear and concise title for the maintenance task.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {form.formState.errors.title && (
-          <p>{form.formState.errors.title.message}</p>
-        )}
-      </div>
-      <div>
-        <label htmlFor="description">Description</label>
-        <textarea
-          id="description"
-          placeholder="Describe the maintenance task in detail"
-          {...form.register("description")}
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Describe the maintenance task in detail"
+                  className="resize-none"
+                  {...field}
+                />
+              </FormControl>
+              <FormDescription>
+                Include any relevant details about the task.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {form.formState.errors.description && (
-          <p>{form.formState.errors.description.message}</p>
-        )}
-      </div>
-      <div>
-        <label htmlFor="priority">Priority</label>
-        <select id="priority" {...form.register("priority")}>
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </select>
-        {form.formState.errors.priority && (
-          <p>{form.formState.errors.priority.message}</p>
-        )}
-      </div>
-      <div>
-        <label htmlFor="assignedTo">Assigned To</label>
-        <input
-          id="assignedTo"
-          placeholder="Enter name of assigned staff"
-          {...form.register("assignedTo")}
+        <FormField
+          control={form.control}
+          name="priority"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Priority</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select task priority" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                </SelectContent>
+              </Select>
+              <FormDescription>
+                Choose the priority level for this task.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-        {form.formState.errors.assignedTo && (
-          <p>{form.formState.errors.assignedTo.message}</p>
-        )}
-      </div>
-      <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? "Submitting..." : "Add Task"}
-      </button>
-    </form>
+        <FormField
+          control={form.control}
+          name="assignedTo"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Assigned To</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter name of assigned staff" {...field} />
+              </FormControl>
+              <FormDescription>
+                Specify who is responsible for this task.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Submitting..." : "Add Task"}
+        </Button>
+      </form>
+    </Form>
   )
 }
 export default TaskForm
+
