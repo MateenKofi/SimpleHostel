@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useResidentStore } from '../../stores/residentStore';
 import DataTable from 'react-data-table-component';
+import { useModal } from '@/components/Modal';
+import DeptorPayment from './DeptorPayment';
 
 const DebtorListTable: React.FC = () => {
+  const { open: openDeptorsListPaymentModal, close: closeDeptorsListPamentModal } = useModal('deptor_payment_modal');
   const debtorsList = useResidentStore((state) => state.debtorsList);
   const residents = useResidentStore((state) => state.residents);
-  console.log(debtorsList);
-
+  const [selectedDebtor, setSelectedDebtor] = useState(null);
   // Combine debtors list with resident information
   const combinedList = debtorsList.map((debtor) => {
     const resident = residents.find((res) => res.id === debtor.residentId);
@@ -55,16 +57,34 @@ const DebtorListTable: React.FC = () => {
       selector: (row: any) => row.originalAmount - row.partialPayment,
       sortable: true,
     },
+    {
+      name: 'Action',
+      cell: (row: any) => (
+        <div className="flex gap-2">
+          <button className="px-4 py-2 bg-primary text-white rounded-md"
+          onClick={() => handlePayment(row)}
+          >
+            Pay
+          </button>
+          
+        </div>
+      ),
+    },
   ];
+
+  const handlePayment = (row) => {
+    setSelectedDebtor(row);
+    openDeptorsListPaymentModal();
+  }
 
   return (
     <div>
-      <h2>Debtors List</h2>
       <DataTable
         columns={columns}
         data={combinedList}
         pagination
       />
+      <DeptorPayment debtor={selectedDebtor} onClose={closeDeptorsListPamentModal} />
     </div>
   );
 };
