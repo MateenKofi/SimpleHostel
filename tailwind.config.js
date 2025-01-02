@@ -22,29 +22,15 @@ export default {
         xl: '1.067rem',
         '2xl': '1.138rem',
         '3xl': '1.214rem',
-        '4xl': '1.295rem',
-        '5xl': '1.382rem',
-      },
-      fontFamily: {
-        heading: [
-          'poppim',
-          'sans-serif',
-        ],
-        body: [
-          'Poppins',
-          'sans-serif',
-        ],
-      },
-      fontWeight: {
-        normal: '400',
-        bold: '700',
-      },
-      borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
       },
     },
   },
-  plugins: [tailwindcssAnimate],
+  plugins: [
+    tailwindcssAnimate,
+    require('daisyui'),
+  ],
+  daisyui: {
+    themes: ["light", "dark"], // Enable light and dark themes
+    darkTheme: "dark", // Set the default dark theme
+  },
 };

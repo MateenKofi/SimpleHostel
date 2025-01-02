@@ -1,4 +1,4 @@
-import  { useState } from 'react';
+import { useState } from 'react';
 import {
   LayoutDashboard,
   Menu,
@@ -21,7 +21,7 @@ const Sidebar = () => {
     { title: 'Dashboard', icon: LayoutDashboard, path: '/' },
     { title: 'Room Management', icon: BedDouble, path: '/room-management' },
     { title: 'Resident Management', icon: BookOpenCheck, path: '/resident-management' },
-    {title:'Deptors List', icon:List, path:'/deptors-list'},
+    { title: 'Deptors List', icon: List, path: '/deptors-list' },
     { title: 'Visitor Management', icon: CalendarCheck, path: '/visitor-management' },
     { title: 'Maintenance & Tracking', icon: Wrench, path: '/maintenance-and-tracking' },
     { title: 'Reports & Analytics', icon: BarChart3, path: '/report-and-analytics' },
@@ -36,10 +36,10 @@ const Sidebar = () => {
     <div
       className={`min-h-screen bg-white text-text transition-all duration-300 ease-in-out relative px-2 mr-16 ${
         isExpanded ? 'w-80' : 'w-20'
-      }`}
+      } hidden md:block`}
     >
-       {/* Toggle Button */}
-       <button
+      {/* Toggle Button */}
+      <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="absolute right-0 top-3 transform translate-x-1/2 bg-black p-2 rounded-full border-l-2 "
       >
