@@ -21,6 +21,7 @@ interface ResidentStore {
     paymentMethod?: 'cash' | 'momo',
     verificationCode?: string
   ) => void;
+  removeFromDebtorsList: (residentId: string) => void;
   deleteResident: (id: string) => void;
   processPayment: (residentId: string, paymentMethod: 'cash' | 'momo', verificationCode: string, paymentAmount: number) => Promise<void>;
   addToDebtorsList: (residentId: string, originalAmount: number, partialPayment: number) => void;
@@ -75,10 +76,19 @@ export const useResidentStore = create<ResidentStore>()(
 
           // Update room capacity
           updateRoomCapacity(selectedRoom.id, selectedRoom.currentCapacity + 1);
+
+          // Use paymentAmount to update the resident's payment status or other logic
+          // For example, you might want to log the payment amount or update a payment history
+          console.log(`Processed payment of ${paymentAmount} for resident ${residentId}`);
         },
         addToDebtorsList: (residentId, originalAmount, partialPayment) => {
           set((state) => ({
             debtorsList: [...state.debtorsList, { residentId, originalAmount, partialPayment }],
+          }));
+        },
+        removeFromDebtorsList: (residentId) => {
+          set((state) => ({
+            debtorsList: state.debtorsList.filter((debtor) => debtor.residentId !== residentId),
           }));
         },
         deleteResident: (id) =>

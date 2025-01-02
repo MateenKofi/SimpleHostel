@@ -72,7 +72,7 @@ const DebtorListTable: React.FC = () => {
     },
   ];
 
-  const handlePayment = (row) => {
+  const handlePayment = (row:any) => {
     setSelectedDebtor(row);
     openDeptorsListPaymentModal();
   }

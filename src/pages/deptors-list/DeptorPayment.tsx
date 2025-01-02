@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CreditCard, Wallet, ShoppingCartIcon as CashIcon } from 'lucide-react';
 import { useResidentStore } from '../../stores/residentStore';
+import toast from 'react-hot-toast';
 
 interface DeptorPaymentProps {
   onClose: () => void;
@@ -31,6 +32,7 @@ interface FormValues {
 const DeptorPayment: React.FC<DeptorPaymentProps> = ({ onClose, debtor }) => {
   const { register, handleSubmit, watch, formState: { errors }, setValue } = useForm<FormValues>();
   const residents = useResidentStore((state) => state.residents);
+  const removeFromDebtorsList = useResidentStore((state) => state.removeFromDebtorsList);
 
   useEffect(() => {
     if (debtor) {
@@ -48,6 +50,10 @@ const DeptorPayment: React.FC<DeptorPaymentProps> = ({ onClose, debtor }) => {
   const paymentOption = watch('paymentOption');
 
   const onSubmit: SubmitHandler<FormValues> = data => {
+    removeFromDebtorsList(data.residentId);
+    toast.success('Payment processed successfully');
+    toast.success('Resident removed from debtors list');
+    onClose();
     console.log(data);
     // Handle form submission logic here
   };
