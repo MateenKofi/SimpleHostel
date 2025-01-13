@@ -19,6 +19,7 @@ export function Header() {
         
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6 ml-6">
+          <Link to="/" className="text-sm font-medium hover:text-primary">Home</Link>
           <Link to="/find-hostel" className="text-sm font-medium hover:text-primary">Find Hostels</Link>
           
           <a href="#" className="text-sm font-medium hover:text-primary">Popular Cities</a>
@@ -44,6 +45,7 @@ export function Header() {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] sm:w-[400px]">
               <nav className="flex flex-col space-y-4">
+                <Link to="/" className="text-sm font-medium hover:text-primary">Home</Link>
                 <Link to="/find-hostel" className="text-sm font-medium hover:text-primary">Find Hostel</Link>
                 <a href="#" className="text-sm font-medium hover:text-primary">Popular Cities</a>
                 <a href="#" className="text-sm font-medium hover:text-primary">About Us</a>
