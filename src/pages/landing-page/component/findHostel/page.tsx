@@ -4,7 +4,7 @@ import { FindHostel } from './find-hostel'
 export default function FindHostelPage() {
   return (
     <div className="min-h-screen">
-      <Header />
+      {/* <Header /> */}
       <main>
         <FindHostel />
       </main>

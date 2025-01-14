@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CreditCard, Wallet, ShoppingCartIcon as CashIcon } from 'lucide-react';
-import { useResidentStore } from '../../stores/residentStore';
+import { useResidentStore } from '../../../stores/residentStore';
 import toast from 'react-hot-toast';
 
 interface DeptorPaymentProps {

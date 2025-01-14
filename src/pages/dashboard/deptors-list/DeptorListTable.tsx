@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useResidentStore } from '../../stores/residentStore';
+import { useResidentStore } from '../../../stores/residentStore';
 import DataTable from 'react-data-table-component';
 import { useModal } from '@/components/Modal';
 import DeptorPayment from './DeptorPayment';

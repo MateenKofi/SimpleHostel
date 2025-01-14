@@ -12,11 +12,12 @@ import BookingForms from '@pages/roombooking/BookingForms';
 import RoomVerification from '@pages/roombooking/RoomVerification';
 import Maintenance from '@pages/maintenance&Tracking/maintenace';
 import AnalyticsDashboard from './pages/reportAndAnalytics/analytics-dashboard';
-import DeptorsList from './pages/deptors-list/DeptorsList';
+import DeptorsList from './pages/dashboard/deptors-list/DeptorsList';
 import Home from './pages/landing-page/page'
 import LandingPageLayout from './components/layout/LandingPageLayout';
 import {FindHostel} from './pages/landing-page/component/findHostel/find-hostel';
 import HostelListingForm from './pages/landing-page/component/hostel-listing/Hostel-Listing-Form';
+import Payment from './pages/landing-page/component/payment/Payment';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
         <Route index element={<Home />} />
         <Route path='find-hostel' element={<FindHostel />} />
         <Route path='hostel-listing' element={<HostelListingForm/>} />
+        <Route path='payment' element={<Payment/>} />
       </Route>
       
       <Route path='room-booking-form' element={<BookingForms />} />

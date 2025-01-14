@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
 import { X } from 'lucide-react'
+import {Link} from 'react-router-dom'
 
 interface Filter {
   locations: string[];
@@ -331,7 +332,9 @@ export function FindHostel() {
                   <p className="text-sm text-gray-600 ">Gender: {hostel.gender}</p>
                   <p className="text-sm text-gray-600 ">Room Type: {hostel.roomType}</p>
                   <p className="font-bold">GH₵ {hostel.price}/semester</p>
+                  <Link to={'/payment'}>
                   <Button className="w-full mt-4">Book Now</Button>
+                  </Link>
                 </CardContent>
               </Card>
             ))}

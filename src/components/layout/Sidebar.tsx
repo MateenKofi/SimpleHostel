@@ -18,17 +18,17 @@ import path from 'path';
 const Sidebar = () => {
   const [isExpanded, setIsExpanded] = useState(true);
   const menuItems = [
-    { title: 'Dashboard', icon: LayoutDashboard, path: '/' },
-    { title: 'Room Management', icon: BedDouble, path: '/room-management' },
-    { title: 'Resident Management', icon: BookOpenCheck, path: '/resident-management' },
-    { title: 'Deptors List', icon: List, path: '/deptors-list' },
-    { title: 'Visitor Management', icon: CalendarCheck, path: '/visitor-management' },
-    { title: 'Maintenance & Tracking', icon: Wrench, path: '/maintenance-and-tracking' },
-    { title: 'Reports & Analytics', icon: BarChart3, path: '/report-and-analytics' },
+    { title: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+    { title: 'Room Management', icon: BedDouble, path: '/dashboard/room-management' },
+    { title: 'Resident Management', icon: BookOpenCheck, path: '/dashboard/resident-management' },
+    { title: 'Deptors List', icon: List, path: '/dashboard/deptors-list' },
+    { title: 'Visitor Management', icon: CalendarCheck, path: '/dashboard/visitor-management' },
+    { title: 'Maintenance & Tracking', icon: Wrench, path: '/dashboard/maintenance-and-tracking' },
+    { title: 'Reports & Analytics', icon: BarChart3, path: '/dashboard/report-and-analytics' },
     {
       title: 'Staff Management',
       icon: Users,
-      path: '/staff-management',
+      path: '/dashboard/staff-management',
     },
   ];
 
