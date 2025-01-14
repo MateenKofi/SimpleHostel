@@ -10,7 +10,6 @@ export default function LandingPage() {
     <div className="min-h-screen">
       <main>
         <HeroCarousel />
-
        <div className=' w-full grid place-items-center '>
        <section className="container py-16 md:py-24">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">

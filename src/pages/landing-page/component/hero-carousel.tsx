@@ -12,8 +12,8 @@ const slides = [
   },
   {
     image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1920&q=80",
-    title: "Meet Fellow Travelers",
-    description: "Connect with like-minded travelers and make lifelong friendships",
+    title: "Meet Fellow Hostelers",
+    description: "Connect with like-minded hostel finders and make lifelong friendships",
   },
   {
     image: "https://images.unsplash.com/photo-1520277739336-7bf67edfa768?auto=format&fit=crop&w=1920&q=80",
@@ -41,7 +41,7 @@ export function HeroCarousel() {
   }
 
   return (
-    <div className="relative h-[500px] md:h-[600px] overflow-hidden">
+    <div className="relative h-[500px] md:h-[550px] overflow-hidden">
       {slides.map((slide, index) => (
         <div
           key={index}

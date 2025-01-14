@@ -10,15 +10,15 @@ export function Header() {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center">
+    <header className="grid place-items-center sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex ">
         <div className="flex items-center space-x-2">
           <img src="/public/logo.png" alt="logo" className='w-10 animate-bounce' />
-          <span className="text-lg font-bold">Fuse</span>
+          <span className="text-2xl font-bold">Fuse</span>
         </div>
         
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-6 ml-6">
+        <nav className="hidden md:flex items-center space-x-6 ml-32">
           <Link to="/" className="text-sm font-medium hover:text-primary">Home</Link>
           <Link to="/find-hostel" className="text-sm font-medium hover:text-primary">Find Hostels</Link>
           
@@ -34,7 +34,9 @@ export function Header() {
           <Button variant="ghost" size="icon" className="hidden md:flex">
             <User className="h-5 w-5" />
           </Button>
-          <Button className="hidden md:flex">List Your Hostel</Button>
+          <Link to="/hostel-listing">
+                <Button className="w-full">List Your Hostel</Button>
+                </Link>
 
           {/* Mobile Menu */}
           <Sheet>
@@ -50,7 +52,9 @@ export function Header() {
                 <a href="#" className="text-sm font-medium hover:text-primary">Popular Cities</a>
                 <a href="#" className="text-sm font-medium hover:text-primary">About Us</a>
                 <a href="#" className="text-sm font-medium hover:text-primary">Contact</a>
+                <Link to="/hostel-listing">
                 <Button className="w-full">List Your Hostel</Button>
+                </Link>
               </nav>
             </SheetContent>
           </Sheet>

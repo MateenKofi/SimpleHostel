@@ -16,6 +16,7 @@ import DeptorsList from './pages/deptors-list/DeptorsList';
 import Home from './pages/landing-page/page'
 import LandingPageLayout from './components/layout/LandingPageLayout';
 import {FindHostel} from './pages/landing-page/component/findHostel/find-hostel';
+import HostelListingForm from './pages/landing-page/component/hostel-listing/Hostel-Listing-Form';
 
 function App() {
   return (
@@ -36,11 +37,13 @@ function App() {
       <Route path='/' element={<LandingPageLayout/>} >
         <Route index element={<Home />} />
         <Route path='find-hostel' element={<FindHostel />} />
+        <Route path='hostel-listing' element={<HostelListingForm/>} />
       </Route>
       
       <Route path='room-booking-form' element={<BookingForms />} />
       <Route path='online-resident-booking' element={<RoomBooking />} />
       <Route path='room-verification' element={<RoomVerification/>} />
+     
     </Routes>
   );
 }
