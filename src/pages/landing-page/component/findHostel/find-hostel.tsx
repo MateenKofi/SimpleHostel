@@ -332,7 +332,7 @@ export function FindHostel() {
                   <p className="text-sm text-gray-600 ">Gender: {hostel.gender}</p>
                   <p className="text-sm text-gray-600 ">Room Type: {hostel.roomType}</p>
                   <p className="font-bold">GH₵ {hostel.price}/semester</p>
-                  <Link to={'/payment'}>
+                  <Link to={'/resident-form'}>
                   <Button className="w-full mt-4">Book Now</Button>
                   </Link>
                 </CardContent>

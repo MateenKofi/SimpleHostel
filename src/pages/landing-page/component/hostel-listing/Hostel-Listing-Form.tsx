@@ -27,8 +27,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 const formSchema = z.object({
   hostelImage: z.string().optional(),
   description: z.string().optional(),
-  location: z.string({
-    required_error: "Please select a location.",
+  hostelName: z.string().min(2, {
+    message: "Hostel name must be at least 2 characters.",
+  }),
+  location: z.string().nonempty({
+    message: "Please select a location.",
   }),
   address: z.string().min(5, {
     message: "Address must be at least 5 characters.",
@@ -52,6 +55,8 @@ const HostelListingForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      hostelImage: "",
+      hostelName: "",
       description: "",
       location: "",
       address: "",
@@ -175,7 +180,20 @@ const HostelListingForm = () => {
                     </div>
                   )}
                 </div>
-
+                {/* Hostel Name */}
+                <FormField
+                  control={form.control}
+                  name="hostelName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hostel Name*</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter hostel name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 {/* Description */}
                 <FormField
                   control={form.control}
@@ -197,7 +215,6 @@ const HostelListingForm = () => {
                     </FormItem>
                   )}
                 />
-
                 {/* Location */}
                 <FormField
                   control={form.control}
@@ -221,7 +238,6 @@ const HostelListingForm = () => {
                     </FormItem>
                   )}
                 />
-
                 {/* Address */}
                 <FormField
                   control={form.control}
@@ -236,7 +252,6 @@ const HostelListingForm = () => {
                     </FormItem>
                   )}
                 />
-
                 {/* Manager's Name */}
                 <FormField
                   control={form.control}
@@ -251,7 +266,6 @@ const HostelListingForm = () => {
                     </FormItem>
                   )}
                 />
-
                 {/* Email */}
                 <FormField
                   control={form.control}
@@ -266,7 +280,6 @@ const HostelListingForm = () => {
                     </FormItem>
                   )}
                 />
-
                 {/* Phone Number */}
                 <FormField
                   control={form.control}
@@ -281,7 +294,6 @@ const HostelListingForm = () => {
                     </FormItem>
                   )}
                 />
-
                 <Button type="submit" className="w-full" disabled={isSubmitting}>
                   {isSubmitting ? (
                     <>
@@ -296,7 +308,6 @@ const HostelListingForm = () => {
             </Form>
           )}
         </div>
-
         {/* Right Section: Static Image */}
         <div className="hidden md:block">
           <img

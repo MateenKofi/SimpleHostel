@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import {useNavigate} from 'react-router-dom'
 import { CreditCard, Smartphone, DollarSign, ChevronRight } from 'lucide-react'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -13,10 +14,13 @@ import 'daisyui/dist/full.css'
 const Payment = () => {
   const [step, setStep] = useState(1)
   const [paymentMethod, setPaymentMethod] = useState('')
+  const navigate = useNavigate()
+
 
   const handlePayment = async () => {
     // Implement payment logic here
     console.log('Processing payment...')
+    
   }
 
   // Placeholder values
@@ -26,10 +30,10 @@ const Payment = () => {
   const totalAmount = isPartialPayment ? basePrice * 0.7 : basePrice
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full max-w-md mx-auto mt-20">
       <CardHeader className="space-y-1">
         <CardTitle>Complete Your Payment</CardTitle>
-        <div className="border steps">
+        <div className="steps">
           <div className={`step ${step >= 1 ? 'step-neutral' : ''}`} onClick={() => setStep(1)}>Summary</div>
           <div className={`step ${step >= 2 ? 'step-neutral' : ''}`} onClick={() => setStep(2)}>Payment Method</div>
         </div>
@@ -122,7 +126,7 @@ const Payment = () => {
         {step === 2 && (
           <Button className="w-full" onClick={handlePayment} disabled={!paymentMethod}>
             Pay ₵{totalAmount.toFixed(2)}
-            <DollarSign className="ml-2 h-4 w-4" />
+           
           </Button>
         )}
       </CardFooter>

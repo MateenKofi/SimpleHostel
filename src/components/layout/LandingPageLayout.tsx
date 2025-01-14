@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom'
 
 const LandingPageLayout = () => {
   return (
-    <div className=" bg-gray-100 w-full h-screen">
+    <div className=" bg-gray-100 w-full min-h-screen">
         <Header />
       <Outlet />
   </div>
