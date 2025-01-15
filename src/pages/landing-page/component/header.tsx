@@ -21,6 +21,7 @@ export function Header() {
         <nav className="hidden md:flex items-center space-x-6 ml-32">
           <Link to="/" className="text-sm font-medium hover:text-primary">Home</Link>
           <Link to="/find-hostel" className="text-sm font-medium hover:text-primary">Find Hostels</Link>
+          <Link to="/dashboard" className="text-sm font-medium hover:text-primary">Dashbaord</Link>
           
           <a href="#" className="text-sm font-medium hover:text-primary">Popular Cities</a>
           <a href="#" className="text-sm font-medium hover:text-primary">About Us</a>
@@ -49,6 +50,7 @@ export function Header() {
               <nav className="flex flex-col space-y-4">
                 <Link to="/" className="text-sm font-medium hover:text-primary">Home</Link>
                 <Link to="/find-hostel" className="text-sm font-medium hover:text-primary">Find Hostel</Link>
+                <Link to="/dashboard" className="text-sm font-medium hover:text-primary">Dashbaord</Link>
                 <a href="#" className="text-sm font-medium hover:text-primary">Popular Cities</a>
                 <a href="#" className="text-sm font-medium hover:text-primary">About Us</a>
                 <a href="#" className="text-sm font-medium hover:text-primary">Contact</a>
