@@ -86,7 +86,7 @@ const ResidentManagement = () => {
     ];
 
     const handleAssignRoom = (resident: Resident) => {
-        navigate(`/room-assignment/${resident.id}`);
+        navigate(`/dashboard/room-assignment/${resident.id}`);
     };
 
     const handleDeleteResident = (id: string) => {
