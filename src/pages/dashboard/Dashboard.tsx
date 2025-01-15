@@ -33,7 +33,7 @@ const occupancyOptions = {
   responsive: true,
   maintainAspectRatio: false,
   animation: {
-    duration: 1000
+    duration: 1000,
   },
   plugins: {
     legend: {
@@ -41,39 +41,38 @@ const occupancyOptions = {
       labels: {
         font: {
           family: 'Poppins',
-          size: 12
+          size: 12,
         },
-        color: '#060e12'
-      }
+        color: '#060e12',
+      },
     },
     title: {
       display: true,
       text: 'Occupancy by Room Type',
       font: {
-        family: 'poppim',
+        family: 'Poppins',
         size: 16,
-        weight: 'bold' as const
+        weight: 'bold' as const,
       },
-      color: '#060e12'
-    }
+      color: '#060e12',
+    },
   },
   scales: {
     y: {
       beginAtZero: true,
       max: 100,
       ticks: {
-        callback: (value: number) => `${value}%`,
-        stepSize: 20
-      }
-    }
-  }
+        callback: (tickValue: string | number) => `${tickValue}%`,
+        stepSize: 20,
+      },
+    },
+  },
 };
-
 const revenueOptions = {
   responsive: true,
   maintainAspectRatio: false,
   animation: {
-    duration: 1000
+    duration: 1000,
   },
   plugins: {
     legend: {
@@ -81,31 +80,31 @@ const revenueOptions = {
       labels: {
         font: {
           family: 'Poppins',
-          size: 12
+          size: 12,
         },
-        color: '#060e12'
-      }
+        color: '#060e12',
+      },
     },
     title: {
       display: true,
       text: 'Revenue Summary',
       font: {
-        family: 'poppim',
+        family: 'Poppins',
         size: 16,
-        weight: 'bold' as const
+        weight: 'bold' as const,
       },
-      color: '#060e12'
-    }
+      color: '#060e12',
+    },
   },
   scales: {
     y: {
       beginAtZero: true,
       ticks: {
-        callback: (value: number) => `$${value.toLocaleString()}`,
-        stepSize: 5000
-      }
-    }
-  }
+        callback: (tickValue: string | number) => `${tickValue}%`,
+        stepSize: 20,
+      },
+    },
+  },
 };
 
 const pieOptions = {

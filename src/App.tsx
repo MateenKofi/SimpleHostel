@@ -11,7 +11,6 @@ import RoomBooking from '@pages/roombooking/RoomBooking';
 import BookingForms from '@pages/roombooking/BookingForms';
 import RoomVerification from '@pages/roombooking/RoomVerification';
 import Maintenance from '@pages/maintenance&Tracking/maintenace';
-import AnalyticsDashboard from './pages/reportAndAnalytics/analytics-dashboard';
 import DeptorsList from './pages/dashboard/deptors-list/DeptorsList';
 import Home from './pages/landing-page/page'
 import LandingPageLayout from './components/layout/LandingPageLayout';
@@ -32,7 +31,6 @@ function App() {
         <Route path="visitor-management" element={<VisitorManagement />} />
         <Route path="staff-management" element={<StaffManagement />} />
         <Route path="maintenance-and-tracking" element={<Maintenance />}/>
-        <Route path="report-and-analytics" element={<AnalyticsDashboard />} />
         <Route path="staff-management/add" element={<AddStaff />} />
       </Route>
 

@@ -35,7 +35,8 @@ console.log('residentId from manual payment', residentId);
 
     setIsProcessing(true);
     try {
-      await processPayment(residentId!, paymentMethod, verificationToken);
+      const paymentAmount = 100; // Replace with the actual payment amount
+      await processPayment(residentId!, paymentMethod, verificationToken, paymentAmount);
       setIsSuccess(true);
       setTimeout(() => {
         navigate('/resident-management');
