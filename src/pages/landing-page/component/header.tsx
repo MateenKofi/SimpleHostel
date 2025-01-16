@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Menu, X, Home, Search, User } from 'lucide-react'
+import { Menu, X, Home, Search, User,KeyRound } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Link } from 'react-router-dom'
@@ -35,6 +35,11 @@ export function Header() {
           <Button variant="ghost" size="icon" className="hidden md:flex">
             <User className="h-5 w-5" />
           </Button>
+          <Link to="/login">
+          <Button variant="ghost" size="icon" className="hidden md:flex">
+            <KeyRound className="h-5 w-5" />
+          </Button>
+          </Link>
           <Link to="/hostel-listing">
                 <Button className="w-full">List Your Hostel</Button>
                 </Link>

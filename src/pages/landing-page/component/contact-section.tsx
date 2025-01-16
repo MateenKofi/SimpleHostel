@@ -41,7 +41,7 @@ export function ContactSection() {
           
           <div className="h-12 w-12">
             <img
-              src="/public/logo.png"
+              src="/logo.png"
               alt="HostelFinder Logo"
               className="w-full h-full object-contain bg-white rounded-full " 
             />
