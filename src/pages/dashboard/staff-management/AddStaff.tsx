@@ -33,7 +33,7 @@ const AddStaff: React.FC = () => {
     addStaff(staffData);
     console.log(staffData);
     
-    navigate('/staff-management');
+    navigate('/dashboard/staff-management');
   };
 
   return (
@@ -42,7 +42,7 @@ const AddStaff: React.FC = () => {
       <div className="flex items-center justify-between mb-6 mt-6 bg-white p-4 rounded-lg">
         <h1 className="text-2xl font-bold">Add Staff</h1>
         <button 
-          onClick={() => navigate('/staff-management')}
+          onClick={() => navigate('dashboard/staff-management')}
           className="flex gap-2 px-4 py-2 bg-primary text-white rounded-md"
         >
           <ChevronLeft/>

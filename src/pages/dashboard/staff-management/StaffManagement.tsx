@@ -65,7 +65,7 @@ const StaffManagement: React.FC = () => {
         <h1 className="text-2xl font-bold">Staff Management</h1>
         <button
           className="px-4 py-2 bg-primary text-white rounded-md"
-          onClick={() => navigate('/staff-management/add')}
+          onClick={() => navigate('/dashboard/staff-management/add')}
         >
           Add Staff
         </button>

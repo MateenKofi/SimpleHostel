@@ -45,7 +45,6 @@ const data = {
     { title: 'Deptors List', icon: List, path: '/dashboard/deptors-list' },
     { title: 'Visitor Management', icon: CalendarCheck, path: '/dashboard/visitor-management' },
     { title: 'Maintenance & Tracking', icon: Wrench, path: '/dashboard/maintenance-and-tracking' },
-    { title: 'Reports & Analytics', icon: BarChart3, path: '/dashboard/report-and-analytics' },
     { title: 'Staff Management', icon: Users, path: '/dashboard/staff-management' },
   ],
 }
