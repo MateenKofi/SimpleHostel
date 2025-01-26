@@ -47,7 +47,7 @@ const ApproveHostel = () => {
 
     const DeclineMutation = useMutation({
         mutationFn: async (hostelId) => {
-            const response = await axios.post(`/api/hostels/delete${hostel}`, {},{
+            const response = await axios.delete(`/api/hostels/delete/${hostelId}`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
                 },

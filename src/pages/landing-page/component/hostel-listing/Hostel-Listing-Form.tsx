@@ -153,11 +153,11 @@ const HostelListingForm = () => {
               <CardContent>
                 <p>Your Hostel Has been listed successfully.</p>
                 <p>
-                 Your hostel will be Reviewed and approved with 24 hours <strong>Fuse</strong> will get in toruch.</p>
+                 Your hostel will be Reviewed and approved within 24 hours <strong>Fuse</strong> will get in toruch.</p>
                 <p>
                   Or you can call us at: <strong>
                   <a
-              className="btn btn-error text-white btn-sm mt-2"
+              className="btn btn-neutral text-white btn-sm mt-2"
               href="tel:+233543983427"
             >
               <PhoneCall className="mr-2 h-4 w-4" />
