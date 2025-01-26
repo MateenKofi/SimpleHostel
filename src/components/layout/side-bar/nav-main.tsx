@@ -7,7 +7,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-
 import {
   LayoutDashboard,
   BedDouble,
@@ -49,13 +48,6 @@ export function NavMain() {
     navMain.push({ title: "Approve Hostel", icon: CheckSquare, path: "/dashboard/approve-hostel" });
   }
 
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (isError) {
-    return <div>Error loading user profile</div>;
-  }
 
   return (
     <SidebarGroup>
