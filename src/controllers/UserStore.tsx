@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { toast } from 'react-hot-toast';
-import axiosInstance from '../api/axiosInstance';
+import axios from 'axios';
 
 type User = {
   name: string;
@@ -23,13 +23,16 @@ export const useUserStore = create<User>((set) => ({
   login: async (data) => {
     set({ isProcessing: true });
     try {
-      const res = await axiosInstance.post('api/users/login', data, {
+      // Create a separate Axios instance for the login request
+      const loginAxios = axios.create({
+        baseURL: `${import.meta.env.VITE_API_BASE_URL}`,
         headers: {
           'Content-Type': 'application/json',
         },
       });
+
+      const res = await loginAxios.post('/api/users/login', data);
       if (res?.status === 200) {
-        console.log(res)
         const { token, userId } = res?.data;
         localStorage.setItem('token', token);
         localStorage.setItem('userId', userId);

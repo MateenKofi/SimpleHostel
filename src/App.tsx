@@ -21,6 +21,17 @@ import Payment from './pages/landing-page/component/payment/Payment';
 import ResidentForm from './pages/landing-page/component/resident-forms/ResidentForm';
 import LoginForm from './pages/Authentication/login/login-form';
 
+
+axios.defaults.headers.common["Accept"] = "application/json";
+  axios.defaults.headers.common["Content-Type"] = "application/json";
+  // axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem('token')}`;
+  axios.defaults.baseURL = `${import.meta.env.VITE_API_BASE_URL}`
+
+  // axios.defaults.withCredentials = true;
+  // axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
+  // axios.defaults.headers.common["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS";
+  // axios.defaults.headers.common["Access-Control-Allow-Headers"] = "Origin, Content-Type, X-Auth-Token";
+  // axios.defaults.headers.common["Access-Control-Allow-Credentials"] = "true";
 function App() {
   return (
     <Routes>

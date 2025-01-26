@@ -1,7 +1,7 @@
-
+import {useEffect} from 'react'
 import { Outlet } from 'react-router-dom';
 import { AppSidebar } from "./side-bar/App-Sidebar"
-
+import {useNavigate} from 'react-router-dom'
 import { Separator } from "@/components/ui/separator"
 import {
   SidebarInset,
@@ -10,6 +10,16 @@ import {
 } from "@/components/ui/sidebar"
 
 const Layout = () => {
+const navigate = useNavigate()
+  useEffect(() => {
+    if(localStorage.getItem('token') === null){
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      localStorage.removeItem('role')
+      localStorage.removeItem('userId')
+      navigate('/login')
+    }
+  }, [])
   return (
     <SidebarProvider>
       <AppSidebar />

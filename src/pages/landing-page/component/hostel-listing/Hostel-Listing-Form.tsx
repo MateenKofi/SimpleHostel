@@ -1,5 +1,4 @@
 import { useState } from "react";
-import axios from "axios";
 import toast from 'react-hot-toast';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -12,9 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useMutation } from '@tanstack/react-query';
-import axiosInstance from "../../../../api/axiosInstance";
+import axios from 'axios';
 import {PhoneCall} from 'lucide-react'
-
 const formSchema = z.object({
   hostelImage: z.string().optional(),
   description: z.string().optional(),
@@ -76,7 +74,7 @@ const HostelListingForm = () => {
       if (imageFile) {
         formData.append('photo', imageFile);
       }
-      const response = await axiosInstance.post('/api/hostels/add', formData, {
+      const response = await axios.post('/api/hostels/add', formData, {
         headers: { 
           'Content-type': 'multipart/form-data',
           'Access-Control-Allow-Origin': '*',
