@@ -36,6 +36,7 @@ export const useUserStore = create<User>((set) => ({
         const { token, userId } = res?.data;
         localStorage.setItem('token', token);
         localStorage.setItem('userId', userId);
+        
         toast.success('User Login Successful');
         return true;
       }

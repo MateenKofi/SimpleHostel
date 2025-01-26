@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUserStore } from "../../../controllers/UserStore";
 import toast from 'react-hot-toast';
+import {  Loader } from 'lucide-react'
 
 interface SignInFormData {
   email: string;
@@ -16,6 +17,7 @@ interface SignInFormData {
 const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   const { register, handleSubmit, formState: { errors } } = useForm<SignInFormData>();
   const login = useUserStore((state) => state.login);
+  const data = useUserStore((state) => state);
   const navigate = useNavigate();
 
   const onSubmit = async (data: SignInFormData) => {
@@ -67,7 +69,7 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                     {errors.password && <p className="text-red-500">{errors.password.message}</p>}
                   </div>
                   <Button type="submit" className="w-full">
-                    Login
+                  {data.isProcessing ? <Loader className='animate-spin' /> : 'Log In'}
                   </Button>
                   <div className="text-center text-sm">
                     Don&apos;t have an account?{" "}
