@@ -1,9 +1,9 @@
-import { Facebook, Instagram } from 'lucide-react'
+import { Facebook, Instagram } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 export function ContactSection() {
   return (
-    <div className="bg-zinc-900 text-white py-16 px-4 rounded-3xl">
+    <div className="bg-zinc-900 text-white py-12 sm:py-16 px-4 rounded-3xl">
       <div className="container max-w-4xl mx-auto text-center space-y-6">
         <div className="space-y-4">
           <h2 className="text-3xl md:text-4xl font-bold">
@@ -14,42 +14,35 @@ export function ContactSection() {
           </p>
         </div>
 
-        <Button 
-          size="lg" 
-          className="bg-red-500 hover:bg-red-600 text-white"
-        >
+        <Button size="lg" className="bg-red-500 hover:bg-red-600 text-white">
           Book Your Stay
         </Button>
 
-        <div className="pt-12 flex items-center justify-between">
+        <div className="pt-12 flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-0">
           <div className="flex items-center gap-4">
-            <a 
-              href="#" 
-              className="text-zinc-400 hover:text-white transition-colors"
-              aria-label="Follow us on Facebook"
-            >
+            <a href="#" className="text-zinc-400 hover:text-white transition-colors" aria-label="Follow us on Facebook">
               <Facebook className="w-6 h-6" />
             </a>
-            <a 
-              href="#" 
+            <a
+              href="#"
               className="text-zinc-400 hover:text-white transition-colors"
               aria-label="Follow us on Instagram"
             >
               <Instagram className="w-6 h-6" />
             </a>
           </div>
-          
-          <div className="h-12 w-12">
+
+          <div className="h-12 w-12 order-first sm:order-none">
             <img
               src="/logo.png"
               alt="HostelFinder Logo"
-              className="w-full h-full object-contain bg-white rounded-full " 
+              className="w-full h-full object-contain bg-white rounded-full"
             />
           </div>
-          
+
           <div className="text-zinc-400">
             <a href="tel:+1234567890" className="hover:text-white transition-colors">
-             (+233) 54 398 3427
+              (+233) 54 398 3427
             </a>
           </div>
         </div>

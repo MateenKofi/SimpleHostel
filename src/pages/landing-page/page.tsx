@@ -7,7 +7,7 @@ import { Search, MapPin, Users, Star, ChevronRight } from 'lucide-react'
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen overflow-hidden">
       <main>
         <HeroCarousel />
        <div className=' w-full grid place-items-center '>

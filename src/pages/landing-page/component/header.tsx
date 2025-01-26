@@ -10,7 +10,7 @@ export function Header() {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <header className="grid place-items-center sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-4">
+    <header className="grid place-items-center sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-4 overflow-hidden">
       <div className="container flex ">
         <div className="flex items-center space-x-2">
           <img src="/public/logo.png" alt="logo" className='w-10 animate-bounce' />
@@ -23,25 +23,19 @@ export function Header() {
           <Link to="/find-hostel" className="text-sm font-medium hover:text-primary">Find Hostels</Link>
           <Link to="/dashboard" className="text-sm font-medium hover:text-primary">Dashbaord</Link>
           
-          <a href="#" className="text-sm font-medium hover:text-primary">Popular Cities</a>
           <a href="#" className="text-sm font-medium hover:text-primary">About Us</a>
           <a href="#" className="text-sm font-medium hover:text-primary">Contact</a>
         </nav>
 
         <div className="flex items-center ml-auto space-x-4">
-          <Button variant="ghost" size="icon" className="hidden md:flex">
-            <Search className="h-5 w-5" />
-          </Button>
-          <Button variant="ghost" size="icon" className="hidden md:flex">
-            <User className="h-5 w-5" />
-          </Button>
           <Link to="/login">
-          <Button variant="ghost" size="icon" className="hidden md:flex">
+          <Button  size="icon" className="w-full flex px-4">
             <KeyRound className="h-5 w-5" />
+            Log In
           </Button>
           </Link>
           <Link to="/hostel-listing">
-                <Button className="w-full">List Your Hostel</Button>
+                <Button className="w-full hidden md:flex text-nowrap">List Your Hostel</Button>
                 </Link>
 
           {/* Mobile Menu */}
@@ -56,7 +50,7 @@ export function Header() {
                 <Link to="/" className="text-sm font-medium hover:text-primary">Home</Link>
                 <Link to="/find-hostel" className="text-sm font-medium hover:text-primary">Find Hostel</Link>
                 <Link to="/dashboard" className="text-sm font-medium hover:text-primary">Dashbaord</Link>
-                <a href="#" className="text-sm font-medium hover:text-primary">Popular Cities</a>
+    
                 <a href="#" className="text-sm font-medium hover:text-primary">About Us</a>
                 <a href="#" className="text-sm font-medium hover:text-primary">Contact</a>
                 <Link to="/hostel-listing">

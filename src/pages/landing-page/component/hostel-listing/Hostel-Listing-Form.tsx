@@ -1,28 +1,19 @@
 import { useState } from "react";
+import axios from "axios";
+import toast from 'react-hot-toast';
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Loader2, X, Edit2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useMutation } from '@tanstack/react-query';
+import axiosInstance from "../../../../api/axiosInstance";
+import {PhoneCall} from 'lucide-react'
 
 const formSchema = z.object({
   hostelImage: z.string().optional(),
@@ -45,10 +36,14 @@ const formSchema = z.object({
   phone: z.string().min(10, {
     message: "Please enter a valid phone number.",
   }),
+  ghanaCard: z.string().nonempty({
+    message: "Please enter a valid Ghana Card number.",
+  }),
 });
 
 const HostelListingForm = () => {
   const [image, setImage] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -63,27 +58,63 @@ const HostelListingForm = () => {
       managerName: "",
       email: "",
       phone: "",
+      ghanaCard: "",
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    try {
-      setIsSubmitting(true);
-      console.log({ ...values, hostelImage: image });
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      form.reset();
-      setImage(null);
+  const AddListingMutation = useMutation({
+    mutationFn: async (data: z.infer<typeof formSchema>) => {
+      const formData = new FormData();
+      formData.append('name', data.hostelName.toUpperCase());
+      formData.append('description', data.description || '');
+      formData.append('location', data.location.toUpperCase());
+      formData.append('address', data.address.toUpperCase());
+      formData.append('manager', data.managerName.toUpperCase());
+      formData.append('email', data.email);
+      formData.append('phone', data.phone);
+      formData.append('ghCard', data.ghanaCard);
+      if (imageFile) {
+        formData.append('photo', imageFile);
+      }
+      const response = await axiosInstance.post('/api/hostels/add', formData, {
+        headers: { 
+          'Content-type': 'multipart/form-data',
+          'Access-Control-Allow-Origin': '*',
+          'Accept': '*/*',
+         },
+      });
+      return response.data;
+      console.log(response?.data);
+    },
+    onSuccess: (data) => {
+      console.log('Success:', data);
       setIsSubmitted(true);
-    } catch (error) {
-      console.error("Error submitting form:", error);
-    } finally {
-      setIsSubmitting(false);
-    }
+      toast.success('Hostel Listed successfully');
+    },
+    onError: (error: any) => {
+      console.error('Error:', error);
+      if (axios.isAxiosError(error) && error.response) {
+        const errorMessage = error.response.data.message || 'Failed to List Hostel';
+        toast.error(errorMessage);
+      } else {
+        toast.error('Failed to List Hostel');
+      }
+    },
+  });
+
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    setIsSubmitting(true);
+    AddListingMutation.mutate(data, {
+      onSettled: () => {
+        setIsSubmitting(false);
+      },
+    });
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImage(reader.result as string);
@@ -96,6 +127,7 @@ const HostelListingForm = () => {
     event.preventDefault();
     const file = event.dataTransfer.files?.[0];
     if (file) {
+      setImageFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImage(reader.result as string);
@@ -106,22 +138,35 @@ const HostelListingForm = () => {
 
   const removeImage = () => {
     setImage(null);
+    setImageFile(null);
   };
 
   return (
-    <div className="h-[90dvh] w-full flex justify-center items-center overflow-y-hidden">
-      <div className="h-5/6 grid grid-cols-2 gap-4 w-4/5 bg-white shadow-lg rounded-md overflow-hidden">
+    <div className="min-h-screen w-full flex justify-center items-center p-4 md:p-8">
+      <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-4 bg-white shadow-lg rounded-md overflow-hidden">
         {/* Left Section: Form Fields and Image Upload */}
-        <div className="p-6 overflow-y-scroll">
-          <h1 className="text-2xl font-bold mb-6">List Your Hostel</h1>
+        <div className="p-4 md:p-6 overflow-y-auto max-h-[80vh] md:max-h-none">
+          <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">List Your Hostel</h1>
           {isSubmitted ? (
-            <Card className='bg-green-100'>
+            <Card className="bg-green-100">
               <CardHeader>
                 <CardTitle>Success!</CardTitle>
               </CardHeader>
               <CardContent>
-                <p>Our team will reach out to you soon.</p>
-                <p>Or you can call us at: <strong>+1234567890</strong></p>
+                <p>Your Hostel Has been listed successfully.</p>
+                <p>
+                 Your hostel will be Reviewed and approved with 24 hours <strong>Fuse</strong> will get in toruch.</p>
+                <p>
+                  Or you can call us at: <strong>
+                  <a
+              className="btn btn-error text-white btn-sm mt-2"
+              href="tel:+233543983427"
+            >
+              <PhoneCall className="mr-2 h-4 w-4" />
+              Contact Admin
+            </a>
+                  </strong>
+                </p>
               </CardContent>
             </Card>
           ) : (
@@ -129,7 +174,7 @@ const HostelListingForm = () => {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 {/* Image Upload Section */}
                 <div
-                  className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-gray-400 transition-colors w-40"
+                  className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-gray-400 transition-colors w-full max-w-xs mx-auto"
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={handleImageDrop}
                   onClick={() => document.getElementById("imageUpload")?.click()}
@@ -144,9 +189,9 @@ const HostelListingForm = () => {
                   {image ? (
                     <div className="relative">
                       <img
-                        src={image}
+                        src={image || "/placeholder.svg"}
                         alt="Hostel"
-                        className="mx-auto rounded-lg h-48 w-40"
+                        className="mx-auto rounded-lg h-48 w-full object-cover"
                       />
                       <div className="absolute top-2 right-2 flex space-x-2">
                         <Button
@@ -188,7 +233,7 @@ const HostelListingForm = () => {
                     <FormItem>
                       <FormLabel>Hostel Name*</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter hostel name" {...field} />
+                        <Input placeholder="Enter hostel name" {...field} className="uppercase" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -202,15 +247,9 @@ const HostelListingForm = () => {
                     <FormItem>
                       <FormLabel>Description (Optional)</FormLabel>
                       <FormControl>
-                        <Textarea
-                          placeholder="Describe your hostel..."
-                          className="resize-none"
-                          {...field}
-                        />
+                        <Textarea placeholder="Describe your hostel..." className="resize-none" {...field} />
                       </FormControl>
-                      <FormDescription>
-                        Provide a brief description of your hostel.
-                      </FormDescription>
+                      <FormDescription>Provide a brief description of your hostel.</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -221,10 +260,10 @@ const HostelListingForm = () => {
                   name="location"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Location*</FormLabel>
+                      <FormLabel>Region*</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="uppercase">
                             <SelectValue placeholder="Select a location" />
                           </SelectTrigger>
                         </FormControl>
@@ -246,7 +285,7 @@ const HostelListingForm = () => {
                     <FormItem>
                       <FormLabel>Address*</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter hostel address" {...field} />
+                        <Input placeholder="BS-0016-9897" {...field} className="uppercase" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -260,7 +299,21 @@ const HostelListingForm = () => {
                     <FormItem>
                       <FormLabel>Manager's Name*</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter manager's name" {...field} />
+                        <Input placeholder="Enter manager's name" {...field} className="uppercase" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                {/* Ghana Card */}
+                 <FormField
+                  control={form.control}
+                  name="ghanaCard"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Ghana Card No.*</FormLabel>
+                      <FormControl>
+                        <Input placeholder="GHA-xxxxxxxxxxx" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -309,11 +362,11 @@ const HostelListingForm = () => {
           )}
         </div>
         {/* Right Section: Static Image */}
-        <div className="hidden md:block">
+        <div className="hidden md:block relative">
           <img
             src="https://images.unsplash.com/photo-1520277739336-7bf67edfa768?auto=format&fit=crop&w=1920&q=80"
             alt="Hostel Preview"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover absolute inset-0"
           />
         </div>
       </div>
