@@ -7,7 +7,8 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUserStore } from "../../../controllers/UserStore";
 import toast from 'react-hot-toast';
-import {  Loader } from 'lucide-react'
+import { Loader, Eye, EyeOff } from 'lucide-react';
+import { useState } from 'react';
 
 interface SignInFormData {
   email: string;
@@ -19,6 +20,7 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   const login = useUserStore((state) => state.login);
   const data = useUserStore((state) => state);
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (data: SignInFormData) => {
     const response = await login(data);
@@ -61,15 +63,24 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                         Forgot your password?
                       </a>
                     </div>
-                    <Input
-                      id="password"
-                      type="password"
-                      {...register('password', { required: 'Password is required' })}
-                    />
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? 'text' : 'password'}
+                        {...register('password', { required: 'Password is required' })}
+                      />
+                      <button
+                        type="button"
+                        className="absolute inset-y-0 right-0 flex items-center pr-3"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                      </button>
+                    </div>
                     {errors.password && <p className="text-red-500">{errors.password.message}</p>}
                   </div>
                   <Button type="submit" className="w-full">
-                  {data.isProcessing ? <Loader className='animate-spin' /> : 'Log In'}
+                    {data.isProcessing ? <Loader className='animate-spin' /> : 'Log In'}
                   </Button>
                   <div className="text-center text-sm">
                     Don&apos;t have an account?{" "}
