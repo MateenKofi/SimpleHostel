@@ -23,7 +23,7 @@ const ApproveHostel = () => {
 
     const AcceptMutation = useMutation({
         mutationFn: async (hostelId) => {
-            const response = await axios.post(`/api/hostels/verify/${id}`, {
+            const response = await axios.post(`/api/hostels/verify/${hostelId}`, {}, {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
               }
@@ -32,6 +32,7 @@ const ApproveHostel = () => {
         },
         onSuccess: (response) => {
             toast.success('Hostel Approved Successfully');
+            toast.success(response?.data?.message);
             queryClient.invalidateQueries({ queryKey: ['hostels'] });
         },
         onError: (error: any) => {
@@ -46,9 +47,10 @@ const ApproveHostel = () => {
 
     const DeclineMutation = useMutation({
         mutationFn: async (hostelId) => {
-            const response = await axios.post(`/api/hostels/approve`, {
-                hostel_id: hostelId,
-                status: 'declined', // [approved, declined]
+            const response = await axios.post(`/api/hostels/delete${hostel}`, {},{
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
             });
             return response?.data;
         },
