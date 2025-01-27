@@ -69,7 +69,7 @@ const ProfileForm = () => {
     },
     onSuccess: () => {
       toast.success("User Details Updated Successfully");
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ["user","userProfile"] });
     },
     onError: (error: any) => {
       const errorMessage =
@@ -93,6 +93,7 @@ const ProfileForm = () => {
     },
     onSuccess: () => {
       toast.success("Password Updated Successfully");
+      queryClient.invalidateQueries({ queryKey: ["user","userProfile"] });
     },
     onError: (error: any) => {
       const errorMessage =
