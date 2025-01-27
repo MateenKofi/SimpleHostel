@@ -13,7 +13,7 @@ export function Header() {
     <header className="grid place-items-center sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-4 overflow-hidden">
       <div className="container flex ">
         <div className="flex items-center space-x-2">
-          <img src="/public/logo.png" alt="logo" className='w-10 animate-bounce' />
+          <img src="/logo.png" alt="logo" className='w-10 animate-bounce' />
           <span className="text-2xl font-bold">Fuse</span>
         </div>
         

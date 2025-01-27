@@ -250,9 +250,6 @@ const ProfileForm = () => {
               </div>
             </div>
             <div className="flex justify-end gap-4 my-4">
-              <Button variant="outline" type="button">
-                Cancel
-              </Button>
               <Button type="submit">
                 {updatePersonalInfoMutation.isPending ? (
                   <Loader className="animate-spin" />

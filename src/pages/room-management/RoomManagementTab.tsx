@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import RoomManagement from './room-management/RoomManagement';
-import ReportAnalysis from './reports/ReportAnalysis';
+import Amenities from './amenitie/Amenities';
 
 interface TabData {
   id: string;
@@ -16,9 +16,9 @@ const RoomManagementTab = () => {
       content: <RoomManagement />,
     },
     {
-      id: 'reports',
-      title: 'Reports & Analysis',
-      content: <ReportAnalysis />,
+      id: 'amenities',
+      title: 'Amenities',
+      content: <Amenities />,
     },
   ];
 
