@@ -97,7 +97,9 @@ export function NavUser() {
             </DropdownMenuLabel>
             
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem
+              onClick={()=>navigate('/dashboard/profile')}
+              >
                 <BadgeCheck />
                 Account
               </DropdownMenuItem>
