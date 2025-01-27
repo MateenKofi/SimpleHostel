@@ -95,7 +95,6 @@ export function NavUser() {
                 </div>
               </div>
             </DropdownMenuLabel>
-            
             <DropdownMenuGroup>
               <DropdownMenuItem
               onClick={()=>navigate('/dashboard/profile')}

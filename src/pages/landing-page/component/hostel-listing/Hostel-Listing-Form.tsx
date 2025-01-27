@@ -82,7 +82,6 @@ const HostelListingForm = () => {
          },
       });
       return response.data;
-      console.log(response?.data);
     },
     onSuccess: (data) => {
       console.log('Success:', data);
