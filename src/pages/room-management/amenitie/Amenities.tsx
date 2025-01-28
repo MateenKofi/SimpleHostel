@@ -36,11 +36,13 @@ const Amenities = () => {
             name: 'Actions',
             cell: row => (
                 <div className="flex gap-2">
-                    <button className="text-blue-600 hover:text-blue-800">
+                    <button className="text-white bg-black p-1 rounded flex items-center gap-1">
                         <Edit className="w-4 h-4" />
+                        <span>Edit</span>
                     </button>
-                    <button className="text-red-600 hover:text-red-800">
+                    <button className="text-white bg-black p-1 rounded flex items-center gap-1">
                         <Trash2 className="w-4 h-4" />
+                        <span>Delete</span>
                     </button>
                 </div>
             ),
