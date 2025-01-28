@@ -1,7 +1,7 @@
 import { Building, Search, Filter, Download, Plus, EyeClosed, Edit, Trash2 } from 'lucide-react';
 import { useModal } from '../../../components/Modal';
 import AddRoomModal from './AddRoomModal';
-import AmenitiesModal from './AmenitiesModal';
+import AmenitiesModal from '../amenitie/AmenitiesModal';
 import { useRoomStore } from '../../../stores/roomStore';
 import { Room } from '../../../types/types';
 import DataTable from 'react-data-table-component';
