@@ -1,4 +1,4 @@
-import { Plus, Trash2,Loader } from 'lucide-react';
+import { Plus, Trash2, Loader } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import Modal from '../../../components/Modal';
@@ -10,11 +10,12 @@ interface AmenitiesModalProps {
   onClose: () => void;
 }
 
-type AmenityFormData = Amenity;
+type AmenityFormData = Amenity & { hostelId: string | null };
 
 const AmenitiesModal = ({ onClose }: AmenitiesModalProps) => {
-  const { register, handleSubmit, formState: { errors },Reset } = useForm<AmenityFormData>();
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<AmenityFormData>();
   const queryClient = useQueryClient();
+  const hostelId = localStorage.getItem('hostelId');
 
   const AddAmenitiesMutation = useMutation({
     mutationFn: async (data: AmenityFormData) => {
@@ -29,7 +30,7 @@ const AmenitiesModal = ({ onClose }: AmenitiesModalProps) => {
     onSuccess: () => {
       toast.success("Amenities Added Successfully");
       queryClient.invalidateQueries({ queryKey: ["amenities"] });
-      Reset()
+      reset();
     },
     onError: (error: any) => {
       const errorMessage =
@@ -42,6 +43,7 @@ const AmenitiesModal = ({ onClose }: AmenitiesModalProps) => {
     const formattedData = {
       ...data,
       price: parseFloat(data.price as unknown as string),
+      hostelId,
     };
     AddAmenitiesMutation.mutate(formattedData);
   };

@@ -3,16 +3,17 @@ import DataTable from 'react-data-table-component';
 import { Building, Search, Filter, Download, Plus, Edit, Trash2 } from 'lucide-react';
 import { useModal } from '../../../components/Modal';
 import AmenitiesModal from './AmenitiesModal';
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import Swal from 'sweetalert2';
 import axios from 'axios';
 
 const Amenities = () => {
     const { open: openAmenitiesModal, close: closeAmenitiesModal } = useModal('amenities_modal');
-
+    const hostelId = localStorage.getItem('hostelId');
     const { data, isLoading, isError } = useQuery({
         queryKey: ["amenities"],
         queryFn: async () => {
-          const response = await axios.get(`/api/amenities`, {
+          const response = await axios.get(`/api/amenities/hostel/${hostelId}`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
@@ -21,6 +22,44 @@ const Amenities = () => {
         },
     });
 
+    const DeleteAmenitiesMutation = useMutation({
+        mutationFn: async (id) => {
+          const response = await axios.delete(`/api/amenities/${id}`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              "Content-Type": "multipart/form-data",
+            },
+          });
+          return response?.data;
+        },
+        onSuccess: () => {
+          toast.success("User Details Updated Successfully");
+          queryClient.invalidateQueries({ queryKey: ["amenities",] });
+        },
+        onError: (error: any) => {
+          const errorMessage =
+            error.response?.data?.message || "Failed to Update User Details";
+          toast.error(errorMessage);
+        },
+      });
+    
+    const handleDeleteAmenities = (id) => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to recover this amenities!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            reverseButtons: true,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                DeleteAmenitiesMutation.mutate(id);
+
+            }
+        });
+    }
     const columns = [
         {
             name: 'Name',
@@ -48,6 +87,14 @@ const Amenities = () => {
             ),
         },
     ];
+
+    if (isLoading) {
+        return (
+          <div className="w-full h-[70dvh] grid place-items-center">
+            <img src="/logo.png" alt="Loading" className="w-20 h-20 animate-ping" />
+          </div>
+        );
+      }
 
     return (
         <div className="p-6">

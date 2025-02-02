@@ -56,6 +56,7 @@ export function NavUser() {
       return response?.data;
     },
   });
+  localStorage.setItem('hostelId', userProfile?.restofUser?.hostelId)
 
   return (
     <SidebarMenu>
