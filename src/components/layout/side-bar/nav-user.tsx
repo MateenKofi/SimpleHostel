@@ -42,6 +42,7 @@ export function NavUser() {
     localStorage.removeItem('user')
     localStorage.removeItem('role')
     localStorage.removeItem('userId')
+    localStorage.removeItem('hostelId')
     navigate('/login')
   }
 

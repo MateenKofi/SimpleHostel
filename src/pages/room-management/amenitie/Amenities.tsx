@@ -1,16 +1,20 @@
 'use client'
 import DataTable from 'react-data-table-component';
-import { Building, Search, Filter, Download, Plus, Edit, Trash2 } from 'lucide-react';
+import { Building, Search, Filter, Download, Plus, Edit, Trash2, Loader } from 'lucide-react';
 import { useModal } from '../../../components/Modal';
 import AmenitiesModal from './AmenitiesModal';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import  toast  from 'react-hot-toast';
+import { useState } from 'react';
 
 const Amenities = () => {
+    const queryClient = useQueryClient();
     const { open: openAmenitiesModal, close: closeAmenitiesModal } = useModal('amenities_modal');
     const hostelId = localStorage.getItem('hostelId');
-    const { data, isLoading, isError } = useQuery({
+    const [deletingAmenityId, setDeletingAmenityId] = useState<string | null>(null);
+    const { data, isLoading, isError } = useQuery<{ data: { id: string; name: string; price: number; }[] }>({
         queryKey: ["amenities"],
         queryFn: async () => {
           const response = await axios.get(`/api/amenities/hostel/${hostelId}`, {
@@ -23,8 +27,8 @@ const Amenities = () => {
     });
 
     const DeleteAmenitiesMutation = useMutation({
-        mutationFn: async (id) => {
-          const response = await axios.delete(`/api/amenities/${id}`, {
+        mutationFn: async (id: string) => {
+          const response = await axios.delete(`/api/amenities/delete/${id}`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
               "Content-Type": "multipart/form-data",
@@ -33,17 +37,19 @@ const Amenities = () => {
           return response?.data;
         },
         onSuccess: () => {
-          toast.success("User Details Updated Successfully");
-          queryClient.invalidateQueries({ queryKey: ["amenities",] });
+          toast.success("Amenity deleted successfully");
+          queryClient.invalidateQueries({ queryKey: ["amenities"] });
+          setDeletingAmenityId(null);
         },
         onError: (error: any) => {
           const errorMessage =
-            error.response?.data?.message || "Failed to Update User Details";
+            error.response?.data?.message || "Failed to delete amenity";
           toast.error(errorMessage);
+          setDeletingAmenityId(null);
         },
       });
     
-    const handleDeleteAmenities = (id) => {
+    const handleDeleteAmenities = (id: string) => {
         Swal.fire({
             title: 'Are you sure?',
             text: 'You will not be able to recover this amenities!',
@@ -55,8 +61,8 @@ const Amenities = () => {
             reverseButtons: true,
         }).then((result) => {
             if (result.isConfirmed) {
+                setDeletingAmenityId(id);
                 DeleteAmenitiesMutation.mutate(id);
-
             }
         });
     }
@@ -79,9 +85,14 @@ const Amenities = () => {
                         <Edit className="w-4 h-4" />
                         <span>Edit</span>
                     </button>
-                    <button className="text-white bg-black p-1 rounded flex items-center gap-1">
-                        <Trash2 className="w-4 h-4" />
-                        <span>Delete</span>
+                    <button className="text-white bg-black p-1 rounded flex items-center gap-1"
+                        onClick={() => handleDeleteAmenities(row.id)}>
+                        {deletingAmenityId === row.id ? <Loader className='animate-spin'/> : (
+                            <div className="flex items-center gap-1">
+                                 <Trash2 className="w-4 h-4" />
+                                 <span>Delete</span>
+                            </div>
+                        )}
                     </button>
                 </div>
             ),
