@@ -1,12 +1,22 @@
 import { create } from 'zustand';
 import { toast } from 'react-hot-toast';
 import axios from 'axios';
+import {jwtDecode} from 'jwt-decode';
+
+type DecodedToken = {
+  id: string;
+  role: string;
+  hostelId: string;
+  iat: number;
+  exp: number;
+};
 
 type User = {
   name: string;
   email: string;
   token: string | null;
-  role: { id: number; name: string; status: string; permissions: { id: number; status: string }[] } | null;
+  role: string | null;
+  hostelId: string | null;
   isProcessing: boolean;
   login: (data: { email: string; password: string }) => Promise<boolean>;
   logout: () => void;
@@ -15,50 +25,42 @@ type User = {
 export const useUserStore = create<User>((set) => ({
   name: '',
   email: '',
-  phone: '',
   token: null,
   role: null,
+  hostelId: null,
   isProcessing: false,
-
-  login: async (data) => {
+  login: async (data: { email: string; password: string }) => {
     set({ isProcessing: true });
     try {
-      // Create a separate Axios instance for the login request
-      const loginAxios = axios.create({
-        baseURL: `${import.meta.env.VITE_API_BASE_URL}`,
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const response = await axios.post('/api/auth/login', data);
+      const { token } = response.data;
+      const decoded: DecodedToken = jwtDecode(token);
+      set({
+        name: decoded.id,
+        email: data.email,
+        token,
+        role: decoded.role,
+        hostelId: decoded.hostelId,
+        isProcessing: false,
       });
-
-      const res = await loginAxios.post('/api/users/login', data);
-      if (res?.status === 200) {
-        const { token, userId } = res?.data;
-        localStorage.setItem('token', token);
-        localStorage.setItem('userId', userId);
-        
-        toast.success('User Login Successful');
-        return true;
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error('Invalid username or Password');
-    } finally {
+      localStorage.setItem('token', token);
+      toast.success('Login successful');
+      return true;
+    } catch (error) {
       set({ isProcessing: false });
+      toast.error('Login failed');
+      return false;
     }
-    return false;
   },
-
   logout: () => {
-    localStorage.removeItem('token');
     set({
       name: '',
       email: '',
-      phone: '',
       token: null,
       role: null,
-      isProcessing: false,
+      hostelId: null,
     });
-    toast('User logged out');
+    localStorage.removeItem('token');
+    toast.success('Logout successful');
   },
 }));
