@@ -1,4 +1,4 @@
-import { Building, Search, Filter, Download, Plus, EyeClosed, Edit, Trash2 } from 'lucide-react';
+import { Building, Search, Filter, Download, Plus, Edit, Trash2 } from 'lucide-react';
 import { useModal } from '../../../components/Modal';
 import AddRoomModal from './AddRoomModal';
 import AmenitiesModal from '../amenitie/AmenitiesModal';
@@ -10,7 +10,17 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 const columns = [
     {
         name: 'Room Number',
-        selector: (row: Room) => row.roomNumber,
+        selector: (row: Room) => row.number,
+        sortable: true,
+    },
+    {
+        name: 'Block',
+        selector: (row: Room) => row.block,
+        sortable: true,
+    },
+    {
+        name: 'Floor',
+        selector: (row: Room) => row.floor,
         sortable: true,
     },
     {
@@ -21,6 +31,11 @@ const columns = [
     {
         name: 'Price',
         selector: (row: Room) => row.price,
+        sortable: true,
+    },
+    {
+        name: 'Status',
+        selector: (row: Room) => row.status,
         sortable: true,
     },
     {
@@ -38,8 +53,6 @@ const columns = [
     },
 ];
 
-const allRooms: Room[] = [];
-
 const RoomManagement = () => {
     const { open: openAddRoomModal, close: closeAddRoomModal } = useModal('add_room_modal');
     const { open: openAmenitiesModal, close: closeAmenitiesModal } = useModal('amenities_modal');
@@ -56,7 +69,7 @@ const RoomManagement = () => {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
           });
-          return response?.data;
+          return response?.data.data.rooms;
         },
     });
     const { data: amenitiesData, isLoading: isAmenitiesLoading, isError: isAmenitiesError } = useQuery<{ data: { id: string; name: string; price: number; }[] }>({
@@ -123,7 +136,7 @@ const RoomManagement = () => {
 
                 <DataTable
                     columns={columns}
-                    data={allRooms}
+                    data={data || []}
                     pagination
                 />
             </div>
