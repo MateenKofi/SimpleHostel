@@ -30,7 +30,7 @@ const hostels = [
     price: 3000,
     gender: "Mix",
     roomType: "Single",
-    image: "https://images.unsplash.com/photo-1520277739336-7bf67edfa768?auto=format&fit=crop&w=300&h=200&q=80",
+    image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=300&h=200&q=80",
   },
   {
     id: 2,
@@ -39,7 +39,7 @@ const hostels = [
     price: 5200,
     gender: "Female",
     roomType: "Double",
-    image: "https://images.unsplash.com/photo-1626265774643-f1943311a86b?auto=format&fit=crop&w=300&h=200&q=80",
+    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=300&h=200&q=80",
   },
   {
     id: 3,
@@ -48,7 +48,7 @@ const hostels = [
     price: 6500,
     gender: "Male",
     roomType: "Suite",
-    image: "https://images.unsplash.com/photo-1590073242678-70ee3fc28e8e?auto=format&fit=crop&w=300&h=200&q=80",
+    image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=300&h=200&q=80",
   },
   {
     id: 4,
@@ -57,7 +57,7 @@ const hostels = [
     price: 2800,
     gender: "Mix",
     roomType: "Double",
-    image: "https://images.unsplash.com/photo-1506729623300-4d418f0af8f5?auto=format&fit=crop&w=300&h=200&q=80",
+    image: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=300&h=200&q=80",
   },
   {
     id: 5,
@@ -66,7 +66,7 @@ const hostels = [
     price: 4500,
     gender: "Female",
     roomType: "Single",
-    image: "https://images.unsplash.com/photo-1600585154340-be6161f1bb34?auto=format&fit=crop&w=300&h=200&q=80",
+    image: "https://images.unsplash.com/photo-1564078516393-cf04bd966897?auto=format&fit=crop&w=300&h=200&q=80",
   },
   {
     id: 6,
@@ -75,7 +75,7 @@ const hostels = [
     price: 5100,
     gender: "Male",
     roomType: "Suite",
-    image: "https://images.unsplash.com/photo-1542318423-1b8a170491eb?auto=format&fit=crop&w=300&h=200&q=80",
+    image: "https://images.unsplash.com/photo-1631049552057-403cdb8f0658?auto=format&fit=crop&w=300&h=200&q=80",
   },
   {
     id: 7,
@@ -84,7 +84,7 @@ const hostels = [
     price: 3500,
     gender: "Mix",
     roomType: "Double",
-    image: "https://images.unsplash.com/photo-1625609216458-99604d8bc26c?auto=format&fit=crop&w=300&h=200&q=80",
+    image: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=300&h=200&q=80",
   },
   {
     id: 8,
@@ -93,7 +93,7 @@ const hostels = [
     price: 3800,
     gender: "Female",
     roomType: "Single",
-    image: "https://images.unsplash.com/photo-1593032457860-9bfc0e8d0b83?auto=format&fit=crop&w=300&h=200&q=80",
+    image: "https://images.unsplash.com/photo-1564078516393-cf04bd966897?auto=format&fit=crop&w=300&h=200&q=80",
   },
   {
     id: 9,
@@ -102,7 +102,7 @@ const hostels = [
     price: 4700,
     gender: "Male",
     roomType: "Suite",
-    image: "https://images.unsplash.com/photo-1617889761051-dff83c54821b?auto=format&fit=crop&w=300&h=200&q=80",
+    image: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=300&h=200&q=80",
   },
   {
     id: 10,
@@ -111,7 +111,7 @@ const hostels = [
     price: 3400,
     gender: "Mix",
     roomType: "Double",
-    image: "https://images.unsplash.com/photo-1562601091-76c1c99a7469?auto=format&fit=crop&w=300&h=200&q=80",
+    image: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=300&h=200&q=80",
   },
   {
     id: 11,
@@ -120,7 +120,7 @@ const hostels = [
     price: 4900,
     gender: "Female",
     roomType: "Single",
-    image: "https://images.unsplash.com/photo-1570753926980-7d2ccbd20a25?auto=format&fit=crop&w=300&h=200&q=80",
+    image: "https://images.unsplash.com/photo-1564078516393-cf04bd966897?auto=format&fit=crop&w=300&h=200&q=80",
   },
   {
     id: 12,
@@ -129,7 +129,7 @@ const hostels = [
     price: 4600,
     gender: "Male",
     roomType: "Suite",
-    image: "https://images.unsplash.com/photo-1515544560873-2bff2f8f9e1b?auto=format&fit=crop&w=300&h=200&q=80",
+    image: "https://images.unsplash.com/photo-1631049552057-403cdb8f0658?auto=format&fit=crop&w=300&h=200&q=80",
   },
   {
     id: 13,
@@ -138,10 +138,9 @@ const hostels = [
     price: 3900,
     gender: "Mix",
     roomType: "Double",
-    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=300&h=200&q=80",
+    image: "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?auto=format&fit=crop&w=300&h=200&q=80",
   },
 ];
-
 const filterOptions: Filter = {
   locations: [
     "Ahafo", "Ashanti", "Bono", "Bono East", "Central", "Eastern", "Greater Accra",

@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import Modal from "../../../components/Modal";
 import { useForm } from "react-hook-form";
 import type { Room } from "../../../types/types";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import ImageUpload from "../../../components/ImageUpload";
+import { Loader } from "lucide-react";
 
 type RoomForm = Room & {
-  images: { file: File }[];
+  images: [];
 };
 
 const ROOM_STATUS = ["Available", "Maintenance", "Occupied"] as const;
@@ -19,11 +20,7 @@ const ROOM_TYPE_CAPACITY = {
   quard: 4,
 };
 
-const AddRoomModal = ({
-  onClose,
-}: {
-  onClose: () => void;
-}) => {
+const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
   const {
     register,
     handleSubmit,
@@ -33,14 +30,23 @@ const AddRoomModal = ({
   } = useForm<RoomForm>({
     defaultValues: {
       images: [],
+      amenities: [],
     },
   });
 
   const [images, setImages] = useState<{ file: File }[]>([]);
+  const hostelId = localStorage.getItem("hostelId");
 
-  const handleImagesChange = (newImages: { file: File }[]) => {
-    setImages(newImages);
+  // const handleImagesChange = (newImages: File[]) => {
+  //   setImages(newImages);
+  // };
+
+  const handleImagesChange = (newImages: File[]) => {
+    const imageArray = newImages.map((file) => ({ file }));
+    setImages(imageArray);
+    console.log("images", imageArray);
   };
+  // console.log('images',images)
 
   const {
     data: Amenities,
@@ -58,16 +64,58 @@ const AddRoomModal = ({
     },
   });
 
+  const mutation = useMutation({
+    mutationFn: async (data: RoomForm) => {
+      const formData = new FormData();
+      formData.append("hostelId", hostelId || "");
+      formData.append("number", data.roomNumber);
+      formData.append("block", data.block || "");
+      formData.append("floor", data.floor?.toString() || "");
+      formData.append("type", data.roomType.toUpperCase());
+      formData.append("maxCap", data.maxOccupancy.toString());
+      formData.append("price", data.basePrice.toString());
+      formData.append("description", data.description || "");
+      formData.append("status", data.status.toUpperCase());
+
+      if (Array.isArray(data.amenities)) {
+        data.amenities.forEach((amenityId, index) => {
+          formData.append(`amenitiesIds[]`, amenityId);
+        });
+      }
+
+      // Array.from(images).forEach(element => {
+      //   formData.append("photos", image);
+      // });
+       
+
+      images.map((image) => {
+        console.log(image, "this is good here")
+        formData.append("photos", image);
+      });
+
+      const response = await axios.post(`/api/rooms/add`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Room added successfully");
+      queryClient.invalidateQueries({ queryKey: ["rooms"] });
+      onClose();
+    },
+    onError: (error: any) => {
+      const errorMessage =
+        error.response?.data?.message || "Failed to add room";
+      toast.error(errorMessage);
+    },
+  });
+
   const onSubmit = (data: RoomForm) => {
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-      formData.append(key, value as string | Blob);
-    });
-    images.forEach((image, index) => {
-      formData.append(`image${index}`, image.file);
-      formData.append(`inscription${index}`, image.inscription);
-    });
-    // Add your form submission logic here
+    mutation.mutate(data);
   };
 
   // Watch the roomType field and update maxOccupancy accordingly
@@ -83,7 +131,9 @@ const AddRoomModal = ({
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <div className="space-y-1">
           <h2 className="text-2xl font-bold">Add New Room</h2>
-          <p className="text-sm text-gray-500">Fill in the details below to add a new room</p>
+          <p className="text-sm text-gray-500">
+            Fill in the details below to add a new room
+          </p>
         </div>
 
         <ImageUpload onImagesChange={handleImagesChange} />
@@ -94,13 +144,19 @@ const AddRoomModal = ({
               Room Number*
             </label>
             <input
-              {...register("roomNumber", { required: "Room number is required" })}
+              {...register("roomNumber", {
+                required: "Room number is required",
+              })}
               type="text"
               id="number"
               placeholder="e.g., A101"
               className="border rounded-md p-2"
             />
-            {errors.roomNumber && <span className="text-red-500 text-sm">{errors.roomNumber.message}</span>}
+            {errors.roomNumber && (
+              <span className="text-red-500 text-sm">
+                {errors.roomNumber.message}
+              </span>
+            )}
           </div>
 
           {/* Block */}
@@ -115,7 +171,11 @@ const AddRoomModal = ({
               placeholder="e.g., A"
               className="border rounded-md p-2"
             />
-            {errors.block && <span className="text-red-500 text-sm">{errors.block.message}</span>}
+            {errors.block && (
+              <span className="text-red-500 text-sm">
+                {errors.block.message}
+              </span>
+            )}
           </div>
 
           {/* Floor */}
@@ -132,7 +192,11 @@ const AddRoomModal = ({
               id="floor"
               className="border rounded-md p-2"
             />
-            {errors.floor && <span className="text-red-500 text-sm">{errors.floor.message}</span>}
+            {errors.floor && (
+              <span className="text-red-500 text-sm">
+                {errors.floor.message}
+              </span>
+            )}
           </div>
 
           {/* Room Type */}
@@ -143,7 +207,7 @@ const AddRoomModal = ({
             <select
               {...register("roomType", { required: "Room type is required" })}
               id="type"
-              className="border rounded-md p-2"
+              className="border rounded-md p-2 "
             >
               <option value="">Select Room Type</option>
               <option value="single">Single</option>
@@ -151,7 +215,11 @@ const AddRoomModal = ({
               <option value="suit">Suit</option>
               <option value="quard">Quard</option>
             </select>
-            {errors.roomType && <span className="text-red-500 text-sm">{errors.roomType.message}</span>}
+            {errors.roomType && (
+              <span className="text-red-500 text-sm">
+                {errors.roomType.message}
+              </span>
+            )}
           </div>
 
           {/* Max Occupancy (Read-only) */}
@@ -168,18 +236,23 @@ const AddRoomModal = ({
             />
           </div>
 
-          {/* Base Price (Read-only) */}
+          {/* Base Price */}
           <div className="flex flex-col gap-1">
             <label htmlFor="basePrice" className="text-sm font-medium">
               Base Price
             </label>
             <input
-              {...register("basePrice")}
+              {...register("basePrice", { required: "Base price is required" })}
               type="number"
               id="basePrice"
-              className="border rounded-md p-2 "
-              readOnly
+              className="border rounded-md p-2"
+              step="0.01"
             />
+            {errors.basePrice && (
+              <span className="text-red-500 text-sm">
+                {errors.basePrice.message}
+              </span>
+            )}
           </div>
         </div>
 
@@ -188,7 +261,11 @@ const AddRoomModal = ({
           <label htmlFor="status" className="text-sm font-medium">
             Status*
           </label>
-          <select {...register("status")} id="status" className="border rounded-md p-2">
+          <select
+            {...register("status")}
+            id="status"
+            className="border rounded-md p-2"
+          >
             {ROOM_STATUS.map((status) => (
               <option key={status} value={status}>
                 {status}
@@ -207,13 +284,19 @@ const AddRoomModal = ({
                 className={`
                   w-fit cursor-pointer px-4 py-2 rounded-full border transition-colors shadow
                   ${
-                    Array.isArray(watch("amenities")) && watch("amenities").includes(amenity.id)
+                    Array.isArray(watch("amenities")) &&
+                    watch("amenities").includes(amenity.id)
                       ? "bg-black text-white border-black"
                       : "bg-gray-100 text-gray-900 border-gray-200 hover:bg-gray-50"
                   }
                 `}
               >
-                <input type="checkbox" value={amenity.id} {...register("amenities")} className="hidden" />
+                <input
+                  type="checkbox"
+                  value={amenity.id}
+                  {...register("amenities")}
+                  className="hidden"
+                />
                 {amenity.name}
               </label>
             ))}
@@ -235,11 +318,22 @@ const AddRoomModal = ({
         </div>
 
         <div className="flex justify-end gap-2 mt-4">
-          <button type="button" onClick={onClose} className="px-4 py-2 border rounded-md">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 border rounded-md"
+          >
             Cancel
           </button>
-          <button type="submit" className="px-4 py-2 bg-black text-white rounded-md">
-            Add Room
+          <button
+            type="submit"
+            className="flex justify-center items-center px-4 py-2 bg-black text-white rounded-md"
+          >
+            {mutation.isPending ? (
+              <Loader className="w-4 h-4 animate-spin" />
+            ) : (
+              "Add Room"
+            )}
           </button>
         </div>
       </form>

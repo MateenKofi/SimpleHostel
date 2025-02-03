@@ -3,17 +3,20 @@ import DataTable from 'react-data-table-component';
 import { Building, Search, Filter, Download, Plus, Edit, Trash2, Loader } from 'lucide-react';
 import { useModal } from '../../../components/Modal';
 import AmenitiesModal from './AmenitiesModal';
+import EditAmenitiesModal from './EditAmenitiesModal';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Swal from 'sweetalert2';
 import axios from 'axios';
-import  toast  from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import { useState } from 'react';
 
 const Amenities = () => {
     const queryClient = useQueryClient();
     const { open: openAmenitiesModal, close: closeAmenitiesModal } = useModal('amenities_modal');
+    const { open: openEditAmenitiesModal, close: closeEditAmenitiesModal } = useModal('edit_amenities_modal');
     const hostelId = localStorage.getItem('hostelId');
     const [deletingAmenityId, setDeletingAmenityId] = useState<string | null>(null);
+    const [selectedAmenity, setSelectedAmenity] = useState<{ id: string; name: string; price: number } | null>(null);
     const { data, isLoading, isError } = useQuery<{ data: { id: string; name: string; price: number; }[] }>({
         queryKey: ["amenities"],
         queryFn: async () => {
@@ -66,6 +69,12 @@ const Amenities = () => {
             }
         });
     }
+
+    const handleEditAmenities = (amenity: { id: string; name: string; price: number }) => {
+        setSelectedAmenity(amenity);
+        openEditAmenitiesModal();
+    }
+
     const columns = [
         {
             name: 'Name',
@@ -81,7 +90,8 @@ const Amenities = () => {
             name: 'Actions',
             cell: row => (
                 <div className="flex gap-2">
-                    <button className="text-white bg-black p-1 rounded flex items-center gap-1">
+                    <button className="text-white bg-black p-1 rounded flex items-center gap-1"
+                        onClick={() => handleEditAmenities(row)}>
                         <Edit className="w-4 h-4" />
                         <span>Edit</span>
                     </button>
@@ -166,6 +176,9 @@ const Amenities = () => {
                         pagination
                     />
                 </div>
+            )}
+            {selectedAmenity && (
+                <EditAmenitiesModal onClose={closeEditAmenitiesModal} formdata={selectedAmenity} />
             )}
         </div>
     )

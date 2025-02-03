@@ -32,7 +32,7 @@ export const useUserStore = create<User>((set) => ({
   login: async (data: { email: string; password: string }) => {
     set({ isProcessing: true });
     try {
-      const response = await axios.post('/api/auth/login', data);
+      const response = await axios.post('/api/users/login', data);
       const { token } = response.data;
       const decoded: DecodedToken = jwtDecode(token);
       set({
@@ -44,6 +44,7 @@ export const useUserStore = create<User>((set) => ({
         isProcessing: false,
       });
       localStorage.setItem('token', token);
+      localStorage.setItem('hostelId', decoded.hostelId);
       toast.success('Login successful');
       return true;
     } catch (error) {
