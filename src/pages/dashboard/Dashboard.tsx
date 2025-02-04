@@ -56,8 +56,7 @@ const Dashboard =()=> {
       />
     </div>
 
-    <div className="p-4 md:p-6 lg:p-8">
-      <div className="mx-auto space-y-6">
+    <div className="w-full ">
         {/* Default colors */}
         <OccupancyCard
           data={{
@@ -66,9 +65,6 @@ const Dashboard =()=> {
             notReady: 8,
           }}
         />
-
-       
-      </div>
     </div>
 
        
