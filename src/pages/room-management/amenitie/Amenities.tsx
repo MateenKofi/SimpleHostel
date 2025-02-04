@@ -202,9 +202,9 @@ const Amenities = () => {
                     />
                 </div>
             )}
-            {selectedAmenity && (
+            
                 <EditAmenitiesModal onClose={closeEditAmenitiesModal} formdata={selectedAmenity} />
-            )}
+           
         </div>
     )
 }

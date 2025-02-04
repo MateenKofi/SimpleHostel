@@ -23,9 +23,14 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (data: SignInFormData) => {
-    const response = await login(data);
-    if (response) {
-      navigate('/dashboard');
+    try {
+        const response = await login(data);
+        if (response) {
+            toast.success('Login successful');
+            navigate('/dashboard');
+        }
+    } catch (error) {
+        toast.error('Login failed. Please check your credentials.');
     }
   };
 

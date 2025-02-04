@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Modal from '../../../components/Modal';
-import {Loader,Plus} from 'lucide-react';
+import { Loader, Plus } from 'lucide-react';
 
 type AmenityFormData = Amenity & { hostelId: string | null };
 type formdata = {
@@ -29,13 +29,17 @@ const EditAmenitiesModal: React.FC<EditAmenitiesModalProps> = ({ onClose, formda
         }
     });
 
-    const onSubmit = (data: AmenityFormData) => {
-        AddAmenitiesMutation.mutate({ ...data, hostelId });
-    };
-
     const { register, handleSubmit, formState: { errors }, reset } = useForm<AmenityFormData>({
         defaultValues: formdata,
     });
+
+    useEffect(() => {
+        reset(formdata);
+    }, [formdata, reset]);
+
+    const onSubmit = (data: AmenityFormData) => {
+        AddAmenitiesMutation.mutate({ ...data, hostelId });
+    };
 
     const handleClose = () => {
         reset();

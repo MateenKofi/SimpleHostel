@@ -39,6 +39,11 @@ const columns = [
         sortable: true,
     },
     {
+        name: 'Capacity',
+        selector: (row: Room) => row.maxCap,
+        sortable: true,
+    },
+    {
         name: 'Actions',
         cell: (row: Room) => (
             <div className="flex gap-2">
