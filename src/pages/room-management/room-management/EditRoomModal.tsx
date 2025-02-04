@@ -8,7 +8,7 @@ import ImageUpload from "../../../components/ImageUpload";
 import { Loader } from "lucide-react";
 
 type RoomForm = Room & {
-  images: [];
+  images: File[];
 };
 
 const ROOM_STATUS = ["Available", "Maintenance", "Occupied"] as const;
@@ -20,14 +20,13 @@ const ROOM_TYPE_CAPACITY = {
   quard: 4,
 };
 
-const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
+const EditRoomModal = ({ onClose, formdata }: { onClose: () => void }) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
     watch,
-    reset,
   } = useForm<RoomForm>({
     defaultValues: {
       images: [],
@@ -35,16 +34,16 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
     },
   });
 
-  const [images, setImages] = useState<{ file: File }[]>([]);
+  console.log('formdata',formdata)
+
+  const [images, setImages] = useState<File[]>([]);
+  const [defaultImages, setDefaultImages] = useState<string[]>([]);
   const hostelId = localStorage.getItem("hostelId");
 
-
   const handleImagesChange = (newImages: File[]) => {
-    const imageArray = newImages.map((file) => ({ file }));
-    setImages(imageArray);
-    console.log("images", imageArray);
+    setImages(newImages);
+    console.log("images", newImages);
   };
-
 
   const {
     data: Amenities,
@@ -82,7 +81,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
       }
 
       images.forEach((image) => {
-        formData.append("photos", image.file);
+        formData.append("photos", image);
       });
 
       const response = await axios.post(`/api/rooms/add`, formData, {
@@ -97,9 +96,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
     onSuccess: () => {
       toast.success("Room added successfully");
       queryClient.invalidateQueries({ queryKey: ["rooms"] });
-      reset()
       onClose();
-      
     },
     onError: (error: any) => {
       const errorMessage =
@@ -120,17 +117,33 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
     }
   }, [roomType, setValue]);
 
+  useEffect(() => {
+    if (formdata) {
+      setValue("roomNumber", formdata.number);
+      setValue("block", formdata.block);
+      setValue("floor", parseInt(formdata.floor));
+      setValue("roomType", formdata.type.toLowerCase());
+      setValue("maxOccupancy", formdata.maxCap);
+      setValue("basePrice", formdata.price);
+      setValue("description", formdata.description);
+      setValue("status", formdata.status.toLowerCase());
+      const imageUrls = formdata.RoomImage.map((img: any) => img.imageUrl);
+      setDefaultImages(imageUrls);
+      setValue("images", imageUrls);
+    }
+  }, [formdata, setValue]);
+
   return (
-    <Modal modalId="add_room_modal" onClose={onClose} size="large">
+    <Modal modalId="editroom_modal" onClose={onClose} size="large">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <div className="space-y-1">
-          <h2 className="text-2xl font-bold">Add New Room</h2>
+          <h2 className="text-2xl font-bold">Update Room</h2>
           <p className="text-sm text-gray-500">
-            Fill in the details below to add a new room
+            Update the details below to modify the room information
           </p>
         </div>
 
-        <ImageUpload onImagesChange={handleImagesChange} />
+        <ImageUpload onImagesChange={handleImagesChange} defaultImages={defaultImages} />
         <div className="grid grid-cols-2 gap-4">
           {/* Room Number */}
           <div className="flex flex-col gap-1">
@@ -259,9 +272,10 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
             {...register("status")}
             id="status"
             className="border rounded-md p-2"
+            defaultValue={formdata?.status.toLowerCase()}
           >
             {ROOM_STATUS.map((status) => (
-              <option key={status} value={status}>
+              <option key={status} value={status.toLowerCase()}>
                 {status}
               </option>
             ))}
@@ -326,7 +340,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
             {mutation.isPending ? (
               <Loader className="w-4 h-4 animate-spin" />
             ) : (
-              "Add Room"
+              "Update Room"
             )}
           </button>
         </div>
@@ -335,4 +349,4 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
   );
 };
 
-export default AddRoomModal;
+export default EditRoomModal;

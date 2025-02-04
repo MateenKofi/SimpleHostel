@@ -1,3 +1,4 @@
+import {useState} from 'react'
 import {
   Building,
   Search,
@@ -9,13 +10,33 @@ import {
 } from "lucide-react";
 import { useModal } from "../../../components/Modal";
 import AddRoomModal from "./AddRoomModal";
+import EditRoomModal from './EditRoomModal'
 import AmenitiesModal from "../amenitie/AmenitiesModal";
 import axios from "axios";
 import { Room } from "../../../types/types";
 import DataTable from "react-data-table-component";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-const columns = [
+
+const RoomManagement = () => {
+  const { open: openAddRoomModal, close: closeAddRoomModal } =
+    useModal("add_room_modal");
+  const { open: openAmenitiesModal, close: closeAmenitiesModal } =
+    useModal("amenities_modal");
+  const { open: openEditRoomModal, close: closeEditRoomModal } =
+    useModal("editroom_modal");
+    const [selectedRoom, setSelectedRoom] = useState<Room | null>(null)
+  const hostelId = localStorage.getItem("hostelId") || "";
+  if (!hostelId) {
+    console.error("Hostel ID is not defined");
+    return <div>Error: Hostel ID is not defined</div>;
+  }
+
+  const handleEditRoom = (rooms: Room) => {
+    setSelectedRoom(rooms)
+    openEditRoomModal()
+  }
+  const columns = [
     {
         name: "Room No.",
         selector: (row: Room) => row.number,
@@ -69,9 +90,12 @@ const columns = [
         grow: 2,
         cell: (row: Room) => (
             <div className="flex gap-2">
-                <button className="text-white flex bg-black p-2 rounded text-nowrap">
+                <button className="text-white flex bg-black p-2 rounded text-nowrap"
+                onClick={()=> handleEditRoom(row)}
+                >
                     <Edit className="w-4 h-4" />
                     <span> Edit</span>
+                   
                 </button>
                 <button className="text-white flex bg-black p-2 rounded text-nowrap">
                     <Trash2 className="w-4 h-4" />
@@ -82,16 +106,6 @@ const columns = [
     },
 ];
 
-const RoomManagement = () => {
-  const { open: openAddRoomModal, close: closeAddRoomModal } =
-    useModal("add_room_modal");
-  const { open: openAmenitiesModal, close: closeAmenitiesModal } =
-    useModal("amenities_modal");
-  const hostelId = localStorage.getItem("hostelId") || "";
-  if (!hostelId) {
-    console.error("Hostel ID is not defined");
-    return <div>Error: Hostel ID is not defined</div>;
-  }
   const { data, isLoading, isError } = useQuery({
     queryKey: ["rooms"],
     queryFn: async () => {
@@ -213,6 +227,7 @@ const RoomManagement = () => {
           />
         </div>
       )}
+       <EditRoomModal onClose={closeEditRoomModal} formdata={selectedRoom}/>
     </div>
   );
 };
