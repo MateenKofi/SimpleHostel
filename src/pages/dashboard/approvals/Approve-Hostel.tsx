@@ -136,10 +136,10 @@ const ApproveHostel = () => {
             cell: row => (
                 <div className='w-full flex flex-col lg:flex-row gap-2 my-2'>
                     <button className='w-full flex justify-center items-center bg-black text-white rounded px-2 py-1 text-nowrap' onClick={() => handleAccept(row.id)}>
-                        {AcceptMutation.isLoading ? <Loader className='animate-spin' /> : 'Approve'}
+                        {AcceptMutation.isPending ? <Loader className='animate-spin' /> : 'Approve'}
                     </button>
                     <button className='w-full flex justify-center items-center bg-red-400 text-white text-nowrap rounded px-2 py-1' onClick={() => handleDecline(row.id)}>
-                        {DeclineMutation.isLoading ? <Loader className='animate-spin' /> : 'Decline'}
+                        {DeclineMutation.isPending ? <Loader className='animate-spin' /> : 'Decline'}
                     </button>
                 </div>
             ),
