@@ -12,7 +12,7 @@ interface ImageUploadProps {
 
 const ImageUpload: React.FC<ImageUploadProps> = ({ onImagesChange, defaultImages = [] }) => {
     const [images, setImages] = useState<File[]>([])
-    const [existingImages, setExistingImages] = useState<string[]>(defaultImages)
+    const [existingImages, setExistingImages] = useState<string[]>([])
 
     useEffect(() => {
         setExistingImages(defaultImages)

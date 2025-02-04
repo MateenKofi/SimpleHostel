@@ -34,7 +34,7 @@ const EditRoomModal = ({ onClose, formdata }: { onClose: () => void }) => {
     },
   });
 
-  console.log('formdata',formdata)
+  console.log("formdata", formdata);
 
   const [images, setImages] = useState<File[]>([]);
   const [defaultImages, setDefaultImages] = useState<string[]>([]);
@@ -130,6 +130,9 @@ const EditRoomModal = ({ onClose, formdata }: { onClose: () => void }) => {
       const imageUrls = formdata.RoomImage.map((img: any) => img.imageUrl);
       setDefaultImages(imageUrls);
       setValue("images", imageUrls);
+      const selectedAmenities =
+        formdata?.amenities?.map((amenity: any) => amenity.name) || [];
+      setValue("amenities", selectedAmenities);
     }
   }, [formdata, setValue]);
 
@@ -143,7 +146,10 @@ const EditRoomModal = ({ onClose, formdata }: { onClose: () => void }) => {
           </p>
         </div>
 
-        <ImageUpload onImagesChange={handleImagesChange} defaultImages={defaultImages} />
+        <ImageUpload
+          onImagesChange={handleImagesChange}
+          defaultImages={defaultImages}
+        />
         <div className="grid grid-cols-2 gap-4">
           {/* Room Number */}
           <div className="flex flex-col gap-1">
@@ -284,32 +290,38 @@ const EditRoomModal = ({ onClose, formdata }: { onClose: () => void }) => {
 
         {/* Amenities */}
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium">Amenities</label>
-          <div className="flex flex-wrap gap-2">
-            {Amenities?.data?.map((amenity) => (
-              <label
-                key={amenity.id}
-                className={`
-                  w-fit cursor-pointer px-4 py-2 rounded-full border transition-colors shadow
-                  ${
-                    Array.isArray(watch("amenities")) &&
-                    watch("amenities").includes(amenity.id)
-                      ? "bg-black text-white border-black"
-                      : "bg-gray-100 text-gray-900 border-gray-200 hover:bg-gray-50"
-                  }
-                `}
-              >
-                <input
-                  type="checkbox"
-                  value={amenity.id}
-                  {...register("amenities")}
-                  className="hidden"
-                />
-                {amenity.name}
-              </label>
-            ))}
-          </div>
-        </div>
+  <label className="text-sm font-medium">Amenities</label>
+  <div className="flex flex-wrap gap-2">
+    {Amenities?.data?.map((amenity) => {
+      // Extract IDs from formdata.Amenities
+      const formdataAmenityIds = formdata?.Amenities?.map((a: any) => a.id) || [];
+      const isSelected = formdataAmenityIds.includes(amenity.id);
+
+      return (
+        <label
+          key={amenity.id}
+          className={`w-fit cursor-pointer px-4 py-2 rounded-full border transition-colors shadow
+            ${isSelected ? "bg-black text-white border-black" : "bg-gray-100 text-gray-900 border-gray-200 hover:bg-gray-50"}`}
+        >
+          <input
+            type="checkbox"
+            value={amenity.id}
+            {...register("amenities")}
+            className="hidden"
+            checked={isSelected}
+            onChange={() => {
+              const updatedAmenities = isSelected
+                ? watch("amenities").filter((id: string) => id !== amenity.id)
+                : [...(watch("amenities") || []), amenity.id];
+              setValue("amenities", updatedAmenities);
+            }}
+          />
+          {amenity.name}
+        </label>
+      );
+    })}
+  </div>
+</div>
 
         {/* Description */}
         <div className="flex flex-col gap-1">
