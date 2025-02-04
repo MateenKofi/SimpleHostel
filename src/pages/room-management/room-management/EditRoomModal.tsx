@@ -27,6 +27,7 @@ const EditRoomModal = ({ onClose, formdata }: { onClose: () => void }) => {
     formState: { errors },
     setValue,
     watch,
+    reset,
   } = useForm<RoomForm>({
     defaultValues: {
       images: [],
@@ -96,6 +97,7 @@ const EditRoomModal = ({ onClose, formdata }: { onClose: () => void }) => {
     onSuccess: () => {
       toast.success("Room added successfully");
       queryClient.invalidateQueries({ queryKey: ["rooms"] });
+      reset(); // Reset form fields
       onClose();
     },
     onError: (error: any) => {
