@@ -32,6 +32,18 @@ const RoomManagement = () => {
     return <div>Error: Hostel ID is not defined</div>;
   }
 
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["rooms"],
+    queryFn: async () => {
+      const response = await axios.get(`/api/rooms/hostel/${hostelId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      return response?.data.data;
+    },
+  });
+
   const handleEditRoom = (rooms: Room) => {
     setSelectedRoom(rooms)
     openEditRoomModal()
@@ -106,17 +118,7 @@ const RoomManagement = () => {
     },
 ];
 
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["rooms"],
-    queryFn: async () => {
-      const response = await axios.get(`/api/rooms/hostel/${hostelId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      return response?.data.data;
-    },
-  });
+
 
   if (isLoading) {
     return (
@@ -227,7 +229,7 @@ const RoomManagement = () => {
           />
         </div>
       )}
-       <EditRoomModal onClose={closeEditRoomModal} formdata={selectedRoom}/>
+     <EditRoomModal onClose={closeEditRoomModal} formdata={selectedRoom} />
     </div>
   );
 };

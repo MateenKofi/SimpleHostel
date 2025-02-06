@@ -6,9 +6,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import ImageUpload from "../../../components/ImageUpload";
 import { Loader } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 type RoomForm = Room & {
-  images: [];
+  images: File[];
 };
 
 const ROOM_STATUS = ["Available", "Maintenance", "Occupied"] as const;
@@ -35,16 +36,13 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
     },
   });
 
-  const [images, setImages] = useState<{ file: File }[]>([]);
+  const [images, setImages] = useState<File[]>([]);
   const hostelId = localStorage.getItem("hostelId");
 
-
   const handleImagesChange = (newImages: File[]) => {
-    const imageArray = newImages.map((file) => ({ file }));
-    setImages(imageArray);
-    console.log("images", imageArray);
+    setImages(newImages);
+    setValue("images", newImages);
   };
-
 
   const {
     data: Amenities,
@@ -61,6 +59,8 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
       return response?.data;
     },
   });
+
+  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: async (data: RoomForm) => {
@@ -82,7 +82,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
       }
 
       images.forEach((image) => {
-        formData.append("photos", image.file);
+        formData.append("photos", image);
       });
 
       const response = await axios.post(`/api/rooms/add`, formData, {
@@ -97,9 +97,8 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
     onSuccess: () => {
       toast.success("Room added successfully");
       queryClient.invalidateQueries({ queryKey: ["rooms"] });
-      reset()
+      reset();
       onClose();
-      
     },
     onError: (error: any) => {
       const errorMessage =
@@ -130,7 +129,15 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
           </p>
         </div>
 
-        <ImageUpload onImagesChange={handleImagesChange} />
+        {/* Image Upload */}
+        <div className="flex flex-col gap-1">
+          <label htmlFor="images" className="text-sm font-medium">
+            Images
+          </label>
+          <ImageUpload onImagesChange={handleImagesChange} />
+        </div>
+
+        {/* Rest of the form fields */}
         <div className="grid grid-cols-2 gap-4">
           {/* Room Number */}
           <div className="flex flex-col gap-1">

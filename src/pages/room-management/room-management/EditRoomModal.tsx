@@ -131,7 +131,6 @@ const EditRoomModal = ({ onClose, formdata }: { onClose: () => void }) => {
       setValue("status", formdata.status.toLowerCase());
       const imageUrls = formdata.RoomImage.map((img: any) => img.imageUrl);
       setDefaultImages(imageUrls);
-      setValue("images", imageUrls);
       const selectedAmenities =
         formdata?.amenities?.map((amenity: any) => amenity.name) || [];
       setValue("amenities", selectedAmenities);
