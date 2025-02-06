@@ -1,4 +1,5 @@
-import {useState} from 'react'
+import { useState } from 'react';
+import { StatCard } from "../../../components/stat-card";
 import {
   Building,
   Search,
@@ -7,25 +8,25 @@ import {
   Plus,
   Edit,
   Trash2,
+  Home,
+  BedDouble,
+  Users,
+  Hammer,
 } from "lucide-react";
 import { useModal } from "../../../components/Modal";
 import AddRoomModal from "./AddRoomModal";
-import EditRoomModal from './EditRoomModal'
+import EditRoomModal from './EditRoomModal';
 import AmenitiesModal from "../amenitie/AmenitiesModal";
 import axios from "axios";
 import { Room } from "../../../types/types";
 import DataTable from "react-data-table-component";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-
 const RoomManagement = () => {
-  const { open: openAddRoomModal, close: closeAddRoomModal } =
-    useModal("add_room_modal");
-  const { open: openAmenitiesModal, close: closeAmenitiesModal } =
-    useModal("amenities_modal");
-  const { open: openEditRoomModal, close: closeEditRoomModal } =
-    useModal("editroom_modal");
-    const [selectedRoom, setSelectedRoom] = useState<Room | null>(null)
+  const { open: openAddRoomModal, close: closeAddRoomModal } = useModal("add_room_modal");
+  const { open: openAmenitiesModal, close: closeAmenitiesModal } = useModal("amenities_modal");
+  const { open: openEditRoomModal, close: closeEditRoomModal } = useModal("editroom_modal");
+  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
   const hostelId = localStorage.getItem("hostelId") || "";
   if (!hostelId) {
     console.error("Hostel ID is not defined");
@@ -45,80 +46,79 @@ const RoomManagement = () => {
   });
 
   const handleEditRoom = (rooms: Room) => {
-    setSelectedRoom(rooms)
-    openEditRoomModal()
-  }
+    setSelectedRoom(rooms);
+    openEditRoomModal();
+  };
+
   const columns = [
     {
-        name: "Room No.",
-        selector: (row: Room) => row.number,
-        sortable: true,
+      name: "Room No.",
+      selector: (row: Room) => row.number,
+      sortable: true,
     },
     {
-        name: "Block",
-        selector: (row: Room) => row.block,
-        sortable: true,
+      name: "Block",
+      selector: (row: Room) => row.block,
+      sortable: true,
     },
     {
-        name: "Floor",
-        selector: (row: Room) => row.floor,
-        sortable: true,
+      name: "Floor",
+      selector: (row: Room) => row.floor,
+      sortable: true,
     },
     {
-        name: "Type",
-        selector: (row: Room) => row.type,
-        sortable: true,
+      name: "Type",
+      selector: (row: Room) => row.type,
+      sortable: true,
     },
     {
-        name: "Price",
-        selector: (row: Room) => row.price,
-        sortable: true,
+      name: "Price",
+      selector: (row: Room) => row.price,
+      sortable: true,
     },
     {
-        name: "Status",
-        selector: (row: Room) => row.status,
-        sortable: true,
-        cell: (row: Room) => (
-            <span
-                className={`px-2 py-1 rounded ${
-                    row.status === "AVAILABLE"
-                        ? "bg-green-200 text-green-800"
-                        : row.status === "OCCUPIED"
-                        ? "bg-red-200 text-red-800"
-                        : "bg-yellow-200 text-yellow-800"
-                }`}
-            >
-                {row.status}
-            </span>
-        ),
+      name: "Status",
+      selector: (row: Room) => row.status,
+      sortable: true,
+      cell: (row: Room) => (
+        <span
+          className={`px-2 py-1 rounded ${
+            row.status === "AVAILABLE"
+              ? "bg-green-200 text-green-800"
+              : row.status === "OCCUPIED"
+              ? "bg-red-200 text-red-800"
+              : "bg-yellow-200 text-yellow-800"
+          }`}
+        >
+          {row.status}
+        </span>
+      ),
     },
     {
-        name: "Capacity",
-        selector: (row: Room) => row.maxCap,
-        sortable: true,
+      name: "Capacity",
+      selector: (row: Room) => row.maxCap,
+      sortable: true,
     },
     {
-        name: "Actions",
-        grow: 2,
-        cell: (row: Room) => (
-            <div className="flex gap-2">
-                <button className="text-white flex bg-black p-2 rounded text-nowrap"
-                onClick={()=> handleEditRoom(row)}
-                >
-                    <Edit className="w-4 h-4" />
-                    <span> Edit</span>
-                   
-                </button>
-                <button className="text-white flex bg-black p-2 rounded text-nowrap">
-                    <Trash2 className="w-4 h-4" />
-                    <span>Delete</span>
-                </button>
-            </div>
-        ),
+      name: "Actions",
+      grow: 2,
+      cell: (row: Room) => (
+        <div className="flex gap-2">
+          <button
+            className="text-white flex bg-black p-2 rounded text-nowrap"
+            onClick={() => handleEditRoom(row)}
+          >
+            <Edit className="w-4 h-4" />
+            <span> Edit</span>
+          </button>
+          <button className="text-white flex bg-black p-2 rounded text-nowrap">
+            <Trash2 className="w-4 h-4" />
+            <span>Delete</span>
+          </button>
+        </div>
+      ),
     },
-];
-
-
+  ];
 
   if (isLoading) {
     return (
@@ -158,6 +158,48 @@ const RoomManagement = () => {
 
   return (
     <div className="p-6">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 my-3">
+        <StatCard
+          icon={Home}
+          title="Total Rooms"
+          content={data?.totalRooms}
+          description="Total number of rooms in the hostel"
+          backgroundColor="bg-black"
+          titleColor="text-white"
+          contentColor="text-white"
+          descriptionColor="text-white"
+        />
+        <StatCard
+          icon={BedDouble}
+          title="Available Rooms"
+          content={data?.availableRoomsCount}
+          description="Number of rooms currently available"
+          backgroundColor="bg-white"
+          titleColor="text-gray-600"
+          contentColor="text-gray-900"
+          descriptionColor="text-gray-600"
+        />
+        <StatCard
+          icon={Users}
+          title="Occupied Rooms"
+          content={data?.occupiedRoomsCount}
+          description="Number of rooms currently occupied"
+          backgroundColor="bg-white"
+          titleColor="text-gray-600"
+          contentColor="text-gray-900"
+          descriptionColor="text-gray-600"
+        />
+        <StatCard
+          icon={Hammer}
+          title="Maintenance Rooms"
+          content={data?.maintenanceRoomsCount}
+          description="Number of rooms under maintenance"
+          backgroundColor="bg-white"
+          titleColor="text-gray-600"
+          contentColor="text-gray-900"
+          descriptionColor="text-gray-600"
+        />
+      </div>
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-2">
           <Building className="w-6 h-6" />
@@ -186,8 +228,6 @@ const RoomManagement = () => {
           </button>
         </div>
       </div>
-
-      {/* Stats Overview */}
 
       {data?.rooms?.length === 0 ? (
         <div className="w-full flex justify-center flex-col items-center gap-4 text-center py-4 mt-20">
@@ -229,7 +269,7 @@ const RoomManagement = () => {
           />
         </div>
       )}
-     <EditRoomModal onClose={closeEditRoomModal} formdata={selectedRoom} />
+      <EditRoomModal onClose={closeEditRoomModal} formdata={selectedRoom} />
     </div>
   );
 };

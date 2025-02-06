@@ -29,12 +29,12 @@ export function StatCard({
     <Card className={cn("w-full transition-all hover:shadow-md", backgroundColor, className)}>
       <CardContent className="pt-6">
         <div className="space-y-2">
-          <div className="flex items-center gap-2">
-            {Icon && <Icon className={cn("h-4 w-4", titleColor)} />}
+          <div className="flex  gap-1">
+            {Icon && <Icon className={cn("h-6 w-6 border rounded-full p-1", titleColor)} />}
             <p className={cn("text-xl font-bold", titleColor)}>{title}</p>
           </div>
           <div className="flex flex-col gap-1">
-            <p className={cn("text-3xl font-extrabold tracking-tight", contentColor)}>{content}</p>
+            <p className={cn("text-6xl font-extrabold tracking-tight", contentColor)}>{content}</p>
             {description && <p className={cn("text-sm", descriptionColor)}>{description}</p>}
           </div>
         </div>

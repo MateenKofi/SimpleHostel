@@ -40,6 +40,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
   const hostelId = localStorage.getItem("hostelId");
 
   const handleImagesChange = (newImages: File[]) => {
+      const image = newImages.map((newImage)=>newImage.file)
     setImages(newImages);
     setValue("images", newImages);
   };
