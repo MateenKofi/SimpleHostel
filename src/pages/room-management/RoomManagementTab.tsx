@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import RoomManagement from './room-management/RoomManagement';
 import Amenities from './amenitie/Amenities';
+import StatusAlert from '../../components/StatusAlert'
 
 interface TabData {
   id: string;
@@ -26,6 +27,7 @@ const RoomManagementTab = () => {
 
   return (
     <main className="flex-1 bg-gray-100 p-4 overflow-y-auto">
+      <StatusAlert status={'unpublished'}/>
       <div className="mb-6 w-full flex justify-between items-center">
        <div>
        <h1 className="text-2xl font-bold text-gray-800">Room Management</h1>
