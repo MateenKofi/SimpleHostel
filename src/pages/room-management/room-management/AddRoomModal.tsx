@@ -13,6 +13,7 @@ type RoomForm = Room & {
 };
 
 const ROOM_STATUS = ["Available", "Maintenance", "Occupied"] as const;
+const GENDER = ["Male","Female"] as const;
 
 const ROOM_TYPE_CAPACITY = {
   single: 1,
@@ -83,8 +84,12 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
         });
       }
 
+      // images.forEach((image, index) => {
+      //   formData.append(`photos`, image);
+      // });
+      
       images.forEach((image) => {
-        console.log('image from append image', image)
+        console.log('image from append image',image)
         formData.append("photos", image);
       });
 
@@ -267,6 +272,24 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
               </span>
             )}
           </div>
+        </div>
+
+             {/* Gender */}
+        <div className="flex flex-col gap-1">
+          <label htmlFor="gender" className="text-sm font-medium">
+            Gender*
+          </label>
+          <select
+            {...register("gender")}
+            id="gender"
+            className="border rounded-md p-2"
+          >
+            {GENDER.map((gender) => (
+              <option key={gender} value={gender}>
+                {gender}
+              </option>
+            ))}
+          </select>
         </div>
 
         {/* Status */}
