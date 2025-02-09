@@ -2,10 +2,7 @@ import { useRoomStore } from '@stores/roomStore';
 import { Bed, House } from 'lucide-react';
 
 const RoomAssignment = () => {
-  const rooms = useRoomStore(state => state.rooms);
-  const selectedRoom = useRoomStore(state => state.selectedRoom);
-  const setSelectedRoom = useRoomStore(state => state.setSelectedRoom);
-  console.log(selectedRoom);
+
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-4">

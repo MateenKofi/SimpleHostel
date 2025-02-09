@@ -1,7 +1,6 @@
 import Modal from '../../../components/Modal'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
-import { useResidentStore } from '../../../stores/residentStore'
 import { Resident } from '../../../types/types'
 
 

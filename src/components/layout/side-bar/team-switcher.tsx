@@ -20,10 +20,7 @@ import {
 } from "@/components/ui/sidebar"
 import { GalleryVerticalEnd } from 'lucide-react'
 
-export function TeamSwitcher({
-  teams,
-}: {
-}) {
+export function TeamSwitcher () {
   const { isMobile } = useSidebar()
  
 

@@ -1,5 +1,4 @@
 import toast from 'react-hot-toast';
-import { useResidentStore } from '../../stores/residentStore';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Resident } from '../../types/types';
@@ -8,30 +7,12 @@ type ResidentForm = Omit<Resident, "paymentMethod"| "verificationCode">;
 
 const BookingForms = () => {
     
-    const addResident = useResidentStore((state) => state.addResident)
     const { register, handleSubmit, formState: { errors } } = useForm<ResidentForm>()
     const navigate = useNavigate()
 
     const onSubmit = (formData: ResidentForm) => {
-        const newResident: Resident = {
-            id: crypto.randomUUID(),
-            fullName: formData.fullName,
-            studentId: formData.studentId,
-            email: formData.email,
-            phone: formData.phone,
-            course: formData.course,
-            emergencyContactName: formData.emergencyContactName,
-            emergencyContactPhone: formData.emergencyContactPhone,
-            emergencyContactRelation: formData.emergencyContactRelation,
-            status: 'pending',
-            roomNumber: undefined
-        }
-        
-        addResident(newResident)
-        console.log('Current residents:', useResidentStore.getState().residents)
-        localStorage.setItem('resident_id', newResident.id)
-        toast.success('Resident added successfully')
-        navigate('/online-resident-booking')
+        toast.success('Resident added successfully!');
+        navigate('/success'); // Navigate to a success page or any other route
     }
   return (
     <div className='max-h-screen w-full flex'>

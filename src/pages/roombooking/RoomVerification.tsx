@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { useResidentStore } from '../../stores/residentStore';
 import { Resident } from '../../types/types';
 
 interface VerificationForm {
@@ -12,22 +11,11 @@ interface VerificationForm {
 
 const RoomVerification = () => {
   const navigate = useNavigate();
-  const [resident, setResident] = useState<Resident | null>(null);
 
   const { register, handleSubmit, formState: { errors } } = useForm<VerificationForm>();
 
-  const residents = useResidentStore(state => state.residents);
-
   const onSubmit = (data: VerificationForm) => {
-    const matchedResident = residents.find(resident => resident.verificationCode === data.verificationCode);
-
-    if (matchedResident) {
-      toast.success('Room allocation verified successfully!');
-      setResident(matchedResident);
-    } else {
-      toast.error('Invalid verification code');
-      setResident(null);
-    }
+   
   };
 
   return (
@@ -60,22 +48,7 @@ const RoomVerification = () => {
         </button>
       </form>
 
-      {resident && (
-        <div className="mt-4 p-4 bg-white rounded-lg shadow-sm">
-          <h2 className="text-xl font-semibold mb-2">Resident Information</h2>
-          <p><strong>Full Name:</strong> {resident.fullName}</p>
-          <p><strong>Student ID:</strong> {resident.studentId}</p>
-          <p><strong>Email:</strong> {resident.email}</p>
-          <p><strong>Phone:</strong> {resident.phone}</p>
-          <p><strong>Course:</strong> {resident.course}</p>
-          <p><strong>Emergency Contact Name:</strong> {resident.emergencyContactName}</p>
-          <p><strong>Emergency Contact Phone:</strong> {resident.emergencyContactPhone}</p>
-          <p><strong>Emergency Contact Relation:</strong> {resident.emergencyContactRelation}</p>
-          <p><strong>Status:</strong> {resident.status}</p>
-          <p><strong>Room Number:</strong> {resident.roomNumber}</p>
-          <p><strong>Payment Method:</strong> {resident.paymentMethod}</p>
-        </div>
-      )}
+     
     </div>
   );
 };

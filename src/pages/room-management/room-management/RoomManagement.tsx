@@ -78,13 +78,13 @@ const RoomManagement = () => {
     },
     {
       name: "Status",
-      selector: (row: Room) => row.status,
       sortable: true,
+      grow:2,
       cell: (row: Room) => (
         <span
-          className={`px-2 py-1 rounded ${
+          className={`w-full px-2 py-1 rounded text-sm text-capitalize text-center ${
             row.status === "AVAILABLE"
-              ? "bg-green-200 text-green-800"
+              ? "bg-green-200 text-green-800 "
               : row.status === "OCCUPIED"
               ? "bg-red-200 text-red-800"
               : "bg-yellow-200 text-yellow-800"

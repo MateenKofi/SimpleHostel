@@ -1,4 +1,4 @@
-import { useRoomStore } from '../../../../stores/roomStore';
+
 import { Bed, House } from 'lucide-react';
 // import { Amenity } from '../../../../types/types';
 

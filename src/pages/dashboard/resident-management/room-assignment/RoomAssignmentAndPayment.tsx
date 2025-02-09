@@ -1,6 +1,5 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useResidentStore } from '../../../../stores/residentStore'
 import RoomAssignment from './RoomAssignment'
 import Payment from './Payment'
 import { ChevronLeft } from 'lucide-react'

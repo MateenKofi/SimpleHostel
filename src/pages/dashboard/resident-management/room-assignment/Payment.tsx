@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { useRoomStore } from '../../../../stores/roomStore';
-import { useResidentStore } from '../../../../stores/residentStore';
 import { Trash2, Banknote, SmartphoneCharging, Check } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate, useParams } from 'react-router-dom';

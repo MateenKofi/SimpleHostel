@@ -1,8 +1,6 @@
 import React from 'react'
 import Modal from '../../../components/Modal'
 import { useForm, Controller } from 'react-hook-form'
-import { useVisitorStore } from '../../../stores/visitorStore'
-import { useResidentStore } from '../../../stores/residentStore'
 import Select from 'react-select'
 
 interface AddVisitorModalProps {

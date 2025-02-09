@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter, createBrowserRouter } from "react-router-dom";
 import App from "./App";
-import { ToastProvider } from "./components/ToastProvider";
+import  ToastProvider  from './providers/ToastProvider';
 
 
 

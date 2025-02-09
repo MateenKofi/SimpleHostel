@@ -1,12 +1,12 @@
 import React from 'react';
 import DataTable from 'react-data-table-component';
 import { useNavigate } from 'react-router-dom';
-import { useStaffStore } from '../../../stores/staffStore';
+
 import { Staff } from '../../../types/types';
 import { Edit, Trash2 } from 'lucide-react';
 const StaffManagement: React.FC = () => {
   const navigate = useNavigate();
-  const { staffList } = useStaffStore();
+
 
   const columns = [
     {

@@ -4,15 +4,17 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Modal from '../../../components/Modal';
 import { Loader, Plus } from 'lucide-react';
 
-type AmenityFormData = Amenity & { hostelId: string | null };
-type formdata = {
+interface Amenity {
+    id: string;
     name: string;
     price: number;
-};
+}
+
+type AmenityFormData = Amenity & { hostelId: string | null };
 
 interface EditAmenitiesModalProps {
     onClose: () => void;
-    formdata: formdata;
+    formdata: Amenity;
 }
 
 const EditAmenitiesModal: React.FC<EditAmenitiesModalProps> = ({ onClose, formdata }) => {
@@ -24,7 +26,7 @@ const EditAmenitiesModal: React.FC<EditAmenitiesModalProps> = ({ onClose, formda
             // Your mutation function here
         },
         onSuccess: () => {
-            queryClient.invalidateQueries(['amenities']);
+            queryClient.invalidateQueries({ queryKey: ['amenities'] });
             onClose();
         }
     });

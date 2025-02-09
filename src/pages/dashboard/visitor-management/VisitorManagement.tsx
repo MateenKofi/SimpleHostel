@@ -1,8 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { Users, Search, Filter, Clock, UserPlus } from 'lucide-react'
 import DataTable from 'react-data-table-component'
-import { useVisitorStore, Visitor } from '../../../stores/visitorStore'
-import { useResidentStore } from '../../../stores/residentStore'
 import { useModal } from '../../../components/Modal'
 import AddVisitorModal from './AddVisitorModal'
 import { format } from 'date-fns'

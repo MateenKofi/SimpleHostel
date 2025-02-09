@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { useRoomStore } from '../../../stores/roomStore';
-import { useResidentStore } from '../../../stores/residentStore';
 import { Trash2, SmartphoneCharging, Check } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +13,7 @@ const Payment = () => {
     removeSelectedRoom,
   } = useRoomStore();
 
-  const { processPayment, addToDebtorsList } = useResidentStore();
+ 
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);

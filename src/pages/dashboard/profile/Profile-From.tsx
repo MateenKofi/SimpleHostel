@@ -7,9 +7,20 @@ import { Label } from "@/components/ui/label";
 import { Loader } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import toast from "react-hot-toast";
+
+interface PersonalInfoFormValues {
+  name: string;
+  email: string;
+  phoneNumber: string;
+}
+
+interface ResetPasswordFormValues {
+  password: string;
+  confirmPassword: string;
+}
 
 const ProfileForm = () => {
   const queryClient = useQueryClient();
@@ -17,7 +28,7 @@ const ProfileForm = () => {
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [image, setImage] = useState<string | null>(null);
 
-  const personalInfoForm = useForm({
+  const personalInfoForm = useForm<PersonalInfoFormValues>({
     defaultValues: {
       name: "",
       email: "",
@@ -25,7 +36,7 @@ const ProfileForm = () => {
     },
   });
 
-  const resetPasswordForm = useForm({
+  const resetPasswordForm = useForm<ResetPasswordFormValues>({
     defaultValues: {
       password: "",
       confirmPassword: "",
@@ -51,7 +62,7 @@ const ProfileForm = () => {
   });
 
   const updatePersonalInfoMutation = useMutation({
-    mutationFn: async (data) => {
+    mutationFn: async (data: PersonalInfoFormValues) => {
       const formData = new FormData();
       formData.append("name", data.name.toUpperCase());
       formData.append("email", data.email);
@@ -69,7 +80,7 @@ const ProfileForm = () => {
     },
     onSuccess: () => {
       toast.success("User Details Updated Successfully");
-      queryClient.invalidateQueries({ queryKey: ["user","userProfile"] });
+      queryClient.invalidateQueries({ queryKey: ["user", "userProfile"] });
     },
     onError: (error: any) => {
       const errorMessage =
@@ -79,10 +90,10 @@ const ProfileForm = () => {
   });
 
   const resetPasswordMutation = useMutation({
-    mutationFn: async (data) => {
+    mutationFn: async (data: { password: string }) => {
       const response = await axios.put(
         `/api/users/update/${userId}`,
-        { "password": data.password },
+        { password: data.password },
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -93,7 +104,7 @@ const ProfileForm = () => {
     },
     onSuccess: () => {
       toast.success("Password Updated Successfully");
-      queryClient.invalidateQueries({ queryKey: ["user","userProfile"] });
+      queryClient.invalidateQueries({ queryKey: ["user", "userProfile"] });
     },
     onError: (error: any) => {
       const errorMessage =
@@ -102,11 +113,11 @@ const ProfileForm = () => {
     },
   });
 
-  const handleUpdatePersonalInfo = (formData) => {
+  const handleUpdatePersonalInfo: SubmitHandler<PersonalInfoFormValues> = (formData) => {
     updatePersonalInfoMutation.mutate(formData);
   };
 
-  const handleResetPassword = (formData) => {
+  const handleResetPassword: SubmitHandler<ResetPasswordFormValues> = (formData) => {
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match");
       return;
@@ -178,7 +189,7 @@ const ProfileForm = () => {
               )}
             </div>
             <Button className="w-full mt-4" type="submit">
-            {resetPasswordMutation.isPending ? <Loader className="animate-spin" /> : "Reset Password"}
+              {resetPasswordMutation.isPending ? <Loader className="animate-spin" /> : "Reset Password"}
             </Button>
           </form>
         </Card>

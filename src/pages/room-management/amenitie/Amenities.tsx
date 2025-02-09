@@ -78,17 +78,17 @@ const Amenities = () => {
     const columns = [
         {
             name: 'Name',
-            selector: row => row.name,
+            selector: (row: { name: string }) => row.name,
             sortable: true,
         },
         {
             name: 'Price',
-            selector: row => row.price,
+            selector: (row: { price: number }) => row.price,
             sortable: true,
         },
         {
             name: 'Actions',
-            cell: row => (
+            cell: (row: { id: string; name: string; price: number }) => (
                 <div className="flex gap-2">
                     <button className="text-white bg-black p-1 rounded flex items-center gap-1"
                         onClick={() => handleEditAmenities(row)}>
@@ -197,13 +197,13 @@ const Amenities = () => {
 
                     <DataTable
                         columns={columns}
-                        data={data?.data}
+                        data={data?.data || []}
                         pagination
                     />
                 </div>
             )}
             
-                <EditAmenitiesModal onClose={closeEditAmenitiesModal} formdata={selectedAmenity} />
+                <EditAmenitiesModal onClose={closeEditAmenitiesModal} formdata={selectedAmenity || { id: '', name: '', price: 0 }} />
            
         </div>
     )

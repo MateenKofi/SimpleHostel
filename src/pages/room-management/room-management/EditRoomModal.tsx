@@ -6,9 +6,15 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import ImageUpload from "../../../components/ImageUpload";
 import { Loader } from "lucide-react";
+import toast from 'react-hot-toast';
 
 type RoomForm = Room & {
   images: File[];
+};
+
+type EditRoomModalProp = {
+  onClose: () => void;
+  formdata: Room;
 };
 
 const ROOM_STATUS = ["Available", "Maintenance", "Occupied"] as const;
@@ -20,7 +26,7 @@ const ROOM_TYPE_CAPACITY = {
   quard: 4,
 };
 
-const EditRoomModal = ({ onClose, formdata }: { onClose: () => void }) => {
+const EditRoomModal = ({ onClose, formdata }: EditRoomModalProp) => {
   const {
     register,
     handleSubmit,
@@ -61,6 +67,8 @@ const EditRoomModal = ({ onClose, formdata }: { onClose: () => void }) => {
       return response?.data;
     },
   });
+
+  const queryClient = useQueryClient();
 
   const mutation = useMutation({
     mutationFn: async (data: RoomForm) => {
@@ -121,15 +129,15 @@ const EditRoomModal = ({ onClose, formdata }: { onClose: () => void }) => {
 
   useEffect(() => {
     if (formdata) {
-      setValue("roomNumber", formdata.number);
-      setValue("block", formdata.block);
-      setValue("floor", parseInt(formdata.floor));
-      setValue("roomType", formdata.type.toLowerCase());
-      setValue("maxOccupancy", formdata.maxCap);
-      setValue("basePrice", formdata.price);
-      setValue("description", formdata.description);
-      setValue("status", formdata.status.toLowerCase());
-      const imageUrls = formdata.RoomImage.map((img: any) => img.imageUrl);
+      setValue("roomNumber", formdata?.number);
+      setValue("block", formdata?.block);
+      setValue("floor", parseInt(formdata?.floor));
+      setValue("roomType", formdata?.type.toLowerCase());
+      setValue("maxOccupancy", formdata?.maxCap);
+      setValue("basePrice", formdata?.price);
+      setValue("description", formdata?.description);
+      setValue("status", formdata?.status.toLowerCase());
+      const imageUrls = formdata?.RoomImage.map((img: any) => img.imageUrl);
       setDefaultImages(imageUrls);
       const selectedAmenities =
         formdata?.amenities?.map((amenity: any) => amenity.name) || [];
@@ -291,38 +299,45 @@ const EditRoomModal = ({ onClose, formdata }: { onClose: () => void }) => {
 
         {/* Amenities */}
         <div className="flex flex-col gap-1">
-  <label className="text-sm font-medium">Amenities</label>
-  <div className="flex flex-wrap gap-2">
-    {Amenities?.data?.map((amenity) => {
-      // Extract IDs from formdata.Amenities
-      const formdataAmenityIds = formdata?.Amenities?.map((a: any) => a.id) || [];
-      const isSelected = formdataAmenityIds.includes(amenity.id);
+          <label className="text-sm font-medium">Amenities</label>
+          <div className="flex flex-wrap gap-2">
+            {Amenities?.data?.map((amenity) => {
+              // Extract IDs from formdata.Amenities
+              const formdataAmenityIds =
+                formdata?.Amenities?.map((a: any) => a.id) || [];
+              const isSelected = formdataAmenityIds.includes(amenity.id);
 
-      return (
-        <label
-          key={amenity.id}
-          className={`w-fit cursor-pointer px-4 py-2 rounded-full border transition-colors shadow
-            ${isSelected ? "bg-black text-white border-black" : "bg-gray-100 text-gray-900 border-gray-200 hover:bg-gray-50"}`}
-        >
-          <input
-            type="checkbox"
-            value={amenity.id}
-            {...register("amenities")}
-            className="hidden"
-            checked={isSelected}
-            onChange={() => {
-              const updatedAmenities = isSelected
-                ? watch("amenities").filter((id: string) => id !== amenity.id)
-                : [...(watch("amenities") || []), amenity.id];
-              setValue("amenities", updatedAmenities);
-            }}
-          />
-          {amenity.name}
-        </label>
-      );
-    })}
-  </div>
-</div>
+              return (
+                <label
+                  key={amenity.id}
+                  className={`w-fit cursor-pointer px-4 py-2 rounded-full border transition-colors shadow
+            ${
+              isSelected
+                ? "bg-black text-white border-black"
+                : "bg-gray-100 text-gray-900 border-gray-200 hover:bg-gray-50"
+            }`}
+                >
+                  <input
+                    type="checkbox"
+                    value={amenity.id}
+                    {...register("amenities")}
+                    className="hidden"
+                    checked={isSelected}
+                    onChange={() => {
+                      const updatedAmenities = isSelected
+                        ? watch("amenities").filter(
+                            (id: string) => id !== amenity.id
+                          )
+                        : [...(watch("amenities") || []), amenity.id];
+                      setValue("amenities", updatedAmenities);
+                    }}
+                  />
+                  {amenity.name}
+                </label>
+              );
+            })}
+          </div>
+        </div>
 
         {/* Description */}
         <div className="flex flex-col gap-1">

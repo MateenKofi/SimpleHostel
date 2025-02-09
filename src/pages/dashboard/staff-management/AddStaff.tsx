@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useStaffStore } from '../../../stores/staffStore';
 import { ChevronLeft, Edit, ImageUp, Trash } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { Staff } from '../../../types/types';
 import { v4 as uuidv4 } from 'uuid';
 const AddStaff: React.FC = () => {
   const navigate = useNavigate();
-  const { addStaff } = useStaffStore();
   const [image, setImage] = useState<string | null>(null);
   const { register, handleSubmit, formState: { errors } } = useForm<Staff>();
 
@@ -23,16 +21,6 @@ const AddStaff: React.FC = () => {
   };
 
   const onSubmit = (data: Staff) => {
-    const staffData = {
-      ...data,
-      id: uuidv4(),
-      middleName: data.middleName || "",
-      staffStatus: data.staffStatus = 'Active' as "Active" | "Inactive",
-      image:image,
-    };
-    addStaff(staffData);
-    console.log(staffData);
-    
     navigate('/dashboard/staff-management');
   };
 

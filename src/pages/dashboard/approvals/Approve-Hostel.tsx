@@ -1,15 +1,26 @@
 import React from 'react';
-import DataTable from 'react-data-table-component';
+import DataTable, { TableColumn } from 'react-data-table-component';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 import { Loader } from 'lucide-react';
 
-const ApproveHostel = () => {
+interface Hostel {
+    id: string;
+    name: string;
+    address: string;
+    location: string;
+    phone: string;
+    email: string;
+    ghCard: string;
+    isVerified: boolean;
+}
+
+const ApproveHostel: React.FC = () => {
     const queryClient = useQueryClient();
 
-    const { data, isLoading, isError } = useQuery({
+    const { data, isLoading, isError } = useQuery<Hostel[]>({
         queryKey: ['hostels'],
         queryFn: async () => {
             const response = await axios.get('/api/hostels/get', {
@@ -22,7 +33,7 @@ const ApproveHostel = () => {
     });
 
     const AcceptMutation = useMutation({
-        mutationFn: async (hostelId) => {
+        mutationFn: async (hostelId: string) => {
             const response = await axios.post(`/api/hostels/verify/${hostelId}`, {}, {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -46,7 +57,7 @@ const ApproveHostel = () => {
     });
 
     const DeclineMutation = useMutation({
-        mutationFn: async (hostelId) => {
+        mutationFn: async (hostelId: string) => {
             const response = await axios.delete(`/api/hostels/delete/${hostelId}`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -68,7 +79,7 @@ const ApproveHostel = () => {
         },
     });
 
-    const handleAccept = (id) => {
+    const handleAccept = (id: string) => {
         Swal.fire({
             title: 'Are you sure you want to Approve this hostel?',
             text: "You won't be able to revert this!",
@@ -84,7 +95,7 @@ const ApproveHostel = () => {
         });
     };
 
-    const handleDecline = (id) => {
+    const handleDecline = (id: string) => {
         Swal.fire({
             title: 'Are you sure you want to Decline this hostel?',
             text: "You won't be able to revert this!",
@@ -100,7 +111,7 @@ const ApproveHostel = () => {
         });
     };
 
-    const columns = [
+    const columns: TableColumn<Hostel>[] = [
         {
             name: 'Name',
             selector: row => row.name,
@@ -157,11 +168,11 @@ const ApproveHostel = () => {
     }
 
     // Filter the data to only include hostels that are not verified
-    const filteredData = data.filter(hostel => !hostel.isVerifeid);
+    const filteredData = data?.filter(hostel => !hostel.isVerified) || [];
 
     const conditionalRowStyles = [
         {
-            when: (row, index) => index % 2 === 0,
+            when: (row: Hostel) => data?.indexOf(row) % 2 === 0,
             style: {
                 backgroundColor: '#f2f2f2',
             },

@@ -40,10 +40,9 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
   const hostelId = localStorage.getItem("hostelId");
 
   const handleImagesChange = (newImages: File[]) => {
-    const imageArray = newImages.map((file) => ({ file }));
-    setImages(imageArray);
-    console.log("images", imageArray);
-};
+    setImages(newImages);
+    console.log("images", newImages);
+  };
 
   const {
     data: Amenities,
@@ -82,12 +81,8 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
         });
       }
 
-      // images.forEach((image, index) => {
-      //   formData.append(`photos`, image);
-      // });
-      
       images.forEach((image) => {
-        console.log('image from append image',image)
+        console.log('image from append image', image)
         formData.append("photos", image);
       });
 

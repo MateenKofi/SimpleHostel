@@ -1,6 +1,5 @@
 import DataTable from 'react-data-table-component';
 import AddResidentModal from './AddResidentModal';
-import { useResidentStore } from '@stores/residentStore';
 import { Download, Edit, Filter, HousePlus, Plus, Search, Trash2, Users } from 'lucide-react';
 import type { Resident } from '../../../types/types'; // Use 'import type' for type imports
 import { useNavigate } from 'react-router-dom';
