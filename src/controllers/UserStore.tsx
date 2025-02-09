@@ -48,7 +48,8 @@ export const useUserStore = create<User>((set) => ({
       localStorage.setItem('userId', decoded.id);
       toast.success('Login successful');
       return true;
-    } catch (error) {
+    } catch (error:unknown) {
+      console.log(error);
       set({ isProcessing: false });
       toast.error('Login failed');
       return false;
