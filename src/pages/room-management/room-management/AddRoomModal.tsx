@@ -3,7 +3,7 @@ import Modal from "../../../components/Modal";
 import { useForm } from "react-hook-form";
 import type { Room } from "../../../types/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import ImageUpload from "../../../components/ImageUpload";
 import { Loader } from "lucide-react";
 import { toast } from "react-hot-toast";
@@ -39,16 +39,17 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
   const [images, setImages] = useState<File[]>([]);
   const hostelId = localStorage.getItem("hostelId");
 
+  // handle images change
   const handleImagesChange = (newImages: File[]) => {
-    const imageArray = newImages.map((file) => ({ file }));
+    const imageArray = Array.from(newImages).map((image) => {
+      const file = new File([image], image.name, { type: image.type });
+      return file;
+    });
     setImages(imageArray);
-    console.log("images", imageArray);
-};
+  };
 
   const {
     data: Amenities,
-    isLoading,
-    isError,
   } = useQuery<{ data: { id: string; name: string; price: number }[] }>({
     queryKey: ["amenities"],
     queryFn: async () => {
@@ -77,7 +78,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
       formData.append("status", data.status.toUpperCase());
 
       if (Array.isArray(data.amenities)) {
-        data.amenities.forEach((amenityId, index) => {
+        data.amenities.forEach((amenityId) => {
           formData.append(`amenitiesIds[]`, amenityId);
         });
       }
@@ -104,13 +105,22 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
       toast.success("Room added successfully");
       queryClient.invalidateQueries({ queryKey: ["rooms"] });
       reset();
+      setImages([]);
       onClose();
     },
-    onError: (error: any) => {
-      const errorMessage =
-        error.response?.data?.message || "Failed to add room";
+    //handle different instances of errors
+    onError: (error: unknown) => {
+      let errorMessage 
+      if (error instanceof AxiosError) {
+
+        errorMessage=error.response?.data?.message || "Failed to add room";
+      } else {
+        errorMessage= (error as Error).message || "Failed to add room";
+      }
       toast.error(errorMessage);
     },
+
+
   });
 
   const onSubmit = (data: RoomForm) => {
@@ -121,7 +131,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
   const roomType = watch("roomType");
   useEffect(() => {
     if (roomType) {
-      setValue("maxOccupancy", ROOM_TYPE_CAPACITY[roomType]);
+      setValue("maxOccupancy", ROOM_TYPE_CAPACITY[roomType as keyof typeof ROOM_TYPE_CAPACITY]);
     }
   }, [roomType, setValue]);
 
