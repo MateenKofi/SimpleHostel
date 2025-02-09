@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import type React from "react";
@@ -89,65 +90,65 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         </div>
       </div>
 
-    <div className="flex flex-col space-y-4">
-      {/* Display default images */}
-      {defaultImages.length > 0 && (
-        <div>
-        <h3 className="text-lg font-semibold">Default Images</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-          {defaultImages.map((image, index) => (
-            <div key={index} className="relative group">
-            <div className="aspect-square relative rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800 w-32 h-32">
-              <img
-                src={image}
-                alt={`Default Image ${index + 1}`}
-                className="w-full h-full object-cover"
-              />
-              <button
-                onClick={(e) => {
-                e.stopPropagation();
-                removeDefaultImage(index);
-                }}
-                className="absolute top-2 right-2 p-1 bg-red-500 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <X className="w-4 h-4" />
-              </button>
+      <div className="flex flex-col space-y-4">
+        {/* Display default images */}
+        {defaultImages.length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold">Default Images</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+              {defaultImages.map((image, index) => (
+                <div key={index} className="relative group">
+                  <div className="aspect-square relative rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800 w-32 h-32">
+                    <img
+                      src={image}
+                      alt={`Default Image ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeDefaultImage(index);
+                      }}
+                      className="absolute top-2 right-2 p-1 bg-red-500 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
-            </div>
-          ))}
-        </div>
-        </div>
-      )}
+          </div>
+        )}
 
-      {/* Display newly uploaded images */}
-      {images.length > 0 && (
-        <div>
-        <h3 className="text-lg font-semibold">Uploaded Images</h3>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-          {images.map((image, index) => (
-            <div key={index} className="relative group">
-            <div className="aspect-square relative rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800 w-32 h-32">
-              <img
-                src={URL.createObjectURL(image) || "/placeholder.svg"}
-                alt={`Upload ${index + 1}`}
-                className="w-full h-full object-cover"
-              />
-              <button
-                onClick={(e) => {
-                e.stopPropagation();
-                removeImage(index);
-                }}
-                className="absolute top-2 right-2 p-1 bg-red-500 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <X className="w-4 h-4" />
-              </button>
+        {/* Display newly uploaded images */}
+        {images.length > 0 && (
+          <div>
+            <h3 className="text-lg font-semibold">Uploaded Images</h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+              {images.map((image, index) => (
+                <div key={index} className="relative group">
+                  <div className="aspect-square relative rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800 w-32 h-32">
+                    <img
+                      src={URL.createObjectURL(image) || "/placeholder.svg"}
+                      alt={`Upload ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeImage(index);
+                      }}
+                      className="absolute top-2 right-2 p-1 bg-red-500 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
-            </div>
-          ))}
-        </div>
-        </div>
-      )}
-    </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
