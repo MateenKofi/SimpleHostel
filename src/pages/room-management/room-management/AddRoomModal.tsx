@@ -230,7 +230,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
               <option value="">-- Select Room Type --</option>
               <option value="single">Single</option>
               <option value="double">Double</option>
-              <option value="suit">Suit</option>
+              <option value="suite">Suit</option>
               <option value="quard">Quard</option>
             </select>
             {errors.roomType && (
