@@ -98,6 +98,9 @@ importers:
       react-chartjs-2:
         specifier: ^5.2.0
         version: 5.2.0(chart.js@4.4.6)(react@18.3.1)
+      react-country-region-selector:
+        specifier: ^4.0.2
+        version: 4.0.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-data-table-component:
         specifier: ^7.6.2
         version: 7.6.2(react@18.3.1)(styled-components@6.1.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
@@ -2261,6 +2264,12 @@ packages:
     peerDependencies:
       chart.js: ^4.1.1
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
+
+  react-country-region-selector@4.0.2:
+    resolution: {integrity: sha512-BmCITaaXsVMkZkGoX/Nqezt934wBmdBCmMAChG9Hw7C4+rNtEqdq616hhBjYUf/RvXMtvwXU2tW4qcFyl84sGA==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
 
   react-data-table-component@7.6.2:
     resolution: {integrity: sha512-nHe7040fmtrJyQr/ieGrTfV0jBflYGK4sLokC6/AFOv3ThjmA9WzKz8Z8/2wMxzRqLU+Rn0CVFg+8+frKLepWQ==}
@@ -4742,6 +4751,11 @@ snapshots:
     dependencies:
       chart.js: 4.4.6
       react: 18.3.1
+
+  react-country-region-selector@4.0.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
 
   react-data-table-component@7.6.2(react@18.3.1)(styled-components@6.1.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1)):
     dependencies:

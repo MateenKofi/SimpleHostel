@@ -13,7 +13,7 @@ type RoomForm = Room & {
 };
 
 const ROOM_STATUS = ["Available", "Maintenance", "Occupied"] as const;
-const GENDER = ["Male","Female"] as const;
+const GENDER = ["Male","Female","Mix"] as const;
 
 const ROOM_TYPE_CAPACITY = {
   single: 1,
@@ -227,7 +227,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
               id="type"
               className="border rounded-md p-2 "
             >
-              <option value="">Select Room Type</option>
+              <option value="">-- Select Room Type --</option>
               <option value="single">Single</option>
               <option value="double">Double</option>
               <option value="suit">Suit</option>
