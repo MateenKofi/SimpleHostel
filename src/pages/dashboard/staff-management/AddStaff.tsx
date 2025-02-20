@@ -1,13 +1,37 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Edit, ImageUp, Trash } from 'lucide-react';
+import {  useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from 'react-hook-form';
 import { Staff } from '../../../types/types';
-import { v4 as uuidv4 } from 'uuid';
+import axios from 'axios';
+
+
+type StaffForm = {
+  firstName: string;
+  lastName: string;
+  middleName?: string;
+  gender: string;
+  dateOfBirth: string;
+  nationality: string;
+  maritalStatus: string;
+  religion: string;
+  ghanaCardNumber: string;
+  phoneNumber: string;
+  email: string;
+  residence: string;
+  qualification: string;
+  role: string;
+  block: string;
+  dateOfAppointment: string;
+};
+
+
 const AddStaff: React.FC = () => {
   const navigate = useNavigate();
   const [image, setImage] = useState<string | null>(null);
-  const { register, handleSubmit, formState: { errors } } = useForm<Staff>();
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<StaffForm>();
+  const hostelId = localStorage.getItem("hostelId");
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -20,8 +44,60 @@ const AddStaff: React.FC = () => {
     }
   };
 
-  const onSubmit = (data: Staff) => {
-    navigate('/dashboard/staff-management');
+   const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: async (data: staffForm) => {
+      const formData = new FormData();
+      formData.append("hostelId", hostelId || "");
+      formData.append("maritalStatus", data.maritalStatus);
+      formData.append("religion", data.religion);
+      formData.append("gender", data.gender.toUpperCase());
+      formData.append("nationality", data.nationality);
+      formData.append("dateOfBirth", data.dateOfBirth);
+      formData.append("lastName", data.lastName);
+      formData.append("middleName", data.middleName);
+      formData.append("firstName", data.firstName);
+      formData.append("ghanaCardNumber", data.ghanaCardNumber);
+      formData.append("phoneNumber", data.phoneNumber);
+      formData.append("email", data.email);
+      formData.append("residence", data.residence);
+      formData.append("qualification", data.qualification);
+      formData.append("role", data.role.toUpperCase());
+      formData.append("block", data.block);
+      formData.append('dateOfAppointment',data.dateOfAppointment);
+
+      const response = await axios.post(`/api/staffs/add`, formData, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("staff added successfully");
+      queryClient.invalidateQueries({ queryKey: ["staffs"] });
+      reset();
+     
+    },
+    //handle different instances of errors
+    onError: (error: unknown) => {
+      let errorMessage 
+      if (error instanceof AxiosError) {
+
+        errorMessage=error.response?.data?.message || "Failed to add staff";
+      } else {
+        errorMessage= (error as Error).message || "Failed to add staff";
+      }
+      toast.error(errorMessage);
+    },
+
+
+  });
+
+  const onSubmit = (data: staffForm) => {
+    mutation.mutate(data);
   };
 
   return (
@@ -30,7 +106,7 @@ const AddStaff: React.FC = () => {
       <div className="flex items-center justify-between mb-6 mt-6 bg-white p-4 rounded-lg">
         <h1 className="text-2xl font-bold">Add Staff</h1>
         <button 
-          onClick={() => navigate('dashboard/staff-management')}
+          onClick={() => navigate(-1)}
           className="flex gap-2 px-4 py-2 bg-primary text-white rounded-md"
         >
           <ChevronLeft/>
@@ -46,11 +122,11 @@ const AddStaff: React.FC = () => {
             Upload Image
           </label>
           {image ? (
-            <div className="relative ">
+            <div className="w-full h-80 relative ">
               <img
                 src={typeof image === 'string' ? image : ''}
                 alt="Nominee"
-                className="w-full h-full object-cover rounded-md"
+                className="object-cover rounded-md"
               />
               <div className="absolute top-2 right-2 space-x-2">
                 <button
@@ -227,37 +303,33 @@ const AddStaff: React.FC = () => {
           <div className="grid grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium mb-1">Qualification</label>
-              <select {...register("qualification", { required: "Qualification is required" })} className="w-full p-2 border rounded-md">
-                <option value="">--Select Qualification--</option>
-                <option value="BECE">BECE</option>
-                <option value="WASSCE">WASSCE</option>
-                <option value="HND">HND</option>
-                <option value="BSC">BSC</option>
-                <option value="MSC">MSC</option>
-              </select>
+              <input
+              {...register("qualification", { required: "Qualification is required" })}
+              type="text"
+              className="w-full p-2 border rounded-md"
+              placeholder="Enter Qualification"
+              />
               {errors.qualification && <span className="text-red-500 text-sm">{errors.qualification.message?.toString()}</span>}
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Staff Type</label>
-              <select {...register("staffType", { required: "Staff type is required" })} className="w-full p-2 border rounded-md">
-                <option value="">--Select Staff Type--</option>
-                <option value="Chief Warden">Chief Warden</option>
-                <option value="Warden">Warden</option>
-                <option value="Superintendent">Superintendent</option>
-                <option value="Clearance Clerk">Clearance Clerk</option>
-              </select>
+              <input
+              {...register("role", { required: "Staff type is required" })}
+              type="text"
+              className="w-full p-2 border rounded-md"
+              placeholder="Enter Staff Type"
+              />
               {errors.staffType && <span className="text-red-500 text-sm">{errors.staffType.message?.toString()}</span>}
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Block</label>
-              <select {...register("block", { required: "Block is required" })} className="w-full p-2 border rounded-md">
-                <option value="">--Select Block--</option>
-                <option value="Block A">Block A</option>
-                <option value="Block B">Block B</option>
-                <option value="Block C">Block C</option>
-                <option value="Block D">Block D</option>
-              </select>
-              {errors.staffType && <span className="text-red-500 text-sm">{errors.staffType.message?.toString()}</span>}
+              <input
+              {...register("block", { required: "Block is required" })}
+              type="text"
+              className="w-full p-2 border rounded-md"
+              placeholder="Enter Block"
+              />
+              {errors.block && <span className="text-red-500 text-sm">{errors.block.message?.toString()}</span>}
             </div>
             <div>
               <label className="block text-sm font-medium mb-1">Date of Appointment</label>

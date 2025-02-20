@@ -136,9 +136,14 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
       setValue("maxOccupancy", ROOM_TYPE_CAPACITY[roomType as keyof typeof ROOM_TYPE_CAPACITY]);
     }
   }, [roomType, setValue]);
+  
+  const handleClose = () => {
+    onClose();
+    reset();
+    setImages([]);}
 
   return (
-    <Modal modalId="add_room_modal" onClose={onClose} size="large">
+    <Modal modalId="add_room_modal" onClose={handleClose} size="large">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <div className="space-y-1">
           <h2 className="text-2xl font-bold">Add New Room</h2>
@@ -205,7 +210,6 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
             <input
               {...register("floor", {
                 required: "Floor is required",
-                min: { value: 1, message: "Floor must be at least 1" },
               })}
               type="number"
               id="floor"
@@ -285,6 +289,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
             id="gender"
             className="border rounded-md p-2"
           >
+            <option value="">-- select gender --</option>
             {GENDER.map((gender) => (
               <option key={gender} value={gender}>
                 {gender}
@@ -303,6 +308,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
             id="status"
             className="border rounded-md p-2"
           >
+            <option value="">-- Select Status --</option>
             {ROOM_STATUS.map((status) => (
               <option key={status} value={status}>
                 {status}
@@ -357,7 +363,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
         <div className="flex justify-end gap-2 mt-4">
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleClose}
             className="px-4 py-2 border rounded-md"
           >
             Cancel
