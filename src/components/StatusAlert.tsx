@@ -83,8 +83,8 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
   };
 
   const getAlertConfig = (): { type: AlertType; title: string; description: string; icon: JSX.Element; action: JSX.Element } | null => {
-    switch (status) {
-      case 'published':
+    switch (status.toUpperCase()) {
+      case 'PUBLISHED':
         return {
           type: 'success',
           title: 'Rooms Published',
@@ -92,22 +92,20 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
           icon: <Globe className="h-5 w-5 text-green-700" />,
           action: (
             <button
-              className="btn btn-success  btn-sm mt-2"
+              className="btn btn-success btn-sm mt-2"
               onClick={handleUpdateResultsStatus}
               disabled={isLoading}
             >
               <EyeOff className="mr-2 h-4 w-4 text-white" />
-              <span className='text-white'>
-              Unpublish Rooms
-              </span>
+              <span className='text-white'>Unpublish Rooms</span>
             </button>
           ),
         };
-      case 'unpublished':
+      case 'UNPUBLISHED':
         return {
           type: 'info',
-          title: 'Results Unpublished',
-          description: 'The rooms are currently unpublished. Click to publish.',
+          title: 'Rooms Unpublished',
+          description: 'The rooms are currently unpublished. Residents won\'t be able to find rooms on room finder. Click to publish.',
           icon: <CheckCircle className="h-5 w-5 text-blue-700" />,
           action: (
             <button
@@ -116,9 +114,7 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
               disabled={isLoading}
             >
               <Eye className="mr-2 h-4 w-4 text-white" />
-              <span className='text-white'>
-              Publish Rooms
-              </span>
+              <span className='text-white'>Publish Rooms</span>
             </button>
           ),
         };

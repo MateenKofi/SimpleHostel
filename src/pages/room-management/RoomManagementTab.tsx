@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import RoomManagement from './room-management/RoomManagement';
 import Amenities from './amenitie/Amenities';
-import StatusAlert from '../../components/StatusAlert'
+import StatusAlert from '../../components/StatusAlert';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 interface TabData {
   id: string;
@@ -10,6 +12,28 @@ interface TabData {
 }
 
 const RoomManagementTab = () => {
+  const { data: userProfile, isLoading, isError } = useQuery({
+    queryKey: ['userProfile'],
+    queryFn: async () => {
+      const response = await axios.get('/api/users/profile', {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      return response?.data;
+    },
+  });
+
+  const [hostelState, setHostelState] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (userProfile?.restofUser?.hostel?.state) {
+      setHostelState(userProfile.restofUser.hostel.state);
+    }
+  }, [userProfile]);
+
+  console.log('hostelState', hostelState);
+
   const tabData: TabData[] = [
     {
       id: 'rooms',
@@ -27,13 +51,12 @@ const RoomManagementTab = () => {
 
   return (
     <main className="flex-1 bg-gray-100 p-4 overflow-y-auto">
-      <StatusAlert status={'unpublished'}/>
+      <StatusAlert status={hostelState} />
       <div className="mb-6 w-full flex justify-between items-center">
-       <div>
-       <h1 className="text-2xl font-bold text-gray-800">Room Management</h1>
-       <p className="text-gray-600">Manage and plan your room for the semesters</p>
-       </div>
-      
+        <div>
+          <h1 className="text-2xl font-bold text-gray-800">Room Management</h1>
+          <p className="text-gray-600">Manage and plan your room for the semesters</p>
+        </div>
       </div>
 
       <div className="space-y-4">
@@ -46,7 +69,8 @@ const RoomManagementTab = () => {
                   ? 'bg-black text-white'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
-              onClick={() => setActiveTab(tab.id)}>
+              onClick={() => setActiveTab(tab.id)}
+            >
               {tab.title}
             </button>
           ))}

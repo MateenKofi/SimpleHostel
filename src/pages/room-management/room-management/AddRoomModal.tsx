@@ -18,8 +18,8 @@ const GENDER = ["Male","Female","Mix"] as const;
 const ROOM_TYPE_CAPACITY = {
   single: 1,
   double: 2,
-  suit: 3,
-  quard: 4,
+  suite: 3,
+  quad: 4,
 };
 
 const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
@@ -235,8 +235,8 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
               <option value="">-- Select Room Type --</option>
               <option value="single">Single</option>
               <option value="double">Double</option>
-              <option value="suite">Suit</option>
-              <option value="quard">Quard</option>
+              <option value="suite">Suite</option>
+              <option value="quad">Quad</option>
             </select>
             {errors.roomType && (
               <span className="text-red-500 text-sm">
