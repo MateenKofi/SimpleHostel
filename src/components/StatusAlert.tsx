@@ -12,7 +12,7 @@ interface AwardStatusAlertProps {
 type AlertType = "info" | "success";
 
 const alertBgColors: Record<AlertType, string> = {
-  info: 'bg-sky-200',
+  info: 'bg-red-100',
   success: 'bg-green-100',
 };
 
@@ -109,7 +109,7 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
           icon: <CheckCircle className="h-5 w-5 text-blue-700" />,
           action: (
             <button
-              className="btn btn-info text-white btn-sm mt-2"
+              className="btn btn-error text-white btn-sm mt-2"
               onClick={handleUpdateResultsStatus}
               disabled={isLoading}
             >
