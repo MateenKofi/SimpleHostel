@@ -39,7 +39,8 @@ const formSchema = z.object({
     message: "Please select a location.",
   }),
   address: z.string().regex(/^[A-Z0-9]{2}-\d{3}-\d{4}$/, {
-    message: "Address must follow the format XX-XXX-XXXX. Adress from Ghana post code",
+    message:
+      "Address must follow the format XX-XXX-XXXX. Adress from Ghana post code",
   }),
   managerName: z.string().min(2, {
     message: "Manager name must be at least 2 characters.",
@@ -60,7 +61,7 @@ const HostelListingForm = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [region, setRegion] = useState('');
+  const [region, setRegion] = useState("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -82,7 +83,8 @@ const HostelListingForm = () => {
       const formData = new FormData();
       formData.append("name", data.hostelName.toUpperCase());
       formData.append("description", data.description || "");
-      formData.append("location", region);
+      // formData.append("location", region.toUpperCase());
+      formData.append("location", "sunyani".toUpperCase());
       formData.append("address", data.address.toUpperCase());
       formData.append("manager", data.managerName.toUpperCase());
       formData.append("email", data.email);
@@ -197,7 +199,7 @@ const HostelListingForm = () => {
               >
                 {/* Image Upload Section */}
                 <div
-                  className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-gray-400 transition-colors w-full max-w-xs mx-auto"
+                  className="border-2 border-dashed rounded-lg p-4 text-center cursor-pointer hover:border-gray-400 transition-colors w-full max-w-xs "
                   onDragOver={(e) => e.preventDefault()}
                   onDrop={handleImageDrop}
                   onClick={() =>
@@ -296,30 +298,30 @@ const HostelListingForm = () => {
                   control={form.control}
                   name="location"
                   render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Location*</FormLabel>
-                    <FormControl>
-                    <RegionDropdown
-                      country={"Ghana"}
-                      onChange={(val) => {
-                      setRegion(val);
-                      field.onChange(val);
-                      }}
-                      value={region}
-                      className="region"
-                      name="region-field"
-                      style={{
-                      width: "100%",
-                      color: "black",
-                      padding: 4,
-                      fontSize: 16,
-                      borderRadius: 4,
-                      border: "1px solid #ccc",
-                      }}
-                    />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                    <FormItem>
+                      <FormLabel>Location*</FormLabel>
+                      <FormControl>
+                        <RegionDropdown
+                          country={"Ghana"}
+                          onChange={(val) => {
+                            setRegion(val);
+                            field.onChange(val);
+                          }}
+                          value={region}
+                          className="region"
+                          name="region-field"
+                          style={{
+                            width: "100%",
+                            color: "black",
+                            padding: 4,
+                            fontSize: 16,
+                            borderRadius: 4,
+                            border: "1px solid #ccc",
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
                   )}
                 />
                 {/* Address */}
@@ -415,7 +417,7 @@ const HostelListingForm = () => {
                       Submitting...
                     </>
                   ) : (
-                    "Submit Listing"
+                    "Submit"
                   )}
                 </Button>
               </form>

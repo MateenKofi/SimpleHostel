@@ -77,6 +77,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
       formData.append("price", data.basePrice.toString());
       formData.append("description", data.description || "");
       formData.append("status", data.status.toUpperCase());
+      formData.append('gender',data.gender.toUpperCase());
 
       if (Array.isArray(data.amenities)) {
         data.amenities.forEach((amenityId) => {
@@ -364,6 +365,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
           <button
             type="submit"
             className="flex justify-center items-center px-4 py-2 bg-black text-white rounded-md"
+            disabled={mutation.isPending}
           >
             {mutation.isPending ? (
               <Loader className="w-4 h-4 animate-spin" />

@@ -1,7 +1,6 @@
 import React from 'react';
 import DataTable from 'react-data-table-component';
 import { useNavigate } from 'react-router-dom';
-
 import { Staff } from '../../../types/types';
 import { Edit, Trash2 } from 'lucide-react';
 const StaffManagement: React.FC = () => {
@@ -73,7 +72,7 @@ const StaffManagement: React.FC = () => {
       <div className="bg-white rounded-lg shadow-sm p-4">
         <DataTable
           columns={columns}
-          data={staffList}
+          data={[]}
           pagination
           paginationPerPage={10}
           paginationRowsPerPageOptions={[10, 20, 30]}

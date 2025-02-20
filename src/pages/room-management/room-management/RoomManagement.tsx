@@ -79,6 +79,7 @@ const RoomManagement = () => {
     {
       name: "Status",
       sortable: true,
+      center:true,
       grow:2,
       cell: (row: Room) => (
         <span
@@ -96,11 +97,12 @@ const RoomManagement = () => {
     },
     {
       name: "Capacity",
-      selector: (row: Room) => row.maxCap,
+      selector: (row: Room) => `${row.currentResidentCount} / ${row.maxCap}`,
       sortable: true,
     },
     {
       name: "Actions",
+      center:true,
       grow: 2,
       cell: (row: Room) => (
         <div className="flex gap-2">
