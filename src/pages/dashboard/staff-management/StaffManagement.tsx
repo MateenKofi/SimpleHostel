@@ -41,12 +41,20 @@ const StaffManagement: React.FC = () => {
     },
     {
       name: 'Gender',
+      width:'100px',
       selector: (row: Staff) => row.gender,
       sortable: true,
     },
     {
-      name: 'Phone Number',
+      name: 'Phone',
+      grow:2,
       selector: (row: Staff) => row.phoneNumber,
+      sortable: true,
+    },
+    {
+      name: 'Role',
+      grow:2,
+      selector: (row: Staff) => row.role,
       sortable: true,
     },
     {
@@ -71,11 +79,12 @@ const StaffManagement: React.FC = () => {
     },
     {
       name: 'Actions',
+      width:'100px',
       grow:2,
       cell: (row: Staff) => (
-        <div className="flex space-x-2">
+        <div className="my-1 flex flex-col items-center justify-center space-y-1 text-nowrap">
           <button
-            className="flex gap-2 items-center px-2 py-1 bg-primary text-white rounded-md"
+            className="w-full flex gap-2 items-center px-2 py-1 bg-black text-white rounded-md"
             onClick={() => navigate(`/staff-management/${row.id}`)}
           >
             <Edit size={14}/>
@@ -84,7 +93,7 @@ const StaffManagement: React.FC = () => {
             </span>
           </button>
           <button
-            className="flex gap-2 items-center px-2 py-1 bg-red-500 text-white rounded-md"
+            className="w-full flex gap-2 items-center px-2 py-1 bg-red-500 text-white rounded-md"
             onClick={() => navigate(`/staff-management/${row.id}`)}
           >
             <Trash2 size={14}/>
@@ -122,6 +131,7 @@ const StaffManagement: React.FC = () => {
           columns={columns}
           data={filteredStaffs}
           pagination
+          strip
           paginationPerPage={10}
           paginationRowsPerPageOptions={[10, 20, 30]}
           highlightOnHover
