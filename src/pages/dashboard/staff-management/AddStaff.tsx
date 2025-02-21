@@ -5,6 +5,9 @@ import {  useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from 'react-hook-form';
 import { Staff } from '../../../types/types';
 import axios from 'axios';
+import { toast } from "react-hot-toast";
+import dayjs from "dayjs";
+
 
 
 type StaffForm = {
@@ -30,33 +33,33 @@ type StaffForm = {
 const AddStaff: React.FC = () => {
   const navigate = useNavigate();
   const [image, setImage] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const { register, handleSubmit, formState: { errors }, reset } = useForm<StaffForm>();
   const hostelId = localStorage.getItem("hostelId");
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      setImageFile(file);
+      setImage(URL.createObjectURL(file)); // Generate a preview URL
     }
   };
+  
 
    const queryClient = useQueryClient();
 
-  const mutation = useMutation({
-    mutationFn: async (data: staffForm) => {
+ const mutation = useMutation({
+  mutationFn: async (data: StaffForm) => {
+    try {
       const formData = new FormData();
       formData.append("hostelId", hostelId || "");
-      formData.append("maritalStatus", data.maritalStatus);
-      formData.append("religion", data.religion);
+      formData.append("maritalStatus", data.maritalStatus.toUpperCase());
+      formData.append("religion", data.religion.toUpperCase());
       formData.append("gender", data.gender.toUpperCase());
       formData.append("nationality", data.nationality);
       formData.append("dateOfBirth", data.dateOfBirth);
       formData.append("lastName", data.lastName);
-      formData.append("middleName", data.middleName);
+      formData.append("middleName", data.middleName || "");
       formData.append("firstName", data.firstName);
       formData.append("ghanaCardNumber", data.ghanaCardNumber);
       formData.append("phoneNumber", data.phoneNumber);
@@ -65,40 +68,50 @@ const AddStaff: React.FC = () => {
       formData.append("qualification", data.qualification);
       formData.append("role", data.role.toUpperCase());
       formData.append("block", data.block);
-      formData.append('dateOfAppointment',data.dateOfAppointment);
+      formData.append("dateOfAppointment", data.dateOfAppointment);
+      if (imageFile) {
+        formData.append("photo", imageFile);
+      }
+      
 
       const response = await axios.post(`/api/staffs/add`, formData, {
         headers: {
+          "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
       return response.data;
-    },
-    onSuccess: () => {
-      toast.success("staff added successfully");
-      queryClient.invalidateQueries({ queryKey: ["staffs"] });
-      reset();
-     
-    },
-    //handle different instances of errors
-    onError: (error: unknown) => {
-      let errorMessage 
-      if (error instanceof AxiosError) {
+    } catch (error) {
+      console.error("Error in mutation", error);
+      throw error;  // Rethrow error for `onError` to handle
+    }
+  },
+  onSuccess: () => {
+    console.log("Mutation successful");
+    queryClient.invalidateQueries({ queryKey: ["staffs"] });
+    toast.success("Staff added successfully");
+    reset();
+    navigate(-1);
+  },
+  onError: (error: unknown) => {
+    console.error("Mutation error:", error);
+    let errorMessage = "Failed to add staff";
+    if (axios.isAxiosError(error)) {
+      errorMessage = error.response?.data?.message || "Failed to add staff";
+    } else {
+      errorMessage = (error as Error).message || "Failed to add staff";
+    }
+    toast.error(errorMessage);
+  },
+});
 
-        errorMessage=error.response?.data?.message || "Failed to add staff";
-      } else {
-        errorMessage= (error as Error).message || "Failed to add staff";
-      }
-      toast.error(errorMessage);
-    },
 
-
-  });
-
-  const onSubmit = (data: staffForm) => {
-    mutation.mutate(data);
-  };
+const onSubmit = (data: StaffForm) => {
+  const formattedDOB = dayjs(data.dateOfBirth).format("YYYY-MM-DDTHH:mm:ss[Z]"); 
+  const formateedDateOfAppointment = dayjs(data.dateOfAppointment).format("YYYY-MM-DDTHH:mm:ss[Z]");
+  mutation.mutate({ ...data, dateOfBirth: formattedDOB, dateOfAppointment: formateedDateOfAppointment });
+};
 
   return (
    <div className='w-full h-screen flex justify-cente'>
@@ -122,46 +135,48 @@ const AddStaff: React.FC = () => {
             Upload Image
           </label>
           {image ? (
-            <div className="w-full h-80 relative ">
-              <img
-                src={typeof image === 'string' ? image : ''}
-                alt="Nominee"
-                className="object-cover rounded-md"
-              />
-              <div className="absolute top-2 right-2 space-x-2">
-                <button
-                  type="button"
-                  onClick={() => document.getElementById('imageUpload')?.click()}
-                  title="Edit Image"
-                  className="bg-white p-1 rounded-full"
-                >
-                  <Edit className="h-4 w-4 text-gray-600" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setImage(null)}
-                  title="Remove Image"
-                  className="bg-white p-1 rounded-full"
-                >
-                  <Trash className="h-4 w-4 text-gray-600" />
-                </button>
-              </div>
-            </div>
-          ) : (
-            <div
-              className="border-2 border-dashed border-gray-300 rounded-md p-4 text-center cursor-pointer"
-              onClick={() => document.getElementById('imageUpload')?.click()}
-            >
-              <ImageUp className="mx-auto h-12 w-12 text-gray-400" />
-              <p>Click to upload image</p>
-            </div>
-          )}
+  <div className="w-full h-80 relative">
+    <img
+      src={image}
+      alt="Staff"
+      className="object-cover w-full h-full rounded-md"
+    />
+    <div className="absolute top-2 right-2 space-x-2">
+      <button
+        type="button"
+        onClick={() => document.getElementById('imageUpload')?.click()}
+        title="Edit Image"
+        className="bg-white p-1 rounded-full"
+      >
+        <Edit className="h-4 w-4 text-gray-600" />
+      </button>
+      <button
+        type="button"
+        onClick={() => { setImage(null); setImageFile(null); }} // Reset both state values
+        title="Remove Image"
+        className="bg-white p-1 rounded-full"
+      >
+        <Trash className="h-4 w-4 text-gray-600" />
+      </button>
+    </div>
+  </div>
+) : (
+  <div
+    className="border-2 border-dashed border-gray-300 rounded-md p-4 text-center cursor-pointer"
+    onClick={() => document.getElementById('imageUpload')?.click()}
+  >
+    <ImageUp className="mx-auto h-12 w-12 text-gray-400" />
+    <p>Click to upload image</p>
+  </div>
+)}
+
           <input
             id="imageUpload"
             type="file"
             accept="image/*"
             className="hidden"
             onChange={handleImageUpload}
+            value={undefined}
           />
         </div>
 
