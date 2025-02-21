@@ -83,7 +83,7 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
   };
 
   const getAlertConfig = (): { type: AlertType; title: string; description: string; icon: JSX.Element; action: JSX.Element } | null => {
-    switch (status.toUpperCase()) {
+    switch (status?.toUpperCase()) {
       case 'PUBLISHED':
         return {
           type: 'success',
