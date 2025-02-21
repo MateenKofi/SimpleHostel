@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Edit, ImageUp, Trash } from 'lucide-react';
+import { ChevronLeft, Edit, ImageUp, Trash,Loader } from 'lucide-react';
 import {  useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from 'react-hook-form';
 import { Staff } from '../../../types/types';
@@ -120,7 +120,7 @@ const onSubmit = (data: StaffForm) => {
         <h1 className="text-2xl font-bold">Add Staff</h1>
         <button 
           onClick={() => navigate(-1)}
-          className="flex gap-2 px-4 py-2 bg-primary text-white rounded-md"
+          className="flex gap-2 px-4 py-2 bg-black text-white rounded-md"
         >
           <ChevronLeft/>
           <span>
@@ -361,9 +361,10 @@ const onSubmit = (data: StaffForm) => {
         <div>
           <button
             type="submit"
-            className="px-4 py-2 bg-primary text-white rounded-md"
+            className="px-4 py-2 bg-black text-white rounded-md"
           >
-            Submit
+            {mutation.isPending ? <Loader className='animate-spin'/>: ' Submit Forms'}
+           
           </button>
         </div>
       </form>
