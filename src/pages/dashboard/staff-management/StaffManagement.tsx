@@ -1,11 +1,35 @@
-import React from 'react';
+import React, { useState } from 'react';
 import DataTable from 'react-data-table-component';
-import { useNavigate } from 'react-router-dom';
 import { Staff } from '../../../types/types';
 import { Edit, Trash2 } from 'lucide-react';
+import {useNavigate} from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+
+
 const StaffManagement: React.FC = () => {
   const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
+  const hostelId = localStorage.getItem("hostelId") || "";
+  if (!hostelId) {
+    console.error("Hostel ID is not defined");
+    return <div>Error: Hostel ID is not defined</div>;
+  }
+  const { data:staffs, isLoading, isError } = useQuery({
+    queryKey: ["staffs"],
+    queryFn: async () => {
+      const response = await axios.get(`/api/Staffs/get/hostel/${hostelId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      return response?.data.data;
+    },
+  });
 
+  const filteredStaffs = staffs?.filter((staff: Staff) =>
+    `${staff.firstName} ${staff.middleName} ${staff.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const columns = [
     {
@@ -21,13 +45,28 @@ const StaffManagement: React.FC = () => {
       sortable: true,
     },
     {
+      name: 'Phone Number',
+      selector: (row: Staff) => row.phoneNumber,
+      sortable: true,
+    },
+    {
       name: 'Nationality', 
       selector: (row: Staff) => row.nationality,
       sortable: true,
     },
     {
-      name: 'Status',
-      selector: (row: Staff) => row.staffStatus,
+      name: 'Residence',
+      selector: (row: Staff) => row.residence,
+      sortable: true,
+    },
+    {
+      name: 'Qualification',
+      selector: (row: Staff) => row.qualification,
+      sortable: true,
+    },
+    {
+      name: 'Block',
+      selector: (row: Staff) => row.block,
       sortable: true,
     },
     {
@@ -62,17 +101,26 @@ const StaffManagement: React.FC = () => {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Staff Management</h1>
-        <button
-          className="px-4 py-2 bg-primary text-white rounded-md"
-          onClick={() => navigate('/dashboard/staff-management/add')}
-        >
-          Add Staff
-        </button>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            placeholder="Search staff..."
+            className="pl-4 pr-4 py-2 border rounded-md"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <button
+            className="px-4 py-2 bg-black text-white rounded-md"
+            onClick={() => navigate('/dashboard/staff-management/add')}
+          >
+            Add Staff
+          </button>
+        </div>
       </div>
       <div className="bg-white rounded-lg shadow-sm p-4">
         <DataTable
           columns={columns}
-          data={[]}
+          data={filteredStaffs}
           pagination
           paginationPerPage={10}
           paginationRowsPerPageOptions={[10, 20, 30]}
