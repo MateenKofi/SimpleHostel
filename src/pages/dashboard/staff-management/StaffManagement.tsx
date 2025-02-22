@@ -3,38 +3,78 @@ import DataTable from 'react-data-table-component';
 import { Staff } from '../../../types/types';
 import { Edit, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const StaffManagement: React.FC = () => {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
-  const hostelId = localStorage.getItem("hostelId") || "";
+  const queryClient = useQueryClient();
+  const [searchTerm, setSearchTerm] = useState('');
+  const hostelId = localStorage.getItem('hostelId') || '';
+
   if (!hostelId) {
-    console.error("Hostel ID is not defined");
+    console.error('Hostel ID is not defined');
     return <div>Error: Hostel ID is not defined</div>;
   }
+
+  // Fetch the staff data
   const { data: staffs, isLoading, isError } = useQuery({
-    queryKey: ["staffs"],
+    queryKey: ['staffs'],
     queryFn: async () => {
       const response = await axios.get(`/api/Staffs/get/hostel/${hostelId}`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
       return response?.data.data;
     },
   });
 
-  const filteredStaffs = staffs?.filter((staff: Staff) =>
-    `${staff.firstName} ${staff.middleName} ${staff.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
+  // Mutation for deleting a staff member
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return await axios.delete(`/api/Staffs/delete/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+    },
+    onSuccess: () => {
+      // Refresh the staff list after deletion
+      queryClient.invalidateQueries(['staffs']);
+      Swal.fire('Deleted!', 'The staff has been deleted.', 'success');
+    },
+    onError: () => {
+      Swal.fire('Error', 'There was an error deleting the staff.', 'error');
+    },
+  });
+
+  const handleDelete = async (id: string) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'Do you want to delete this staff?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete!',
+    });
+
+    if (result.isConfirmed) {
+      await deleteMutation.mutateAsync(id);
+    }
+  };
+
+  const filteredStaffs = (staffs || []).filter((staff: Staff) =>
+    `${staff.firstName} ${staff.middleName} ${staff.lastName}`
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
   );
 
   const columns = [
     {
       name: 'Name',
       grow: 2,
-      selector: (row: Staff) => 
+      selector: (row: Staff) =>
         `${row.firstName} ${row.middleName} ${row.lastName}`,
       sortable: true,
     },
@@ -57,7 +97,7 @@ const StaffManagement: React.FC = () => {
       sortable: true,
     },
     {
-      name: 'Nationality', 
+      name: 'Nationality',
       selector: (row: Staff) => row.nationality,
       sortable: true,
     },
@@ -86,24 +126,24 @@ const StaffManagement: React.FC = () => {
             className="w-full flex gap-2 items-center px-2 py-1 bg-black text-white rounded-md"
             onClick={() => navigate(`/dashboard/staff-management/edit/${row.id}`)}
           >
-            <Edit size={14}/>
-            <span>
-            Edit
-            </span>
+            <Edit size={14} />
+            <span>Edit</span>
           </button>
           <button
             className="w-full flex gap-2 items-center px-2 py-1 bg-red-500 text-white rounded-md"
-            onClick={() => navigate(`/dashboard/staff-management/${row.id}`)}
+            onClick={() => handleDelete(row.id)}
           >
-            <Trash2 size={14}/>
-            <span>
-            Delete
-            </span>
+            <Trash2 size={14} />
+            <span>Delete</span>
           </button>
         </div>
       ),
-    }
+    },
   ];
+
+  if (isError) {
+    return <div>Error loading staff data.</div>;
+  }
 
   return (
     <div className="p-6">
