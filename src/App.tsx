@@ -22,6 +22,7 @@ import ResidentForm from './pages/landing-page/component/resident-forms/Resident
 import LoginForm from './pages/Authentication/login/login-form';
 import ApproveHostel from './pages/dashboard/approvals/Approve-Hostel'
 import ProfileForm from './pages/dashboard/profile/Profile-From'
+import EditStaff from './pages/dashboard/staff-management/EditStaff';
 
 axios.defaults.headers.common["Accept"] = "application/json";
   axios.defaults.headers.common["Content-Type"] = "application/json";
@@ -44,6 +45,7 @@ function App() {
         <Route path='deptors-list' element={<DeptorsList/>}/>
         <Route path="visitor-management" element={<VisitorManagement />} />
         <Route path="staff-management" element={<StaffManagement />} />
+        <Route path="staff-management/Edit/:id" element={<EditStaff />} />
         <Route path="maintenance-and-tracking" element={<Maintenance />}/>
         <Route path="staff-management/add" element={<AddStaff />} />
         <Route path="approve-hostel" element={<ApproveHostel />} />

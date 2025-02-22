@@ -84,7 +84,7 @@ const StaffManagement: React.FC = () => {
         <div className="my-1 flex flex-col items-center justify-center space-y-1 text-nowrap">
           <button
             className="w-full flex gap-2 items-center px-2 py-1 bg-black text-white rounded-md"
-            onClick={() => navigate(`/staff-management/${row.id}`)}
+            onClick={() => navigate(`/dashboard/staff-management/edit/${row.id}`)}
           >
             <Edit size={14}/>
             <span>
@@ -93,7 +93,7 @@ const StaffManagement: React.FC = () => {
           </button>
           <button
             className="w-full flex gap-2 items-center px-2 py-1 bg-red-500 text-white rounded-md"
-            onClick={() => navigate(`/staff-management/${row.id}`)}
+            onClick={() => navigate(`/dashboard/staff-management/${row.id}`)}
           >
             <Trash2 size={14}/>
             <span>
