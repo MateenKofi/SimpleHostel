@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { Staff } from '../../../types/types';
 import { Edit, Trash2 } from 'lucide-react';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-
 
 const StaffManagement: React.FC = () => {
   const navigate = useNavigate();
@@ -15,7 +14,7 @@ const StaffManagement: React.FC = () => {
     console.error("Hostel ID is not defined");
     return <div>Error: Hostel ID is not defined</div>;
   }
-  const { data:staffs, isLoading, isError } = useQuery({
+  const { data: staffs, isLoading, isError } = useQuery({
     queryKey: ["staffs"],
     queryFn: async () => {
       const response = await axios.get(`/api/Staffs/get/hostel/${hostelId}`, {
@@ -41,19 +40,19 @@ const StaffManagement: React.FC = () => {
     },
     {
       name: 'Gender',
-      width:'100px',
+      width: '100px',
       selector: (row: Staff) => row.gender,
       sortable: true,
     },
     {
       name: 'Phone',
-      grow:2,
+      grow: 2,
       selector: (row: Staff) => row.phoneNumber,
       sortable: true,
     },
     {
       name: 'Role',
-      grow:2,
+      grow: 2,
       selector: (row: Staff) => row.role,
       sortable: true,
     },
@@ -79,8 +78,8 @@ const StaffManagement: React.FC = () => {
     },
     {
       name: 'Actions',
-      width:'100px',
-      grow:2,
+      width: '100px',
+      grow: 2,
       cell: (row: Staff) => (
         <div className="my-1 flex flex-col items-center justify-center space-y-1 text-nowrap">
           <button
@@ -127,17 +126,39 @@ const StaffManagement: React.FC = () => {
         </div>
       </div>
       <div className="bg-white rounded-lg shadow-sm p-4">
-        <DataTable
-          columns={columns}
-          data={filteredStaffs}
-          pagination
-          strip
-          paginationPerPage={10}
-          paginationRowsPerPageOptions={[10, 20, 30]}
-          highlightOnHover
-          pointerOnHover
-          responsive
-        />
+        {isLoading ? (
+          <div className="animate-pulse">
+            <div className="h-6 bg-gray-200 rounded mb-4"></div>
+            <div className="grid grid-cols-8 gap-4 mb-4">
+              <div className="col-span-2 h-6 bg-gray-200 rounded"></div>
+              <div className="col-span-1 h-6 bg-gray-200 rounded"></div>
+              <div className="col-span-2 h-6 bg-gray-200 rounded"></div>
+              <div className="col-span-1 h-6 bg-gray-200 rounded"></div>
+              <div className="col-span-1 h-6 bg-gray-200 rounded"></div>
+              <div className="col-span-1 h-6 bg-gray-200 rounded"></div>
+            </div>
+            <div className="h-6 bg-gray-200 rounded mb-4"></div>
+            <div className="grid grid-cols-8 gap-4 mb-4">
+              <div className="col-span-2 h-6 bg-gray-200 rounded"></div>
+              <div className="col-span-1 h-6 bg-gray-200 rounded"></div>
+              <div className="col-span-2 h-6 bg-gray-200 rounded"></div>
+              <div className="col-span-1 h-6 bg-gray-200 rounded"></div>
+              <div className="col-span-1 h-6 bg-gray-200 rounded"></div>
+              <div className="col-span-1 h-6 bg-gray-200 rounded"></div>
+            </div>
+          </div>
+        ) : (
+          <DataTable
+            columns={columns}
+            data={filteredStaffs}
+            pagination
+            paginationPerPage={10}
+            paginationRowsPerPageOptions={[10, 20, 30]}
+            highlightOnHover
+            pointerOnHover
+            responsive
+          />
+        )}
       </div>
     </div>
   );
