@@ -152,6 +152,14 @@ const EditStaff: React.FC = () => {
 
   // Submit handler to format dates and call mutation
   const onSubmit = (data: StaffForm) => {
+    const dateOfBirthValid = dayjs(data.dateOfBirth, 'YYYY-MM-DD', true).isValid();
+    const dateOfAppointmentValid = dayjs(data.dateOfAppointment, 'YYYY-MM-DD', true).isValid();
+
+    if (!dateOfBirthValid || !dateOfAppointmentValid) {
+      toast.error('Date of birth and Date of appointment must be in the format YYYY-MM-DD');
+      return;
+    }
+
     const formattedDOB = dayjs(data.dateOfBirth).format('YYYY-MM-DDTHH:mm:ss[Z]');
     const formattedDateOfAppointment = dayjs(data.dateOfAppointment).format('YYYY-MM-DDTHH:mm:ss[Z]');
     EditStaffMutation.mutate({ ...data, dateOfBirth: formattedDOB, dateOfAppointment: formattedDateOfAppointment });
