@@ -23,6 +23,8 @@ import LoginForm from './pages/Authentication/login/login-form';
 import ApproveHostel from './pages/dashboard/approvals/Approve-Hostel'
 import ProfileForm from './pages/dashboard/profile/Profile-From'
 import EditStaff from './pages/dashboard/staff-management/EditStaff';
+import CalendarYear from './pages/calendarYear/CalendarYear';
+
 
 axios.defaults.headers.common["Accept"] = "application/json";
   axios.defaults.headers.common["Content-Type"] = "application/json";
@@ -40,6 +42,7 @@ function App() {
       <Route path='/dashboard' element={<Layout />}>
         <Route index element={<Dashboard />} />
         <Route path="room-management" element={<RoomManagementTab/>} />
+        <Route path="calendar-year-management" element={<CalendarYear/>} />
         <Route path='room-assignment/:residentId' element={<RoomAssignmentAndPayment />} />
         <Route path="resident-management" element={<ResidentManagement />} />
         <Route path='deptors-list' element={<DeptorsList/>}/>

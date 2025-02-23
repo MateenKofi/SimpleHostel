@@ -16,6 +16,7 @@ import {
   Wrench,
   Users,
   CheckSquare,
+  Calendar,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useQuery } from '@tanstack/react-query'
@@ -36,6 +37,7 @@ export function NavMain() {
 
   const navMain = [
     { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
+    {title: "Calendar Year", icon: Calendar, path: "/dashboard/calendar-year-management"},
     { title: "Room Management", icon: BedDouble, path: "/dashboard/room-management" },
     { title: "Resident Management", icon: BookOpenCheck, path: "/dashboard/resident-management" },
     { title: "Debtors List", icon: List, path: "/dashboard/debtors-list" },
