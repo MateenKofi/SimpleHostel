@@ -38,8 +38,6 @@ export function NavMain() {
     },
   })
 
-  if (isLoading) return <div>Loading...</div>
-  if (isError) return <div>Error loading user profile</div>
 
   const navMain = [
     { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },

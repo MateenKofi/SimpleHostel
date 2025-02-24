@@ -12,6 +12,7 @@ import {
   BedDouble,
   Users,
   Hammer,
+  Loader,
 } from "lucide-react";
 import { useModal } from "../../../components/Modal";
 import AddRoomModal from "./AddRoomModal";
@@ -30,6 +31,7 @@ const RoomManagement = () => {
   const { open: openAmenitiesModal, close: closeAmenitiesModal } = useModal("amenities_modal");
   const { open: openEditRoomModal, close: closeEditRoomModal } = useModal("editroom_modal");
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
+  const [deletingRoomId, setDeletingRoomId] = useState<string | null>(null);
   const hostelId = localStorage.getItem("hostelId") || "";
 
   if (!hostelId) {
@@ -87,7 +89,9 @@ const RoomManagement = () => {
     });
 
     if (result.isConfirmed) {
-      deleteMutation.mutateAsync(id);
+      setDeletingRoomId(id);
+      await deleteMutation.mutateAsync(id);
+      setDeletingRoomId(null);
     }
   };
 
@@ -159,8 +163,14 @@ const RoomManagement = () => {
             className="text-white flex bg-black p-2 rounded"
             onClick={() => handleDelete(row.id)}
           >
-            <Trash2 className="w-4 h-4" />
-            <span>Delete</span>
+            {deletingRoomId === row.id ? (
+              <Loader className="w-4 h-4 animate-spin" />
+            ) : (
+              <>
+                <Trash2 className="w-4 h-4" />
+                <span>Delete</span>
+              </>
+            )}
           </button>
         </div>
       ),
