@@ -11,6 +11,7 @@ const StaffManagement: React.FC = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState('');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const hostelId = localStorage.getItem('hostelId') || '';
 
   if (!hostelId) {
@@ -51,6 +52,7 @@ const StaffManagement: React.FC = () => {
   });
 
   const handleDelete = async (id: string) => {
+    setDeletingId(id);
     const result = await Swal.fire({
       title: 'Are you sure?',
       text: 'Do you want to delete this staff?',
@@ -62,6 +64,7 @@ const StaffManagement: React.FC = () => {
     if (result.isConfirmed) {
       await deleteMutation.mutateAsync(id);
     }
+    setDeletingId(null);
   };
 
   const filteredStaffs = (staffs || []).filter((staff: Staff) =>
@@ -133,8 +136,14 @@ const StaffManagement: React.FC = () => {
             className="w-full flex gap-2 items-center px-2 py-1 bg-red-500 text-white rounded-md"
             onClick={() => handleDelete(row.id)}
           >
-            <Trash2 size={14} />
-            <span>Delete</span>
+            {deletingId === row.id ? (
+              <span className="loader"></span>
+            ) : (
+              <>
+                <Trash2 size={14} />
+                <span>Delete</span>
+              </>
+            )}
           </button>
         </div>
       ),
