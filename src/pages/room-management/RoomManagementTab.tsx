@@ -32,7 +32,6 @@ const RoomManagementTab = () => {
     }
   }, [userProfile]);
 
-  console.log('hostelState', hostelState);
 
   const tabData: TabData[] = [
     {
