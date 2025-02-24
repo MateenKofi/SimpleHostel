@@ -354,7 +354,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
             type="submit"
             className="flex justify-center items-center px-4 py-2 bg-black text-white rounded-md"
           >
-            {mutation.isLoading ? <Loader className="w-4 h-4 animate-spin" /> : "Update Room"}
+            {mutation.isPending ? <Loader className="w-4 h-4 animate-spin" /> : "Update Room"}
           </button>
         </div>
       </form>
