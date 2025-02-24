@@ -335,9 +335,9 @@ const RoomManagement = () => {
       )}
 
       {/* Edit Room Modal (only rendered if a room is selected) */}
-      {selectedRoom && (
+      
         <EditRoomModal onClose={closeEditRoomModal} formdata={selectedRoom} />
-      )}
+     
     </div>
   );
 };
