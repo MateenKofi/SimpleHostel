@@ -130,7 +130,7 @@ const onSubmit = (data: StaffForm) => {
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-6 p-6 rounded-lg shadow-sm bg-white">
-        <div className='w-52 h-52'>
+        <div className='w-52 h-52 overflow-hidden rounded-md'>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Upload Image
           </label>
@@ -169,7 +169,6 @@ const onSubmit = (data: StaffForm) => {
     <p>Click to upload image</p>
   </div>
 )}
-
           <input
             id="imageUpload"
             type="file"

@@ -1,7 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { CalendarClock, Plus, History, Trash2 } from "lucide-react"
+import { useForm } from "react-hook-form"
+import { CalendarClock, Plus, History, Trash2,Loader } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
@@ -16,6 +17,8 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { toast } from "react-hot-toast"
+import axios from 'axios';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface ICalendarYear {
     id: string
@@ -65,12 +68,51 @@ const CalendarYear = () => {
             },
         },
     ])
+    const queryClient = useQueryClient();
     const [loading, setLoading] = React.useState(false)
-    const [newYearName, setNewYearName] = React.useState("")
+    const { register, handleSubmit, reset } = useForm<{ yearName: string }>()
 
-    const startNewYear = () => {
-        // Dummy function for starting a new year
-        toast({ title: "New year started", description: newYearName })
+    // Mutation for adding calendar year
+    const AddCalendarYearMutation = useMutation({
+        mutationFn: async (data) => {
+            const hostelId = localStorage.getItem('hostelId');
+            try {
+                const payload = {
+                    name: data.yearName,
+                    hostelId: hostelId || '',
+                };
+
+                const response = await axios.post(`/api/calendar/start`, payload, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('token')}`,
+                    },
+                });
+
+                return response.data;
+            } catch (error) {
+                console.error('Error in mutation', error);
+                throw error;
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [''] });
+            toast.success('Academic Year added successfully');
+            reset();
+        },
+        onError: (error: unknown) => {
+            console.error('Mutation error:', error);
+            let errorMessage = 'Failed to add Academic Year';
+            if (axios.isAxiosError(error)) {
+                errorMessage = error.response?.data?.message || 'Failed to add Academic Year';
+            } else {
+                errorMessage = (error as Error).message || 'Failed to add Academic Year';
+            }
+            toast.error(errorMessage);
+        },
+    });
+
+    const onSubmit = (data) => {
+        AddCalendarYearMutation.mutate(data)
     }
 
     const deleteYear = (id: string) => {
@@ -80,7 +122,7 @@ const CalendarYear = () => {
 
     return (
         <div className="container mx-auto py-8 px-4">
-            <div className="flex justify-between items-center mb-8">
+            <form onSubmit={handleSubmit(onSubmit)} className="flex justify-between items-center mb-8">
                 <h1 className="text-3xl font-bold">Calendar Year Management</h1>
                 <Dialog>
                     <DialogTrigger asChild>
@@ -96,23 +138,26 @@ const CalendarYear = () => {
                                 Enter a name for the new calendar year. This will create a new active year.
                             </DialogDescription>
                         </DialogHeader>
-                        <div className="grid gap-4 py-4">
+                        <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-4">
                             <div className="grid gap-2">
                                 <Label htmlFor="name">Year Name</Label>
                                 <Input
                                     id="name"
-                                    value={newYearName}
-                                    onChange={(e) => setNewYearName(e.target.value)}
+                                    {...register("yearName")}
                                     placeholder="e.g., Academic Year 2024-2025"
                                 />
                             </div>
-                        </div>
-                        <DialogFooter>
-                            <Button onClick={startNewYear}>Create</Button>
-                        </DialogFooter>
+                            <DialogFooter>
+                                <Button type="submit"
+                                disabled={AddCalendarYearMutation.isPending}
+                                >
+                                    {AddCalendarYearMutation.isPending ? <Loader className='animate-spin'/>: 'Create Year'}
+                                </Button>
+                            </DialogFooter>
+                        </form>
                     </DialogContent>
                 </Dialog>
-            </div>
+            </form>
 
             {currentYear && (
                 <Card className="mb-8">

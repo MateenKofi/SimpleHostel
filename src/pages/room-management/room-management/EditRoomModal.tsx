@@ -94,10 +94,10 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
       }
 
       // // Append each new image file
-      // images.forEach((image) => {
-      //   console.log("Appending image:", image.name);
-      //   formData.append("photos", image);
-      // });
+      images.forEach((image) => {
+        console.log("Appending image:", image.name);
+        formData.append("photos", image);
+      });
 
       const response = await axios.put(`/api/rooms/update/${formdata.id}`, formData, {
         headers: {

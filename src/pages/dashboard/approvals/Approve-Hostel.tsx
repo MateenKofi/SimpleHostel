@@ -34,13 +34,11 @@ const ApproveHostel: React.FC = () => {
 
     const AcceptMutation = useMutation({
         mutationFn: async (hostelId: string) => {
-            const response = await axios.post(`/api/hostels/verify/${hostelId}`, 
-                {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem('token')}`,
-              }
-            }
-            );
+            const response = await axios.post(`/api/hostels/verify/${hostelId}`, {}, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem('token')}`,
+                },
+            });
             return response?.data;
         },
         onSuccess: (response) => {
