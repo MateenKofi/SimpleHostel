@@ -6,27 +6,27 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import ImageUpload from "../../../components/ImageUpload";
 import { Loader } from "lucide-react";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 
 type RoomForm = Room & {
   images: File[];
 };
 
-type EditRoomModalProp = {
+type EditRoomModalProps = {
   onClose: () => void;
   formdata: Room;
 };
 
 const ROOM_STATUS = ["Available", "Maintenance", "Occupied"] as const;
 
-const ROOM_TYPE_CAPACITY = {
+const ROOM_TYPE_CAPACITY: Record<string, number> = {
   single: 1,
   double: 2,
   suit: 3,
   quard: 4,
 };
 
-const EditRoomModal = ({ onClose, formdata }: EditRoomModalProp) => {
+const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
   const {
     register,
     handleSubmit,
@@ -41,35 +41,38 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProp) => {
     },
   });
 
-  console.log("formdata", formdata);
-
   const [images, setImages] = useState<File[]>([]);
   const [defaultImages, setDefaultImages] = useState<string[]>([]);
   const hostelId = localStorage.getItem("hostelId");
 
+  // Called when new images are uploaded
   const handleImagesChange = (newImages: File[]) => {
     setImages(newImages);
-    console.log("images", newImages);
   };
 
+  // Remove a default image from the UI
+  const handleRemoveDefaultImage = (index: number) => {
+    setDefaultImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // Fetch amenities for the hostel
   const {
-    data: Amenities,
-    isLoading,
-    isError,
+    data: amenitiesData,
+    isLoading: isAmenitiesLoading,
+    isError: isAmenitiesError,
   } = useQuery<{ data: { id: string; name: string; price: number }[] }>({
     queryKey: ["amenities"],
     queryFn: async () => {
       const response = await axios.get(`/api/amenities/hostel/${hostelId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
-      return response?.data;
+      return response.data;
     },
   });
 
   const queryClient = useQueryClient();
 
+  // Mutation to update the room
   const mutation = useMutation({
     mutationFn: async (data: RoomForm) => {
       const formData = new FormData();
@@ -83,34 +86,35 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProp) => {
       formData.append("description", data.description || "");
       formData.append("status", data.status.toUpperCase());
 
+      // Append each selected amenity ID
       if (Array.isArray(data.amenities)) {
-        data.amenities.forEach((amenityId, index) => {
-          formData.append(`amenitiesIds[]`, amenityId);
+        data.amenities.forEach((amenityId) => {
+          formData.append("amenitiesIds[]", amenityId);
         });
       }
 
-      images.forEach((image) => {
-        formData.append("photos", image);
-      });
+      // // Append each new image file
+      // images.forEach((image) => {
+      //   console.log("Appending image:", image.name);
+      //   formData.append("photos", image);
+      // });
 
-      const response = await axios.post(`/api/rooms/add`, formData, {
+      const response = await axios.put(`/api/rooms/update/${formdata.id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-
       return response.data;
     },
     onSuccess: () => {
-      toast.success("Room added successfully");
+      toast.success("Room updated successfully");
       queryClient.invalidateQueries({ queryKey: ["rooms"] });
-      reset(); // Reset form fields
+      reset();
       onClose();
     },
     onError: (error: any) => {
-      const errorMessage =
-        error.response?.data?.message || "Failed to add room";
+      const errorMessage = error.response?.data?.message || "Failed to update room";
       toast.error(errorMessage);
     },
   });
@@ -119,7 +123,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProp) => {
     mutation.mutate(data);
   };
 
-  // Watch the roomType field and update maxOccupancy accordingly
+  // Update maxOccupancy when roomType changes
   const roomType = watch("roomType");
   useEffect(() => {
     if (roomType) {
@@ -127,21 +131,27 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProp) => {
     }
   }, [roomType, setValue]);
 
+  // Initialize form values and default images/amenities from formdata
   useEffect(() => {
     if (formdata) {
-      setValue("roomNumber", formdata?.number);
-      setValue("block", formdata?.block);
-      setValue("floor", parseInt(formdata?.floor));
-      setValue("roomType", formdata?.type.toLowerCase());
-      setValue("maxOccupancy", formdata?.maxCap);
-      setValue("basePrice", formdata?.price);
-      setValue("description", formdata?.description);
-      setValue("status", formdata?.status.toLowerCase());
-      const imageUrls = formdata?.RoomImage.map((img: any) => img.imageUrl);
+      setValue("roomNumber", formdata.number);
+      setValue("block", formdata.block);
+      setValue("floor", parseInt(formdata.floor));
+      setValue("roomType", formdata.type.toLowerCase());
+      setValue("maxOccupancy", formdata.maxCap);
+      setValue("basePrice", formdata.price);
+      setValue("description", formdata.description);
+      setValue("status", formdata.status.toLowerCase());
+
+      // Set default images from room images array
+      const imageUrls = formdata.RoomImage.map((img: any) => img.imageUrl);
       setDefaultImages(imageUrls);
-      const selectedAmenities =
-        formdata?.amenities?.map((amenity: any) => amenity.name) || [];
-      setValue("amenities", selectedAmenities);
+
+      // Use either formdata.amenities or formdata.Amenities for default selection
+      const selectedAmenityIds = formdata.amenities
+        ? formdata.amenities.map((a: any) => a.id || a)
+        : formdata.Amenities?.map((amenity: any) => amenity.id) || [];
+      setValue("amenities", selectedAmenityIds);
     }
   }, [formdata, setValue]);
 
@@ -158,7 +168,9 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProp) => {
         <ImageUpload
           onImagesChange={handleImagesChange}
           defaultImages={defaultImages}
+          onRemoveDefaultImage={handleRemoveDefaultImage}
         />
+
         <div className="grid grid-cols-2 gap-4">
           {/* Room Number */}
           <div className="flex flex-col gap-1">
@@ -166,25 +178,21 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProp) => {
               Room Number*
             </label>
             <input
-              {...register("roomNumber", {
-                required: "Room number is required",
-              })}
+              {...register("roomNumber", { required: "Room number is required" })}
               type="text"
               id="number"
               placeholder="e.g., A101"
               className="border rounded-md p-2"
             />
             {errors.roomNumber && (
-              <span className="text-red-500 text-sm">
-                {errors.roomNumber.message}
-              </span>
+              <span className="text-red-500 text-sm">{errors.roomNumber.message}</span>
             )}
           </div>
 
           {/* Block */}
           <div className="flex flex-col gap-1">
             <label htmlFor="block" className="text-sm font-medium">
-              Block
+              Block*
             </label>
             <input
               {...register("block", { required: "Block is required" })}
@@ -193,17 +201,13 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProp) => {
               placeholder="e.g., A"
               className="border rounded-md p-2"
             />
-            {errors.block && (
-              <span className="text-red-500 text-sm">
-                {errors.block.message}
-              </span>
-            )}
+            {errors.block && <span className="text-red-500 text-sm">{errors.block.message}</span>}
           </div>
 
           {/* Floor */}
           <div className="flex flex-col gap-1">
             <label htmlFor="floor" className="text-sm font-medium">
-              Floor
+              Floor*
             </label>
             <input
               {...register("floor", {
@@ -214,11 +218,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProp) => {
               id="floor"
               className="border rounded-md p-2"
             />
-            {errors.floor && (
-              <span className="text-red-500 text-sm">
-                {errors.floor.message}
-              </span>
-            )}
+            {errors.floor && <span className="text-red-500 text-sm">{errors.floor.message}</span>}
           </div>
 
           {/* Room Type */}
@@ -229,7 +229,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProp) => {
             <select
               {...register("roomType", { required: "Room type is required" })}
               id="type"
-              className="border rounded-md p-2 "
+              className="border rounded-md p-2"
             >
               <option value="">Select Room Type</option>
               <option value="single">Single</option>
@@ -238,13 +238,11 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProp) => {
               <option value="quard">Quard</option>
             </select>
             {errors.roomType && (
-              <span className="text-red-500 text-sm">
-                {errors.roomType.message}
-              </span>
+              <span className="text-red-500 text-sm">{errors.roomType.message}</span>
             )}
           </div>
 
-          {/* Max Occupancy (Read-only) */}
+          {/* Maximum Occupancy (Read-only) */}
           <div className="flex flex-col gap-1">
             <label htmlFor="maxOccupancy" className="text-sm font-medium">
               Maximum Occupancy
@@ -261,7 +259,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProp) => {
           {/* Base Price */}
           <div className="flex flex-col gap-1">
             <label htmlFor="basePrice" className="text-sm font-medium">
-              Base Price
+              Base Price*
             </label>
             <input
               {...register("basePrice", { required: "Base price is required" })}
@@ -271,9 +269,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProp) => {
               step="0.01"
             />
             {errors.basePrice && (
-              <span className="text-red-500 text-sm">
-                {errors.basePrice.message}
-              </span>
+              <span className="text-red-500 text-sm">{errors.basePrice.message}</span>
             )}
           </div>
         </div>
@@ -284,10 +280,9 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProp) => {
             Status*
           </label>
           <select
-            {...register("status")}
+            {...register("status", { required: "Status is required" })}
             id="status"
             className="border rounded-md p-2"
-            defaultValue={formdata?.status.toLowerCase()}
           >
             {ROOM_STATUS.map((status) => (
               <option key={status} value={status.toLowerCase()}>
@@ -301,21 +296,17 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProp) => {
         <div className="flex flex-col gap-1">
           <label className="text-sm font-medium">Amenities</label>
           <div className="flex flex-wrap gap-2">
-            {Amenities?.data?.map((amenity) => {
-              // Extract IDs from formdata.Amenities
-              const formdataAmenityIds =
-                formdata?.Amenities?.map((a: any) => a.id) || [];
-              const isSelected = formdataAmenityIds.includes(amenity.id);
-
+            {amenitiesData?.data.map((amenity) => {
+              const currentAmenities: string[] = watch("amenities") || [];
+              const isSelected = currentAmenities.includes(amenity.id);
               return (
                 <label
                   key={amenity.id}
-                  className={`w-fit cursor-pointer px-4 py-2 rounded-full border transition-colors shadow
-            ${
-              isSelected
-                ? "bg-black text-white border-black"
-                : "bg-gray-100 text-gray-900 border-gray-200 hover:bg-gray-50"
-            }`}
+                  className={`w-fit cursor-pointer px-4 py-2 rounded-full border transition-colors shadow ${
+                    isSelected
+                      ? "bg-black text-white border-black"
+                      : "bg-gray-100 text-gray-900 border-gray-200 hover:bg-gray-50"
+                  }`}
                 >
                   <input
                     type="checkbox"
@@ -323,12 +314,13 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProp) => {
                     {...register("amenities")}
                     className="hidden"
                     checked={isSelected}
-                    onChange={() => {
-                      const updatedAmenities = isSelected
-                        ? watch("amenities").filter(
-                            (id: string) => id !== amenity.id
-                          )
-                        : [...(watch("amenities") || []), amenity.id];
+                    onChange={(e) => {
+                      let updatedAmenities = [...currentAmenities];
+                      if (e.target.checked) {
+                        updatedAmenities.push(amenity.id);
+                      } else {
+                        updatedAmenities = updatedAmenities.filter((id) => id !== amenity.id);
+                      }
                       setValue("amenities", updatedAmenities);
                     }}
                   />
@@ -353,23 +345,16 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProp) => {
           />
         </div>
 
+        {/* Action Buttons */}
         <div className="flex justify-end gap-2 mt-4">
-          <button
-            type="button"
-            onClick={onClose}
-            className="px-4 py-2 border rounded-md"
-          >
+          <button type="button" onClick={onClose} className="px-4 py-2 border rounded-md">
             Cancel
           </button>
           <button
             type="submit"
             className="flex justify-center items-center px-4 py-2 bg-black text-white rounded-md"
           >
-            {mutation.isPending ? (
-              <Loader className="w-4 h-4 animate-spin" />
-            ) : (
-              "Update Room"
-            )}
+            {mutation.isLoading ? <Loader className="w-4 h-4 animate-spin" /> : "Update Room"}
           </button>
         </div>
       </form>
