@@ -26,7 +26,7 @@ export function NavMain() {
     data: userProfile,
     isLoading,
     isError,
-  } = useQuery<any>({
+  } = useQuery<{ restofUser: { role: string } }>({
     queryKey: ["userProfile"],
     queryFn: async () => {
       const response = await axios.get("/api/users/profile", {
@@ -37,6 +37,9 @@ export function NavMain() {
       return response?.data
     },
   })
+
+  if (isLoading) return <div>Loading...</div>
+  if (isError) return <div>Error loading user profile</div>
 
   const navMain = [
     { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
@@ -62,7 +65,7 @@ export function NavMain() {
             <SidebarMenuButton
               onClick={() => (window.location.href = item.path)}
               tooltip={item.title}
-              className="w-full transition-colors duration-3000 ease-in-out hover:bg-black hover:text-white rounded-md"
+              className="w-full transition duration-700 ease-in-out hover:bg-black hover:text-white hover:translate-x-2 rounded-md"
             >
               {item.icon && <item.icon className="w-4 h-4" />}
               <span>{item.title}</span>
