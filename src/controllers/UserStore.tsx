@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { useQuery } from "@tanstack/react-query";
+
 
 type DecodedToken = {
   id: string;
@@ -40,6 +40,7 @@ export const useUserStore = create<User>((set) => ({
       const response = await axios.post("/api/users/login", data);
       const { token } = response.data;
       const decoded: DecodedToken = jwtDecode(token);
+      console.log('decodedToken', decoded);
 
       set({
         name: "", // Name should be fetched separately
@@ -53,6 +54,7 @@ export const useUserStore = create<User>((set) => ({
       localStorage.setItem("token", token);
       localStorage.setItem("hostelId", decoded.hostelId);
       localStorage.setItem("userId", decoded.id);
+      localStorage.setItem('role',decoded.role);
 
       toast.success("Login successful");
       return true;
@@ -93,22 +95,4 @@ export const useUserStore = create<User>((set) => ({
   },
 }));
 
-// Fetch user profile separately using React Query
-export const useUserProfile = () => {
-  return useQuery({
-    queryKey: ["userProfile"],
-    queryFn: async () => {
-      const response = await axios.get("/api/users/profile", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      const userProfile = response?.data;
-      if (userProfile) {
-        localStorage.setItem("userProfile", JSON.stringify(userProfile?.restofUser?.role));
-      }
-      return userProfile;
-    },
-    enabled: !!localStorage.getItem("token"), // Only fetch if token exists
-  });
-};
+

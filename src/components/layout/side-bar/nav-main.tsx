@@ -1,5 +1,5 @@
 "use client"
-
+import { useEffect } from "react";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -19,14 +19,12 @@ import {
   Calendar,
   UserCog,
 } from "lucide-react"
-import { useUserStore, useUserProfile } from "../../../controllers/UserStore";
+
 
 
 
 export function NavMain() {
-  const { isLoading, isError } = useUserProfile();
-  const userProfile = localStorage.getItem('userProfile')
- 
+  const userRole = localStorage.getItem('role')
 
   const navMain = [
     { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
@@ -39,7 +37,7 @@ export function NavMain() {
     { title: "Staff Management", icon: Users, path: "/dashboard/staff-management" },
   ]
 
-  if (userProfile === "SUPER_ADMIN") {
+  if (userRole === "SUPER_ADMIN") {
     navMain.push({ title: "Approve Hostel", icon: CheckSquare, path: "/dashboard/approve-hostel" })
     navMain.push({ title: "Super Admin", icon: UserCog, path: "/dashboard/approve-hostel" })
   }

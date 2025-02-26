@@ -29,10 +29,9 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { User } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
-import axios from 'axios'
 import {useNavigate} from 'react-router-dom'
+import { LogoutIcon } from "@/components/animateIcons/Logout"
+
 export function NavUser() {
 
   const { isMobile } = useSidebar()
@@ -46,17 +45,7 @@ export function NavUser() {
     navigate('/login')
   }
 
-  const { data:userProfile, isLoading, isError } = useQuery({
-    queryKey: ['userProfile'],
-    queryFn: async () => {
-      const response = await axios.get('/api/users/profile', {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      });
-      return response?.data;
-    },
-  });
+  const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}')
 
   return (
     <SidebarMenu>
@@ -68,12 +57,12 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={userProfile?.restofUser?.imageUrl} alt={userProfile?.restofUser?.name} />
+                <AvatarImage src={userProfile?.imageUrl} alt={userProfile?.restofUser?.name} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{userProfile?.restofUser?.name || 'User Name'}</span>
-                <span className="truncate text-xs">{userProfile?.restofUser?.email|| 'User Email'}</span>
+                <span className="truncate font-semibold">{userProfile?.name || 'User Name'}</span>
+                <span className="truncate text-xs">{userProfile?.email|| 'User Email'}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -87,7 +76,7 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={userProfile?.restofUser?.imageUrl} alt={userProfile?.restofUser?.name} />
+                  <AvatarImage src={userProfile?.imageUrl} alt={userProfile?.restofUser?.name} />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -112,8 +101,7 @@ export function NavUser() {
             <DropdownMenuItem
             onClick={handlelogout}
             >
-              <LogOut />
-              Log out
+              <LogoutIcon />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
