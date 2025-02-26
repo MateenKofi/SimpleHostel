@@ -99,27 +99,27 @@ const RoomManagement = () => {
   const columns = [
     {
       name: "Room No.",
-      selector: (row: Room) => row.number,
+      selector: (row: Room) => row.number || '',
       sortable: true,
     },
     {
       name: "Block",
-      selector: (row: Room) => row.block,
+      selector: (row: Room) => row.block || '',
       sortable: true,
     },
     {
       name: "Floor",
-      selector: (row: Room) => row.floor,
+      selector: (row: Room) => row.floor || '',
       sortable: true,
     },
     {
       name: "Type",
-      selector: (row: Room) => row.type,
+      selector: (row: Room) => row.type || '',
       sortable: true,
     },
     {
       name: "Price",
-      selector: (row: Room) => row.price,
+      selector: (row: Room) => row.price || 0,
       sortable: true,
     },
     {
@@ -143,7 +143,7 @@ const RoomManagement = () => {
     },
     {
       name: "Capacity",
-      selector: (row: Room) => `${row.currentResidentCount} / ${row.maxCap}`,
+      selector: (row: Room) => `${row.currentResidentCount || 0} / ${row.maxCap || 0}`,
       sortable: true,
     },
     {
@@ -336,7 +336,7 @@ const RoomManagement = () => {
 
       {/* Edit Room Modal (only rendered if a room is selected) */}
       
-        <EditRoomModal onClose={closeEditRoomModal} formdata={selectedRoom} />
+        {selectedRoom && <EditRoomModal onClose={closeEditRoomModal} formdata={selectedRoom} />}
      
     </div>
   );

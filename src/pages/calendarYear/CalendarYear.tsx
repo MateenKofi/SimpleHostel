@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useForm } from "react-hook-form"
+import { SubmitHandler, useForm } from "react-hook-form"
 import { CalendarClock, Plus, History, Trash2,Loader } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -30,6 +30,10 @@ interface ICalendarYear {
         totalRevenue: number
         totalExpenses: number
     }
+}
+
+interface FormValues {
+    yearName: string
 }
 
 const CalendarYear = () => {
@@ -70,11 +74,11 @@ const CalendarYear = () => {
     ])
     const queryClient = useQueryClient();
     const [loading, setLoading] = React.useState(false)
-    const { register, handleSubmit, reset } = useForm<{ yearName: string }>()
+    const { register, handleSubmit, reset } = useForm<FormValues>()
 
     // Mutation for adding calendar year
     const AddCalendarYearMutation = useMutation({
-        mutationFn: async (data) => {
+        mutationFn: async (data:FormValues) => {
             const hostelId = localStorage.getItem('hostelId');
             try {
                 const payload = {
@@ -111,13 +115,13 @@ const CalendarYear = () => {
         },
     });
 
-    const onSubmit = (data) => {
+    const onSubmit:SubmitHandler<FormValues> = (data) => {
         AddCalendarYearMutation.mutate(data)
     }
 
     const deleteYear = (id: string) => {
         // Dummy function for deleting a year
-        toast({ title: "Year deleted", description: `Year ID: ${id}` })
+        toast('Year deleted successfully')
     }
 
     return (

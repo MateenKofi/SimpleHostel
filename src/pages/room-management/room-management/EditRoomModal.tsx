@@ -142,7 +142,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
       setValue("maxOccupancy", formdata.maxCap);
       setValue("basePrice", formdata.price);
       setValue("description", formdata.description);
-      setValue("status", formdata.status.toLowerCase() as 'Available' | 'Maintenance' | 'Occupied');
+      setValue("status", formdata.status.toLowerCase() as 'AVAILABLE' | 'MANTENANCE' | 'OCCUPIED');
 
       // Set default images from room images array
       const imageUrls = formdata.RoomImage.map((img: any) => img.imageUrl);

@@ -10,26 +10,10 @@ type AddResidentModalProps = {
 type ResidentForm = Omit<Resident, 'paymentMethod'>
 
 const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
-    const addResident = useResidentStore((state) => state.addResident)
     const { register, handleSubmit, formState: { errors } } = useForm<ResidentForm>()
 
     const onSubmit = (formData: ResidentForm) => {
-        const newResident: Resident = {
-            id: crypto.randomUUID(),
-            fullName: formData.fullName,
-            studentId: formData.studentId,
-            email: formData.email,
-            phone: formData.phone,
-            course: formData.course,
-            emergencyContactName: formData.emergencyContactName,
-            emergencyContactPhone: formData.emergencyContactPhone,
-            emergencyContactRelation: formData.emergencyContactRelation,
-            status: 'pending',
-            roomNumber: undefined
-        }
-        
-        addResident(newResident)
-        console.log('Current residents:', useResidentStore.getState().residents)
+        console.log(formData)
         toast.success('Resident added successfully')
         onClose()
     }

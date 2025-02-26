@@ -22,8 +22,9 @@ export type Room = {
     floor?: number | string
     block?: string
     roomType: 'single'|'double'|'suit'|'quard'
-    status: 'Available' | 'Maintenance' | 'Occupied';
+    status: 'AVAILABLE' | 'MANTENANCE' | 'OCCUPIED';
     maxCap: number
+    currentResidentCount:number
     maxOccupancy: number
     currentCapacity: number
     price: number
@@ -62,4 +63,5 @@ export type Staff = {
     block: string;
     dateOfAppointment: string;
     staffStatus: "Active" | "Inactive";
+    role:string;
   }

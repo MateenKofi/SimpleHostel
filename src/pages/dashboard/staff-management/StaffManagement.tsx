@@ -43,7 +43,7 @@ const StaffManagement: React.FC = () => {
     },
     onSuccess: () => {
       // Refresh the staff list after deletion
-      queryClient.invalidateQueries(['staffs']);
+      queryClient.invalidateQueries({queryKey:['staffs']});
       Swal.fire('Deleted!', 'The staff has been deleted.', 'success');
     },
     onError: () => {

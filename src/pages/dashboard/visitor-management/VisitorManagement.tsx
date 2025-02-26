@@ -5,16 +5,22 @@ import { useModal } from '../../../components/Modal'
 import AddVisitorModal from './AddVisitorModal'
 import { format } from 'date-fns'
 
+interface Visitor {
+  id: string;
+  name: string;
+  phone: string;
+  residentId: string;
+  purpose: string;
+  checkInTime: string;
+  checkOutTime?: string;
+  status: 'checked-in' | 'checked-out';
+}
+
 const VisitorManagement = () => {
   const [activeTab, setActiveTab] = useState<'active' | 'history'>('active')
-  const { open: openAddVisitorModal, close: closeAddVisitorModal } = useModal('add_visitor_modal')
+  const { open: openAddVisitorModal, close: closeAddVisitorModal } = useModal('add_visitor_modal');
+
   
-  const visitorStore = useVisitorStore()
-  const visitors = useMemo(() => 
-    activeTab === 'active' ? visitorStore.getActiveVisitors() : visitorStore.getVisitorHistory()
-  , [activeTab, visitorStore])
-  const checkOutVisitor = useVisitorStore((state) => state.checkOutVisitor)
-  const residents = useResidentStore((state) => state.residents)
 
   const columns = [
     {
@@ -26,20 +32,7 @@ const VisitorManagement = () => {
       name: 'Phone',
       selector: (row: Visitor) => row.phone,
     },
-    {
-      name: 'Resident',
-      selector: (row: Visitor) => {
-        const resident = residents.find(r => r.id === row.residentId)
-        return resident?.fullName || 'Unknown'
-      },
-    },
-    {
-      name: 'Room',
-      selector: (row: Visitor) => {
-        const resident = residents.find(r => r.id === row.residentId)
-        return resident?.roomNumber || 'Not Assigned'
-      },
-    },
+   
     {
       name: 'Purpose',
       selector: (row: Visitor) => row.purpose,
@@ -71,7 +64,7 @@ const VisitorManagement = () => {
       cell: (row: Visitor) => (
         row.status === 'checked-in' && (
           <button
-            onClick={() => checkOutVisitor(row.id)}
+            onClick={() => {}}
             className="px-3 py-1 text-sm bg-blue-500 text-white rounded-md"
           >
             Check Out
@@ -89,7 +82,7 @@ const VisitorManagement = () => {
           <h1 className="text-2xl font-bold">Visitor Management</h1>
         </div>
         <button
-          className="px-4 py-2 bg-primary text-white rounded-md flex items-center gap-2"
+          className="px-4 py-2 bg-black text-white rounded-md flex items-center gap-2"
           onClick={openAddVisitorModal}
         >
           <UserPlus className="w-4 h-4" />
@@ -102,7 +95,7 @@ const VisitorManagement = () => {
         <div className="flex gap-4 mb-6">
           <button
             className={`px-4 py-2 rounded-md flex items-center gap-2 ${
-              activeTab === 'active' ? 'bg-primary text-white' : 'bg-gray-100'
+              activeTab === 'active' ? 'bg-black text-white' : 'bg-gray-100'
             }`}
             onClick={() => setActiveTab('active')}
           >
@@ -111,7 +104,7 @@ const VisitorManagement = () => {
           </button>
           <button
             className={`px-4 py-2 rounded-md flex items-center gap-2 ${
-              activeTab === 'history' ? 'bg-primary text-white' : 'bg-gray-100'
+              activeTab === 'history' ? 'bg-black text-white' : 'bg-gray-100'
             }`}
             onClick={() => setActiveTab('history')}
           >
@@ -139,7 +132,7 @@ const VisitorManagement = () => {
         {/* Visitor Table */}
         <DataTable
           columns={columns}
-          data={visitors}
+          data={[]}
           pagination
           paginationPerPage={10}
           paginationRowsPerPageOptions={[10, 20, 30]}

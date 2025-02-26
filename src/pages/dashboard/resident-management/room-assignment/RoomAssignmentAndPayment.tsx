@@ -6,11 +6,7 @@ import { ChevronLeft } from 'lucide-react'
 
 const RoomAssignmentAndPayment = () => {
     const navigate = useNavigate()
-    const residentId = localStorage.getItem('resident_id')
-    const resident = useResidentStore(state => 
-        state.residents.find(r => r.id === residentId)
-    )
-
+   
     const handleBack = () => {
         navigate('/resident-management')
     }

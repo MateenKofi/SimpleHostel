@@ -10,7 +10,7 @@ import toast from 'react-hot-toast';
 
 interface DeptorPaymentProps {
   onClose: () => void;
-  debtor: any; // Replace 'any' with the appropriate type if known
+  debtor: any; 
 }
 
 interface FormValues {
@@ -30,26 +30,23 @@ interface FormValues {
 
 const DeptorPayment: React.FC<DeptorPaymentProps> = ({ onClose, debtor }) => {
   const { register, handleSubmit, watch, formState: { errors }, setValue } = useForm<FormValues>();
-  const residents = useResidentStore((state) => state.residents);
-  const removeFromDebtorsList = useResidentStore((state) => state.removeFromDebtorsList);
+ 
 
   useEffect(() => {
     if (debtor) {
-      const resident = residents.find((res) => res.id === debtor.residentId);
       setValue('fullName', debtor.fullName);
       setValue('phone', debtor.phone);
-      setValue('room_number', resident?.roomNumber || '');
       setValue('originalAmount', debtor.originalAmount);
       setValue('partialPayment', debtor.partialPayment);
       setValue('balance', (debtor.originalAmount - debtor.partialPayment).toString());
       setValue('residentId', debtor.residentId);
     }
-  }, [debtor, residents, setValue]);
+  }, [debtor, setValue]);
 
   const paymentOption = watch('paymentOption');
 
   const onSubmit: SubmitHandler<FormValues> = data => {
-    removeFromDebtorsList(data.residentId);
+   
     toast.success('Payment processed successfully');
     toast.success('Resident removed from debtors list');
     onClose();

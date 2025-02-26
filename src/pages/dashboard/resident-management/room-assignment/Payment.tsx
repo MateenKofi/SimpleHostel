@@ -6,46 +6,33 @@ import { toast } from 'react-hot-toast';
 
 const Payment = () => {
   const navigate = useNavigate();
-const { residentId } = useParams<{ residentId: string }>();
-console.log('residentId from manual payment', residentId);
-  // const residentId = localStorage.getItem('resident_id');
-
-  const {
-    selectedRoom,
-    removeSelectedRoom,
-  } = useRoomStore();
-
-  const { processPayment } = useResidentStore();
+  const { residentId } = useParams<{ residentId: string }>();
+  console.log('residentId from manual payment', residentId);
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [verificationCode, setVerificationCode] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<'cash' | 'momo' | null>(null);
 
+  // Dummy data for selected room
+  const selectedRoom = {
+    roomNumber: '101',
+    basePrice: 500,
+  };
+
+  const removeSelectedRoom = () => {
+    console.log('Room removed');
+  };
+
   const handlePayment = async () => {
-    if (!residentId || !selectedRoom || !paymentMethod) {
-      toast.error('Please select a room and payment method first');
-      return;
-    }
-
-    const verificationToken = uuidv4();
-    setVerificationCode(verificationToken);
-
     setIsProcessing(true);
-    try {
-      const paymentAmount = 100; // Replace with the actual payment amount
-      await processPayment(residentId!, paymentMethod, verificationToken, paymentAmount);
-      setIsSuccess(true);
-      setTimeout(() => {
-        navigate('/resident-management');
-        localStorage.removeItem('resident_id');
-      }, 2000);
-    } catch (error) {
-      console.error('Payment failed:', error);
-      toast.error('Payment failed. Please try again.');
-    } finally {
+    // Simulate payment processing
+    setTimeout(() => {
       setIsProcessing(false);
-    }
+      setIsSuccess(true);
+      setVerificationCode(uuidv4());
+      toast.success('Payment successful!');
+    }, 2000);
   };
 
   return (

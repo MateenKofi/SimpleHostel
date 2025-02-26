@@ -172,7 +172,7 @@ const ApproveHostel: React.FC = () => {
 
     const conditionalRowStyles = [
         {
-            when: (row: Hostel) => data?.indexOf(row) % 2 === 0,
+            when: (row: Hostel) => !!data && data.indexOf(row) % 2 === 0,
             style: {
                 backgroundColor: '#f2f2f2',
             },

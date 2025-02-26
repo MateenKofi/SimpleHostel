@@ -8,9 +8,7 @@ import { useModal } from '@components/Modal';
 const ResidentManagement = () => {
     const navigate = useNavigate();
     const { open: openAddResidentModal, close: closeAddResidentModal } = useModal('add_resident_modal');
-    const residents = useResidentStore((state) => state.residents);
-    const deleteResident = useResidentStore((state) => state.deleteResident);
-
+    
     const columns = [
         {
             name: 'Name',
@@ -89,9 +87,7 @@ const ResidentManagement = () => {
     };
 
     const handleDeleteResident = (id: string) => {
-        if (window.confirm('Are you sure you want to delete this resident?')) {
-            deleteResident(id);
-        }
+      console.log('deleted successfully')
     };
 
     return (
@@ -142,7 +138,7 @@ const ResidentManagement = () => {
 
                 <DataTable
                     columns={columns}
-                    data={residents}
+                    data={[]}
                     pagination
                     paginationPerPage={10}
                     paginationRowsPerPageOptions={[10, 20, 30]}

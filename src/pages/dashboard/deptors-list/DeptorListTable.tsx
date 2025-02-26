@@ -5,20 +5,13 @@ import DeptorPayment from './DeptorPayment';
 
 const DebtorListTable: React.FC = () => {
   const { open: openDeptorsListPaymentModal, close: closeDeptorsListPamentModal } = useModal('deptor_payment_modal');
-  const debtorsList = useResidentStore((state) => state.debtorsList);
-  const residents = useResidentStore((state) => state.residents);
-  const [selectedDebtor, setSelectedDebtor] = useState(null);
-  // Combine debtors list with resident information
-  const combinedList = debtorsList.map((debtor) => {
-    const resident = residents.find((res) => res.id === debtor.residentId);
-    return {
-      ...debtor,
-      fullName: resident?.fullName || 'N/A',
-      studentId: resident?.studentId || 'N/A',
-      phone: resident?.phone || 'N/A',
-      email: resident?.email || 'N/A',
-    };
-  });
+  const [selectedDebtor, setSelectedDebtor] = useState<any>(null);
+
+  const handlePayment = (row: any) => {
+    // Handle payment logic here
+    openDeptorsListPaymentModal();
+    setSelectedDebtor(row)
+  };
 
   const columns = [
     {
@@ -65,22 +58,38 @@ const DebtorListTable: React.FC = () => {
           >
             Pay
           </button>
-          
         </div>
       ),
     },
   ];
 
-  const handlePayment = (row:any) => {
-    setSelectedDebtor(row);
-    openDeptorsListPaymentModal();
-  }
+  const data = [
+    {
+      id: 1,
+      fullName: 'John Doe',
+      studentId: 'S12345',
+      phone: '123-456-7890',
+      email: 'john.doe@example.com',
+      originalAmount: 1000,
+      partialPayment: 200,
+    },
+    {
+      id: 2,
+      fullName: 'Jane Smith',
+      studentId: 'S67890',
+      phone: '098-765-4321',
+      email: 'jane.smith@example.com',
+      originalAmount: 1500,
+      partialPayment: 500,
+    },
+    // Add more dummy data as needed
+  ];
 
   return (
     <div>
       <DataTable
         columns={columns}
-        data={combinedList}
+        data={data}
         pagination
       />
       <DeptorPayment debtor={selectedDebtor} onClose={closeDeptorsListPamentModal} />

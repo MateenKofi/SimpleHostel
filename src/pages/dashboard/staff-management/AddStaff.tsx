@@ -27,6 +27,7 @@ type StaffForm = {
   role: string;
   block: string;
   dateOfAppointment: string;
+  staffType:string;
 };
 
 
