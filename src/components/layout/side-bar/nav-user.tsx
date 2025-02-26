@@ -2,11 +2,7 @@
 
 import {
   BadgeCheck,
-  Bell,
   ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
 } from "lucide-react"
 
 import {
@@ -31,6 +27,7 @@ import {
 } from "@/components/ui/sidebar"
 import {useNavigate} from 'react-router-dom'
 import { LogoutIcon } from "@/components/animateIcons/Logout"
+import { BellIcon } from "@/components/animateIcons/bell"
 
 export function NavUser() {
 
@@ -93,8 +90,7 @@ export function NavUser() {
                 Account
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <Bell />
-                Notifications
+                <BellIcon />
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

@@ -1,5 +1,6 @@
 "use client"
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -20,11 +21,9 @@ import {
   UserCog,
 } from "lucide-react"
 
-
-
-
 export function NavMain() {
   const userRole = localStorage.getItem('role')
+  const navigate = useNavigate();
 
   const navMain = [
     { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
@@ -49,7 +48,7 @@ export function NavMain() {
         {navMain.map((item) => (
           <SidebarMenuItem key={item.title}>
             <SidebarMenuButton
-              onClick={() => (window.location.href = item.path)}
+              onClick={() => navigate(item.path)}
               tooltip={item.title}
               className="w-full transition duration-700 ease-in-out hover:bg-black hover:text-white hover:translate-x-2 rounded-md"
             >
@@ -62,4 +61,3 @@ export function NavMain() {
     </SidebarGroup>
   )
 }
-
