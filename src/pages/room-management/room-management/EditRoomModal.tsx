@@ -7,6 +7,7 @@ import axios from "axios";
 import ImageUpload from "../../../components/ImageUpload";
 import { Loader } from "lucide-react";
 import toast from "react-hot-toast";
+import { R } from "framer-motion/dist/types.d-6pKw1mTI";
 
 type RoomForm = Room & {
   images: File[];
@@ -136,12 +137,12 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
     if (formdata) {
       setValue("roomNumber", formdata.number);
       setValue("block", formdata.block);
-      setValue("floor", parseInt(formdata.floor));
-      setValue("roomType", formdata.type.toLowerCase());
+      setValue("floor", parseInt(formdata.floor?.toString() || "0"));
+      setValue("roomType", formdata.type.toLowerCase() as "single" | "double" | "suit" | "quard");
       setValue("maxOccupancy", formdata.maxCap);
       setValue("basePrice", formdata.price);
       setValue("description", formdata.description);
-      setValue("status", formdata.status.toLowerCase());
+      setValue("status", formdata.status.toLowerCase() as 'Available' | 'Maintenance' | 'Occupied');
 
       // Set default images from room images array
       const imageUrls = formdata.RoomImage.map((img: any) => img.imageUrl);

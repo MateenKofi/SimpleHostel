@@ -19,20 +19,23 @@ export type Room = {
     hostelId: string
     gender: string
     roomNumber: string
-    floor?: number
+    floor?: number | string
     block?: string
     roomType: 'single'|'double'|'suit'|'quard'
     status: 'Available' | 'Maintenance' | 'Occupied';
+    maxCap: number
     maxOccupancy: number
     currentCapacity: number
+    price: number
     basePrice: number
     amenities: string[]
     isAvailable: boolean
     resident?: Resident
     description?: string
     number:string
-    type:strig
-    maxCap:string
+    type:string
+    RoomImage:string[]
+    Amenities: Amenity[]
 } 
 
 export type Amenity = {

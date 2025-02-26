@@ -50,7 +50,7 @@ export function NavMain() {
             <SidebarMenuButton
               onClick={() => navigate(item.path)}
               tooltip={item.title}
-              className="w-full transition duration-700 ease-in-out hover:bg-black hover:text-white hover:translate-x-2 rounded-md"
+              className="w-full transition-all duration-500 ease-in-out hover:bg-black hover:text-white hover:translate-x-2 rounded-md"
             >
               {item.icon && <item.icon className="w-4 h-4" />}
               <span>{item.title}</span>
