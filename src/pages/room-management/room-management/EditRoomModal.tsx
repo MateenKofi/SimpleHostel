@@ -76,7 +76,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
   const mutation = useMutation({
     mutationFn: async (data: RoomForm) => {
       const formData = new FormData();
-      formData.append("hostelId", hostelId || "");
+      // formData.append("hostel", hostelId || "");
       formData.append("number", data.roomNumber);
       formData.append("block", data.block || "");
       formData.append("floor", data.floor?.toString() || "");
@@ -89,7 +89,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
       // Append each selected amenity ID
       if (Array.isArray(data.amenities)) {
         data.amenities.forEach((amenityId) => {
-          formData.append("amenitiesIds[]", amenityId);
+          formData.append("addAmenitiesIds[]", amenityId);
         });
       }
 
@@ -99,7 +99,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
         formData.append("photos", image);
       });
 
-      const response = await axios.put(`/api/rooms/update/${formdata.id}`, formData, {
+      const response = await axios.put(`/api/rooms/updateall/${formdata.id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
