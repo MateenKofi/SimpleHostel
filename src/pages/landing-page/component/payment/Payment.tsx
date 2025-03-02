@@ -97,12 +97,29 @@ const PaymentForm = ({ amount, description }: PaymentFormProps) => {
     resolver: zodResolver(cardFormSchema),
     defaultValues: {
       paymentMethod: "momo", 
+      cardNumber: "",
+      cardHolder: "",
+      expiryDate: "",
+      cvv: "",
+      provider: "",
+      momoNumber: "",
+      
     },
   })
 
   const paymentMethod = form.watch("paymentMethod")
 
-
+  useEffect(() => {
+    form.reset({
+      paymentMethod,
+      cardNumber: "",
+      cardHolder: "",
+      expiryDate: "",
+      cvv: "",
+      provider: "",
+      momoNumber: "",
+    })
+  }, [paymentMethod, form])
 
   async function onSubmit(values: z.infer<typeof cardFormSchema>) {
     setIsSubmitting(true)
