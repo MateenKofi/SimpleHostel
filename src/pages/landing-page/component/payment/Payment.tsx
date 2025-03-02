@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { CreditCard, Loader2, Phone, CheckCircle2, AlertCircle } from 'lucide-react'
+import { CreditCard, Loader2, Phone, CheckCircle2, AlertCircle } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -48,60 +48,76 @@ const momoProviders = [
   { value: "airteltigo", label: "AirtelTigo Money" },
 ] as const
 
-const cardFormSchema = z.object({
-  paymentMethod: z.enum(["card", "momo"]),
-  // Card Fields
-  cardNumber: z.string().regex(/^\d{16}$/, "Card number must be 16 digits").optional(),
-  cardHolder: z.string().min(3, "Cardholder name is required").optional(),
-  expiryDate: z.string().regex(/^(0[1-9]|1[0-2])\/([0-9]{2})$/, "Invalid expiry date (MM/YY)").optional(),
-  cvv: z.string().regex(/^\d{3,4}$/, "CVV must be 3 or 4 digits").optional(),
-  // MoMo Fields
-  provider: z.string().optional(),
-  momoNumber: z.string().regex(/^\d{10}$/, "Mobile money number must be 10 digits").optional(),
-}).refine((data) => {
-  if (data.paymentMethod === "card") {
-    return data.cardNumber && data.cardHolder && data.expiryDate && data.cvv;
-  }
-  return data.provider && data.momoNumber;
-}, {
-  message: "Please fill in all required fields",
-  path: ["paymentMethod"],
-});
+const cardFormSchema = z
+  .object({
+    paymentMethod: z.enum(["card", "momo"]),
+    // Card Fields
+    cardNumber: z
+      .string()
+      .regex(/^\d{16}$/, "Card number must be 16 digits")
+      .optional(),
+    cardHolder: z.string().min(3, "Cardholder name is required").optional(),
+    expiryDate: z
+      .string()
+      .regex(/^(0[1-9]|1[0-2])\/([0-9]{2})$/, "Invalid expiry date (MM/YY)")
+      .optional(),
+    cvv: z.string().regex(/^\d{3,4}$/, "CVV must be 3 or 4 digits").optional(),
+    // MoMo Fields
+    provider: z.string().optional(),
+    momoNumber: z
+      .string()
+      .regex(/^\d{10}$/, "Mobile money number must be 10 digits")
+      .optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.paymentMethod === "card") {
+        return data.cardNumber && data.cardHolder && data.expiryDate && data.cvv
+      }
+      return data.provider && data.momoNumber
+    },
+    {
+      message: "Please fill in all required fields",
+      path: ["paymentMethod"],
+    }
+  )
 
 interface PaymentFormProps {
-  amount: number;
-  description: string;
+  amount: number
+  description: string
 }
 
-const PaymentForm =({ amount, description }: PaymentFormProps) => {
+const PaymentForm = ({ amount, description }: PaymentFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [paymentStatus, setPaymentStatus] = useState<"idle" | "success" | "error">("idle")
-  
+  const [paymentStatus, setPaymentStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle")
+
   const form = useForm<z.infer<typeof cardFormSchema>>({
     resolver: zodResolver(cardFormSchema),
     defaultValues: {
-      paymentMethod: "momo", // Set MoMo as default
-      provider: "mtn", // Default to MTN as it's the most common
+      paymentMethod: "momo", 
     },
   })
 
   const paymentMethod = form.watch("paymentMethod")
 
+
+
   async function onSubmit(values: z.infer<typeof cardFormSchema>) {
     setIsSubmitting(true)
     setPaymentStatus("idle")
-    
+
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
-      // Simulate success (in real app, handle actual payment processing here)
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+
+      // Simulate success (in a real app, handle actual payment processing here)
       setPaymentStatus("success")
-      toast('Payment successful!', { icon: '✅' })
-      
+      toast("Payment successful!", { icon: "✅" })
     } catch (error) {
       setPaymentStatus("error")
-      toast('Payment failed. Please try again.', { icon: '❌' })
+      toast("Payment failed. Please try again.", { icon: "❌" })
     } finally {
       setIsSubmitting(false)
     }
@@ -123,9 +139,7 @@ const PaymentForm =({ amount, description }: PaymentFormProps) => {
             <span className="font-semibold">GH₵ {amount?.toLocaleString()}</span>
           </div>
           <Separator />
-          <div className="text-sm text-muted-foreground">
-            {description}
-          </div>
+          <div className="text-sm text-muted-foreground">{description}</div>
         </div>
 
         <Form {...form}>
@@ -139,10 +153,10 @@ const PaymentForm =({ amount, description }: PaymentFormProps) => {
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      value={field.value} // Controlled RadioGroup
                       className="grid grid-cols-2 gap-4"
                     >
-                      {/* MoMo Option First */}
+                      {/* MoMo Option */}
                       <div>
                         <RadioGroupItem
                           value="momo"
@@ -157,7 +171,7 @@ const PaymentForm =({ amount, description }: PaymentFormProps) => {
                           Mobile Money
                         </Label>
                       </div>
-                      {/* Card Option Second */}
+                      {/* Card Option */}
                       <div>
                         <RadioGroupItem
                           value="card"
@@ -187,7 +201,7 @@ const PaymentForm =({ amount, description }: PaymentFormProps) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Mobile Money Provider</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select provider" />
@@ -195,7 +209,10 @@ const PaymentForm =({ amount, description }: PaymentFormProps) => {
                         </FormControl>
                         <SelectContent>
                           {momoProviders.map((provider) => (
-                            <SelectItem key={provider.value} value={provider.value}>
+                            <SelectItem
+                              key={provider.value}
+                              value={provider.value}
+                            >
                               {provider.label}
                             </SelectItem>
                           ))}
@@ -216,7 +233,8 @@ const PaymentForm =({ amount, description }: PaymentFormProps) => {
                         <Input placeholder="0XX XXX XXXX" {...field} />
                       </FormControl>
                       <FormDescription>
-                        Enter the mobile number registered with your Mobile Money account
+                        Enter the mobile number registered with your Mobile Money
+                        account
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -225,8 +243,9 @@ const PaymentForm =({ amount, description }: PaymentFormProps) => {
 
                 <Alert className="bg-muted">
                   <AlertDescription className="text-sm">
-                    You will receive a prompt on your phone to complete the payment. 
-                    Please enter your Mobile Money PIN to confirm the transaction.
+                    You will receive a prompt on your phone to complete the
+                    payment. Please enter your Mobile Money PIN to confirm the
+                    transaction.
                   </AlertDescription>
                 </Alert>
               </div>
@@ -282,7 +301,11 @@ const PaymentForm =({ amount, description }: PaymentFormProps) => {
                       <FormItem>
                         <FormLabel>CVV</FormLabel>
                         <FormControl>
-                          <Input placeholder="123" type="password" {...field} />
+                          <Input
+                            placeholder="123"
+                            type="password"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -319,9 +342,7 @@ const PaymentForm =({ amount, description }: PaymentFormProps) => {
                   Processing...
                 </>
               ) : (
-                <>
-                  Pay GH₵{amount?.toLocaleString()}
-                </>
+                <>Pay GH₵{amount?.toLocaleString()}</>
               )}
             </Button>
           </form>
@@ -330,4 +351,5 @@ const PaymentForm =({ amount, description }: PaymentFormProps) => {
     </Card>
   )
 }
+
 export default PaymentForm
