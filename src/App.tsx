@@ -17,7 +17,7 @@ import Home from './pages/landing-page/page'
 import LandingPageLayout from './components/layout/LandingPageLayout';
 import {FindHostel} from './pages/landing-page/component/findHostel/find-hostel';
 import HostelListingForm from './pages/landing-page/component/hostel-listing/Hostel-Listing-Form';
-import Payment from './pages/landing-page/component/payment/Payment';
+import PaymentForm from './pages/landing-page/component/payment/Payment';
 import ResidentForm from './pages/landing-page/component/resident-forms/ResidentForm';
 import LoginForm from './pages/Authentication/login/login-form';
 import ApproveHostel from './pages/dashboard/approvals/Approve-Hostel'
@@ -59,7 +59,7 @@ function App() {
         <Route index element={<Home />} />
         <Route path='find-hostel' element={<FindHostel />} />
         <Route path='hostel-listing' element={<HostelListingForm/>} />
-        <Route path='payment' element={<Payment/>} />
+        <Route path='payment' element={<PaymentForm/>} />
         <Route path='resident-form' element={<ResidentForm/>} />
         <Route path='login' element={<LoginForm/>} />
       </Route>

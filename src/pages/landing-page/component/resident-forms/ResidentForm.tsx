@@ -69,7 +69,7 @@ const ResidentForm =()=> {
     setIsSubmitting(false)
 
     form.reset()
-    navigate('/online-resident-booking')
+    navigate('/payment')
   }
 
   return (
