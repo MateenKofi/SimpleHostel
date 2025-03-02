@@ -8,9 +8,7 @@ import ResidentManagement from '@pages/dashboard/resident-management/ResidentMan
 import VisitorManagement from '@pages/dashboard/visitor-management/VisitorManagement';
 import StaffManagement from '@pages/dashboard/staff-management/StaffManagement';
 import AddStaff from '@pages/dashboard/staff-management/AddStaff';
-import RoomBooking from '@pages/roombooking/RoomBooking';
-import BookingForms from '@pages/roombooking/BookingForms';
-import RoomVerification from '@pages/roombooking/RoomVerification';
+
 import Maintenance from '@pages/maintenance&Tracking/maintenace';
 import DeptorsList from './pages/dashboard/deptors-list/DeptorsList';
 import Home from './pages/landing-page/page'
@@ -43,7 +41,7 @@ function App() {
         <Route index element={<Dashboard />} />
         <Route path="room-management" element={<RoomManagementTab/>} />
         <Route path="calendar-year-management" element={<CalendarYear/>} />
-        <Route path='room-assignment/:residentId' element={<RoomAssignmentAndPayment />} />
+        <Route path='room-assignment' element={<RoomAssignmentAndPayment />} />
         <Route path="resident-management" element={<ResidentManagement />} />
         <Route path='deptors-list' element={<DeptorsList/>}/>
         <Route path="visitor-management" element={<VisitorManagement />} />
@@ -59,15 +57,12 @@ function App() {
         <Route index element={<Home />} />
         <Route path='find-hostel' element={<FindHostel />} />
         <Route path='hostel-listing' element={<HostelListingForm/>} />
-        <Route path='payment' element={<PaymentForm/>} />
+        <Route path='payment' element={<PaymentForm amount={26666} description={''}/>} />
         <Route path='resident-form' element={<ResidentForm/>} />
         <Route path='login' element={<LoginForm/>} />
       </Route>
       
-      <Route path='room-booking-form' element={<BookingForms />} />
-      <Route path='online-resident-booking' element={<RoomBooking />} />
-      <Route path='room-verification' element={<RoomVerification/>} />
-     
+  
     </Routes>
   );
 }

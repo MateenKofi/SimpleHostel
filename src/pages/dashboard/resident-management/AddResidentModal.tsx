@@ -2,6 +2,7 @@ import Modal from '../../../components/Modal'
 import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { Resident } from '../../../types/types'
+import { useNavigate } from 'react-router-dom'
 
 
 type AddResidentModalProps = {
@@ -10,18 +11,20 @@ type AddResidentModalProps = {
 type ResidentForm = Omit<Resident, 'paymentMethod'>
 
 const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
+    const navigate = useNavigate()
     const { register, handleSubmit, formState: { errors } } = useForm<ResidentForm>()
 
     const onSubmit = (formData: ResidentForm) => {
         console.log(formData)
         toast.success('Resident added successfully')
         onClose()
+        navigate('/dashboard/room-assignment')
     }
 
     return (
         <Modal modalId="add_resident_modal" onClose={onClose}>
             <div className='p-6'>
-                <h1 className='text-2xl font-bold'>Add Resident</h1>
+                <h1 className='text-3xl font-bold'>Add Resident </h1>
             </div>
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 p-6">
                 <div className="flex flex-col gap-1">
