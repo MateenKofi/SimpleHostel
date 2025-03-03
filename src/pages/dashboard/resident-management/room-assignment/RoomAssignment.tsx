@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { Bed, House } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 interface Room {
   id: number;
@@ -13,6 +16,20 @@ interface Room {
 const RoomAssignment = () => {
   const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
 
+  const { data:available_hostel, isLoading, isError } = useQuery({
+    queryKey: ['available_hostel'],
+    queryFn: async () => {
+      const hostel_id = localStorage.getItem('hostelId');
+        const response = await axios.get(`/api/hostel/available/${hostel_id}`, {
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+        });
+        return response?.data?.data;
+    },
+});
+
+console.log(available_hostel);
   const rooms: Room[] = [
     {
       id: 1,
@@ -42,11 +59,16 @@ const RoomAssignment = () => {
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-4">
-      <h2 className="text-xl font-semibold mb-4">Room Assignment</h2>
-      
+      <div className='mb-4'>
+      <h2 className="text-2xl font-semibold">Room Assignment</h2>
+      <p className='text-gray-600 font-thin max-w-2xl'>
+        Select a room for the resident. The selected room will be reserved for 
+        the resident until the payment is completed.
+      </p>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {rooms.map(room => (
-          <div 
+          <Link to="/dashboard/payment" 
             key={room.id}
             className={`border rounded-lg p-4 hover:border-primary cursor-pointer transition-all ${
               selectedRoom?.id === room.id ? 'border-primary border-2' : ''
@@ -94,7 +116,7 @@ const RoomAssignment = () => {
                 </span>
               </div>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>

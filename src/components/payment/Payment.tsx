@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { CreditCard, Loader2, Phone, CheckCircle2, AlertCircle } from "lucide-react"
+import { CreditCard, Loader2, Phone, CheckCircle2, AlertCircle, DollarSign, ChevronLeft } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -41,6 +41,7 @@ import {
   AlertTitle,
 } from "@/components/ui/alert"
 import { toast } from "react-hot-toast"
+import { useNavigate } from "react-router-dom"
 
 const momoProviders = [
   { value: "mtn", label: "MTN Mobile Money" },
@@ -50,7 +51,7 @@ const momoProviders = [
 
 const cardFormSchema = z
   .object({
-    paymentMethod: z.enum(["card", "momo"]),
+    paymentMethod: z.enum(["card", "momo", "cash"]),
     // Card Fields
     cardNumber: z
       .string()
@@ -74,7 +75,10 @@ const cardFormSchema = z
       if (data.paymentMethod === "card") {
         return data.cardNumber && data.cardHolder && data.expiryDate && data.cvv
       }
-      return data.provider && data.momoNumber
+      if (data.paymentMethod === "momo") {
+        return data.provider && data.momoNumber
+      }
+      return true // Cash doesn't need any fields
     },
     {
       message: "Please fill in all required fields",
@@ -88,6 +92,7 @@ interface PaymentFormProps {
 }
 
 const PaymentForm = ({ amount, description }: PaymentFormProps) => {
+  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [paymentStatus, setPaymentStatus] = useState<
     "idle" | "success" | "error"
@@ -141,8 +146,19 @@ const PaymentForm = ({ amount, description }: PaymentFormProps) => {
   }
 
   return (
-    <Card className="w-full max-w-lg mx-auto">
+    <Card className="w-full max-w-lg mx-auto my-10">
       <CardHeader>
+        <div className="w-full flex justify-between items-center">
+   <div className="flex justify-end">
+            <button
+              onClick={() => navigate(-1)}
+              className="bg-primary text-white px-4 py-2 rounded-md flex items-center"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              <span className="ml-2">Back</span>
+            </button>
+          </div>          
+        </div>
         <CardTitle className="text-2xl font-bold">Payment Details</CardTitle>
         <CardDescription>
           Complete your payment using your preferred method.
@@ -171,7 +187,7 @@ const PaymentForm = ({ amount, description }: PaymentFormProps) => {
                     <RadioGroup
                       onValueChange={field.onChange}
                       value={field.value} // Controlled RadioGroup
-                      className="grid grid-cols-2 gap-4"
+                      className="grid grid-cols-3 gap-4"
                     >
                       {/* MoMo Option */}
                       <div>
@@ -201,6 +217,21 @@ const PaymentForm = ({ amount, description }: PaymentFormProps) => {
                         >
                           <CreditCard className="mb-3 h-6 w-6" />
                           Card Payment
+                        </Label>
+                      </div>
+                      {/* Cash Option */}
+                      <div>
+                        <RadioGroupItem
+                          value="cash"
+                          id="cash"
+                          className="peer sr-only"
+                        />
+                        <Label
+                          htmlFor="cash"
+                          className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-gray-900 hover:text-white peer-data-[state=checked]:bg-black peer-data-[state=checked]:text-white [&:has([data-state=checked])]:border-primary cursor-pointer"
+                        >
+                          <DollarSign className="mb-3 h-6 w-6" />
+                          Cash Payment
                         </Label>
                       </div>
                     </RadioGroup>
@@ -266,7 +297,7 @@ const PaymentForm = ({ amount, description }: PaymentFormProps) => {
                   </AlertDescription>
                 </Alert>
               </div>
-            ) : (
+            ) : paymentMethod === "card" ? (
               <div className="space-y-4">
                 <FormField
                   control={form.control}
@@ -330,7 +361,7 @@ const PaymentForm = ({ amount, description }: PaymentFormProps) => {
                   />
                 </div>
               </div>
-            )}
+            ) : null}
 
             {paymentStatus === "success" && (
               <Alert className="bg-success-50 border-success-500">

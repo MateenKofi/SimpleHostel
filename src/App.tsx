@@ -15,13 +15,14 @@ import Home from './pages/landing-page/page'
 import LandingPageLayout from './components/layout/LandingPageLayout';
 import {FindHostel} from './pages/landing-page/component/findHostel/find-hostel';
 import HostelListingForm from './pages/landing-page/component/hostel-listing/Hostel-Listing-Form';
-import PaymentForm from './pages/landing-page/component/payment/Payment';
+import PaymentForm from './components/payment/Payment';
 import ResidentForm from './pages/landing-page/component/resident-forms/ResidentForm';
 import LoginForm from './pages/Authentication/login/login-form';
 import ApproveHostel from './pages/dashboard/approvals/Approve-Hostel'
 import ProfileForm from './pages/dashboard/profile/Profile-From'
 import EditStaff from './pages/dashboard/staff-management/EditStaff';
 import CalendarYear from './pages/calendarYear/CalendarYear';
+import Payment from './pages/dashboard/resident-management/room-assignment/Payment';
 
 
 axios.defaults.headers.common["Accept"] = "application/json";
@@ -51,6 +52,7 @@ function App() {
         <Route path="staff-management/add" element={<AddStaff />} />
         <Route path="approve-hostel" element={<ApproveHostel />} />
         <Route path="profile" element={<ProfileForm />} />
+        <Route path='payment' element={<Payment/>} />
       </Route>
 
       <Route path='/' element={<LandingPageLayout/>} >
