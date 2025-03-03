@@ -11,7 +11,7 @@ const RoomAssignmentAndPayment = () => {
     }
 
     return (
-        <div className="p-6 h-screen bg-gray-100">
+        <div className="p-6 h-screen bg-gray-200">
             <div className="mb-6 bg-white rounded-lg shadow-sm p-4 flex justify-between items-center">
                 <div>
                     <h1 className="text-4xl font-bold">Room Selection</h1>
