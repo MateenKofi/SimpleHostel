@@ -1,7 +1,7 @@
 import { Header } from '../header'
 import { FindHostel } from './find-hostel'
 
-export default function FindHostelPage() {
+const FindHostelPage = () => {
   return (
     <div className="min-h-screen">
       {/* <Header /> */}
@@ -11,4 +11,4 @@ export default function FindHostelPage() {
     </div>
   )
 }
-
+export default FindHostelPage

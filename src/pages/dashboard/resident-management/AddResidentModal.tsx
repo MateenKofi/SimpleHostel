@@ -1,247 +1,299 @@
-import Modal from '../../../components/Modal'
-import { useForm } from 'react-hook-form'
-import { toast } from 'react-hot-toast'
-import { Resident } from '../../../types/types'
-import { useNavigate } from 'react-router-dom'
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import Modal from "../../../components/Modal";
+import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
+import { Resident } from "../../../types/types";
+import { useNavigate } from "react-router-dom";
+import {  useMutation, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
-
+import { Loader } from "lucide-react";
 
 type AddResidentModalProps = {
-    onClose: () => void;
-}
-type ResidentForm = Omit<Resident, 'paymentMethod'>
+  onClose: () => void;
+};
+type ResidentForm = Omit<Resident, "paymentMethod">;
 
 const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
-    const navigate = useNavigate()
-    const queryClient = useQueryClient()
-    const { register, handleSubmit, formState: { errors } } = useForm<ResidentForm>()
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<ResidentForm>();
 
-    const mutation = useMutation({
-        mutationFn: async (data: ResidentForm) => {
-          const formData = new FormData();
-          formData.append("name", data.roomNumber);
-          formData.append("studentId", data.block || "");
-          formData.append("course", data.floor?.toString() || "");
-          formData.append("phone", data.roomType.toUpperCase());
-          formData.append("email", data.maxOccupancy.toString());
-          formData.append("emergencyContactName", data.basePrice.toString());
-          formData.append("emergencyContactPhone", data.description || "");
-          formData.append("status", data.status.toUpperCase());
-          formData.append('gender',data.gender.toUpperCase());
-    
-    
-          const response = await axios.post(`/api/rooms/add`, formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          });
-    
-          return response.data;
+  const AddResidentMutation = useMutation({
+    mutationFn: async (data: ResidentForm) => {
+      const formData = new FormData();
+      formData.append("name", data.fullName);
+      formData.append("studentId", data.studentId);
+      formData.append("course", data.course);
+      formData.append("phone", data.phone || "");
+      formData.append("email", data.email);
+      formData.append("emergencyContactName", data.emergencyContactName);
+      formData.append("emergencyContactPhone", data.emergencyContactPhone || "");
+      formData.append("relationship", data.emergencyContactRelation);
+      formData.append("gender", data.gender.toUpperCase());
+
+      const response = await axios.post(`/api/residents/add`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        onSuccess: () => {
-          toast.success("Room added successfully");
-          queryClient.invalidateQueries({ queryKey: ["rooms"] });
-          reset();
-          
-          
-        },
-        //handle different instances of errors
-        onError: (error: unknown) => {
-          let errorMessage 
-          if (error instanceof AxiosError) {
-    
-            errorMessage=error.response?.data?.message || "Failed to add room";
-          } else {
-            errorMessage= (error as Error).message || "Failed to add room";
-          }
-          toast.error(errorMessage);
-        },
-    
-    
       });
-    const onSubmit = (formData: ResidentForm) => {
-        console.log(formData)
-        toast.success('Resident added successfully')
-        onClose()
-        navigate('/dashboard/room-assignment')
-    }
 
-    return (
-        <Modal modalId="add_resident_modal" onClose={onClose}>
-            <div className='p-6'>
-                <h1 className='text-3xl font-bold'>Add Resident </h1>
-            </div>
-            <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 p-6">
-                <div className="flex flex-col gap-1">
-                    <label htmlFor="fullName" className="text-sm font-medium">
-                        Full Name*
-                    </label>
-                    <input
-                        {...register('fullName', { required: 'Full name is required' })}
-                        type="text"
-                        id="fullName"
-                        placeholder="Enter full name"
-                        className="border rounded-md p-2"
-                    />
-                    {errors.fullName && (
-                        <span className="text-red-500 text-sm">{errors.fullName.message}</span>
-                    )}
-                </div>
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Room added successfully");
+      queryClient.invalidateQueries({ queryKey: [" "] });
+      reset();
+      toast.success("Resident added successfully");
+      onClose();
+      navigate("/dashboard/room-assignment");
+    },
+    //handle different instances of errors
+    onError: (error: unknown) => {
+      let errorMessage;
+      if (error instanceof AxiosError) {
+        errorMessage = error.response?.data?.message || "Failed to add room";
+      } else {
+        errorMessage = (error as Error).message || "Failed to add room";
+      }
+      toast.error(errorMessage);
+    },
+  });
+  const onSubmit = (formData: ResidentForm) => {
+  AddResidentMutation.mutate(formData);
+  };
 
-                <div className="flex flex-col gap-1">
-                    <label htmlFor="studentId" className="text-sm font-medium">
-                        Student ID*
-                    </label>
-                    <input
-                        {...register('studentId', { required: 'Student ID is required' })}
-                        type="text"
-                        id="studentId"
-                        placeholder="Enter student ID"
-                        className="border rounded-md p-2"
-                    />
-                    {errors.studentId && (
-                        <span className="text-red-500 text-sm">{errors.studentId.message}</span>
-                    )}
-                </div>
+  return (
+    <Modal modalId="add_resident_modal" onClose={onClose}>
+      <div className="p-6">
+        <h1 className="text-3xl font-bold">Add Resident </h1>
+      </div>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-4 p-6"
+      >
+        <div className="flex flex-col gap-1">
+          <label htmlFor="fullName" className="text-sm font-medium">
+            Full Name*
+          </label>
+          <input
+            {...register("fullName", { required: "Full name is required" })}
+            type="text"
+            id="fullName"
+            placeholder="Enter full name"
+            className="border rounded-md p-2"
+          />
+          {errors.fullName && (
+            <span className="text-red-500 text-sm">
+              {errors.fullName.message}
+            </span>
+          )}
+        </div>
 
-                <div className="flex flex-col gap-1">
-                    <label htmlFor="course" className="text-sm font-medium">
-                        Course*
-                    </label>
-                    <input
-                        {...register('course', { required: 'Course is required' })}
-                        type="text"
-                        id="course"
-                        placeholder="Enter course name"
-                        className="border rounded-md p-2"
-                    />
-                    {errors.course && (
-                        <span className="text-red-500 text-sm">{errors.course.message}</span>
-                    )}
-                </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="studentId" className="text-sm font-medium">
+            Student ID*
+          </label>
+          <input
+            {...register("studentId", { required: "Student ID is required" })}
+            type="text"
+            id="studentId"
+            placeholder="Enter student ID"
+            className="border rounded-md p-2"
+          />
+          {errors.studentId && (
+            <span className="text-red-500 text-sm">
+              {errors.studentId.message}
+            </span>
+          )}
+        </div>
 
-                <div className="flex flex-col gap-1">
-                    <label htmlFor="email" className="text-sm font-medium">
-                        Email*
-                    </label>
-                    <input
-                        {...register('email', { 
-                            required: 'Email is required',
-                            pattern: {
-                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                message: 'Invalid email address'
-                            }
-                        })}
-                        type="email"
-                        id="email"
-                        placeholder="Enter email address"
-                        className="border rounded-md p-2"
-                    />
-                    {errors.email && (
-                        <span className="text-red-500 text-sm">{errors.email.message}</span>
-                    )}
-                </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="course" className="text-sm font-medium">
+            Course*
+          </label>
+          <input
+            {...register("course", { required: "Course is required" })}
+            type="text"
+            id="course"
+            placeholder="Enter course name"
+            className="border rounded-md p-2"
+          />
+          {errors.course && (
+            <span className="text-red-500 text-sm">
+              {errors.course.message}
+            </span>
+          )}
+        </div>
 
-                <div className="flex flex-col gap-1">
-                    <label htmlFor="phone" className="text-sm font-medium">
-                        Phone Number*
-                    </label>
-                    <input
-                        {...register('phone', { 
-                            required: 'Phone number is required',
-                            pattern: {
-                                value: /^\d{10}$/,
-                                message: 'Phone number must be 10 digits'
-                            }
-                        })}
-                        type="tel"
-                        id="phone"
-                        placeholder="Enter phone number"
-                        className="border rounded-md p-2"
-                    />
-                    {errors.phone && (
-                        <span className="text-red-500 text-sm">{errors.phone.message}</span>
-                    )}
-                </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="email" className="text-sm font-medium">
+            Email*
+          </label>
+          <input
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                message: "Invalid email address",
+              },
+            })}
+            type="email"
+            id="email"
+            placeholder="Enter email address"
+            className="border rounded-md p-2"
+          />
+          {errors.email && (
+            <span className="text-red-500 text-sm">{errors.email.message}</span>
+          )}
+        </div>
 
-                <div className="border-t pt-4 mt-2">
-                    <h2 className="text-lg font-semibold mb-4">Emergency Contact</h2>
-                    
-                    <div className="flex flex-col gap-1">
-                        <label htmlFor="emergencyContactName" className="text-sm font-medium">
-                            Contact Name*
-                        </label>
-                        <input
-                            {...register('emergencyContactName', { required: 'Emergency contact name is required' })}
-                            type="text"
-                            id="emergencyContactName"
-                            placeholder="Enter emergency contact name"
-                            className="border rounded-md p-2"
-                        />
-                        {errors.emergencyContactName && (
-                            <span className="text-red-500 text-sm">{errors.emergencyContactName.message}</span>
-                        )}
-                    </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="phone" className="text-sm font-medium">
+            Phone Number*
+          </label>
+          <input
+            {...register("phone", {
+              required: "Phone number is required",
+              pattern: {
+                value: /^\d{10}$/,
+                message: "Phone number must be 10 digits",
+              },
+            })}
+            type="tel"
+            id="phone"
+            placeholder="Enter phone number"
+            className="border rounded-md p-2"
+          />
+          {errors.phone && (
+            <span className="text-red-500 text-sm">{errors.phone.message}</span>
+          )}
+        </div>
 
-                    <div className="flex flex-col gap-1 mt-4">
-                        <label htmlFor="emergencyContactPhone" className="text-sm font-medium">
-                            Contact Phone*
-                        </label>
-                        <input
-                            {...register('emergencyContactPhone', { 
-                                required: 'Emergency contact phone is required',
-                                pattern: {
-                                    value: /^\d{10}$/,
-                                    message: 'Phone number must be 10 digits'
-                                }
-                            })}
-                            type="tel"
-                            id="emergencyContactPhone"
-                            placeholder="Enter emergency contact phone"
-                            className="border rounded-md p-2"
-                        />
-                        {errors.emergencyContactPhone && (
-                            <span className="text-red-500 text-sm">{errors.emergencyContactPhone.message}</span>
-                        )}
-                    </div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="gender" className="text-sm font-medium">
+            Gender*
+          </label>
+          <select
+            {...register("gender", { required: "Gender is required" })}
+            id="gender"
+            className="border rounded-md p-2"
+          >
+            <option value="">Select gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+          {errors.gender && (
+            <span className="text-red-500 text-sm">{errors.gender.message}</span>
+          )}
+        </div>
 
-                    <div className="flex flex-col gap-1 mt-4">
-                        <label htmlFor="emergencyContactRelation" className="text-sm font-medium">
-                            Relationship*
-                        </label>
-                        <input
-                            {...register('emergencyContactRelation', { required: 'Relationship is required' })}
-                            type="text"
-                            id="emergencyContactRelation"
-                            placeholder="Enter relationship (e.g. Parent, Sibling)"
-                            className="border rounded-md p-2"
-                        />
-                        {errors.emergencyContactRelation && (
-                            <span className="text-red-500 text-sm">{errors.emergencyContactRelation.message}</span>
-                        )}
-                    </div>
-                </div>
+        <div className="border-t pt-4 mt-2">
+          <h2 className="text-lg font-semibold mb-4">Emergency Contact</h2>
 
-                <div className="flex justify-end gap-2 mt-4">
-                    <button
-                        type="button"
-                        onClick={onClose}
-                        className="px-4 py-2 border rounded-md hover:bg-gray-100"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        type="submit"
-                        className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
-                    >
-                        Add Resident
-                    </button>
-                </div>
-            </form>
-        </Modal>
-    )
-}
+          <div className="flex flex-col gap-1">
+            <label
+              htmlFor="emergencyContactName"
+              className="text-sm font-medium"
+            >
+              Contact Name*
+            </label>
+            <input
+              {...register("emergencyContactName", {
+                required: "Emergency contact name is required",
+              })}
+              type="text"
+              id="emergencyContactName"
+              placeholder="Enter emergency contact name"
+              className="border rounded-md p-2"
+            />
+            {errors.emergencyContactName && (
+              <span className="text-red-500 text-sm">
+                {errors.emergencyContactName.message}
+              </span>
+            )}
+          </div>
 
-export default AddResidentModal
+          <div className="flex flex-col gap-1 mt-4">
+            <label
+              htmlFor="emergencyContactPhone"
+              className="text-sm font-medium"
+            >
+              Contact Phone*
+            </label>
+            <input
+              {...register("emergencyContactPhone", {
+                required: "Emergency contact phone is required",
+                pattern: {
+                  value: /^\d{10}$/,
+                  message: "Phone number must be 10 digits",
+                },
+              })}
+              type="tel"
+              id="emergencyContactPhone"
+              placeholder="Enter emergency contact phone"
+              className="border rounded-md p-2"
+            />
+            {errors.emergencyContactPhone && (
+              <span className="text-red-500 text-sm">
+                {errors.emergencyContactPhone.message}
+              </span>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-1 mt-4">
+            <label
+              htmlFor="emergencyContactRelation"
+              className="text-sm font-medium"
+            >
+              Relationship*
+            </label>
+            <input
+              {...register("emergencyContactRelation", {
+                required: "Relationship is required",
+              })}
+              type="text"
+              id="emergencyContactRelation"
+              placeholder="Enter relationship (e.g. Parent, Sibling)"
+              className="border rounded-md p-2"
+            />
+            {errors.emergencyContactRelation && (
+              <span className="text-red-500 text-sm">
+                {errors.emergencyContactRelation.message}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-2 mt-4">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-2 border rounded-md hover:bg-gray-100"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
+          >
+            {AddResidentMutation.isPending ? (
+                <span className="w-full flex gap-2 items-center">
+                <Loader className="animate-spin" size={16} />
+                <span className="ml-2">Adding Resident...</span>
+                </span>
+            ):(
+                <span>Add Resident</span>
+            )}
+          </button>
+        </div>
+      </form>
+    </Modal>
+  );
+};
+
+export default AddResidentModal;

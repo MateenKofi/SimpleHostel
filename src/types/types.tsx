@@ -2,6 +2,7 @@ export type Resident = {
     id: string;
     fullName: string;
     studentId: string;
+    gender:string;
     email: string;
     phone: string;
     course: string;
