@@ -76,7 +76,7 @@ const StaffManagement: React.FC = () => {
   const columns = [
     {
       name: 'Name',
-      grow: 2,
+  
       selector: (row: Staff) =>
         `${row.firstName} ${row.middleName} ${row.lastName}`,
       sortable: true,
@@ -89,24 +89,14 @@ const StaffManagement: React.FC = () => {
     },
     {
       name: 'Phone',
-      grow: 2,
+      
       selector: (row: Staff) => row.phoneNumber,
       sortable: true,
     },
     {
       name: 'Role',
-      grow: 2,
+      
       selector: (row: Staff) => row.role,
-      sortable: true,
-    },
-    {
-      name: 'Nationality',
-      selector: (row: Staff) => row.nationality,
-      sortable: true,
-    },
-    {
-      name: 'Residence',
-      selector: (row: Staff) => row.residence,
       sortable: true,
     },
     {
@@ -122,7 +112,7 @@ const StaffManagement: React.FC = () => {
     {
       name: 'Actions',
       width: '100px',
-      grow: 2,
+      
       cell: (row: Staff) => (
         <div className="my-1 flex flex-col items-center justify-center space-y-1 text-nowrap">
           <button

@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form'
 import { toast } from 'react-hot-toast'
 import { Resident } from '../../../types/types'
 import { useNavigate } from 'react-router-dom'
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import axios, { AxiosError } from "axios";
 
 
 type AddResidentModalProps = {
@@ -12,8 +14,53 @@ type ResidentForm = Omit<Resident, 'paymentMethod'>
 
 const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
     const navigate = useNavigate()
+    const queryClient = useQueryClient()
     const { register, handleSubmit, formState: { errors } } = useForm<ResidentForm>()
 
+    const mutation = useMutation({
+        mutationFn: async (data: ResidentForm) => {
+          const formData = new FormData();
+          formData.append("name", data.roomNumber);
+          formData.append("studentId", data.block || "");
+          formData.append("course", data.floor?.toString() || "");
+          formData.append("phone", data.roomType.toUpperCase());
+          formData.append("email", data.maxOccupancy.toString());
+          formData.append("emergencyContactName", data.basePrice.toString());
+          formData.append("emergencyContactPhone", data.description || "");
+          formData.append("status", data.status.toUpperCase());
+          formData.append('gender',data.gender.toUpperCase());
+    
+    
+          const response = await axios.post(`/api/rooms/add`, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+    
+          return response.data;
+        },
+        onSuccess: () => {
+          toast.success("Room added successfully");
+          queryClient.invalidateQueries({ queryKey: ["rooms"] });
+          reset();
+          
+          
+        },
+        //handle different instances of errors
+        onError: (error: unknown) => {
+          let errorMessage 
+          if (error instanceof AxiosError) {
+    
+            errorMessage=error.response?.data?.message || "Failed to add room";
+          } else {
+            errorMessage= (error as Error).message || "Failed to add room";
+          }
+          toast.error(errorMessage);
+        },
+    
+    
+      });
     const onSubmit = (formData: ResidentForm) => {
         console.log(formData)
         toast.success('Resident added successfully')
