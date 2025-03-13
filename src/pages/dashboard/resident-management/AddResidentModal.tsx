@@ -34,6 +34,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
       formData.append("emergencyContactPhone", data.emergencyContactPhone || "");
       formData.append("relationship", data.emergencyContactRelation);
       formData.append("gender", data.gender.toUpperCase());
+      formData.append('hostelId', localStorage.getItem('hostelId') || '');
 
       const response = await axios.post(`/api/residents/add`, formData, {
         headers: {
