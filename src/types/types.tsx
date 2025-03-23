@@ -66,3 +66,18 @@ export type Staff = {
     staffStatus: "Active" | "Inactive";
     role:string;
   }
+
+  export type CalendarYearT = {
+    id: string
+    name: string
+    hostelId: string
+    startDate: Date
+    endDate?: Date | null
+    isActive: boolean
+    financialReport?: {
+      totalRevenue: number
+      totalExpenses: number
+    }
+    Residents?: Resident[]
+  }
+  
