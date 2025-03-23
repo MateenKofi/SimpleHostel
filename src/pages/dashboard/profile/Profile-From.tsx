@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import axios,{AxiosError} from "axios";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -82,7 +82,7 @@ const ProfileForm = () => {
       toast.success("User Details Updated Successfully");
       queryClient.invalidateQueries({ queryKey: ["user", "userProfile"] });
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       const errorMessage =
         error.response?.data?.message || "Failed to Update User Details";
       toast.error(errorMessage);
@@ -106,7 +106,7 @@ const ProfileForm = () => {
       toast.success("Password Updated Successfully");
       queryClient.invalidateQueries({ queryKey: ["user", "userProfile"] });
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{message?:string}>) => {
       const errorMessage =
         error.response?.data?.message || "Failed to Update Password";
       toast.error(errorMessage);

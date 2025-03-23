@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import { ChevronsUpDown, Plus } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -10,15 +9,14 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
+  
 } from "@/components/ui/sidebar";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 export function TeamSwitcher() {
-  const { isMobile } = useSidebar();
 
-  const { data, isLoading, isError } = useQuery({
+  const { data } = useQuery({
     queryKey: ["hostel"],
     queryFn: async () => {
       const response = await axios.get(
