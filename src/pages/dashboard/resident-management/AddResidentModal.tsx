@@ -25,14 +25,14 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
   const AddResidentMutation = useMutation({
     mutationFn: async (data: ResidentForm) => {
       const payload = {
-        name: data.fullName,
+        name: data.name,
         studentId: data.studentId,
         course: data.course,
         phone: data.phone || "",
         email: data.email,
         emergencyContactName: data.emergencyContactName,
         emergencyContactPhone: data.emergencyContactPhone || "",
-        relationship: data.emergencyContactRelation,
+        relationship: data.relationship,
         gender: data.gender.toUpperCase(),
         hostelId: localStorage.getItem("hostelId") || "",
         calendarYearId: "d37b0e5a-0f52-4488-a1ec-cfc00c19310a",
@@ -79,19 +79,19 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
         className="flex flex-col gap-4 p-6"
       >
         <div className="flex flex-col gap-1">
-          <label htmlFor="fullName" className="text-sm font-medium">
+          <label htmlFor="name" className="text-sm font-medium">
             Full Name*
           </label>
           <input
-            {...register("fullName", { required: "Full name is required" })}
+            {...register("name", { required: "Full name is required" })}
             type="text"
-            id="fullName"
+            id="name"
             placeholder="Enter full name"
             className="border rounded-md p-2"
           />
-          {errors.fullName && (
+          {errors.name && (
             <span className="text-red-500 text-sm">
-              {errors.fullName.message}
+              {errors.name.message}
             </span>
           )}
         </div>
@@ -249,23 +249,23 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
 
           <div className="flex flex-col gap-1 mt-4">
             <label
-              htmlFor="emergencyContactRelation"
+              htmlFor="relationship"
               className="text-sm font-medium"
             >
               Relationship*
             </label>
             <input
-              {...register("emergencyContactRelation", {
+              {...register("relationship", {
                 required: "Relationship is required",
               })}
               type="text"
-              id="emergencyContactRelation"
+              id="relationship"
               placeholder="Enter relationship (e.g. Parent, Sibling)"
               className="border rounded-md p-2"
             />
-            {errors.emergencyContactRelation && (
+            {errors.relationship && (
               <span className="text-red-500 text-sm">
-                {errors.emergencyContactRelation.message}
+                {errors.relationship.message}
               </span>
             )}
           </div>

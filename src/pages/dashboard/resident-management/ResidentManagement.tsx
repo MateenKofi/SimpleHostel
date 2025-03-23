@@ -50,7 +50,15 @@ const ResidentManagement = () => {
     },
     {
       name: 'Room',
-      selector: (row: Resident) => row.roomNumber ? row.roomNumber : 'Not Assigned',
+      cell: (row: Resident) => (
+        <div>
+          {row.roomAssigned === false ? 'Not Assigned' : (
+            <span>
+              {row.roomAssigned}
+            </span>
+          )}
+        </div>
+      )
     },
    
     {
