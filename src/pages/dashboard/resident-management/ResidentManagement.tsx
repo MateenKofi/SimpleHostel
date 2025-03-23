@@ -11,39 +11,32 @@ const ResidentManagement = () => {
   const navigate = useNavigate();
   const { open: openAddResidentModal, close: closeAddResidentModal } = useModal('add_resident_modal');
 
-  // Remove or move this call to a user action if not intended on initial render.
-  // openAddResidentModal();
-
   const { data, isLoading, error } = useQuery({
     queryKey: ['resident'],
     queryFn: async () => {
-      const response = await axios.get(`/api/residents/get/${localStorage.getItem('hostelId')}`);
-      return response.data;
+      const response = await axios.get(`/api/residents/residents/hostel/${localStorage.getItem('hostelId')}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+        return response?.data?.data;
     },
   });
 
   const handleAssignRoom = (resident: Resident) => {
-    // Add logic for assigning a room to the resident.
     console.log('Assign room for', resident);
   };
 
   const handleDeleteResident = (id: string) => {
     console.log(`Resident with ID ${id} deleted successfully`);
-    // Add deletion logic here.
   };
 
   const columns = [
     {
       name: 'Name',
-      selector: (row: Resident) => row.fullName,
+      selector: (row: Resident) => row.name,
       sortable: true,
       grow: 1,
-    },
-    {
-      name: 'Verification',
-      selector: (row: Resident) => row.verificationCode ?? '',
-      sortable: true,
-      grow: 4,
     },
     {
       name: 'Student ID',
@@ -59,24 +52,7 @@ const ResidentManagement = () => {
       name: 'Room',
       selector: (row: Resident) => row.roomNumber ? row.roomNumber : 'Not Assigned',
     },
-    {
-      name: 'Status',
-      selector: (row: Resident) => row.status,
-      sortable: true,
-      cell: (row: Resident) => (
-        <span
-          className={`px-2 py-1 rounded-full text-xs ${
-            row.status === 'active'
-              ? 'bg-green-100 text-green-800'
-              : row.status === 'pending'
-              ? 'bg-yellow-100 text-yellow-800'
-              : 'bg-red-100 text-red-800'
-          }`}
-        >
-          {row.status.charAt(0).toUpperCase() + row.status.slice(1)}
-        </span>
-      ),
-    },
+   
     {
       name: 'Action',
       cell: (row: Resident) => (
@@ -93,7 +69,6 @@ const ResidentManagement = () => {
           <button
             title="Edit"
             className="text-blue-600 hover:text-blue-800"
-            // You can add an edit handler here if needed.
             onClick={() => console.log(`Edit resident ${row.id}`)}
           >
             <Edit className="w-4 h-4" />
