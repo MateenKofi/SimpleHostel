@@ -24,21 +24,23 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
 
   const AddResidentMutation = useMutation({
     mutationFn: async (data: ResidentForm) => {
-      const formData = new FormData();
-      formData.append("name", data.fullName);
-      formData.append("studentId", data.studentId);
-      formData.append("course", data.course);
-      formData.append("phone", data.phone || "");
-      formData.append("email", data.email);
-      formData.append("emergencyContactName", data.emergencyContactName);
-      formData.append("emergencyContactPhone", data.emergencyContactPhone || "");
-      formData.append("relationship", data.emergencyContactRelation);
-      formData.append("gender", data.gender.toUpperCase());
-      formData.append('hostelId', localStorage.getItem('hostelId') || '');
+      const payload = {
+        name: data.fullName,
+        studentId: data.studentId,
+        course: data.course,
+        phone: data.phone || "",
+        email: data.email,
+        emergencyContactName: data.emergencyContactName,
+        emergencyContactPhone: data.emergencyContactPhone || "",
+        relationship: data.emergencyContactRelation,
+        gender: data.gender.toUpperCase(),
+        hostelId: localStorage.getItem("hostelId") || "",
+        calendarYearId: "d37b0e5a-0f52-4488-a1ec-cfc00c19310a",
+      };
 
-      const response = await axios.post(`/api/residents/add`, formData, {
+      const response = await axios.post(`/api/residents/add`, payload, {
         headers: {
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
@@ -53,7 +55,6 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
       onClose();
       navigate("/dashboard/room-assignment");
     },
-    //handle different instances of errors
     onError: (error: unknown) => {
       let errorMessage;
       if (error instanceof AxiosError) {
