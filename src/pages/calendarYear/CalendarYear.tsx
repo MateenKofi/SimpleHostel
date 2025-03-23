@@ -1,15 +1,14 @@
 "use client"
 import { type SubmitHandler, useForm } from "react-hook-form"
-import { CalendarClock,History } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { toast } from "react-hot-toast"
 import axios from "axios"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { Skeleton } from "@/components/ui/skeleton"
 import AddCalendarYearForm from "@/components/AddCalendarYearFrom"
 import CurrentYearCard from "@/components/CalenderYearCard"
 import HistoricalYearsList from "@/components/HistoricalYearsList"
 import { CalendarYearT } from "@/types/types"
+import HistoricalYearsSkeleton from "@/components/loaders/HIstoricalYearsSkeleton"
+import CurrentYearSkeleton from "./CurrentYearSkeleton"
 
 
 interface FormValues {
@@ -90,54 +89,9 @@ const CalendarYear = () => {
   }
 
 
-  // Current Year Skeleton
-  const CurrentYearSkeleton = () => (
-    <Card className="mb-8">
-      <CardHeader>
-        <CardTitle className="flex items-center">
-          <CalendarClock className="mr-2 h-5 w-5" />
-          <Skeleton className="h-6 w-64" />
-        </CardTitle>
-        <CardDescription>
-          <Skeleton className="h-4 w-full max-w-md" />
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="grid gap-4">
-          <div>
-            <Skeleton className="h-4 w-48 mb-2" />
-            <Skeleton className="h-4 w-48" />
-          </div>
-        </div>
-      </CardContent>
-    </Card>
-  )
+  
 
-  // Historical Years Skeleton
-  const HistoricalYearsSkeleton = () => (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center">
-          <History className="mr-2 h-5 w-5" />
-          Historical Calendar Years
-        </CardTitle>
-        <CardDescription>Previous calendar years and their financial summaries</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="grid gap-4">
-          {[1, 2, 3].map((index) => (
-            <div key={index} className="flex items-center justify-between p-4 rounded-lg border">
-              <div className="w-full">
-                <Skeleton className="h-5 w-48 mb-2" />
-                <Skeleton className="h-4 w-40 mb-1" />
-                <Skeleton className="h-4 w-40" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </CardContent>
-    </Card>
-  )
+
 
   return (
     <div className="container mx-auto py-8 px-4">
