@@ -49,6 +49,11 @@ const ResidentManagement = () => {
       sortable: true,
     },
     {
+      name: 'Email',
+      selector: (row: Resident) => row.email,
+      sortable: true,
+    },
+    {
       name: 'Room',
       cell: (row: Resident) => (
         <div>
@@ -65,7 +70,7 @@ const ResidentManagement = () => {
       name: 'Action',
       cell: (row: Resident) => (
         <div className="flex gap-2">
-          {!row.roomNumber && (
+          {!row.roomId && (
             <button
               title="Assign Room"
               className="text-blue-600 hover:text-blue-800"
