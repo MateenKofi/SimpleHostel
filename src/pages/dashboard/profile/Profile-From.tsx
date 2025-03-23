@@ -43,7 +43,7 @@ const ProfileForm = () => {
     },
   });
 
-  const { setValue, register, handleSubmit, formState: { errors } } = personalInfoForm;
+  const { setValue, register, formState: { errors } } = personalInfoForm;
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["user"],

@@ -1,97 +1,96 @@
-"use client"
-import { type SubmitHandler, useForm } from "react-hook-form"
-import { toast } from "react-hot-toast"
-import axios from "axios"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import AddCalendarYearForm from "@/components/AddCalendarYearFrom"
-import CurrentYearCard from "@/components/CalenderYearCard"
-import HistoricalYearsList from "@/components/HistoricalYearsList"
-import { CalendarYearT } from "@/types/types"
-import HistoricalYearsSkeleton from "@/components/loaders/HIstoricalYearsSkeleton"
-import CurrentYearSkeleton from "./CurrentYearSkeleton"
-
+"use client";
+import { type SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
+import axios from "axios";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import AddCalendarYearForm from "@/components/AddCalendarYearFrom";
+import CurrentYearCard from "@/components/CalenderYearCard";
+import HistoricalYearsList from "@/components/HistoricalYearsList";
+import { CalendarYearT } from "@/types/types";
+import HistoricalYearsSkeleton from "@/components/loaders/HIstoricalYearsSkeleton";
+import CurrentYearSkeleton from "./CurrentYearSkeleton";
 
 interface FormValues {
-  yearName: string
+  yearName: string;
 }
 
 const CalendarYear = () => {
-  const { data: currentYear, isLoading: isCurrentYearLoading } = useQuery<CalendarYearT>({
-    queryKey: ["currentYear"],
-    queryFn: async () => {
-      const hostelId = localStorage.getItem("hostelId")
-      const response = await axios.get(`/api/calendar/current/${hostelId}`, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      })
-      return response?.data?.data
-    },
-  })
+  const { data: currentYear, isLoading: isCurrentYearLoading } =
+    useQuery<CalendarYearT>({
+      queryKey: ["currentYear"],
+      queryFn: async () => {
+        const hostelId = localStorage.getItem("hostelId");
+        const response = await axios.get(`/api/calendar/current/${hostelId}`, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        return response?.data?.data;
+      },
+    });
 
-  const { data: historicalYearsResponse, isLoading: isHistoricalYearsLoading } = useQuery<{ data: CalendarYearT[] }>({
-    queryKey: ["historicalYears"],
-    queryFn: async () => {
-      const hostelId = localStorage.getItem("hostelId")
-      if (!hostelId) {
-        throw new Error("Hostel ID is not available in local storage.")
-      }
-      const response = await axios.get(`/api/calendar/historical/${hostelId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      })
-      return response.data
-    },
-  })
+  const { data: historicalYearsResponse, isLoading: isHistoricalYearsLoading } =
+    useQuery<{ data: CalendarYearT[] }>({
+      queryKey: ["historicalYears"],
+      queryFn: async () => {
+        const hostelId = localStorage.getItem("hostelId");
+        if (!hostelId) {
+          throw new Error("Hostel ID is not available in local storage.");
+        }
+        const response = await axios.get(
+          `/api/calendar/historical/${hostelId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        return response.data;
+      },
+    });
 
-  const historicalYears = historicalYearsResponse?.data || []
+  const historicalYears = historicalYearsResponse?.data || [];
 
-  const queryClient = useQueryClient()
-  const { register, handleSubmit, reset } = useForm<FormValues>()
+  const queryClient = useQueryClient();
+  const { register, handleSubmit, reset } = useForm<FormValues>();
 
   // Mutation for adding calendar year
   const AddCalendarYearMutation = useMutation({
     mutationFn: async (data: FormValues) => {
-      const hostelId = localStorage.getItem("hostelId")
+      const hostelId = localStorage.getItem("hostelId");
       const payload = {
         name: data.yearName,
         hostelId: hostelId || "",
-      }
+      };
       const response = await axios.post(`/api/calendar/start`, payload, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      })
-      return response.data
+      });
+      return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["currentYear"] })
-      queryClient.invalidateQueries({ queryKey: ["historicalYears"] })
-      toast.success("Academic Year added successfully")
-      reset()
+      queryClient.invalidateQueries({ queryKey: ["currentYear"] });
+      queryClient.invalidateQueries({ queryKey: ["historicalYears"] });
+      toast.success("Academic Year added successfully");
+      reset();
     },
     onError: (error: unknown) => {
-      console.error("Mutation error:", error)
-      let errorMessage = "Failed to add Academic Year"
+      console.error("Mutation error:", error);
+      let errorMessage = "Failed to add Academic Year";
       if (axios.isAxiosError(error)) {
-        errorMessage = error.response?.data?.message || errorMessage
+        errorMessage = error.response?.data?.message || errorMessage;
       } else {
-        errorMessage = (error as Error).message || errorMessage
+        errorMessage = (error as Error).message || errorMessage;
       }
-      toast.error(errorMessage)
+      toast.error(errorMessage);
     },
-  })
+  });
 
   const onSubmit: SubmitHandler<FormValues> = (data) => {
-    AddCalendarYearMutation.mutate(data)
-  }
-
-
-  
-
-
+    AddCalendarYearMutation.mutate(data);
+  };
 
   return (
     <div className="container mx-auto py-8 px-4">
@@ -102,20 +101,19 @@ const CalendarYear = () => {
         handleSubmit={handleSubmit}
       />
 
-{isCurrentYearLoading ? (
+      {isCurrentYearLoading ? (
         <CurrentYearSkeleton />
       ) : (
         <CurrentYearCard currentYear={currentYear} />
       )}
 
-{isHistoricalYearsLoading ? (
+      {isHistoricalYearsLoading ? (
         <HistoricalYearsSkeleton />
       ) : (
         <HistoricalYearsList historicalYears={historicalYears} />
       )}
     </div>
-  )
-}
+  );
+};
 
-export default CalendarYear
-
+export default CalendarYear;
