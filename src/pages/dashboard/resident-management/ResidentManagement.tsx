@@ -14,7 +14,7 @@ const ResidentManagement = () => {
   const { data, isLoading, error } = useQuery({
     queryKey: ['resident'],
     queryFn: async () => {
-      const response = await axios.get(`/api/residents/residents/hostel/${localStorage.getItem('hostelId')}`, {
+      const response = await axios.get(`/api/residents/hostel/${localStorage.getItem('hostelId')}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -56,13 +56,9 @@ const ResidentManagement = () => {
     {
       name: 'Room',
       cell: (row: Resident) => (
-        <div>
-          {row.roomAssigned === false ? 'Not Assigned' : (
             <span>
-              {row.roomAssigned}
+              {row?.room ? row.room.number : 'N/A'}
             </span>
-          )}
-        </div>
       )
     },
    
@@ -126,7 +122,7 @@ const ResidentManagement = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm p-4">
+      <div className="bg-white rounded-lg shadow-sm p-4 border">
         <div className="flex justify-between items-center mb-4">
           <div className="relative">
             <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />

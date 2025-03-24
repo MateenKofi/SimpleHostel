@@ -1,11 +1,19 @@
 import { useState } from "react";
-import { Bed, ChevronLeft, ChevronRight, HomeIcon as House } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import {
+  Bed,
+  ChevronLeft,
+  ChevronRight,
+  HomeIcon as House,
+  Loader,
+  ShieldPlus,
+  User,
+} from "lucide-react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 interface Room {
-  id: string; // Adjusted type to string if IDs are UUIDs
+  id: string;
   roomNumber: string;
   basePrice: number;
   maxOccupancy: number;
@@ -16,10 +24,26 @@ interface Room {
 
 const RoomAssignment = () => {
   const [activeImage, setActiveImage] = useState<Record<string, number>>({});
-  const fallbackImage = "/logo.png"; // Add the path to your fallback image
+  const fallbackImage = "/logo.png";
+
+  // Extract common values from local storage once
+  const token = localStorage.getItem("token");
+  const hostelId = localStorage.getItem("hostelId");
+  const residentId = localStorage.getItem("residentId") || "";
+
+  // Helper for axios config
+  const axiosConfig = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
 
   // Function to handle image navigation
-  const navigateImage = (roomId: string, direction: "prev" | "next", totalImages: number) => {
+  const navigateImage = (
+    roomId: string,
+    direction: "prev" | "next",
+    totalImages: number
+  ) => {
     setActiveImage((prev) => {
       const currentIndex = prev[roomId] || 0;
       return {
@@ -32,48 +56,75 @@ const RoomAssignment = () => {
     });
   };
 
+  // Mutation to initialize payment
+  const initializePaymentMutation = useMutation({
+    mutationFn: async (data: {
+      roomId: string;
+      residentId: string;
+      initialPayment: number;
+    }) => {
+      const response = await axios.post(
+        `/api/payments/init`,
+        data,
+        axiosConfig
+      );
+      return response.data;
+    },
+    onSuccess: (response) => {
+      if (response && response.paymentUrl) {
+        toast(response.message || "Redirecting to payment...");
+        // window.location.href = response?.paymentUrl?.authorizationUrl;
+        const reference = response?.paymentUrl?.reference
+        console.log("Payment reference:", reference);
+      } else {
+        console.error("Payment URL is undefined:", response);
+        toast.error("Failed to retrieve payment URL. Please try again.");
+      }
+    },
+    onError: (error) => {
+      console.error("Error initializing payment:", error);
+      toast.error("Failed to initialize payment. Please check your connection.");
+    },
+  });
+
   // Fetch rooms data
   const { data, isLoading, isError } = useQuery({
     queryKey: ["rooms"],
     queryFn: async () => {
-      const hostelId = localStorage.getItem("hostelId");
       if (!hostelId) {
         throw new Error("Hostel ID is not available in local storage.");
       }
-      const response = await axios.get(`/api/rooms/hostel/${hostelId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
-      return response?.data.data;
+      const response = await axios.get(`/api/rooms/hostel/${hostelId}`, axiosConfig);
+      return response.data.data;
     },
   });
 
-  // Transform the API data to match the Room interface
+  // Transform the API data to match the Room interface and filter available rooms
   const rooms: Room[] = data?.rooms
     ? data.rooms
         .map((room: any) => ({
           id: room.id,
-          roomNumber: room.number, // API uses "number" instead of "roomNumber"
-          basePrice: room.price, // API field "price" corresponds to basePrice
-          maxOccupancy: room.maxCap, // API field "maxCap" corresponds to maxOccupancy
+          roomNumber: room.number,
+          basePrice: room.price,
+          maxOccupancy: room.maxCap,
+          currentResidentCount: room.currentResidentCount,
+          gender:room.gender,
           amenities: room.Amenities?.map((amenity: any) => amenity.name) || [],
           isAvailable: room.status === "AVAILABLE",
           images: room.RoomImage?.map((img: any) => img.imageUrl) || [],
         }))
-        .filter((room: Room) => room.isAvailable) // Filter only available rooms
+        .filter((room: Room) => room.isAvailable)
     : [];
 
   if (isLoading) return <div>Loading rooms...</div>;
-  if (isError) return <div>Error loading rooms.</div>;
+  if (isError) return <div>Error loading rooms. Please try again later.</div>;
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-4">
       <div className="mb-4">
         <h2 className="text-2xl font-semibold">Room Assignment</h2>
         <p className="text-gray-600 font-thin max-w-2xl">
-          Select a room for the resident. The selected room will be reserved for the resident until the payment is
-          completed.
+          Select a room for the resident. The selected room will be reserved until payment is completed.
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -90,9 +141,10 @@ const RoomAssignment = () => {
                     src={room.images[activeImage[room.id] || 0]}
                     alt={`Room ${room.roomNumber}`}
                     className="object-cover w-full h-full"
+                    onError={(e) => {
+                      e.currentTarget.src = fallbackImage;
+                    }}
                   />
-
-                  {/* Navigation buttons */}
                   {room.images.length > 1 && (
                     <>
                       <button
@@ -115,18 +167,21 @@ const RoomAssignment = () => {
                       >
                         <ChevronRight className="h-5 w-5" />
                       </button>
-
-                      {/* Image indicators */}
                       <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
                         {room.images.map((_, index) => (
                           <button
                             key={index}
                             onClick={(e) => {
                               e.stopPropagation();
-                              setActiveImage((prev) => ({ ...prev, [room.id]: index }));
+                              setActiveImage((prev) => ({
+                                ...prev,
+                                [room.id]: index,
+                              }));
                             }}
                             className={`h-1.5 rounded-full ${
-                              (activeImage[room.id] || 0) === index ? "w-4 bg-white" : "w-1.5 bg-white/60"
+                              (activeImage[room.id] || 0) === index
+                                ? "w-4 bg-white"
+                                : "w-1.5 bg-white/60"
                             } transition-all`}
                             aria-label={`Go to image ${index + 1}`}
                           />
@@ -146,52 +201,68 @@ const RoomAssignment = () => {
 
             <div className="p-4">
               <div className="flex justify-between items-start mb-3">
-                <div>
-                  <h5 className="text-lg font-medium flex items-center gap-2">
-                    <House className="w-4 h-4" />
-                    <span>{room.roomNumber}</span>
-                  </h5>
-                </div>
+                <h5 className="text-lg font-medium flex items-center gap-2">
+                  <House className="w-4 h-4" />
+                  <span>{room.roomNumber}</span>
+                </h5>
+                <span className="flex gap-2 items-center bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                  <ShieldPlus/>
+                  <span>
+                    {room.currentResidentCount} / {room.maxOccupancy} Occupants
+                  </span>
+                </span>
                 <span className="text-primary font-semibold">
                   GH{room.basePrice.toLocaleString()}
                 </span>
+                
               </div>
 
               <div className="space-y-2">
                 <div className="flex gap-2 text-gray-600 text-sm">
+                  <span className="flex items-center gap-1 bg-gray-100 text-gray-900 px-2 py-1 rounded-full shadow">
                   <Bed className="w-4 h-4" />
-                  <span>{room.maxOccupancy} Beds</span>
+                  <div className="h-4/5 w-[0.2px] bg-gray-500 "></div>
+                  <span>{room.maxOccupancy} Bed(s)</span>
+                  </span>
+                  <span className="flex items-center gap-1 bg-gray-100 text-gray-900 px-2 py-1 rounded-full shadow capitalize">
+                  <User className="w-4 h-4" />
+                  <div className="h-4/5 w-[0.2px] bg-gray-500 "></div>
+                  <span>{room.gender}</span>
+                  </span>
                 </div>
 
-                {/* Amenities */}
                 <div className="flex flex-wrap gap-2">
                   {room.amenities.map((amenity, index) => (
-                    <span key={index} className="text-xs bg-gray-100 px-2 py-1 rounded-full">
+                    <span
+                      key={index}
+                      className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-900"
+                    >
                       {amenity}
                     </span>
                   ))}
                 </div>
 
-                {/* Status indicator */}
-                <div className="flex justify-between items-center mt-3 gap-4">
-                  <span
-                    className={`text-xs px-2 py-1 rounded-full ${
-                      room.isAvailable ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {room.isAvailable ? "Available" : "Occupied"}
-                  </span>
-                  <Link
-                    to="/dashboard/payment"
-                    className="mt-4 text-base font-medium w-full text-center bg-black text-white rounded-md px-4 py-2 hover:bg-gray-800 transition-all"
+                <div className="flex justify-between items-center mt-3">
+                  <button
+                    className="w-full text-base font-medium text-center bg-black text-white rounded-md px-4 py-2 hover:bg-gray-800 transition-all"
+                    disabled={initializePaymentMutation.isPending}
                     onClick={(e) => {
                       e.stopPropagation();
+                      // Directly pass this room's details to the mutation
+                      initializePaymentMutation.mutate({
+                        roomId: room.id,
+                        residentId,
+                        initialPayment: room.basePrice,
+                      });
                     }}
                   >
-                    Book Room
-                  </Link>
+                    {initializePaymentMutation.isPending ? (
+                      <Loader className="animate-spin" />
+                    ) : (
+                      "Book Room"
+                    )}
+                  </button>
                 </div>
-
               </div>
             </div>
           </div>

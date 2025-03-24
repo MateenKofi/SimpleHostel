@@ -47,13 +47,18 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
 
       return response.data;
     },
-    onSuccess: () => {
+    onSuccess: (response) => {
+      const residentId = response?.data?.id;
+      if(residentId) {
+        localStorage.setItem("residentId", residentId);
+      }
       toast.success("Room added successfully");
       queryClient.invalidateQueries({ queryKey: [" "] });
       reset();
       toast.success("Resident added successfully");
       onClose();
       navigate("/dashboard/room-assignment");
+
     },
     onError: (error: unknown) => {
       let errorMessage;

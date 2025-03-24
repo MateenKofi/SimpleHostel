@@ -7,7 +7,7 @@ const RoomAssignmentAndPayment = () => {
     const navigate = useNavigate()
    
     const handleBack = () => {
-        navigate('/resident-management')
+        navigate('/dashboard/resident-management')
     }
 
     return (
