@@ -96,7 +96,7 @@ const RoomAssignment = () => {
           isAvailable: room.status === "AVAILABLE",
           images: room.RoomImage?.map((img) => img.imageUrl) || [],
         }))
-        .filter((room) => room.isAvailable)
+        .filter((room:Room) => room.isAvailable)
     : [];
 
   if (isLoading) return <RoomAssignmentLoader />;
@@ -118,22 +118,22 @@ const RoomAssignment = () => {
           >
             {/* Image Carousel */}
             <div className="relative h-48 w-full">
-              {room.images.length > 0 ? (
+              {(room.images ?? []).length > 0 ? (
                 <>
                   <img
-                    src={room.images[activeImage[room.id] || 0]}
+                    src={((room.images as string[] | undefined) ?? [fallbackImage])[activeImage[room.id] || 0]}
                     alt={`Room ${room.roomNumber}`}
                     className="object-cover w-full h-full"
                     onError={(e) => {
-                      e.currentTarget.src = fallbackImage;
+                      (e.currentTarget as HTMLImageElement).src = fallbackImage;
                     }}
                   />
-                  {room.images.length > 1 && (
+                  {(room.images ?? []).length > 1 && (
                     <>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigateImage(room.id, "prev", room.images.length);
+                          navigateImage(room.id, "prev", (room.images ?? []).length);
                         }}
                         className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 text-white rounded-full p-1 hover:bg-black/50"
                         aria-label="Previous image"
@@ -143,7 +143,7 @@ const RoomAssignment = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          navigateImage(room.id, "next", room.images.length);
+                          navigateImage(room.id, "next", (room.images ?? []).length);
                         }}
                         className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 text-white rounded-full p-1 hover:bg-black/50"
                         aria-label="Next image"
@@ -151,7 +151,7 @@ const RoomAssignment = () => {
                         <ChevronRight className="h-5 w-5" />
                       </button>
                       <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1">
-                        {room.images.map((_, index) => (
+                        {(room.images ?? []).map((_, index) => (
                           <button
                             key={index}
                             onClick={(e) => {

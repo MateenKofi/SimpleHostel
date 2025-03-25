@@ -43,8 +43,8 @@ export type Room = {
   description?: string;
   number: string;
   type: string;
-  RoomImage?: images[];
-  images?:images[];
+  RoomImage?: images[] | undefined | null;
+  images?:images[] | undefined | null;
   Amenities: Amenity[];
 };
 
