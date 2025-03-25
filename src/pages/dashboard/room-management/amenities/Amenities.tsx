@@ -1,14 +1,15 @@
 'use client'
 import DataTable from 'react-data-table-component';
 import { Building, Search, Filter, Download, Plus, Edit, Trash2, Loader } from 'lucide-react';
-import { useModal } from '../../../components/Modal';
+import { useModal } from '@/components/Modal';
 import AmenitiesModal from './AmenitiesModal';
 import EditAmenitiesModal from './EditAmenitiesModal';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Swal from 'sweetalert2';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
+import AmenitiesLoader from '@/components/loaders/AmenitiesLoader';
 
 const Amenities = () => {
     const queryClient = useQueryClient();
@@ -44,12 +45,11 @@ const Amenities = () => {
           queryClient.invalidateQueries({ queryKey: ["amenities"] });
           setDeletingAmenityId(null);
         },
-        onError: (error: any) => {
-          const errorMessage =
-            error.response?.data?.message || "Failed to delete amenity";
-          toast.error(errorMessage);
-          setDeletingAmenityId(null);
-        },
+        onError: (error: AxiosError<{ message?: string }>) => {
+            const errorMessage =
+              error.response?.data?.message || "Failed to Update User Details";
+            toast.error(errorMessage);
+          },
       });
     
     const handleDeleteAmenities = (id: string) => {
@@ -110,34 +110,12 @@ const Amenities = () => {
     ];
 
     if (isLoading) {
+        <AmenitiesLoader/>
+    }
+    if (isError) {
         return (
-            <div className="p-6">
-                <div className="flex justify-between items-center mb-6">
-                    <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 bg-gray-300 rounded-full animate-pulse"></div>
-                        <div className="h-6 bg-gray-300 rounded-md w-32 animate-pulse"></div>
-                    </div>
-                    <div className="flex gap-2">
-                        <div className="px-4 py-2 bg-gray-300 rounded-md w-24 animate-pulse"></div>
-                        <div className="px-4 py-2 bg-gray-300 rounded-md w-24 animate-pulse"></div>
-                        <div className="px-4 py-2 bg-gray-300 rounded-md w-24 animate-pulse"></div>
-                    </div>
-                </div>
-                <div className="bg-white rounded-lg shadow-sm p-4">
-                    <div className="flex justify-between items-center mb-4">
-                        <div className="relative w-[300px]">
-                            <div className="w-full h-10 bg-gray-300 rounded-md animate-pulse"></div>
-                        </div>
-                        <div className="flex gap-2">
-                            <div className="px-4 py-2 bg-gray-300 rounded-md w-24 animate-pulse"></div>
-                        </div>
-                    </div>
-                    <div className="space-y-4">
-                        {[...Array(5)].map((_, index) => (
-                            <div key={index} className="h-10 bg-gray-300 rounded-md animate-pulse"></div>
-                        ))}
-                    </div>
-                </div>
+            <div className="w-full flex justify-center flex-col items-center gap-4 text-center py-4 mt-20">
+                <p>Error fetching amenities. Please try again later.</p>
             </div>
         );
     }

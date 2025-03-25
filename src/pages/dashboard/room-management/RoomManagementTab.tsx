@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import RoomManagement from './room-management/RoomManagement';
-import Amenities from './amenitie/Amenities';
-import StatusAlert from '../../components/StatusAlert';
+import RoomManagement from './rooms/RoomManagement';
+import Amenities from './amenities/Amenities';
+import StatusAlert from '@/components/StatusAlert';
 
 interface TabData {
   id: string;
@@ -10,8 +10,6 @@ interface TabData {
 }
 
 const RoomManagementTab = () => {
- ;
-
   const [hostelState, setHostelState] = useState<string | undefined>(undefined);
   const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}')
   useEffect(() => {

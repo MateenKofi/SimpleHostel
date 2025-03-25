@@ -14,6 +14,7 @@ export interface LogoutIconHandle {
 
 interface LogoutIconProps extends HTMLAttributes<HTMLDivElement> {
   size?: number;
+  label?: string;
 }
 
 const pathVariants: Variants = {
@@ -27,7 +28,7 @@ const pathVariants: Variants = {
 };
 
 const LogoutIcon = forwardRef<LogoutIconHandle, LogoutIconProps>(
-  ({ onMouseEnter, onMouseLeave, className, size = 20, ...props }, ref) => {
+  ({ onMouseEnter, onMouseLeave, className, size = 20, label, ...props }, ref) => {
     const controls = useAnimation();
     const isControlledRef = useRef(false);
 
@@ -89,7 +90,7 @@ const LogoutIcon = forwardRef<LogoutIconHandle, LogoutIconProps>(
           <motion.polyline points="16 17 21 12 16 7" variants={pathVariants} animate={controls} />
           <motion.line x1="21" x2="9" y1="12" y2="12" variants={pathVariants} animate={controls} />
         </svg>
-        Logout
+        {label && <span className="ml-2">{label}</span>}
       </div>
     );
   }

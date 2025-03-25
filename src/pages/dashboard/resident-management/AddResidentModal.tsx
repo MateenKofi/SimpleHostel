@@ -60,16 +60,13 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
       navigate("/dashboard/room-assignment");
 
     },
-    onError: (error: unknown) => {
-      let errorMessage;
-      if (error instanceof AxiosError) {
-        errorMessage = error.response?.data?.message || "Failed to add room";
-      } else {
-        errorMessage = (error as Error).message || "Failed to add room";
-      }
+    onError: (error: AxiosError<{ message?: string }>) => {
+      const errorMessage =
+        error.response?.data?.message || "Failed to Update User Details";
       toast.error(errorMessage);
     },
   });
+  
   const onSubmit = (formData: ResidentForm) => {
   AddResidentMutation.mutate(formData);
   };

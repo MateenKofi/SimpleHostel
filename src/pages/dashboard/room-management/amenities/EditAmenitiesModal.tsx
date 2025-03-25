@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import Modal from '../../../components/Modal';
+import Modal from '@/components/Modal';
 import { Loader, Plus } from 'lucide-react';
+import { AxiosError } from 'axios';
+import toast from 'react-hot-toast';
 
 interface Amenity {
     id: string;
@@ -28,7 +30,12 @@ const EditAmenitiesModal: React.FC<EditAmenitiesModalProps> = ({ onClose, formda
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['amenities'] });
             onClose();
-        }
+        },
+        onError: (error: AxiosError<{ message?: string }>) => {
+              const errorMessage =
+                error.response?.data?.message || "Failed to Update User Details";
+              toast.error(errorMessage);
+            },
     });
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm<AmenityFormData>({

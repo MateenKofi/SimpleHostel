@@ -1,7 +1,6 @@
 "use client"
 
 import {
-  BadgeCheck,
   ChevronsUpDown,
 } from "lucide-react"
 
@@ -28,6 +27,7 @@ import {
 import {useNavigate} from 'react-router-dom'
 import { LogoutIcon } from "@/components/animateIcons/Logout"
 import { BellIcon } from "@/components/animateIcons/bell"
+import { UserIcon } from "@/components/animateIcons/User"
 
 export function NavUser() {
 
@@ -86,18 +86,17 @@ export function NavUser() {
               <DropdownMenuItem
               onClick={()=>navigate('/dashboard/profile')}
               >
-                <BadgeCheck />
-                Account
+                <UserIcon label="Account"/>
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <BellIcon />
+                <BellIcon label="Notification"/>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem
             onClick={handlelogout}
             >
-              <LogoutIcon />
+              <LogoutIcon label="Logout"/>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

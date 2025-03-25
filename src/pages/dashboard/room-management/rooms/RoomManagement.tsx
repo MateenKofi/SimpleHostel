@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StatCard } from "../../../components/stat-card";
+import { StatCard } from "@/components/stat-card";
 import {
   Building,
   Search,
@@ -14,12 +14,12 @@ import {
   Hammer,
   Loader,
 } from "lucide-react";
-import { useModal } from "../../../components/Modal";
+import { useModal } from "@/components/Modal";
 import AddRoomModal from "./AddRoomModal";
 import EditRoomModal from "./EditRoomModal";
-import AmenitiesModal from "../amenitie/AmenitiesModal";
-import axios from "axios";
-import { Room } from "../../../helper/types/types";
+import AmenitiesModal from "../amenities/AmenitiesModal";
+import axios, { AxiosError } from "axios";
+import { Room } from "@/helper/types/types";
 import DataTable from "react-data-table-component";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
@@ -66,7 +66,7 @@ const RoomManagement = () => {
       toast.success("Room deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["rooms"] });
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{message:string}>) => {
       const errorMessage = error.response?.data?.message || "Failed to delete room";
       toast.error(errorMessage);
     },
@@ -333,8 +333,6 @@ const RoomManagement = () => {
           />
         </div>
       )}
-
-      {/* Edit Room Modal (only rendered if a room is selected) */}
       
         {selectedRoom && <EditRoomModal onClose={closeEditRoomModal} formdata={selectedRoom} />}
      

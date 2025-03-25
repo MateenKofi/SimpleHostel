@@ -10,6 +10,7 @@ import axios,{AxiosError} from "axios";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import  LogoLoader  from "@/components/loaders/logoLoader";
 
 interface PersonalInfoFormValues {
   name: string;
@@ -138,11 +139,7 @@ const ProfileForm = () => {
   };
 
   if (isLoading) {
-    return (
-      <div className="w-full h-[70dvh] grid place-items-center">
-        <img src="/logo.png" alt="Loading" className="w-20 h-20 animate-ping" />
-      </div>
-    );
+    <LogoLoader/>
   }
 
   if (isError) {

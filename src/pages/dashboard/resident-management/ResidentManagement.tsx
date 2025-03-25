@@ -1,30 +1,32 @@
-import DataTable from 'react-data-table-component';
-import AddResidentModal from './AddResidentModal';
-import { Download, Edit, Filter, HousePlus, Plus, Search, Trash2, Users } from 'lucide-react';
-import type { Resident } from '../../../helper/types/types';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { useModal } from '@components/Modal';
-import { useQuery } from '@tanstack/react-query';
+import React from "react";
+import DataTable from "react-data-table-component";
+import AddResidentModal from "./AddResidentModal";
+import { Download, Edit, Filter, HousePlus, Plus, Search, Trash2, Users } from "lucide-react";
+import type { Resident } from "../../../helper/types/types";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useModal } from "@components/Modal";
+import { useQuery } from "@tanstack/react-query";
+import ResidentLoader from "@/components/loaders/ResidentLoader";
 
 const ResidentManagement = () => {
   const navigate = useNavigate();
-  const { open: openAddResidentModal, close: closeAddResidentModal } = useModal('add_resident_modal');
+  const { open: openAddResidentModal, close: closeAddResidentModal } = useModal("add_resident_modal");
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['resident'],
+    queryKey: ["resident"],
     queryFn: async () => {
-      const response = await axios.get(`/api/residents/hostel/${localStorage.getItem('hostelId')}`, {
+      const response = await axios.get(`/api/residents/hostel/${localStorage.getItem("hostelId")}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-        return response?.data?.data;
+      return response?.data?.data;
     },
   });
 
   const handleAssignRoom = (resident: Resident) => {
-    console.log('Assign room for', resident);
+    console.log("Assign room for", resident);
   };
 
   const handleDeleteResident = (id: string) => {
@@ -33,37 +35,32 @@ const ResidentManagement = () => {
 
   const columns = [
     {
-      name: 'Name',
+      name: "Name",
       selector: (row: Resident) => row.name,
       sortable: true,
       grow: 1,
     },
     {
-      name: 'Student ID',
+      name: "Student ID",
       selector: (row: Resident) => row.studentId,
       sortable: true,
     },
     {
-      name: 'Phone',
+      name: "Phone",
       selector: (row: Resident) => row.phone,
       sortable: true,
     },
     {
-      name: 'Email',
+      name: "Email",
       selector: (row: Resident) => row.email,
       sortable: true,
     },
     {
-      name: 'Room',
-      cell: (row: Resident) => (
-            <span>
-              {row?.room ? row.room.number : 'N/A'}
-            </span>
-      )
+      name: "Room",
+      cell: (row: Resident) => <span>{row?.room ? row.room.number : "N/A"}</span>,
     },
-   
     {
-      name: 'Action',
+      name: "Action",
       cell: (row: Resident) => (
         <div className="flex gap-2">
           {!row.roomId && (
@@ -103,7 +100,7 @@ const ResidentManagement = () => {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => navigate('/room-verification')}
+            onClick={() => navigate("/room-verification")}
             className="px-4 py-2 bg-primary text-white rounded-md"
           >
             Verify Resident
@@ -139,7 +136,7 @@ const ResidentManagement = () => {
         </div>
 
         {isLoading ? (
-          <div>Loading...</div>
+          <ResidentLoader />
         ) : error ? (
           <div>Error loading residents</div>
         ) : (
@@ -159,5 +156,7 @@ const ResidentManagement = () => {
     </div>
   );
 };
+
+
 
 export default ResidentManagement;

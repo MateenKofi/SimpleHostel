@@ -3,11 +3,11 @@ import { lazy, Suspense } from 'react';
 import axios from 'axios';
 import Layout from '@components/layout/Layout';
 import LandingPageLayout from './components/layout/LandingPageLayout';
-import {Divide, Loader} from 'lucide-react';
+import { Loader} from 'lucide-react';
 
 // Lazy load components
 const Dashboard = lazy(() => import('@pages/dashboard/Dashboard'));
-const RoomManagementTab = lazy(() => import('@pages/room-management/RoomManagementTab'));
+const RoomManagementTab = lazy(() => import('@pages/dashboard/room-management/RoomManagementTab'));
 const RoomAssignmentAndPayment = lazy(() => import('@pages/dashboard/resident-management/room-assignment/RoomAssignmentAndPayment'));
 const ResidentManagement = lazy(() => import('@pages/dashboard/resident-management/ResidentManagement'));
 const VisitorManagement = lazy(() => import('@pages/dashboard/visitor-management/VisitorManagement'));
