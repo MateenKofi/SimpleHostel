@@ -24,7 +24,7 @@ const LoginForm = lazy(() => import('./pages/Authentication/login/login-form'));
 const ApproveHostel = lazy(() => import('./pages/dashboard/approvals/Approve-Hostel'));
 const ProfileForm = lazy(() => import('./pages/dashboard/profile/Profile-From'));
 const EditStaff = lazy(() => import('./pages/dashboard/staff-management/EditStaff'));
-const CalendarYear = lazy(() => import('./pages/calendarYear/CalendarYear'));
+const CalendarYear = lazy(() => import('./pages/dashboard/calendarYear/CalendarYear'));
 const Payment = lazy(() => import('./pages/dashboard/resident-management/room-assignment/Payment'));
 
 // Axios configuration
