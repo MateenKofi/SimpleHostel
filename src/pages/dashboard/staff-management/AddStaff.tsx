@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Edit, ImageUp, Trash,Loader } from 'lucide-react';
 import {  useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from 'react-hook-form';
-import { Staff } from '../../../types/types';
+import { Staff } from '../../../helper/types/types';
 import axios from 'axios';
 import { toast } from "react-hot-toast";
 import dayjs from "dayjs";

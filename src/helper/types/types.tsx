@@ -1,24 +1,25 @@
 export type Resident = {
-  id: string
-  name: string
-  studentId: string
-  course: string
-  phone: string
-  email: string
-  emergencyContactName: string
-  emergencyContactPhone: string
-  relationship:string
-  roomId: string
-  gender: string
+  id: string;
+  name: string;
+  studentId: string;
+  course: string;
+  phone: string;
+  email: string;
+  emergencyContactName: string;
+  emergencyContactPhone: string;
+  relationship: string;
+  roomId: string;
+  gender: string;
   roomAssigned: boolean;
-  createdAt: string
-  updatedAt: string
-  amountPaid: number | null
-  balanceOwed: number | null
-  roomPrice: number
-  delFlag: boolean
-  calendarYearId: string
-  hostelId: string | null
+  createdAt: string;
+  updatedAt: string;
+  amountPaid: number | null;
+  balanceOwed: number | null;
+  roomPrice: number;
+  delFlag: boolean;
+  calendarYearId: string;
+  hostelId: string | null;
+  room?: Room | null;
 };
 
 export type Room = {
@@ -42,8 +43,19 @@ export type Room = {
   description?: string;
   number: string;
   type: string;
-  RoomImage: string[];
+  RoomImage?: images[];
+  images?:images[];
   Amenities: Amenity[];
+};
+
+export type images = {
+  id:string;
+  roomId?: string;
+  imageUrl: string;
+  imageKey: string;
+  createdAt?: string;
+  updatedAt?: string;
+  delFlag?: boolean;
 };
 
 export type Amenity = {

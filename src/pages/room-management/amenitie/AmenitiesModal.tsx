@@ -2,7 +2,7 @@ import { Plus, Trash2, Loader } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import Modal from '../../../components/Modal';
-import { Amenity } from '../../../types/types';
+import { Amenity } from '../../../helper/types/types';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from 'axios';
 

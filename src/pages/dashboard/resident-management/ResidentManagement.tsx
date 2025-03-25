@@ -1,7 +1,7 @@
 import DataTable from 'react-data-table-component';
 import AddResidentModal from './AddResidentModal';
 import { Download, Edit, Filter, HousePlus, Plus, Search, Trash2, Users } from 'lucide-react';
-import type { Resident } from '../../../types/types';
+import type { Resident } from '../../../helper/types/types';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useModal } from '@components/Modal';

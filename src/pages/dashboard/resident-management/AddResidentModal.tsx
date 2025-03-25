@@ -1,7 +1,7 @@
 import Modal from "../../../components/Modal";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
-import { Resident } from "../../../types/types";
+import { Resident } from "../../../helper/types/types";
 import { useNavigate } from "react-router-dom";
 import {  useMutation, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";

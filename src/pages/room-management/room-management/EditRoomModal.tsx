@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Modal from "../../../components/Modal";
 import { useForm } from "react-hook-form";
-import type { Room } from "../../../types/types";
+import type { Room } from "../../../helper/types/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import ImageUpload from "../../../components/ImageUpload";

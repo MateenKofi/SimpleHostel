@@ -9,34 +9,20 @@ import {
   User,
 } from "lucide-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
-
-interface Room {
-  id: string;
-  roomNumber: string;
-  basePrice: number;
-  maxOccupancy: number;
-  amenities: string[];
-  isAvailable: boolean;
-  images: string[];
-}
+import RoomAssignmentLoader from "../../../../components/loaders/RoomAssignmentLoader";
+import { axiosConfig } from "../../../../helper/axiosConfig";
+import { Room, Amenity } from "../../../../helper/types/types";
 
 const RoomAssignment = () => {
+  const navigate = useNavigate();
   const [activeImage, setActiveImage] = useState<Record<string, number>>({});
   const fallbackImage = "/logo.png";
 
-  // Extract common values from local storage once
-  const token = localStorage.getItem("token");
-  const hostelId = localStorage.getItem("hostelId");
+  const hostelId = localStorage.getItem("hostelId") || "";
   const residentId = localStorage.getItem("residentId") || "";
-
-  // Helper for axios config
-  const axiosConfig = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
 
   // Function to handle image navigation
   const navigateImage = (
@@ -70,18 +56,15 @@ const RoomAssignment = () => {
       );
       return response.data;
     },
-    onSuccess: (response) => {
+    onSuccess: (response: { paymentUrl: { authorizationUrl: string }; message: string }) => {
       if (response && response.paymentUrl) {
+        navigate("/dashboard/resident-management");
+        localStorage.removeItem("residentId");
         toast(response.message || "Redirecting to payment...");
-        // window.location.href = response?.paymentUrl?.authorizationUrl;
-        const reference = response?.paymentUrl?.reference
-        console.log("Payment reference:", reference);
-      } else {
-        console.error("Payment URL is undefined:", response);
-        toast.error("Failed to retrieve payment URL. Please try again.");
+        window.location.href = response.paymentUrl.authorizationUrl;
       }
     },
-    onError: (error) => {
+    onError: (error: unknown) => {
       console.error("Error initializing payment:", error);
       toast.error("Failed to initialize payment. Please check your connection.");
     },
@@ -102,21 +85,21 @@ const RoomAssignment = () => {
   // Transform the API data to match the Room interface and filter available rooms
   const rooms: Room[] = data?.rooms
     ? data.rooms
-        .map((room: any) => ({
+        .map((room: Room) => ({
           id: room.id,
-          roomNumber: room.number,
-          basePrice: room.price,
+          roomNumber: room.roomNumber,
+          basePrice: room.basePrice,
           maxOccupancy: room.maxCap,
           currentResidentCount: room.currentResidentCount,
-          gender:room.gender,
-          amenities: room.Amenities?.map((amenity: any) => amenity.name) || [],
+          gender: room.gender,
+          amenities: room.Amenities?.map((amenity: Amenity) => amenity.name) || [],
           isAvailable: room.status === "AVAILABLE",
-          images: room.RoomImage?.map((img: any) => img.imageUrl) || [],
+          images: room.RoomImage?.map((img) => img.imageUrl) || [],
         }))
-        .filter((room: Room) => room.isAvailable)
+        .filter((room) => room.isAvailable)
     : [];
 
-  if (isLoading) return <div>Loading rooms...</div>;
+  if (isLoading) return <RoomAssignmentLoader />;
   if (isError) return <div>Error loading rooms. Please try again later.</div>;
 
   return (
@@ -206,7 +189,7 @@ const RoomAssignment = () => {
                   <span>{room.roomNumber}</span>
                 </h5>
                 <span className="flex gap-2 items-center bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
-                  <ShieldPlus/>
+                  <ShieldPlus />
                   <span>
                     {room.currentResidentCount} / {room.maxOccupancy} Occupants
                   </span>
@@ -214,20 +197,19 @@ const RoomAssignment = () => {
                 <span className="text-primary font-semibold">
                   GH{room.basePrice.toLocaleString()}
                 </span>
-                
               </div>
 
               <div className="space-y-2">
                 <div className="flex gap-2 text-gray-600 text-sm">
                   <span className="flex items-center gap-1 bg-gray-100 text-gray-900 px-2 py-1 rounded-full shadow">
-                  <Bed className="w-4 h-4" />
-                  <div className="h-4/5 w-[0.2px] bg-gray-500 "></div>
-                  <span>{room.maxOccupancy} Bed(s)</span>
+                    <Bed className="w-4 h-4" />
+                    <div className="h-4/5 w-[0.2px] bg-gray-500 "></div>
+                    <span>{room.maxOccupancy} Bed(s)</span>
                   </span>
                   <span className="flex items-center gap-1 bg-gray-100 text-gray-900 px-2 py-1 rounded-full shadow capitalize">
-                  <User className="w-4 h-4" />
-                  <div className="h-4/5 w-[0.2px] bg-gray-500 "></div>
-                  <span>{room.gender}</span>
+                    <User className="w-4 h-4" />
+                    <div className="h-4/5 w-[0.2px] bg-gray-500 "></div>
+                    <span>{room.gender}</span>
                   </span>
                 </div>
 
@@ -248,7 +230,6 @@ const RoomAssignment = () => {
                     disabled={initializePaymentMutation.isPending}
                     onClick={(e) => {
                       e.stopPropagation();
-                      // Directly pass this room's details to the mutation
                       initializePaymentMutation.mutate({
                         roomId: room.id,
                         residentId,

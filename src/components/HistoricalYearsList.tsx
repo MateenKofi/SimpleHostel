@@ -1,6 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { History } from "lucide-react"
-import {CalendarYearT} from "@/types/types"
+import {CalendarYearT} from "@/helper/types/types"
 
 const HistoricalYearsList = ({ historicalYears }: { historicalYears: CalendarYearT[] }) => (
   <Card>

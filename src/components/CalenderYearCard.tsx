@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { CalendarClock } from "lucide-react"
 import moment from "moment"
-import { CalendarYearT } from "@/types/types"
+import { CalendarYearT } from "@/helper/types/types"
 
 const CurrentYearCard = ({ currentYear }: { currentYear: CalendarYearT | undefined }) => {
   if (!currentYear) return <p className="text-center">No current calendar year found.</p>

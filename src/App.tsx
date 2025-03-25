@@ -13,7 +13,7 @@ const ResidentManagement = lazy(() => import('@pages/dashboard/resident-manageme
 const VisitorManagement = lazy(() => import('@pages/dashboard/visitor-management/VisitorManagement'));
 const StaffManagement = lazy(() => import('@pages/dashboard/staff-management/StaffManagement'));
 const AddStaff = lazy(() => import('@pages/dashboard/staff-management/AddStaff'));
-const Maintenance = lazy(() => import('@pages/maintenance&Tracking/maintenace'));
+const Maintenance = lazy(() => import('@/pages/dashboard/maintenance&Tracking/maintenace'));
 const DeptorsList = lazy(() => import('./pages/dashboard/deptors-list/DeptorsList'));
 const Home = lazy(() => import('./pages/landing-page/page'));
 const FindHostel = lazy(() => import('./pages/landing-page/component/findHostel/page'));

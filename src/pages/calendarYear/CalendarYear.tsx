@@ -6,7 +6,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import AddCalendarYearForm from "@/components/AddCalendarYearFrom";
 import CurrentYearCard from "@/components/CalenderYearCard";
 import HistoricalYearsList from "@/components/HistoricalYearsList";
-import { CalendarYearT } from "@/types/types";
+import { CalendarYearT } from "@/helper/types/types";
 import HistoricalYearsSkeleton from "@/components/loaders/HIstoricalYearsSkeleton";
 import CurrentYearSkeleton from "./CurrentYearSkeleton";
 

@@ -21,7 +21,7 @@
       "@components/*": ["src/components/*"],
       "@pages/*": ["src/pages/*"],
       "@stores/*": ["src/stores/*"],
-      "@types/*": ["src/types/*"],
+      "@types/*": ["src/helper/types/*"],
       "@lib/*": ["src/lib/*"],
       "@assets/*": ["src/assets/*"],
       "@providers/*": ["src/providers/*"]

@@ -19,7 +19,7 @@ import AddRoomModal from "./AddRoomModal";
 import EditRoomModal from "./EditRoomModal";
 import AmenitiesModal from "../amenitie/AmenitiesModal";
 import axios from "axios";
-import { Room } from "../../../types/types";
+import { Room } from "../../../helper/types/types";
 import DataTable from "react-data-table-component";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "react-hot-toast";
