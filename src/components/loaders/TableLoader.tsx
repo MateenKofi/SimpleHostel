@@ -1,6 +1,7 @@
-const ResidentLoader = () => {
+const TableLoader = () => {
     return (
-      <div className="animate-pulse">
+     <div className="bg-white p-4 rounded-md">
+       <div className="animate-pulse">
         <div className="h-6 bg-gray-300 rounded w-1/4 mb-4"></div>
         <div className="h-10 bg-gray-300 rounded mb-4"></div>
         <div className="space-y-4">
@@ -13,6 +14,7 @@ const ResidentLoader = () => {
           ))}
         </div>
       </div>
+     </div>
     );
   };
-export default ResidentLoader;
+export default TableLoader;

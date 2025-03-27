@@ -1,10 +1,11 @@
 import React from 'react';
 import DataTable, { TableColumn } from 'react-data-table-component';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 import { Loader } from 'lucide-react';
+import LogoLoader from '@/components/loaders/logoLoader';
 
 interface Hostel {
     id: string;
@@ -46,13 +47,9 @@ const ApproveHostel: React.FC = () => {
             toast.success(response?.data?.message);
             queryClient.invalidateQueries({ queryKey: ['hostels'] });
         },
-        onError: (error: any) => {
-            if (axios.isAxiosError(error) && error.response) {
-                const errorMessage = error.response.data.message || 'Failed to Approve Hostel';
+        onError: (error: AxiosError<{message:string}>) => { 
+                const errorMessage = error.response?.data?.message || 'Failed to Approve Hostel';
                 toast.error(errorMessage);
-            } else {
-                toast.error('Failed to Approve Hostel');
-            }
         },
     });
 
@@ -65,17 +62,13 @@ const ApproveHostel: React.FC = () => {
             });
             return response?.data;
         },
-        onSuccess: (response) => {
+        onSuccess: () => {
             toast.success('Hostel Declined Successfully');
             queryClient.invalidateQueries({ queryKey: ['hostels'] });
         },
-        onError: (error: any) => {
-            if (axios.isAxiosError(error) && error.response) {
-                const errorMessage = error.response.data.message || 'Failed to Decline Hostel';
+        onError: (error: AxiosError<{message:string}>) => {
+                const errorMessage = error.response?.data?.message || 'Failed to Decline Hostel';
                 toast.error(errorMessage);
-            } else {
-                toast.error('Failed to Decline Hostel');
-            }
         },
     });
 
@@ -156,19 +149,14 @@ const ApproveHostel: React.FC = () => {
             ),
         },
     ];
-
-    if (isLoading) {
-        return <div className='w-full h-[70dvh] grid place-items-center'>
-            <img src="/logo.png" alt="Loading" className='w-20 h-20 animate-ping' />
-        </div>;
-    }
+    if (isLoading) {return(<LogoLoader/> )}
 
     if (isError) {
         return <div>Error loading data</div>;
     }
 
     // Filter the data to only include hostels that are not verified
-    const filteredData = data?.filter(hostel => !hostel.isVerified) || [];
+    const filteredData = data?.filter(hostel => hostel.isVerified = false) || [];
 
     const conditionalRowStyles = [
         {

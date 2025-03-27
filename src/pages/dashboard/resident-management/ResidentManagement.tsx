@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useModal } from "@components/Modal";
 import { useQuery } from "@tanstack/react-query";
-import ResidentLoader from "@/components/loaders/ResidentLoader";
+import ResidentLoader from "@/components/loaders/TableLoader";
 
 const ResidentManagement = () => {
   const navigate = useNavigate();
