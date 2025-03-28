@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import RoomManagement from './rooms/RoomManagement';
 import Amenities from './amenities/Amenities';
 import StatusAlert from '@/components/StatusAlert';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 
 interface TabData {
   id: string;
@@ -10,13 +12,20 @@ interface TabData {
 }
 
 const RoomManagementTab = () => {
-  const [hostelState, setHostelState] = useState<string | undefined>(undefined);
-  const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}')
-  useEffect(() => {
-    if (userProfile?.hostel?.state) {
-      setHostelState(userProfile.hostel.state);
-    }
-  }, [userProfile]);
+   const { data:hostel } = useQuery({
+      queryKey: ["hostel"],
+      queryFn: async () => {
+        const response = await axios.get(
+          `/api/hostels/get/${localStorage.getItem("hostelId")}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        return response?.data?.data;
+      },
+    });
 
 
   const tabData: TabData[] = [
@@ -36,7 +45,7 @@ const RoomManagementTab = () => {
 
   return (
     <main className="flex-1 bg-gray-100 p-4 overflow-y-auto">
-      <StatusAlert status={hostelState as 'published' | 'unpublished'} />
+      <StatusAlert status={hostel?.state as 'published' | 'unpublished'} />
       <div className="mb-6 w-full flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Room Management</h1>

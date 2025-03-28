@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Globe, EyeOff, Eye,CheckCircle } from 'lucide-react';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
@@ -19,29 +19,47 @@ const alertBgColors: Record<AlertType, string> = {
 const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
   const [showResults, setShowResults] = useState<boolean>(false);
   const [isLoading] = useState<boolean>(false);
-  const eventId = localStorage.getItem('eventId');
   const queryClient = useQueryClient();
 
-  const UpdateResultStatusMutation = useMutation({
-    mutationFn: async (newStatus: string) => {
-      const response = await axios.post(`/api/v3/admin/award/update-results`, {
-        award_id: eventId,
-        status: newStatus,
-        _method: 'PUT',
-      });
+  const PublishHostelMutation = useMutation({
+    mutationFn: async () => {
+      const hostelId = localStorage.getItem('hostelId');
+      const response = await axios.put(`/api/hostels/publish/${hostelId}`,{},{
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+      }); 
       return response?.data;
     },
     onSuccess: () => {
-      toast.success('Event status updated successfully');
-      queryClient.invalidateQueries({ queryKey: ['events'] });
+      toast.success('Hostel published successfully');
+      queryClient.invalidateQueries({ queryKey: ['hostel'] });
     },
-    onError: (error: any) => {
-      if (axios.isAxiosError(error) && error.response) {
-        const errorMessage = error.response.data.message || 'Failed to update Event status';
+    onError: (error: AxiosError<{message:string}>) => { 
+        const errorMessage = error.response?.data?.message || 'Failed to publish hostel';
         toast.error(errorMessage);
-      } else {
-        toast.error('Failed to update Event status');
-      }
+    },
+  });
+
+  const UnpublishHostelMutation = useMutation({
+    mutationFn: async () => {
+      const hostelId = localStorage.getItem('hostelId');
+      const response = await axios.put(`/api/hostels/unpublish/${hostelId}`,{}, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          "Content-Type": "application/json",
+        },
+      }); 
+      return response?.data;
+    },
+    onSuccess: () => {
+      toast.success('Hostel unpublished successfully');
+      queryClient.invalidateQueries({ queryKey: ['hostel'] });
+    },
+    onError: (error: AxiosError<{message:string}>) => { 
+        const errorMessage = error.response?.data?.message || 'Failed to unpublish hostel';
+        toast.error(errorMessage);
     },
   });
 
@@ -55,7 +73,9 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
     });
 
     if (result.isConfirmed) {
-      UpdateResultStatusMutation.mutateAsync('published');
+      Swal.showLoading();
+      await PublishHostelMutation.mutateAsync();
+      Swal.close();
     }
   };
 
@@ -69,7 +89,9 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
     });
 
     if (result.isConfirmed) {
-      UpdateResultStatusMutation.mutateAsync('unpublished');
+      Swal.showLoading();
+      await UnpublishHostelMutation.mutateAsync();
+      Swal.close();
     }
   };
 
