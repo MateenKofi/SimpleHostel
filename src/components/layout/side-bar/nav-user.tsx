@@ -28,6 +28,8 @@ import {useNavigate} from 'react-router-dom'
 import { LogoutIcon } from "@/components/animateIcons/Logout"
 import { BellIcon } from "@/components/animateIcons/bell"
 import { UserIcon } from "@/components/animateIcons/User"
+import { useQuery } from "@tanstack/react-query"
+import axios from "axios"
 
 export function NavUser() {
 
@@ -42,7 +44,18 @@ export function NavUser() {
     navigate('/login')
   }
 
-  const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}')
+  const { data:User, isLoading, isError } = useQuery({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const userId = localStorage.getItem('userId')
+      const response = await axios.get(`/api/users/get/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      return response?.data;
+    },
+  });
 
   return (
     <SidebarMenu>
@@ -54,12 +67,12 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={userProfile?.imageUrl} alt={userProfile?.restofUser?.name} />
+                <AvatarImage src={User?.imageUrl} alt={User?.name} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{userProfile?.name || 'User Name'}</span>
-                <span className="truncate text-xs">{userProfile?.email|| 'User Email'}</span>
+                <span className="truncate font-semibold">{User?.name || 'User Name'}</span>
+                <span className="truncate text-xs">{User?.email|| 'User Email'}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -73,12 +86,12 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={userProfile?.imageUrl} alt={userProfile?.restofUser?.name} />
+                  <AvatarImage src={User?.imageUrl} alt={User?.name} />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{userProfile?.restofUser?.name}</span>
-                  <span className="truncate text-xs">{userProfile?.restofUser?.email}</span>
+                  <span className="truncate font-semibold">{User?.name}</span>
+                  <span className="truncate text-xs">{User?.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>

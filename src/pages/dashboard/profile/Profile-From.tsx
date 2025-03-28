@@ -46,7 +46,7 @@ const ProfileForm = () => {
 
   const { setValue, register, formState: { errors } } = personalInfoForm;
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError,refetch } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
       const response = await axios.get(`/api/users/get/${userId}`, {
@@ -80,8 +80,9 @@ const ProfileForm = () => {
       return response?.data;
     },
     onSuccess: () => {
+      refetch()
       toast.success("User Details Updated Successfully");
-      queryClient.invalidateQueries({ queryKey: ["user", "userProfile"] });
+      queryClient.invalidateQueries({ queryKey: [ "userProfile"] });
     },
     onError: (error: AxiosError<{ message?: string }>) => {
       const errorMessage =
