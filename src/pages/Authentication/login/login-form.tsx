@@ -6,10 +6,8 @@ import { Label } from "@/components/ui/label";
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUserStore } from "../../../controllers/UserStore";
-import toast from 'react-hot-toast';
 import { Loader, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
-
 interface SignInFormData {
   email: string;
   password: string;
@@ -23,15 +21,10 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (data: SignInFormData) => {
-    try {
         const response = await login(data);
         if (response) {
-            toast.success('Login successful');
             navigate('/dashboard');
         }
-    } catch (error) {
-        toast.error('Login failed. Please check your credentials.');
-    }
   };
 
   return (

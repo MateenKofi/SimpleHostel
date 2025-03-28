@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { toast } from "react-hot-toast";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { jwtDecode } from "jwt-decode";
 
 
@@ -40,7 +40,6 @@ export const useUserStore = create<User>((set) => ({
       const response = await axios.post("/api/users/login", data);
       const { token } = response.data;
       const decoded: DecodedToken = jwtDecode(token);
-      console.log('decodedToken', decoded);
 
       set({
         name: "", // Name should be fetched separately
@@ -58,10 +57,10 @@ export const useUserStore = create<User>((set) => ({
 
       toast.success("Login successful");
       return true;
-    } catch (error: unknown) {
-      console.error(error);
+    } catch (error: AxiosError<{message:string}>) {
+      const errorMessage = error.response?.data?.message || "Login failed";
+      toast.error(errorMessage);
       set({ isProcessing: false });
-      toast.error("Login failed");
       return false;
     }
   },
@@ -78,7 +77,8 @@ export const useUserStore = create<User>((set) => ({
     localStorage.removeItem("token");
     localStorage.removeItem("hostelId");
     localStorage.removeItem("userId");
-
+    localStorage.removeItem("role");
+    localStorage.removeItem("residentId")
     toast.success("Logout successful");
   },
 
