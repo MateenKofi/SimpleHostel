@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { toast } from "react-hot-toast";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
 
@@ -20,7 +20,7 @@ type User = {
   hostelId: string | null;
   isProcessing: boolean;
   login: (data: { email: string; password: string }) => Promise<boolean>;
-  logout: () => void;
+  logout: (navigate: (path: string) => void) => void;
   setUser: (token: string) => void;
 };
 
@@ -32,6 +32,7 @@ export const useUserStore = create<User>((set) => ({
   role: null,
   hostelId: null,
   isProcessing: false,
+  
 
   // Login function
   login: async (data) => {
@@ -68,7 +69,7 @@ export const useUserStore = create<User>((set) => ({
   },
 
   // Logout function
-  logout: () => {
+  logout: (navigate: (path: string) => void) => {
     set({
       name: "",
       email: "",
@@ -80,8 +81,9 @@ export const useUserStore = create<User>((set) => ({
     localStorage.removeItem("hostelId");
     localStorage.removeItem("userId");
     localStorage.removeItem("role");
-    localStorage.removeItem("residentId")
+    localStorage.removeItem("residentId");
     toast.success("Logout successful");
+    navigate('/login');
   },
 
   // Function to set user from token (useful for refreshing state)

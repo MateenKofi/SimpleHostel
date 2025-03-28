@@ -30,21 +30,14 @@ import { BellIcon } from "@/components/animateIcons/bell"
 import { UserIcon } from "@/components/animateIcons/User"
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
+import {useUserStore} from '@/controllers/UserStore'
 
 export function NavUser() {
 
   const { isMobile } = useSidebar()
   const navigate = useNavigate()
-  const handlelogout = () =>{
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    localStorage.removeItem('role')
-    localStorage.removeItem('userId')
-    localStorage.removeItem('hostelId')
-    navigate('/login')
-  }
-
-  const { data:User, isLoading, isError } = useQuery({
+ const logout = useUserStore((state) => state.logout)
+  const { data:User } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
       const userId = localStorage.getItem('userId')
@@ -57,6 +50,9 @@ export function NavUser() {
     },
   });
 
+  const handlelogout = async () => {
+    logout(navigate)
+  }
   return (
     <SidebarMenu>
       <SidebarMenuItem>
