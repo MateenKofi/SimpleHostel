@@ -46,7 +46,7 @@ const ProfileForm = () => {
 
   const { setValue, register, formState: { errors } } = personalInfoForm;
 
-  const { data, isLoading, isError,refetch } = useQuery({
+  const { data, isLoading, isError,refetch:refectUser } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
       const response = await axios.get(`/api/users/get/${userId}`, {
@@ -80,7 +80,7 @@ const ProfileForm = () => {
       return response?.data;
     },
     onSuccess: () => {
-      refetch()
+      refectUser()
       toast.success("User Details Updated Successfully");
       queryClient.invalidateQueries({ queryKey: [ "userProfile"] });
     },
@@ -105,8 +105,9 @@ const ProfileForm = () => {
       return response?.data;
     },
     onSuccess: () => {
+      refectUser()
       toast.success("Password Updated Successfully");
-      queryClient.invalidateQueries({ queryKey: ["user", "userProfile"] });
+      queryClient.invalidateQueries({ queryKey: [ "userProfile"] });
     },
     onError: (error: AxiosError<{message?:string}>) => {
       const errorMessage =
