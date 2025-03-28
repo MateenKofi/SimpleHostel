@@ -57,8 +57,10 @@ export const useUserStore = create<User>((set) => ({
 
       toast.success("Login successful");
       return true;
-    } catch (error: AxiosError<{message:string}>) {
-      const errorMessage = error.response?.data?.message || "Login failed";
+    } catch (error: unknown) {
+      const errorMessage = axios.isAxiosError(error) && error.response?.data?.message
+        ? error.response.data.message
+        : "Login failed";
       toast.error(errorMessage);
       set({ isProcessing: false });
       return false;
