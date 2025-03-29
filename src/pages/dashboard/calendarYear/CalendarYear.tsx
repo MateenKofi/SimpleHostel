@@ -8,7 +8,7 @@ import CurrentYearCard from "@/components/CalenderYearCard";
 import HistoricalYearsList from "@/components/HistoricalYearsList";
 import { CalendarYearT } from "@/helper/types/types";
 import HistoricalYearsSkeleton from "@/components/loaders/HIstoricalYearsSkeleton";
-import CurrentYearSkeleton from "./CurrentYearSkeleton";
+import CurrentYearSkeleton from "@/components/loaders/CurrentYearSkeleton";
 
 interface FormValues {
   yearName: string;

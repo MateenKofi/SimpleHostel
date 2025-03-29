@@ -134,7 +134,7 @@ const RoomManagement = () => {
       grow: 2,
       cell: (row: Room) => (
         <span
-          className={`w-full px-2 py-1 rounded text-sm text-capitalize text-center ${
+          className={`w-full px-2 py-1 rounded text-sm text-center ${
             row.status === "AVAILABLE"
               ? "bg-green-200 text-green-800"
               : row.status === "OCCUPIED"
@@ -157,16 +157,16 @@ const RoomManagement = () => {
       center: true,
       grow: 2,
       cell: (row: Room) => (
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full text-nowrap">
           <button
-            className="text-white flex bg-black p-2 rounded"
+            className="w-full text-white flex bg-black p-2 rounded"
             onClick={() => handleEditRoom(row)}
           >
             <Edit className="w-4 h-4" />
             <span>Edit</span>
           </button>
           <button
-            className="text-white flex bg-black p-2 rounded"
+            className="w-full text-white flex items-center justify-center bg-black p-2 rounded"
             onClick={() => handleDelete(row.id)}
           >
             {deletingRoomId === row.id ? (
