@@ -94,9 +94,31 @@ const RoomManagement = () => {
     });
 
     if (result.isConfirmed) {
+      Swal.fire({
+        title: "Deleting...",
+        text: "Please wait while we delete the room.",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
       setDeletingRoomId(id);
-      await deleteMutation.mutateAsync(id);
-      setDeletingRoomId(null);
+      try {
+        await deleteMutation.mutateAsync(id);
+        Swal.fire({
+          title: "Deleted!",
+          text: "The room has been deleted successfully.",
+          icon: "success",
+        });
+      } catch (error) {
+        Swal.fire({
+          title: "Error!",
+          text: "Failed to delete the room. Please try again.",
+          icon: "error",
+        });
+      } finally {
+        setDeletingRoomId(null);
+      }
     }
   };
 
@@ -169,14 +191,9 @@ const RoomManagement = () => {
             className="w-full text-white flex items-center justify-center bg-black p-2 rounded"
             onClick={() => handleDelete(row.id)}
           >
-            {deletingRoomId === row.id ? (
-              <Loader className="w-4 h-4 animate-spin" />
-            ) : (
-              <>
+
                 <Trash2 className="w-4 h-4" />
                 <span>Delete</span>
-              </>
-            )}
           </button>
         </div>
       ),
