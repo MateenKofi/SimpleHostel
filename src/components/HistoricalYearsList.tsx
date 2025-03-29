@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { History } from "lucide-react"
+import { History, Users } from "lucide-react"
 import {CalendarYearT} from "@/helper/types/types"
 
 const HistoricalYearsList = ({ historicalYears }: { historicalYears: CalendarYearT[] }) => (
@@ -26,6 +26,13 @@ const HistoricalYearsList = ({ historicalYears }: { historicalYears: CalendarYea
                     Ended on {new Date(year.endDate).toLocaleDateString()}
                   </p>
                 )}
+                <span className="flex gap-2 items-start text-sm text-muted-foreground font-bold bg-black text-white w-fit p-1 rounded">
+                <span className="flex gap-2 items-center">
+                  <Users/>
+                 <h3> Residents</h3>
+                  </span> 
+                <span>{year?.HistoricalResident?.length}</span>
+                </span>
               </div>
             </div>
           ))

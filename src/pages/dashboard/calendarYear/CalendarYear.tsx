@@ -2,7 +2,7 @@
 import { type SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
 import axios from "axios";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import AddCalendarYearForm from "@/components/AddCalendarYearFrom";
 import CurrentYearCard from "@/components/CalenderYearCard";
 import HistoricalYearsList from "@/components/HistoricalYearsList";
@@ -15,7 +15,7 @@ interface FormValues {
 }
 
 const CalendarYear = () => {
-  const { data: currentYear, isLoading: isCurrentYearLoading } =
+  const { data: currentYear, isLoading: isCurrentYearLoading,refetch:refectCurrentYear } =
     useQuery<CalendarYearT>({
       queryKey: ["currentYear"],
       queryFn: async () => {
@@ -30,7 +30,7 @@ const CalendarYear = () => {
       },
     });
 
-  const { data: historicalYearsResponse, isLoading: isHistoricalYearsLoading } =
+  const { data: historicalYearsResponse, isLoading: isHistoricalYearsLoading,refetch:refectHistoricalYears } =
     useQuery<{ data: CalendarYearT[] }>({
       queryKey: ["historicalYears"],
       queryFn: async () => {
@@ -52,7 +52,6 @@ const CalendarYear = () => {
 
   const historicalYears = historicalYearsResponse?.data || [];
 
-  const queryClient = useQueryClient();
   const { register, handleSubmit, reset } = useForm<FormValues>();
 
   // Mutation for adding calendar year
@@ -71,8 +70,8 @@ const CalendarYear = () => {
       return response.data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["currentYear"] });
-      queryClient.invalidateQueries({ queryKey: ["historicalYears"] });
+      refectCurrentYear()
+      refectHistoricalYears()
       toast.success("Academic Year added successfully");
       reset();
     },

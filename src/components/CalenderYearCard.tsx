@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { CalendarClock } from "lucide-react"
+import { CalendarClock, Users } from "lucide-react"
 import moment from "moment"
 import { CalendarYearT } from "@/helper/types/types"
 
@@ -32,6 +32,13 @@ const CurrentYearCard = ({ currentYear }: { currentYear: CalendarYearT | undefin
               <p className="text-sm text-muted-foreground">
                 Ended on: {currentYear?.endDate ? moment(currentYear?.endDate).format("MM/DD/YYYY") : "No end date"}
               </p>
+              <span className="flex gap-2 items-start  font-bold bg-black text-white w-fit p-2 rounded">
+                <span className="flex gap-2 items-center">
+                  <Users/>
+                 <h3> Residents</h3>
+                  </span> 
+                <span>{currentYear?.Residents?.length}</span>
+                </span>
             </div>
           </div>
         </CardContent>

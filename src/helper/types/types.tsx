@@ -45,7 +45,7 @@ export type Room = {
   type: string;
   RoomImage?: images[] | undefined | null;
   images?:images[] | undefined | null;
-  Amenities: Amenity[];
+  Amenities?: Amenity[];
 };
 
 export type images = {
@@ -96,5 +96,6 @@ export type CalendarYearT = {
     totalRevenue: number;
     totalExpenses: number;
   };
+  HistoricalResident?: Resident[];
   Residents?: Resident[];
 };
