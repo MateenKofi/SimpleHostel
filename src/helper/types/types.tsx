@@ -19,7 +19,7 @@ export type Resident = {
   delFlag: boolean;
   calendarYearId: string;
   hostelId: string | null;
-  room?: Room | null;
+  room?: Omit<Room, "resident">;
 };
 
 export type Room = {
@@ -59,6 +59,7 @@ export type images = {
 };
 
 export type Amenity = {
+  id: string;
   name: string;
   price: number;
 };

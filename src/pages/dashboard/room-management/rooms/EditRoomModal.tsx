@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import Modal from "@/components/Modal";
 import { useForm } from "react-hook-form";
-import type { Room } from "../../../../helper/types/types";
+import type { Amenity, Room } from "@/helper/types/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import ImageUpload from "@/components/ImageUpload";
@@ -48,7 +48,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
 
   // Called when new images are uploaded
   const handleImagesChange = (newImages: File[]) => {
-    setImages(newImages);
+    setImages(newImages || []);
   };
 
   // Remove a default image from the UI
@@ -93,7 +93,6 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
           formData.append("addAmenitiesIds[]", amenityId);
         });
       }
-
       // // Append each new image file
       images.forEach((image) => {
         console.log("Appending image:", image.name);
@@ -135,23 +134,23 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
   // Initialize form values and default images/amenities from formdata
   useEffect(() => {
     if (formdata) {
-      setValue("roomNumber", formdata.number);
-      setValue("block", formdata.block);
-      setValue("floor", parseInt(formdata.floor?.toString() || "0"));
-      setValue("roomType", formdata.type.toLowerCase() as "single" | "double" | "suit" | "quard");
-      setValue("maxOccupancy", formdata.maxCap);
-      setValue("basePrice", formdata.price);
-      setValue("description", formdata.description);
-      setValue("status", formdata.status.toLowerCase() as 'AVAILABLE' | 'MANTENANCE' | 'OCCUPIED');
+      setValue("roomNumber", formdata?.number);
+      setValue("block", formdata?.block);
+      setValue("floor", parseInt(formdata?.floor?.toString() || "0"));
+      setValue("roomType", formdata?.type?.toLowerCase() as "single" | "double" | "suit" | "quard");
+      setValue("maxOccupancy", formdata?.maxCap);
+      setValue("basePrice", formdata?.price);
+      setValue("description", formdata?.description);
+      setValue("status", formdata?.status?.toLowerCase() as 'AVAILABLE' | 'MANTENANCE' | 'OCCUPIED');
 
       // Set default images from room images array
-      const imageUrls = (formdata.RoomImage ?? []).map((img: any) => img.imageUrl);
+      const imageUrls = (formdata?.RoomImage ?? []).map((img: { imageUrl: string }) => img.imageUrl);
       setDefaultImages(imageUrls);
 
       // Use either formdata.amenities or formdata.Amenities for default selection
-      const selectedAmenityIds = formdata.amenities
-        ? formdata.amenities.map((a: any) => a.id || a)
-        : formdata.Amenities?.map((amenity: any) => amenity.id) || [];
+      const selectedAmenityIds = formdata?.amenities
+        ? formdata.amenities.map((a: { id: string } | string) => typeof a === "string" ? a : a.id)
+        : formdata.Amenities?.map((amenity: Amenity) => amenity.id || "") || [];
       setValue("amenities", selectedAmenityIds);
     }
   }, [formdata, setValue]);
@@ -296,6 +295,15 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
         {/* Amenities */}
         <div className="flex flex-col gap-1">
           <label className="text-sm font-medium">Amenities</label>
+          {isAmenitiesLoading && <Loader className="w-4 h-4 animate-spin" />}
+          {isAmenitiesError && (
+            <span className="text-red-500 text-sm">Failed to load amenities</span>
+          )}
+          {!isAmenitiesLoading && !isAmenitiesError && amenitiesData?.data.length === 0 && (
+            <span className="text-gray-500 text-sm">No amenities available</span>
+          )}
+          
+          {/* Amenities Checkboxes */}
           <div className="flex flex-wrap gap-2">
             {amenitiesData?.data.map((amenity) => {
               const currentAmenities: string[] = watch("amenities") || [];

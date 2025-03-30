@@ -57,7 +57,7 @@ const EditAmenitiesModal: React.FC<EditAmenitiesModalProps> = ({ onClose, formda
 
     return (
         <Modal modalId='edit_amenities_modal' onClose={handleClose}>
-            <h1 className="text-2xl font-bold mb-4">Update Amenity</h1>
+            <h1 className="text-2xl font-bold mb-4 text-gray-500">Update Amenity</h1>
             <form onSubmit={handleSubmit(onSubmit)} className="mb-4 p-4">
                 <div className="flex gap-2">
                     <input

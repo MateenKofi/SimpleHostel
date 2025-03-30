@@ -36,7 +36,7 @@ const RoomManagement = () => {
     useModal("amenities_modal");
   const { open: openEditRoomModal, close: closeEditRoomModal } =
     useModal("editroom_modal");
-  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
+  const [selectedRoom, setSelectedRoom] = useState<Room>({} as Room);
   const [deletingRoomId, setDeletingRoomId] = useState<string | null>(null);
   const hostelId = localStorage.getItem("hostelId") || "";
 
@@ -102,7 +102,6 @@ const RoomManagement = () => {
           Swal.showLoading();
         },
       });
-      setDeletingRoomId(id);
       try {
         await deleteMutation.mutateAsync(id);
         Swal.fire({
@@ -319,9 +318,8 @@ const RoomManagement = () => {
         </div>
       )}
 
-      {selectedRoom && (
+    
         <EditRoomModal onClose={closeEditRoomModal} formdata={selectedRoom} />
-      )}
     </div>
   );
 };

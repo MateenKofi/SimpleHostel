@@ -1,10 +1,10 @@
-import { Plus, Trash2, Loader } from 'lucide-react';
+import { Plus, Loader } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import Modal from '@/components/Modal';
 import { Amenity } from '@/helper/types/types';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 
 interface AmenitiesModalProps {
   onClose: () => void;
@@ -32,7 +32,7 @@ const AmenitiesModal = ({ onClose }: AmenitiesModalProps) => {
       queryClient.invalidateQueries({ queryKey: ["amenities"] });
       reset();
     },
-    onError: (error: any) => {
+    onError: (error: AxiosError<{message:string}>) => {
       const errorMessage =
         error.response?.data?.message || "Failed to add Amenities";
       toast.error(errorMessage);
@@ -50,7 +50,7 @@ const AmenitiesModal = ({ onClose }: AmenitiesModalProps) => {
 
   return (
     <Modal modalId='amenities_modal' onClose={onClose}>
-      <h1 className="text-2xl font-bold mb-4">Add Amenity</h1>
+      <h1 className="text-2xl font-bold mb-4 text-gray-500">Add Amenity</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="mb-4 p-4">
         <div className="flex gap-2">
           <input

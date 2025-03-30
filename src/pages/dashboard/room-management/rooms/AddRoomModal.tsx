@@ -38,6 +38,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
   });
 
   const [images, setImages] = useState<File[]>([]);
+  const [imageUploadKey, setImageUploadKey] = useState(0);
   const hostelId = localStorage.getItem("hostelId");
 
   // handle images change
@@ -128,13 +129,15 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
   const handleClose = () => {
     onClose();
     reset();
-    setImages([]);}
+    setImages([]);
+    setImageUploadKey((prevKey) => prevKey + 1);
+  };
 
   return (
     <Modal modalId="add_room_modal" onClose={handleClose} size="large">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <div className="space-y-1">
-          <h2 className="text-2xl font-bold">Add New Room</h2>
+          <h2 className="text-2xl font-bold text-gray-500 ">Add New Room</h2>
           <p className="text-sm text-gray-500">
             Fill in the details below to add a new room
           </p>
@@ -142,17 +145,18 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
 
         {/* Image Upload */}
         <div className="flex flex-col gap-1">
-          <label htmlFor="images" className="text-sm font-medium">
+          <label htmlFor="images" className="text-sm font-medium text-gray-900">
             Images
           </label>
-          <ImageUpload onImagesChange={handleImagesChange} />
+          <ImageUpload key={imageUploadKey} onImagesChange={handleImagesChange} />
+          <p className="text-gray-500 text-sm font-thin italic">you can only upload a max of 5 images</p>
         </div>
 
         {/* Rest of the form fields */}
         <div className="grid grid-cols-2 gap-4">
           {/* Room Number */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="number" className="text-sm font-medium">
+            <label htmlFor="number" className="text-sm font-medium text-gray-500 ">
               Room Number*
             </label>
             <input
@@ -173,7 +177,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
 
           {/* Block */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="block" className="text-sm font-medium">
+            <label htmlFor="block" className="text-sm font-medium text-gray-500 ">
               Block
             </label>
             <input
@@ -192,7 +196,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
 
           {/* Floor */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="floor" className="text-sm font-medium">
+            <label htmlFor="floor" className="text-sm font-medium text-gray-500 ">
               Floor
             </label>
             <input
@@ -212,7 +216,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
 
           {/* Room Type */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="type" className="text-sm font-medium">
+            <label htmlFor="type" className="text-sm font-medium text-gray-500 ">
               Room Type*
             </label>
             <select
@@ -235,21 +239,21 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
 
           {/* Max Occupancy (Read-only) */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="maxOccupancy" className="text-sm font-medium">
+            <label htmlFor="maxOccupancy" className="text-sm font-medium text-gray-500 ">
               Maximum Occupancy
             </label>
             <input
               {...register("maxOccupancy")}
               type="number"
               id="maxOccupancy"
-              className="border rounded-md p-2 bg-gray-100"
+              className="border rounded-md p-2"
               readOnly
             />
           </div>
 
           {/* Base Price */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="basePrice" className="text-sm font-medium">
+            <label htmlFor="basePrice" className="text-sm font-medium text-gray-500 ">
               Base Price
             </label>
             <input
@@ -269,7 +273,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
 
              {/* Gender */}
         <div className="flex flex-col gap-1">
-          <label htmlFor="gender" className="text-sm font-medium">
+          <label htmlFor="gender" className="text-sm font-medium text-gray-500 ">
             Gender*
           </label>
           <select
@@ -288,7 +292,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
 
         {/* Status */}
         <div className="flex flex-col gap-1">
-          <label htmlFor="status" className="text-sm font-medium">
+          <label htmlFor="status" className="text-sm font-medium text-gray-500 ">
             Status*
           </label>
           <select
@@ -307,7 +311,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
 
         {/* Amenities */}
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium">Amenities</label>
+          <label className="text-sm font-medium text-gray-500 ">Amenities</label>
           <div className="flex flex-wrap gap-2">
             {Amenities?.data?.map((amenity) => (
               <label
@@ -336,7 +340,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
 
         {/* Description */}
         <div className="flex flex-col gap-1">
-          <label htmlFor="description" className="text-sm font-medium">
+          <label htmlFor="description" className="text-sm font-medium text-gray-500 ">
             Description
           </label>
           <textarea
@@ -352,7 +356,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
           <button
             type="button"
             onClick={handleClose}
-            className="px-4 py-2 border rounded-md"
+            className="px-4 py-2 border rounded-md "
           >
             Cancel
           </button>

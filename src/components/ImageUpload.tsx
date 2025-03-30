@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { X, Upload } from "lucide-react";
 
@@ -46,11 +46,17 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     onImagesChange?.(updatedImages);
   };
 
+  useEffect(() => {
+    return () => {
+      setImages([]);
+    };
+  }, []);
+
   return (
     <div className="space-y-4">
       <div
         {...getRootProps()}
-        className={`border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-8 transition-colors duration-150 ease-in-out ${
+        className={`border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-2 transition-colors duration-150 ease-in-out ${
           isDragActive ? "border-primary bg-primary/5" : ""
         } ${
           images.length + defaultImages.length >= 5
@@ -75,8 +81,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         {/* Default Images Section */}
         {defaultImages.length > 0 && (
           <div>
-            <h3 className="text-lg font-semibold">Default Images</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+            <h3 className="text-lg font-semibold text-gray-500">Default Images</h3>
+            <div className="w-fit grid grid-cols-2 md:grid-cols-3 gap-2 mt-4">
               {defaultImages.map((image, index) => (
                 <div key={index} className="relative group">
                   <div className="aspect-square relative rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800 w-32 h-32">
@@ -89,7 +95,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation();
-                        onRemoveDefaultImage && onRemoveDefaultImage(index);
+                        onRemoveDefaultImage?.(index);
                       }}
                       className="absolute top-2 right-2 p-1 bg-red-500 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
                     >
@@ -105,8 +111,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         {/* Uploaded Images Section */}
         {images.length > 0 && (
           <div>
-            <h3 className="text-lg font-semibold">Uploaded Images</h3>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+            <h3 className="text-lg font-semibold text-gray-500">Uploaded Images</h3>
+            <div className="w-fit grid grid-cols-2 md:grid-cols-3 gap-2 mt-4">
               {images.map((image, index) => (
                 <div key={index} className="relative group">
                   <div className="aspect-square relative rounded-lg overflow-hidden border border-gray-200 dark:border-gray-800 w-32 h-32">
