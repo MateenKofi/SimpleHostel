@@ -25,6 +25,7 @@ const EditAmenitiesModal: React.FC<EditAmenitiesModalProps> = ({ onClose, formda
 
     const AddAmenitiesMutation = useMutation({
         mutationFn: async (data: AmenityFormData) => {
+            console.log(data)
             // Your mutation function here
         },
         onSuccess: () => {
