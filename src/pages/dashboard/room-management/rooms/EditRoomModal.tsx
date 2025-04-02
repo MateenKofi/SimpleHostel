@@ -45,6 +45,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
   const [images, setImages] = useState<File[]>([]);
   const [defaultImages, setDefaultImages] = useState<string[]>([]);
   const hostelId = localStorage.getItem("hostelId");
+  const [imageUploadKey, setImageUploadKey] = useState(0);
 
   // Called when new images are uploaded
   const handleImagesChange = (newImages: File[]) => {
@@ -111,6 +112,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
       toast.success("Room updated successfully");
       queryClient.invalidateQueries({ queryKey: ["rooms"] });
       reset();
+      setImages([]);
       onClose();
     },
     onError: (error: AxiosError<{message:string}>) => {
@@ -155,17 +157,25 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
     }
   }, [formdata, setValue]);
 
+  const handleClose = () => {
+    onClose();
+    reset();
+    setImages([]);
+    setImageUploadKey((prevKey) => prevKey + 1);
+  };
+
   return (
-    <Modal modalId="editroom_modal" onClose={onClose} size="large">
+    <Modal modalId="editroom_modal" onClose={handleClose} size="large">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <div className="space-y-1">
-          <h2 className="text-2xl font-bold">Update Room</h2>
+          <h2 className="text-2xl font-bold text-gray-500">Update Room</h2>
           <p className="text-sm text-gray-500">
             Update the details below to modify the room information
           </p>
         </div>
 
         <ImageUpload
+          key={imageUploadKey}
           onImagesChange={handleImagesChange}
           defaultImages={defaultImages}
           onRemoveDefaultImage={handleRemoveDefaultImage}
@@ -174,7 +184,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
         <div className="grid grid-cols-2 gap-4">
           {/* Room Number */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="number" className="text-sm font-medium">
+            <label htmlFor="number" className="text-sm font-medium text-gray-500">
               Room Number*
             </label>
             <input
@@ -191,7 +201,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
 
           {/* Block */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="block" className="text-sm font-medium">
+            <label htmlFor="block" className="text-sm font-medium text-gray-500">
               Block*
             </label>
             <input
@@ -206,7 +216,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
 
           {/* Floor */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="floor" className="text-sm font-medium">
+            <label htmlFor="floor" className="text-sm font-medium text-gray-500">
               Floor*
             </label>
             <input
@@ -223,7 +233,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
 
           {/* Room Type */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="type" className="text-sm font-medium">
+            <label htmlFor="type" className="text-sm font-medium text-gray-500">
               Room Type*
             </label>
             <select
@@ -244,21 +254,21 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
 
           {/* Maximum Occupancy (Read-only) */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="maxOccupancy" className="text-sm font-medium">
+            <label htmlFor="maxOccupancy" className="text-sm font-medium text-gray-500">
               Maximum Occupancy
             </label>
             <input
               {...register("maxOccupancy")}
               type="number"
               id="maxOccupancy"
-              className="border rounded-md p-2 bg-gray-100"
+              className="border rounded-md p-2 "
               readOnly
             />
           </div>
 
           {/* Base Price */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="basePrice" className="text-sm font-medium">
+            <label htmlFor="basePrice" className="text-sm font-medium text-gray-500">
               Base Price*
             </label>
             <input
@@ -276,7 +286,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
 
         {/* Status */}
         <div className="flex flex-col gap-1">
-          <label htmlFor="status" className="text-sm font-medium">
+          <label htmlFor="status" className="text-sm font-medium text-gray-500">
             Status*
           </label>
           <select
@@ -294,7 +304,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
 
         {/* Amenities */}
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium">Amenities</label>
+          <label className="text-sm font-medium text-gray-500">Amenities</label>
           {isAmenitiesLoading && <Loader className="w-4 h-4 animate-spin" />}
           {isAmenitiesError && (
             <span className="text-red-500 text-sm">Failed to load amenities</span>
@@ -342,7 +352,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
 
         {/* Description */}
         <div className="flex flex-col gap-1">
-          <label htmlFor="description" className="text-sm font-medium">
+          <label htmlFor="description" className="text-sm font-medium text-gray-500">
             Description
           </label>
           <textarea
@@ -356,7 +366,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
 
         {/* Action Buttons */}
         <div className="flex justify-end gap-2 mt-4">
-          <button type="button" onClick={onClose} className="px-4 py-2 border rounded-md">
+          <button type="button" onClick={handleClose} className="px-4 py-2 border rounded-md bg-red-500 text-white">
             Cancel
           </button>
           <button
