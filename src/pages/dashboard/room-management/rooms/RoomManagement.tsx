@@ -117,6 +117,8 @@ const RoomManagement = () => {
       } finally {
         setDeletingRoomId(null);
       }
+    } else{
+      setDeletingRoomId(null);
     }
   };
 

@@ -89,7 +89,7 @@ const Amenities = () => {
         {
             name: 'Actions',
             cell: (row: { id: string; name: string; price: number }) => (
-                <div className="flex gap-2">
+                <div className="flex gap-2 text-nowrap">
                     <button className="text-white bg-black p-1 rounded flex items-center gap-1"
                         onClick={() => handleEditAmenities(row)}>
                         <Edit className="w-4 h-4" />
