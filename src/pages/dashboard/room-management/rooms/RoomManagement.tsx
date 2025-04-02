@@ -12,7 +12,6 @@ import {
   BedDouble,
   Users,
   Hammer,
-  Loader,
 } from "lucide-react";
 import { useModal } from "@/components/Modal";
 import AddRoomModal from "./AddRoomModal";
@@ -124,23 +123,28 @@ const RoomManagement = () => {
   // Define columns for DataTable
   const columns = [
     {
-      name: "Room No.",
-      selector: (row: Room) => row.number || "",
+      name: "Room ",
+      selector: (row: Room) => row.number || "N/A",
       sortable: true,
     },
     {
       name: "Block",
-      selector: (row: Room) => row.block || "",
+      selector: (row: Room) => row.block || "N/A",
       sortable: true,
     },
     {
       name: "Floor",
-      selector: (row: Room) => row.floor || "",
+      selector: (row: Room) => row.floor || "N/A",
       sortable: true,
     },
     {
       name: "Type",
       selector: (row: Room) => row.type || "",
+      sortable: true,
+    },
+    {
+      name: "Gender",
+      selector: (row: Room) => row.gender || "",
       sortable: true,
     },
     {
@@ -155,7 +159,7 @@ const RoomManagement = () => {
       grow: 2,
       cell: (row: Room) => (
         <span
-          className={`w-full px-2 py-1 rounded text-sm text-center ${
+          className={`w-full px-2 py-1 rounded text-xs text-center text-nowrap ${
             row.status === "AVAILABLE"
               ? "bg-green-200 text-green-800"
               : row.status === "OCCUPIED"
@@ -182,6 +186,7 @@ const RoomManagement = () => {
           <button
             className="w-full text-white flex bg-black p-2 rounded"
             onClick={() => handleEditRoom(row)}
+    
           >
             <Edit className="w-4 h-4" />
             <span>Edit</span>
@@ -189,6 +194,7 @@ const RoomManagement = () => {
           <button
             className="w-full text-white flex items-center justify-center bg-black p-2 rounded"
             onClick={() => handleDelete(row.id)}
+            disabled={deletingRoomId === row.id}
           >
 
                 <Trash2 className="w-4 h-4" />
