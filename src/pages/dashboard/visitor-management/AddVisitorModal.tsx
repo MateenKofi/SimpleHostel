@@ -4,10 +4,12 @@ import Select from 'react-select'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
+import { Resident } from '@/helper/types/types'
 
 interface VisitorFormData {
   name: string
   phone: string
+  email: string
   residentId: { value: string; label: string } | null
   purpose: string
 }
@@ -33,8 +35,17 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
   })
 
   const mutation = useMutation({
-    mutationFn: async (data: any) => {
-      const response = await axios.post('/api/visitors', data, {
+    mutationFn: async (data: VisitorFormData) => {
+      const hostelId = localStorage.getItem('hostelId')
+      const formData = new FormData()
+      formData.append('name', data.name)
+      formData.append('phone', data.phone)
+      formData.append('email', data.email)
+      formData.append('residentId', data.residentId?.value || '')
+      
+      // formData.append('purpose', data.purpose)
+
+      const response = await axios.post(`/api/visitors/add/${hostelId}`, formData, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
@@ -52,14 +63,7 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
   })
 
   const onSubmit = (data: VisitorFormData) => {
-    const hostelId = localStorage.getItem('hostelId')
-    // Extract residentId value from the react-select object
-    const formattedData = { 
-      ...data, 
-      hostelId, 
-      residentId: data.residentId?.value || null 
-    }
-    mutation.mutate(formattedData)
+    mutation.mutate(data)
   }
 
   return (
@@ -96,6 +100,18 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
                 <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
               )}
             </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-500">
+                Email
+              </label>
+              <input
+                {...register('email', { required: 'Email is required' })}
+                className="w-full p-2 border rounded-md"
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+              )}
+            </div>
 
             <div>
               <label className="block text-sm font-medium mb-2 text-gray-500">
@@ -109,9 +125,9 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
                   <Select
                     {...field}
                     options={
-                      Residents?.map((resident: any) => ({
+                      Residents?.map((resident: Resident) => ({
                         value: resident.id,
-                        label: resident.name,
+                        label: resident?.name + ' - ' + (resident?.room?.number || "No Room"),
                       })) || []
                     }
                     isLoading={isLoadingResidents}
