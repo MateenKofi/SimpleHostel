@@ -356,7 +356,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
           <button
             type="button"
             onClick={handleClose}
-            className="px-4 py-2 border rounded-md "
+            className="px-4 py-2 border rounded-md  bg-red-500 text-white hover:bg-red-600 transition-colors duration-200"
           >
             Cancel
           </button>

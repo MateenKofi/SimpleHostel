@@ -12,6 +12,7 @@ import {
   BedDouble,
   Users,
   Hammer,
+  Eye,
 } from "lucide-react";
 import { useModal } from "@/components/Modal";
 import AddRoomModal from "./AddRoomModal";
@@ -126,31 +127,37 @@ const RoomManagement = () => {
   const columns = [
     {
       name: "Room ",
+      width:'8%',
       selector: (row: Room) => row.number || "N/A",
       sortable: true,
     },
     {
       name: "Block",
+      width:'8%',
       selector: (row: Room) => row.block || "N/A",
       sortable: true,
     },
     {
       name: "Floor",
+      width:'8%',
       selector: (row: Room) => row.floor || "N/A",
       sortable: true,
     },
     {
       name: "Type",
+      width:'9%',
       selector: (row: Room) => row.type || "",
       sortable: true,
     },
     {
       name: "Gender",
+      width:'9%',
       selector: (row: Room) => row.gender || "",
       sortable: true,
     },
     {
       name: "Price",
+      width:'8%',
       selector: (row: Room) => row.price || 0,
       sortable: true,
     },
@@ -158,10 +165,11 @@ const RoomManagement = () => {
       name: "Status",
       sortable: true,
       center: true,
+      width:'13%',
       grow: 2,
       cell: (row: Room) => (
         <span
-          className={`w-full px-2 py-1 rounded text-xs text-center text-nowrap ${
+          className={`w-full px-1 py-1 rounded text-xs text-center text-nowrap ${
             row.status === "AVAILABLE"
               ? "bg-green-200 text-green-800"
               : row.status === "OCCUPIED"
@@ -175,6 +183,7 @@ const RoomManagement = () => {
     },
     {
       name: "Capacity",
+      width:'10%',
       selector: (row: Room) =>
         `${row.currentResidentCount || 0} / ${row.maxCap || 0}`,
       sortable: true,
@@ -185,6 +194,14 @@ const RoomManagement = () => {
       grow: 2,
       cell: (row: Room) => (
         <div className="flex gap-2 w-full text-nowrap">
+          <button
+            className="w-full text-xs text-white flex bg-black p-2 rounded"
+            onClick={() => handleEditRoom(row)}
+    
+          >
+            <Eye className="w-4 h-4" />
+            <span>View</span>
+          </button>
           <button
             className="w-full text-white flex bg-black p-2 rounded"
             onClick={() => handleEditRoom(row)}
@@ -322,6 +339,7 @@ const RoomManagement = () => {
             pagination
             highlightOnHover
             responsive
+            striped
           />
         </div>
       )}

@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Modal from '@/components/Modal';
 import { Loader, Plus } from 'lucide-react';
-import { AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 
 interface Amenity {
@@ -25,8 +25,16 @@ const EditAmenitiesModal: React.FC<EditAmenitiesModalProps> = ({ onClose, formda
 
     const AddAmenitiesMutation = useMutation({
         mutationFn: async (data: AmenityFormData) => {
-            console.log(data)
-            // Your mutation function here
+         const formData = new FormData();
+            formData.append('name', data.name);
+            formData.append('price', data.price.toString());
+            const response = await axios.put(`/api/amenities/update/${formdata.id}`, formData, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+            return response?.data;
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['amenities'] });
