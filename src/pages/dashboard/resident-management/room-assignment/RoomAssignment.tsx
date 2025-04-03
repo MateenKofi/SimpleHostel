@@ -65,8 +65,12 @@ const RoomAssignment = () => {
       }
     },
     onError: (error: unknown) => {
-      console.error("Error initializing payment:", error);
-      toast.error("Failed to initialize payment. Please check your connection.");
+      if (axios.isAxiosError(error)) {
+        const errorMessage = error.response?.data?.message || "Failed to initialize payment.";
+        toast.error(errorMessage);
+      } else {
+        toast.error("An unexpected error occurred. Please try again.");
+      }
     },
   });
 
@@ -88,7 +92,7 @@ const RoomAssignment = () => {
         .map((room: Room) => ({
           id: room.id,
           roomNumber: room.roomNumber,
-          basePrice: room.basePrice,
+          basePrice: room.price,
           maxOccupancy: room.maxCap,
           currentResidentCount: room.currentResidentCount,
           gender: room.gender,
@@ -195,7 +199,7 @@ const RoomAssignment = () => {
                   </span>
                 </span>
                 <span className="text-primary font-semibold">
-                  GH{room.basePrice.toLocaleString()}
+                  GH{room?.basePrice?.toLocaleString()}
                 </span>
               </div>
 
@@ -233,7 +237,7 @@ const RoomAssignment = () => {
                       initializePaymentMutation.mutate({
                         roomId: room.id,
                         residentId,
-                        initialPayment: room.basePrice,
+                        initialPayment: room?.basePrice,
                       });
                     }}
                   >

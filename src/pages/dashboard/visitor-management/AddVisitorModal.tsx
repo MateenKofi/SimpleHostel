@@ -1,61 +1,106 @@
-import React from 'react'
-import Modal from '../../../components/Modal'
+import Modal from '@/components/Modal'
 import { useForm, Controller } from 'react-hook-form'
 import Select from 'react-select'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import axios, { AxiosError } from 'axios'
+import toast from 'react-hot-toast'
+
+interface VisitorFormData {
+  name: string
+  phone: string
+  residentId: { value: string; label: string } | null
+  purpose: string
+}
 
 interface AddVisitorModalProps {
   onClose: () => void
 }
 
 const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
+  const { register, handleSubmit, reset, control, formState: { errors } } = useForm<VisitorFormData>()
 
-  const { register, handleSubmit, reset, control, formState: { errors } } = useForm()
+  const { data: Residents, isLoading: isLoadingResidents } = useQuery({
+    queryKey: ['residents'],
+    queryFn: async () => {
+      const hostelId = localStorage.getItem('hostelId')
+      const response = await axios.get(`/api/residents/hostel/${hostelId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      })
+      return response?.data?.data
+    },
+  })
 
-  const onSubmit = (data: any) => {
-    reset()
-    onClose()
+  const mutation = useMutation({
+    mutationFn: async (data: any) => {
+      const response = await axios.post('/api/visitors', data, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      })
+      return response.data
+    },
+    onSuccess: () => {
+      toast.success('Visitor added successfully!')
+      reset()
+      onClose()
+    },
+    onError: (error: AxiosError<{ message: string }>) => {
+      toast.error(error.response?.data?.message || 'Failed to add visitor.')
+    },
+  })
+
+  const onSubmit = (data: VisitorFormData) => {
+    const hostelId = localStorage.getItem('hostelId')
+    // Extract residentId value from the react-select object
+    const formattedData = { 
+      ...data, 
+      hostelId, 
+      residentId: data.residentId?.value || null 
+    }
+    mutation.mutate(formattedData)
   }
 
-  // Dummy data for resident options
-  const residentOptions = [
-    { value: '1', label: 'John Doe' },
-    { value: '2', label: 'Jane Smith' },
-    { value: '3', label: 'Alice Johnson' },
-  ]
-
   return (
-    <Modal modalId='add_visitor_modal' onClose={onClose}>
+    <Modal modalId="add_visitor_modal" onClose={onClose}>
       <div className="h-full flex flex-col">
         <div className="flex items-center justify-between px-6 py-4 border-b">
-          <h2 className="text-xl font-semibold">New Visitor</h2>
+          <h2 className="text-xl font-bold text-gray-500">New Visitor</h2>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6"></div>
+        <div className="flex-1 overflow-y-auto p-6">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium mb-2">Visitor Name</label>
+              <label className="block text-sm font-medium mb-2 text-gray-500">
+                Visitor Name
+              </label>
               <input
                 {...register('name', { required: 'Name is required' })}
                 className="w-full p-2 border rounded-md"
               />
               {errors.name && (
-                <p className="text-red-500 text-sm mt-1">{errors.name.message as string}</p>
+                <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Phone Number</label>
+              <label className="block text-sm font-medium mb-2 text-gray-500">
+                Phone Number
+              </label>
               <input
                 {...register('phone', { required: 'Phone number is required' })}
                 className="w-full p-2 border rounded-md"
               />
               {errors.phone && (
-                <p className="text-red-500 text-sm mt-1">{errors.phone.message as string}</p>
+                <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Select Resident</label>
+              <label className="block text-sm font-medium mb-2 text-gray-500">
+                Select Resident
+              </label>
               <Controller
                 name="residentId"
                 control={control}
@@ -63,27 +108,35 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
                 render={({ field }) => (
                   <Select
                     {...field}
-                    options={residentOptions}
-                    className="w-full"
+                    options={
+                      Residents?.map((resident: any) => ({
+                        value: resident.id,
+                        label: resident.name,
+                      })) || []
+                    }
+                    isLoading={isLoadingResidents}
+                    className="w-full text-gray-500"
                     placeholder="Search for a resident..."
                     isClearable
                   />
                 )}
               />
               {errors.residentId && (
-                <p className="text-red-500 text-sm mt-1">{errors.residentId.message as string}</p>
+                <p className="text-red-500 text-sm mt-1">{errors.residentId.message}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2">Purpose of Visit</label>
+              <label className="block text-sm font-medium mb-2 text-gray-500">
+                Purpose of Visit
+              </label>
               <textarea
                 {...register('purpose', { required: 'Purpose is required' })}
                 className="w-full p-2 border rounded-md"
                 rows={3}
               />
               {errors.purpose && (
-                <p className="text-red-500 text-sm mt-1">{errors.purpose.message as string}</p>
+                <p className="text-red-500 text-sm mt-1">{errors.purpose.message}</p>
               )}
             </div>
 
@@ -91,7 +144,7 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 border rounded-md"
+                className="px-4 py-2 border rounded-md bg-red-500 text-white"
               >
                 Cancel
               </button>
@@ -104,6 +157,7 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
             </div>
           </form>
         </div>
+      </div>
     </Modal>
   )
 }
