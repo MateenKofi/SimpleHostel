@@ -39,7 +39,7 @@ export function NavMain() {
 
   if (userRole === "SUPER_ADMIN") {
     navMain.push({ title: "Approve Hostel", icon: CheckSquare, path: "/dashboard/approve-hostel" })
-    navMain.push({ title: "Super Admin", icon: UserCog, path: "/dashboard/approve-hostel" })
+    navMain.push({ title: "Users", icon: UserCog, path: "/dashboard/users" })
   }
 
   return (

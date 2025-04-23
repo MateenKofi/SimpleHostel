@@ -44,12 +44,12 @@ export type Room = {
   number: string;
   type: string;
   RoomImage?: images[] | undefined | null;
-  images?:images[] | undefined | null;
+  images?: images[] | undefined | null;
   Amenities?: Amenity[];
 };
 
 export type images = {
-  id:string;
+  id: string;
   roomId?: string;
   imageUrl: string;
   imageKey: string;
@@ -99,4 +99,20 @@ export type CalendarYearT = {
   };
   HistoricalResident?: Resident[];
   Residents?: Resident[];
+};
+
+export type Users = {
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  phoneNumber: string;
+  role: string;
+  createdAt: Date;
+  updatedAt: Date;
+  imageUrl: string | null;
+  imageKey: string | null;
+  delFlag: boolean;
+  hostelId: string | null;
+  hostel: string | null;
 };
