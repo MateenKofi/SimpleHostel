@@ -26,6 +26,7 @@ const ProfileForm = lazy(() => import('./pages/dashboard/profile/Profile-From'))
 const EditStaff = lazy(() => import('./pages/dashboard/staff-management/EditStaff'));
 const CalendarYear = lazy(() => import('./pages/dashboard/calendarYear/CalendarYear'));
 const Payment = lazy(() => import('./pages/dashboard/resident-management/room-assignment/Payment'));
+const Transactions = lazy(()=> import('./pages/dashboard/transactions/Transactions'))
 
 // Axios configuration
 axios.defaults.headers.common["Accept"] = "application/json";
@@ -58,6 +59,7 @@ function App() {
           <Route path="approve-hostel" element={<ApproveHostel />} />
           <Route path="profile" element={<ProfileForm />} />
           <Route path='payment' element={<Payment />} />
+          <Route path='transactions' element={<Transactions />} />
         </Route>
 
         <Route path='/' element={<LandingPageLayout />}>

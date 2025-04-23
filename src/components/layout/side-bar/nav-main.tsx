@@ -1,5 +1,4 @@
 "use client"
-import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   SidebarGroup,
@@ -35,7 +34,7 @@ export function NavMain() {
     { title: "Visitor Management", icon: CalendarCheck, path: "/dashboard/visitor-management" },
     { title: "Maintenance & Tracking", icon: Wrench, path: "/dashboard/maintenance-and-tracking" },
     { title: "Staff Management", icon: Users, path: "/dashboard/staff-management" },
-    {title:"Transactions", icon:Wallet2 ,path:'/dashboard/staff-management'}
+    {title:"Transactions", icon:Wallet2 ,path:'/dashboard/transactions'}
   ]
 
   if (userRole === "SUPER_ADMIN") {
