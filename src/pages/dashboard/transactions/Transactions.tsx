@@ -31,7 +31,7 @@ useEffect(() => {
             user: `User ${i + 1}`,
             amount: Math.floor(Math.random() * 1000) + 100,
             date: new Date(Date.now() - i * 86400000).toISOString().split('T')[0],
-            status: i % 3 === 0 ? 'Completed' : i % 3 === 1 ? 'Pending' : 'Failed',
+            status: (i % 3 === 0 ? 'Completed' : i % 3 === 1 ? 'Pending' : 'Failed') as Transaction['status'],
         }));
         setData(all);
     };
