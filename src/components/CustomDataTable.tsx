@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import DataTable, { TableColumn } from 'react-data-table-component';
 import { Download, Search } from 'lucide-react';
+import TableLoader from './loaders/TableLoader';
 
 interface DataTableProps<T> {
   title?: string;
@@ -16,6 +17,8 @@ interface DataTableProps<T> {
   exportFilename?: string;
   exportAllData?: T[];              // optional full data override (for server-side)
   onSearchChange?: (searchText: string) => void; // new prop for server-side search
+  isLoading?:boolean;
+  isError?:boolean;
 }
 
 function CustomDataTable<T>({
@@ -29,9 +32,11 @@ function CustomDataTable<T>({
   perPage = 10,
   onPageChange,
   onPerPageChange,
-  exportFilename = `${title}.csv`,
+  exportFilename = title ? `${title}.csv` : 'export.csv',
   exportAllData,
   onSearchChange,
+  isLoading,
+  isError,
 }: DataTableProps<T>) {
   const [searchText, setSearchText] = useState('');
 
@@ -90,6 +95,14 @@ function CustomDataTable<T>({
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
   };
+
+  if(isLoading){
+    return <TableLoader/>
+  }
+  
+  if(isError){
+    return <div className='text-red-500'>Something went wrong</div>
+  }
 
   return (
     <div className="space-y-4">
