@@ -1,11 +1,11 @@
 import React from 'react';
-import DataTable, { TableColumn } from 'react-data-table-component';
+import  { TableColumn } from 'react-data-table-component';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios, { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 import { Loader } from 'lucide-react';
-import LogoLoader from '@/components/loaders/logoLoader';
+import CustomDataTable from '@/components/CustomDataTable';
 
 interface Hostel {
     id: string;
@@ -21,10 +21,10 @@ interface Hostel {
 const ApproveHostel: React.FC = () => {
     const queryClient = useQueryClient();
 
-    const { data, isLoading, isError } = useQuery<Hostel[]>({
-        queryKey: ['hostels'],
+    const { data:UnverifiedHostels, isLoading, isError } = useQuery<Hostel[]>({
+        queryKey: ['unverifiedHostels'],
         queryFn: async () => {
-            const response = await axios.get('/api/hostels/get', {
+            const response = await axios.get('/api/hostels/unverified', {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
@@ -131,11 +131,6 @@ const ApproveHostel: React.FC = () => {
             sortable: true,
         },
         {
-            name: 'Ghana Card',
-            selector: row => row.ghCard,
-            sortable: true,
-        },
-        {
             name: 'Actions',
             cell: row => (
                 <div className='w-full flex flex-col lg:flex-row gap-2 my-2'>
@@ -149,33 +144,16 @@ const ApproveHostel: React.FC = () => {
             ),
         },
     ];
-    if (isLoading) {return(<LogoLoader/> )}
 
-    if (isError) {
-        return <div>Error loading data</div>;
-    }
-
-    // Filter the data to only include hostels that are not verified
-    const filteredData = data?.filter(hostel => hostel.isVerified = false) || [];
-
-    const conditionalRowStyles = [
-        {
-            when: (row: Hostel) => !!data && data.indexOf(row) % 2 === 0,
-            style: {
-                backgroundColor: '#f2f2f2',
-            },
-        },
-    ];
-
+   
     return (
         <div className='p-6'>
-            <DataTable
-                title="Approve Hostels"
+            <CustomDataTable
                 columns={columns}
-                data={filteredData}
-                pagination
-                responsive
-                conditionalRowStyles={conditionalRowStyles}
+                data={UnverifiedHostels || []}
+                title='Unverified Hostels'
+                isError={isError}
+                isLoading={isLoading}
             />
         </div>
     );
