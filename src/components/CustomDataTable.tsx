@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import DataTable, { TableColumn } from 'react-data-table-component';
 import { Download, Search } from 'lucide-react';
 
@@ -15,6 +15,7 @@ interface DataTableProps<T> {
   onPerPageChange?: (page: number, totalRows: number) => void;
   exportFilename?: string;
   exportAllData?: T[];              // optional full data override (for server-side)
+  onSearchChange?: (searchText: string) => void; // new prop for server-side search
 }
 
 function CustomDataTable<T>({
@@ -25,17 +26,37 @@ function CustomDataTable<T>({
   onRowClicked,
   serverSide = false,
   totalRows,
-  perPage = 5,
+  perPage = 10,
   onPageChange,
   onPerPageChange,
   exportFilename = `${title}.csv`,
   exportAllData,
+  onSearchChange,
 }: DataTableProps<T>) {
   const [searchText, setSearchText] = useState('');
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(e.target.value);
+    const value = e.target.value;
+    setSearchText(value);
+    if (serverSide && onSearchChange) {
+      onSearchChange(value);
+    }
   };
+
+  // For client-side search, filter data locally
+  const filteredData = useMemo(() => {
+    if (serverSide || !searchable || !searchText) return data;
+    const lower = searchText.toLowerCase();
+    return data.filter(row =>
+      columns.some(col => {
+        const val = typeof col.selector === 'function'
+          ? col.selector(row)
+          : (col.selector && (row as any)[col.selector as string]);
+        if (val == null) return false;
+        return String(val).toLowerCase().includes(lower);
+      })
+    );
+  }, [data, columns, searchText, serverSide, searchable]);
 
   const exportToCSV = () => {
     // Use full data if provided, otherwise fallback to data prop
@@ -99,7 +120,7 @@ function CustomDataTable<T>({
 
       <DataTable
         columns={columns}
-        data={data}
+        data={serverSide ? data : filteredData}
         pagination
         paginationServer={serverSide}
         paginationTotalRows={totalRows}
