@@ -82,7 +82,7 @@ const UserTable = () => {
   return (
     <div className='p-6 border shadow-sm rounded-md'>
         <CustomDataTable
-        title='User Management'
+        title='User Management Table'
         data={AllUsers}
         columns={columns}
         isLoading={isLoading}

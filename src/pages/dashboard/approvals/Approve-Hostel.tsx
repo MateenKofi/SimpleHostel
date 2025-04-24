@@ -2,10 +2,7 @@ import ApproveHostelTable from '@/components/ApproveHostelTable';
 import React from 'react';
 
 
-
 const ApproveHostel: React.FC = () => {
-
-   
     return (
        <div className='p-6'>
         <div className='p-6 border shadow-md rounded-lg bg-white mb-3'>
