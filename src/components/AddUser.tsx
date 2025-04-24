@@ -4,7 +4,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation,useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { ImagePlus, RefreshCcw } from "lucide-react";
@@ -21,6 +21,7 @@ type AddUserFormData = {
   photo: File;
 };
 const AddUser = ({ onClose }: AddUserProps) => {
+    const querclient = useQueryClient()
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const { register, handleSubmit,reset } = useForm<AddUserFormData>();
@@ -44,6 +45,7 @@ const AddUser = ({ onClose }: AddUserProps) => {
         .then((res) => {
           toast.success("User Added successfully");
          handleClose()
+            querclient.invalidateQueries({queryKey:['AllUsers']})
           return res.data;
         })
         .catch((error) => {

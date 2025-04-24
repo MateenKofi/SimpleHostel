@@ -34,7 +34,7 @@ axios.defaults.headers.common["Accept"] = "application/json";
 axios.defaults.headers.common["Content-Type"] = "application/json";
 axios.defaults.headers.common['Content-Type'] = 'accept/multipart/form-data';
 axios.defaults.baseURL = `${import.meta.env.VITE_API_BASE_URL}`;
-axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
+
 
 function App() {
   return (
