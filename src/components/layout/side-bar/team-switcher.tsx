@@ -13,12 +13,12 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 export function TeamSwitcher() {
-
+const hostelId = localStorage.getItem('hostelId')
   const { data } = useQuery({
     queryKey: ["hostel"],
     queryFn: async () => {
       const response = await axios.get(
-        `/api/hostels/get/${localStorage.getItem("hostelId")}`,
+        `/api/hostels/get/${hostelId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -27,6 +27,7 @@ export function TeamSwitcher() {
       );
       return response?.data?.data;
     },
+    enabled : !hostelId
   });
 
   return (
