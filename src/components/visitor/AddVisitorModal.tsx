@@ -42,10 +42,13 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
       formData.append('phone', data.phone)
       formData.append('email', data.email)
       formData.append('residentId', data.residentId?.value || '')
-      
+      formData.append('status', 'ACTIVE')
       // formData.append('purpose', data.purpose)
 
-      const response = await axios.post(`/api/visitors/add/${hostelId}`, formData, {
+      const response = await axios.post(`/api/visitors/add`, formData, {
+        params:{
+          hostelId: hostelId,
+        },
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
@@ -167,8 +170,9 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
               <button
                 type="submit"
                 className="px-4 py-2 bg-black text-white rounded-md"
+                disabled={mutation.isPending}
               >
-                Add Visitor
+                {mutation.isPending ? 'Adding...' : 'Add Visitor'}
               </button>
             </div>
           </form>

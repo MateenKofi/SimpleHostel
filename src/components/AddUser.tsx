@@ -39,7 +39,8 @@ const AddUser = ({ onClose }: AddUserProps) => {
       await axios
         .post("/api/users/signup", formData, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+           ' Authorization': `Bearer ${localStorage.getItem("oken")}`,
+             'Content-Type': 'accept/multipart/form-data'
           }, 
         })
         .then((res) => {

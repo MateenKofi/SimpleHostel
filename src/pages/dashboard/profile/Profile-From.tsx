@@ -6,11 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios,{AxiosError} from "axios";
+import axios, { AxiosError } from "axios";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import  LogoLoader  from "@/components/loaders/logoLoader";
+import LogoLoader from "@/components/loaders/logoLoader";
 
 interface PersonalInfoFormValues {
   name: string;
@@ -44,9 +44,18 @@ const ProfileForm = () => {
     },
   });
 
-  const { setValue, register, formState: { errors } } = personalInfoForm;
+  const {
+    setValue,
+    register,
+    formState: { errors },
+  } = personalInfoForm;
 
-  const { data, isLoading, isError,refetch:refectUser } = useQuery({
+  const {
+    data,
+    isLoading,
+    isError,
+    refetch: refectUser,
+  } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
       const response = await axios.get(`/api/users/get/${userId}`, {
@@ -71,23 +80,24 @@ const ProfileForm = () => {
       if (uploadedImage) {
         formData.append("photo", uploadedImage);
       }
-      const response = await axios.put(`/api/users/update/${userId}`, formData, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      return response?.data;
-    },
-    onSuccess: () => {
-      refectUser()
-      toast.success("User Details Updated Successfully");
-      queryClient.invalidateQueries({ queryKey: [ "userProfile"] });
-    },
-    onError: (error: AxiosError<{ message?: string }>) => {
-      const errorMessage =
-        error.response?.data?.message || "Failed to Update User Details";
-      toast.error(errorMessage);
+      await axios
+        .put(`/api/users/update/${userId}`, formData, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          refectUser();
+          toast.success("User Details Updated Successfully");
+          queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+          return res.data;
+        })
+        .catch((err) => {
+          const errorMessage =
+            err.response?.data?.message || "Failed to update user details";
+          toast.error(errorMessage);
+        });
     },
   });
 
@@ -105,22 +115,26 @@ const ProfileForm = () => {
       return response?.data;
     },
     onSuccess: () => {
-      refectUser()
+      refectUser();
       toast.success("Password Updated Successfully");
-      queryClient.invalidateQueries({ queryKey: [ "userProfile"] });
+      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
     },
-    onError: (error: AxiosError<{message?:string}>) => {
+    onError: (error: AxiosError<{ message?: string }>) => {
       const errorMessage =
         error.response?.data?.message || "Failed to Update Password";
       toast.error(errorMessage);
     },
   });
 
-  const handleUpdatePersonalInfo: SubmitHandler<PersonalInfoFormValues> = (formData) => {
+  const handleUpdatePersonalInfo: SubmitHandler<PersonalInfoFormValues> = (
+    formData
+  ) => {
     updatePersonalInfoMutation.mutate(formData);
   };
 
-  const handleResetPassword: SubmitHandler<ResetPasswordFormValues> = (formData) => {
+  const handleResetPassword: SubmitHandler<ResetPasswordFormValues> = (
+    formData
+  ) => {
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match");
       return;
@@ -141,7 +155,7 @@ const ProfileForm = () => {
   };
 
   if (isLoading) {
-    <LogoLoader/>
+    <LogoLoader />;
   }
 
   if (isError) {
@@ -188,7 +202,11 @@ const ProfileForm = () => {
               )}
             </div>
             <Button className="w-full mt-4" type="submit">
-              {resetPasswordMutation.isPending ? <Loader className="animate-spin" /> : "Reset Password"}
+              {resetPasswordMutation.isPending ? (
+                <Loader className="animate-spin" />
+              ) : (
+                "Reset Password"
+              )}
             </Button>
           </form>
         </Card>
@@ -196,7 +214,9 @@ const ProfileForm = () => {
         {/* Personal Information Form */}
         <Card className="p-6">
           <h2 className="mb-6 text-lg font-semibold">Personal Information</h2>
-          <form onSubmit={personalInfoForm.handleSubmit(handleUpdatePersonalInfo)}>
+          <form
+            onSubmit={personalInfoForm.handleSubmit(handleUpdatePersonalInfo)}
+          >
             <div className="flex mb-4 items-start space-x-4">
               <div className="relative w-fit">
                 <img
@@ -224,7 +244,9 @@ const ProfileForm = () => {
                     {...register("name", { required: "User Name is required" })}
                   />
                   {errors.name && (
-                    <p className="text-red-600 text-sm">{errors.name.message}</p>
+                    <p className="text-red-600 text-sm">
+                      {errors.name.message}
+                    </p>
                   )}
                 </div>
                 <div className="space-y-2">
