@@ -22,7 +22,7 @@ const UserTable = () => {
         }
     })
 
-       const DeleteAmenitiesMutation = useMutation({
+       const DeleteUserMutation = useMutation({
         mutationFn: async (id: string) => {
           try {
             const response = await axios.delete(`/api/users/delete/${id}`, {
@@ -54,7 +54,7 @@ const UserTable = () => {
             reverseButtons: true,
         }).then((result) => {
             if (result.isConfirmed) {
-                DeleteAmenitiesMutation.mutate(id);
+                DeleteUserMutation.mutate(id);
             }
         });
     }
