@@ -129,7 +129,7 @@ const VisitorHistory = () => {
   return (
     <div className="p-4 bg-white rounded-lg shadow-sm border">
       <CustomDataTable
-        title="Active Visitors Table"
+        title="Visitors History Table"
         columns={columns}
         data={InactiveVisitors}
         isError={isError}
