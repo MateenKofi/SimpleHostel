@@ -8,6 +8,7 @@ import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import EditRoomModal from "@/components/rooms/EditRoomModal";
 import { useModal } from "../Modal";
+import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const RoomTable = () => {
+  const navigate = useNavigate()
   const { open: openEditRoomModal, close: closeEditRoomModal } =
     useModal("editroom_modal");
   const [selectedRoom, setSelectedRoom] = useState<Room>({} as Room);
@@ -185,7 +187,7 @@ const RoomTable = () => {
             <DropdownMenuItem>
               <button
                 className="w-full text-xs text-white flex gap-1 items-center justify-center bg-black p-2 rounded "
-                onClick={() => handleEditRoom(row)}
+                onClick={() => navigate(`/dashboard/view-room/:${row.id}`)}
               >
                 <Eye className="w-4 h-4" />
                 <span>View</span>

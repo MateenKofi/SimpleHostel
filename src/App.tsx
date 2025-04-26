@@ -28,6 +28,7 @@ const CalendarYear = lazy(() => import('./pages/dashboard/calendarYear/CalendarY
 const Payment = lazy(() => import('./pages/dashboard/resident-management/room-assignment/Payment'));
 const Transactions = lazy(()=> import('./pages/dashboard/transactions/Transactions'))
 const Users = lazy(() => import('./pages/dashboard/users/Users'));
+const ViewRoom = lazy(()=> import('./components/rooms/ViewRoom'))
 
 // Axios configuration
 axios.defaults.headers.common["Accept"] = "application/json";
@@ -61,6 +62,7 @@ function App() {
           <Route path='payment' element={<Payment />} />
           <Route path='transactions' element={<Transactions />} />
           <Route path='users' element={<Users />} />
+         <Route path='view-room/:id' element={<ViewRoom/>} />
         </Route>
 
         <Route path='/' element={<LandingPageLayout />}>

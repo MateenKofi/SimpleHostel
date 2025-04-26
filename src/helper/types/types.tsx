@@ -24,17 +24,18 @@ export type Resident = {
 
 export type Room = {
   id: string;
-  hostelId: string;
+  hallId: string;
   gender: string;
-  roomNumber: string;
+  name: string;
   floor?: number | string;
   block?: string;
   roomType: "single" | "double" | "suit" | "quard";
   status: "AVAILABLE" | "MANTENANCE" | "OCCUPIED";
-  maxCap: number;
-  currentResidentCount: number;
+  capacity: number;
+  currentStudentsCount: number;
   maxOccupancy: number;
-  currentCapacity: number;
+  maxCap:number;
+  currentResidentCount: number;
   price: number;
   basePrice: number;
   amenities: string[];
@@ -43,6 +44,9 @@ export type Room = {
   description?: string;
   number: string;
   type: string;
+  updatedAt?: string;
+  createdAt?: string;
+  RoomImages?: images[] | undefined | null;
   RoomImage?: images[] | undefined | null;
   images?: images[] | undefined | null;
   Amenities?: Amenity[];
