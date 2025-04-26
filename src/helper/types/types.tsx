@@ -21,13 +21,27 @@ export type Resident = {
   hostelId: string | null;
   room?: Omit<Room, "resident">;
 };
+export type Visitor = {
+  id: string;
+  name: string;
+  phone: string;
+  
+  residentId: string;
+  purpose: string;
+  checkInTime: string;
+  checkOutTime?: string;
+  timeIn: string;
+  timeOut: string;
+  status: "ACTIVE" | "CHECKED_OUT";
+  resident?: Resident;
+};
 
 export type Room = {
   id: string;
   hallId: string;
   gender: string;
   name: string;
-  roomNumber:string;
+  roomNumber: string;
   floor?: number | string;
   block?: string;
   roomType: "single" | "double" | "suit" | "quard";
@@ -35,7 +49,7 @@ export type Room = {
   capacity: number;
   currentStudentsCount: number;
   maxOccupancy: number;
-  maxCap:number;
+  maxCap: number;
   currentResidentCount: number;
   price: number;
   basePrice: number;
