@@ -4,7 +4,7 @@ import moment from "moment"
 import { CalendarYearT } from "@/helper/types/types"
 
 const CurrentYearCard = ({ currentYear }: { currentYear: CalendarYearT | undefined }) => {
-  if (!currentYear) return <p className="text-center">No current calendar year found.</p>
+  if (!currentYear) return <p className="text-center shadow-md border rounded-md p-6 my-4 h-48">No current calendar year found.</p>
 
   return (
     <Card className="mb-8 p-4 flex justify-between items-start">

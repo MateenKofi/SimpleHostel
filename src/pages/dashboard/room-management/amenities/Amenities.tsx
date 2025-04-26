@@ -1,6 +1,5 @@
 'use client'
-import DataTable from 'react-data-table-component';
-import { Building, Search, Filter, Download, Plus, Edit, Trash2, Loader } from 'lucide-react';
+import { Building, Plus, Edit, Trash2, Loader } from 'lucide-react';
 import { useModal } from '@/components/Modal';
 import AmenitiesModal from './AmenitiesModal';
 import EditAmenitiesModal from './EditAmenitiesModal';
@@ -9,7 +8,8 @@ import Swal from 'sweetalert2';
 import axios, { AxiosError } from 'axios';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
-import AmenitiesLoader from '@/components/loaders/AmenitiesLoader';
+import CustomDataTable from '@/components/CustomDataTable';
+import { Amenity } from '@/helper/types/types';
 
 const Amenities = () => {
     const queryClient = useQueryClient();
@@ -17,8 +17,8 @@ const Amenities = () => {
     const { open: openEditAmenitiesModal, close: closeEditAmenitiesModal } = useModal('edit_amenities_modal');
     const hostelId = localStorage.getItem('hostelId');
     const [deletingAmenityId, setDeletingAmenityId] = useState<string | null>(null);
-    const [selectedAmenity, setSelectedAmenity] = useState<{ id: string; name: string; price: number } | null>(null);
-    const { data, isLoading, isError } = useQuery<{ data: { id: string; name: string; price: number; }[] }>({
+    const [selectedAmenity, setSelectedAmenity] = useState<Amenity | null>(null);
+    const { data:amenities, isLoading, isError,refetch:refetchAmenities } = useQuery<Amenity[]>({
         queryKey: ["amenities"],
         queryFn: async () => {
           const response = await axios.get(`/api/amenities/hostel/${hostelId}`, {
@@ -26,7 +26,7 @@ const Amenities = () => {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
           });
-          return response?.data;
+          return response?.data?.data;
         },
     });
 
@@ -70,7 +70,7 @@ const Amenities = () => {
         });
     }
 
-    const handleEditAmenities = (amenity: { id: string; name: string; price: number }) => {
+    const handleEditAmenities = (amenity: Amenity) => {
         setSelectedAmenity(amenity);
         openEditAmenitiesModal();
     }
@@ -88,7 +88,7 @@ const Amenities = () => {
         },
         {
             name: 'Actions',
-            cell: (row: { id: string; name: string; price: number }) => (
+            cell: (row: Amenity) => (
                 <div className="flex gap-2 text-nowrap">
                     <button className="text-white bg-black p-1 rounded flex items-center gap-1"
                         onClick={() => handleEditAmenities(row)}>
@@ -109,16 +109,6 @@ const Amenities = () => {
         },
     ];
 
-    if (isLoading) {
-        <AmenitiesLoader/>
-    }
-    if (isError) {
-        return (
-            <div className="w-full flex justify-center flex-col items-center gap-4 text-center py-4 mt-20">
-                <p>Error fetching amenities. Please try again later.</p>
-            </div>
-        );
-    }
 
     return (
         <div className="p-6">
@@ -135,14 +125,10 @@ const Amenities = () => {
                         <span>Amenities</span>
                     </button>
                     <AmenitiesModal onClose={closeAmenitiesModal} />
-                    <button className="px-4 py-2 bg-black text-white rounded-md flex items-center gap-2">
-                        <Download className="w-4 h-4" />
-                        Import
-                    </button>
                 </div>
             </div>
 
-            {data?.data?.length === 0 ? (
+            {amenities?.length === 0 ? (
                 <div className="w-full flex justify-center flex-col items-center gap-4 text-center py-4 mt-20">
                     <p>No amenities found. Please add some amenities.</p>
                     <div>
@@ -156,33 +142,17 @@ const Amenities = () => {
                 </div>
             ) : (
                 <div className="bg-white rounded-lg shadow-sm p-4 ">
-                    <div className="flex justify-between items-center mb-4">
-                        <div className="relative">
-                            <Search className="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                            <input
-                                type="text"
-                                placeholder="Search Amenities..."
-                                className="pl-10 pr-4 py-2 border rounded-md w-[300px]"
-                            />
-                        </div>
-                        <div className="flex gap-2">
-                            <button className="px-4 py-2 border rounded-md flex items-center gap-2">
-                                <Filter className="w-4 h-4" />
-                                Filter
-                            </button>
-                        </div>
-                    </div>
-
-                    <DataTable
-                        columns={columns}
-                        data={data?.data || []}
-                        pagination
+                    <CustomDataTable<Amenity>
+                    title='Amenities Table'
+                    columns={columns}
+                    data={amenities || []}
+                    isError={isError}
+                    isLoading={isLoading}
+                    refetch={refetchAmenities}
                     />
                 </div>
             )}
-            
                 <EditAmenitiesModal onClose={closeEditAmenitiesModal} formdata={selectedAmenity || { id: '', name: '', price: 0 }} />
-           
         </div>
     )
 }

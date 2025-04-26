@@ -37,7 +37,6 @@ const UserTable = () => {
           } catch (error: any) {
             const errorMessage = error?.response?.data?.message || "Failed to delete user";
             toast.error(errorMessage);
-            throw error;
           }
         },
       });

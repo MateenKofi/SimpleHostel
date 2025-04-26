@@ -1,0 +1,18 @@
+import Rooms from "@/components/rooms/Rooms";
+import { Building } from "lucide-react";
+
+const RoomManagement = () => {
+  return (
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center gap-2">
+          <Building className="w-6 h-6" />
+          <h1 className="text-2xl font-bold">Room Management</h1>
+        </div>
+      </div>
+      <Rooms/>
+    </div>
+  );
+};
+
+export default RoomManagement;

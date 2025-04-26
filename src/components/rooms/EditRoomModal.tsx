@@ -309,13 +309,13 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
           {isAmenitiesError && (
             <span className="text-red-500 text-sm">Failed to load amenities</span>
           )}
-          {!isAmenitiesLoading && !isAmenitiesError && amenitiesData?.data.length === 0 && (
+          {!isAmenitiesLoading && !isAmenitiesError && amenitiesData?.data?.length === 0 && (
             <span className="text-gray-500 text-sm">No amenities available</span>
           )}
           
           {/* Amenities Checkboxes */}
           <div className="flex flex-wrap gap-2">
-            {amenitiesData?.data.map((amenity) => {
+            {amenitiesData?.data?.map((amenity) => {
               const currentAmenities: string[] = watch("amenities") || [];
               const isSelected = currentAmenities.includes(amenity.id);
               return (

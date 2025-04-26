@@ -87,23 +87,9 @@ const ResidentTable = () => {
           text: "The Resident has been deleted successfully.",
           icon: "success",
         });
-      } catch (error) {
-        let errorMessage = "Failed to delete the room. Please try again.";
-        if (
-          error &&
-          typeof error === "object" &&
-          "response" in error &&
-          error.response &&
-          typeof error.response === "object" &&
-          "data" in error.response &&
-          error.response.data &&
-          typeof error.response.data === "object" &&
-          "message" in error.response.data
-        ) {
-          errorMessage =
-            (error.response.data as { message?: string }).message ||
-            errorMessage;
-        }
+      } catch (error:any) {
+       const errorMessage = error?.response?.data?.message || "Failed to delete Ressident";
+            toast.error(errorMessage);
         Swal.fire({
           title: "Error!",
           text: errorMessage,

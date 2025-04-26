@@ -53,37 +53,34 @@ const CalendarYear = () => {
   const historicalYears = historicalYearsResponse?.data || [];
 
   const { register, handleSubmit, reset } = useForm<FormValues>();
+  const hostelId = localStorage.getItem("hostelId");
 
   // Mutation for adding calendar year
   const AddCalendarYearMutation = useMutation({
     mutationFn: async (data: FormValues) => {
-      const hostelId = localStorage.getItem("hostelId");
       const payload = {
         name: data.yearName,
         hostelId: hostelId || "",
       };
-      const response = await axios.post(`/api/calendar/start`, payload, {
+      await axios.post(`/api/calendar/start`, payload, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-      });
-      return response.data;
-    },
-    onSuccess: () => {
-      refectCurrentYear()
+      }).then((res)=>{
+         refectCurrentYear()
       refectHistoricalYears()
       toast.success("Academic Year added successfully");
       reset();
-    },
-    onError: (error: unknown) => {
-      console.error("Mutation error:", error);
-      let errorMessage = "Failed to add Academic Year";
+        return res.data
+      }).catch((error)=>{
+        let errorMessage = "Failed to add Academic Year";
       if (axios.isAxiosError(error)) {
         errorMessage = error.response?.data?.message || errorMessage;
       } else {
         errorMessage = (error as Error).message || errorMessage;
       }
       toast.error(errorMessage);
+      })
     },
   });
 

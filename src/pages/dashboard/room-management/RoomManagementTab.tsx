@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import RoomManagement from './rooms/RoomManagement';
+import RoomManagement from './RoomManagement';
 import Amenities from './amenities/Amenities';
 import StatusAlert from '@/components/StatusAlert';
 import { useQuery } from '@tanstack/react-query';
