@@ -27,6 +27,7 @@ export type Room = {
   hallId: string;
   gender: string;
   name: string;
+  roomNumber:string;
   floor?: number | string;
   block?: string;
   roomType: "single" | "double" | "suit" | "quard";
