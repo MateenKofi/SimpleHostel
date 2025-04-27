@@ -74,7 +74,7 @@ const HostelListingForm = () => {
       const formData = new FormData();
       formData.append("name", data.hostelName.toUpperCase());
       formData.append("description", data.description || "");
-      formData.append("location", region.toUpperCase());
+      formData.append("location","sunyani".toUpperCase());
       formData.append("address", data.address.toUpperCase());
       formData.append("manager", data.managerName.toUpperCase());
       formData.append("email", data.email);
