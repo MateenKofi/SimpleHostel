@@ -90,8 +90,9 @@ const HostelListingForm = () => {
           },
         })
         .then((res) => {
+          console.log(res)
           toast.success("Hostel Listed successfully");
-          return res.data
+          return  <SuccessfulListing/>
         })
         .catch((error) => {
           if (axios.isAxiosError(error) && error.response) {
@@ -117,9 +118,6 @@ const HostelListingForm = () => {
           <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
             List Your Hostel
           </h1>
-          {AddListingMutation.isSuccess ? (
-           <SuccessfulListing/>
-          ) : (
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
@@ -294,7 +292,6 @@ const HostelListingForm = () => {
                 </Button>
               </form>
             </Form>
-          )}
         </div>
         {/* Right Section: Static Image */}
         <div className="hidden md:block relative">
