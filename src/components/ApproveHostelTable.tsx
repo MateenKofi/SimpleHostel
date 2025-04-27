@@ -20,7 +20,7 @@ interface Hostel {
 
 const ApproveHostelTable = () => {
     const queryClient = useQueryClient();
-    const { data:UnverifiedHostels, isLoading, isError } = useQuery<Hostel[]>({
+    const { data:UnverifiedHostels, isLoading, isError,refetch:refetchUnverifiedHostels } = useQuery<Hostel[]>({
         queryKey: ['unverifiedHostels'],
         queryFn: async () => {
             const response = await axios.get('/api/hostels/unverified', {
@@ -45,6 +45,7 @@ const ApproveHostelTable = () => {
             toast.success('Hostel Approved Successfully');
             toast.success(response?.data?.message);
             queryClient.invalidateQueries({ queryKey: ['hostels'] });
+            refetchUnverifiedHostels()
         },
         onError: (error: AxiosError<{message:string}>) => { 
                 const errorMessage = error.response?.data?.message || 'Failed to Approve Hostel';
@@ -64,6 +65,7 @@ const ApproveHostelTable = () => {
         onSuccess: () => {
             toast.success('Hostel Declined Successfully');
             queryClient.invalidateQueries({ queryKey: ['hostels'] });
+            refetchUnverifiedHostels()
         },
         onError: (error: AxiosError<{message:string}>) => {
                 const errorMessage = error.response?.data?.message || 'Failed to Decline Hostel';
@@ -152,6 +154,7 @@ const ApproveHostelTable = () => {
                 title='Unverified Hostels Table'
                 isError={isError}
                 isLoading={isLoading}
+                refetch={refetchUnverifiedHostels}
             />
         </div>
   )
