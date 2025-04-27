@@ -144,17 +144,17 @@ const ProfileForm = () => {
             <div className="flex mb-4 items-start space-x-4">
               <div className="relative w-fit">
                 <img
-                  src={image || User?.imageUrl}
+                  src={image || User?.imageUrl || '/logo.png'}
                   alt="Profile"
                   className="h-24 w-24 rounded-full object-cover"
                 />
                 <label className="mt-2 flex gap-2 text-sm text-blue-600 cursor-pointer">
-                  Update
+                  {!(image || User?.imageUrl) ? "Upload" : "Update"}
                   <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageUpload}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageUpload}
                   />
                 </label>
               </div>
