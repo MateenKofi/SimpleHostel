@@ -70,12 +70,13 @@ const HostelListingForm = () => {
     },
   });
 
+  
   const AddListingMutation = useMutation({
     mutationFn: async (data: z.infer<typeof formSchema>) => {
       const formData = new FormData();
       formData.append("name", data.hostelName.toUpperCase());
       formData.append("description", data.description || "");
-      formData.append("location","sunyani".toUpperCase());
+      formData.append("location", 'sunyani'.toUpperCase());
       formData.append("address", data.address.toUpperCase());
       formData.append("manager", data.managerName.toUpperCase());
       formData.append("email", data.email);
@@ -84,30 +85,28 @@ const HostelListingForm = () => {
       if (image) {
         formData.append("photo", image);
       }
-      await axios
-        .post("/api/hostels/add", formData, {
+      try {
+        const res = await axios.post("/api/hostels/add", formData, {
           headers: {
             "Content-type": "multipart/form-data",
           },
-        })
-        .then((res) => {
-          toast.success("Hostel Listed successfully");
-          setSubmitted(true)
-          return res.data
-        })
-        .catch((error) => {
-          setSubmitted(false)
-          if (axios.isAxiosError(error) && error.response) {
-            const errorMessage =
-              error.response.data.message || "Failed to List Hostel";
-            toast.error(errorMessage);
-          } else {
-            toast.error("Failed to List Hostel");
-          }
         });
+        toast.success("Hostel Listed successfully");
+        setSubmitted(true);
+        return res.data;
+      } catch (error) {
+        setSubmitted(false);
+        if (axios.isAxiosError(error) && error.response) {
+          const errorMessage =
+            error.response.data.message || "Failed to List Hostel";
+          toast.error(errorMessage);
+        } else {
+          toast.error("Failed to List Hostel");
+        }
+      }
     },
   });
-
+ 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     AddListingMutation.mutate(data);
   };
@@ -208,7 +207,7 @@ const HostelListingForm = () => {
                       <FormLabel>Address*</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="BS-016-9897"
+                          placeholder="BS-016-9897, BS-0003-5700"
                           {...field}
                           className="Capitalize"
                         />
