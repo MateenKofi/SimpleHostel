@@ -21,11 +21,11 @@ export type Resident = {
   hostelId: string | null;
   room?: Omit<Room, "resident">;
 };
+
 export type Visitor = {
   id: string;
   name: string;
   phone: string;
-  
   residentId: string;
   purpose: string;
   checkInTime: string;

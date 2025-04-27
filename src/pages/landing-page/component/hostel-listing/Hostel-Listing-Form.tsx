@@ -15,14 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea"; 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -83,7 +76,6 @@ const HostelListingForm = () => {
       const formData = new FormData();
       formData.append("name", data.hostelName.toUpperCase());
       formData.append("description", data.description || "");
-      // formData.append("location", region.toUpperCase());
       formData.append("location", "sunyani".toUpperCase());
       formData.append("address", data.address.toUpperCase());
       formData.append("manager", data.managerName.toUpperCase());
@@ -96,8 +88,6 @@ const HostelListingForm = () => {
       const response = await axios.post("/api/hostels/add", formData, {
         headers: {
           "Content-type": "multipart/form-data",
-          "Access-Control-Allow-Origin": "*",
-          Accept: "*/*",
         },
       });
       return response.data;
@@ -161,7 +151,6 @@ const HostelListingForm = () => {
   return (
     <div className="min-h-screen w-full flex justify-center items-center p-4 md:p-8">
       <div className="w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-4 bg-white shadow-lg rounded-md overflow-hidden">
-        {/* Left Section: Form Fields and Image Upload */}
         <div className="p-4 md:p-6 overflow-y-auto max-h-[80vh] md:max-h-none">
           <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
             List Your Hostel
@@ -265,7 +254,7 @@ const HostelListingForm = () => {
                         <Input
                           placeholder="Enter hostel name"
                           {...field}
-                          className="uppercase"
+                          className="Capitalize"
                         />
                       </FormControl>
                       <FormMessage />
@@ -308,7 +297,7 @@ const HostelListingForm = () => {
                             field.onChange(val);
                           }}
                           value={region}
-                          className="region"
+                          className="region rounded-md bg-white p-1"
                           name="region-field"
                           style={{
                             width: "100%",
@@ -333,7 +322,7 @@ const HostelListingForm = () => {
                       <FormLabel>Address*</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder="BS-0016-9897"
+                          placeholder="BS-016-9897"
                           {...field}
                           className="uppercase"
                         />
@@ -353,7 +342,7 @@ const HostelListingForm = () => {
                         <Input
                           placeholder="Enter manager's name"
                           {...field}
-                          className="uppercase"
+                          className="capitalize"
                         />
                       </FormControl>
                       <FormMessage />
@@ -368,7 +357,7 @@ const HostelListingForm = () => {
                     <FormItem>
                       <FormLabel>Ghana Card No.*</FormLabel>
                       <FormControl>
-                        <Input placeholder="GHA-xxxxxxxxxxx" {...field} />
+                        <Input placeholder="GHA-xxxxxxxxx-x" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
