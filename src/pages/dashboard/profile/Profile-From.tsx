@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader, RefreshCcw } from "lucide-react";
+import { CircleFadingArrowUp, ImageUp, Loader, RefreshCcw } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -149,7 +149,13 @@ const ProfileForm = () => {
                   className="h-24 w-24 rounded-full object-cover"
                 />
                 <label className="mt-2 flex gap-2 text-sm text-blue-600 cursor-pointer">
-                  {!(image || User?.imageUrl) ? "Upload" : "Update"}
+                  <span className="bg-black text-white rounded py-1 px-2 text-xs">
+                  {!(image || User?.imageUrl) ? (<span className="flex items-center gap-1">
+                    <ImageUp/> Upload
+                  </span>) : (<span className="flex items-center gap-1">
+                    <CircleFadingArrowUp/> Update
+                  </span>)}
+                  </span>
                   <input
                   type="file"
                   accept="image/*"
