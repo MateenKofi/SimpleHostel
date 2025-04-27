@@ -6,9 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import LogoLoader from "@/components/loaders/logoLoader";
 
@@ -18,31 +18,13 @@ interface PersonalInfoFormValues {
   phoneNumber: string;
 }
 
-interface ResetPasswordFormValues {
-  password: string;
-  confirmPassword: string;
-}
-
 const ProfileForm = () => {
   const queryClient = useQueryClient();
   const userId = localStorage.getItem("userId");
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [image, setImage] = useState<string | null>(null);
 
-  const personalInfoForm = useForm<PersonalInfoFormValues>({
-    defaultValues: {
-      name: "",
-      email: "",
-      phoneNumber: "",
-    },
-  });
-
-  const resetPasswordForm = useForm<ResetPasswordFormValues>({
-    defaultValues: {
-      password: "",
-      confirmPassword: "",
-    },
-  });
+  const personalInfoForm = useForm<PersonalInfoFormValues>();
 
   const {
     setValue,
@@ -51,7 +33,7 @@ const ProfileForm = () => {
   } = personalInfoForm;
 
   const {
-    data,
+    data: User,
     isLoading,
     isError,
     refetch: refectUser,
@@ -63,13 +45,17 @@ const ProfileForm = () => {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
-      setValue("name", response?.data?.name);
-      setValue("email", response?.data?.email);
-      setValue("phoneNumber", response?.data?.phoneNumber);
-      setImage(response?.data?.imageUrl);
       return response?.data;
     },
   });
+
+  useEffect(() => {
+    if (User) {
+      setValue("name", User.name);
+      setValue("email", User.email);
+      setValue("phoneNumber", User.phoneNumber);
+    }
+  }, [User, setValue]);
 
   const updatePersonalInfoMutation = useMutation({
     mutationFn: async (data: PersonalInfoFormValues) => {
@@ -101,45 +87,10 @@ const ProfileForm = () => {
     },
   });
 
-  const resetPasswordMutation = useMutation({
-    mutationFn: async (data: { password: string }) => {
-      const response = await axios.put(
-        `/api/users/update/${userId}`,
-        { password: data.password },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      return response?.data;
-    },
-    onSuccess: () => {
-      refectUser();
-      toast.success("Password Updated Successfully");
-      queryClient.invalidateQueries({ queryKey: ["userProfile"] });
-    },
-    onError: (error: AxiosError<{ message?: string }>) => {
-      const errorMessage =
-        error.response?.data?.message || "Failed to Update Password";
-      toast.error(errorMessage);
-    },
-  });
-
   const handleUpdatePersonalInfo: SubmitHandler<PersonalInfoFormValues> = (
     formData
   ) => {
     updatePersonalInfoMutation.mutate(formData);
-  };
-
-  const handleResetPassword: SubmitHandler<ResetPasswordFormValues> = (
-    formData
-  ) => {
-    if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
-    resetPasswordMutation.mutate({ password: formData.password });
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,9 +105,9 @@ const ProfileForm = () => {
     }
   };
 
-  if (isLoading) {
-    <LogoLoader />;
-  }
+ if (isLoading) {
+  return <LogoLoader />;
+}
 
   if (isError) {
     return <div>Error loading data</div>;
@@ -166,51 +117,6 @@ const ProfileForm = () => {
     <div className="min-h-screen bg-gray-50 p-4 md:p-6 lg:p-8">
       <div className="mx-auto max-w-3xl space-y-6">
         <h1 className="text-3xl font-bold">Account Settings</h1>
-
-        {/* Reset Password Form */}
-        <Card className="p-6">
-          <h2 className="mb-6 text-lg font-semibold">Reset Password</h2>
-          <form onSubmit={resetPasswordForm.handleSubmit(handleResetPassword)}>
-            <div className="space-y-2">
-              <Label htmlFor="password">New Password</Label>
-              <Input
-                id="password"
-                type="password"
-                {...resetPasswordForm.register("password", {
-                  required: "Password is required",
-                })}
-              />
-              {resetPasswordForm.formState.errors.password && (
-                <p className="text-red-600 text-sm">
-                  {resetPasswordForm.formState.errors.password.message}
-                </p>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm New Password</Label>
-              <Input
-                id="confirmPassword"
-                type="password"
-                {...resetPasswordForm.register("confirmPassword", {
-                  required: "Please confirm your password",
-                })}
-              />
-              {resetPasswordForm.formState.errors.confirmPassword && (
-                <p className="text-red-600 text-sm">
-                  {resetPasswordForm.formState.errors.confirmPassword.message}
-                </p>
-              )}
-            </div>
-            <Button className="w-full mt-4" type="submit">
-              {resetPasswordMutation.isPending ? (
-                <Loader className="animate-spin" />
-              ) : (
-                "Reset Password"
-              )}
-            </Button>
-          </form>
-        </Card>
-
         {/* Personal Information Form */}
         <Card className="p-6">
           <h2 className="mb-6 text-lg font-semibold">Personal Information</h2>
@@ -220,7 +126,7 @@ const ProfileForm = () => {
             <div className="flex mb-4 items-start space-x-4">
               <div className="relative w-fit">
                 <img
-                  src={image || data?.imageUrl}
+                  src={image || User?.imageUrl}
                   alt="Profile"
                   className="h-24 w-24 rounded-full object-cover"
                 />
@@ -270,10 +176,6 @@ const ProfileForm = () => {
                   id="email"
                   {...register("email", {
                     required: "Email is required",
-                    pattern: {
-                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                      message: "Invalid email address",
-                    },
                   })}
                 />
                 {errors.email && (
@@ -282,11 +184,12 @@ const ProfileForm = () => {
               </div>
             </div>
             <div className="flex justify-end gap-4 my-4">
+              <Button type="button">change Password</Button>
               <Button type="submit">
                 {updatePersonalInfoMutation.isPending ? (
                   <Loader className="animate-spin" />
                 ) : (
-                  "Save"
+                  "Update"
                 )}
               </Button>
             </div>
