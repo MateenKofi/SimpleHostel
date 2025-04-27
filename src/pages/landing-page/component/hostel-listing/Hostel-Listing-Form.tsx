@@ -31,7 +31,7 @@ const formSchema = z.object({
   location: z.string().nonempty({
     message: "Please select a location.",
   }),
-  address: z.string().regex(/^[A-Z0-9]{2}-\d{3}-\d{4}$/, {
+  address: z.string().nonempty({
     message:
       "Address must follow the format XX-XXX-XXXX. Adress from Ghana post code",
   }),
@@ -52,6 +52,7 @@ const formSchema = z.object({
 const HostelListingForm = () => {
   const [image, setImage] = useState<File | null>(null);
   const [region, setRegion] = useState("");
+  console.log('region',region)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -73,7 +74,7 @@ const HostelListingForm = () => {
       const formData = new FormData();
       formData.append("name", data.hostelName.toUpperCase());
       formData.append("description", data.description || "");
-      formData.append("location", "sunyani".toUpperCase());
+      formData.append("location", region.toUpperCase());
       formData.append("address", data.address.toUpperCase());
       formData.append("manager", data.managerName.toUpperCase());
       formData.append("email", data.email);
@@ -206,7 +207,7 @@ const HostelListingForm = () => {
                         <Input
                           placeholder="BS-016-9897"
                           {...field}
-                          className="uppercase"
+                          className="Capitalize"
                         />
                       </FormControl>
                       <FormMessage />
