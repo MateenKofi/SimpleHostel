@@ -35,7 +35,6 @@ const Layout = () => {
           <ErrorBoundary>
             <Outlet />
           </ErrorBoundary>
-          <Outlet />
         </SidebarInset>
       </div>
     </SidebarProvider>
