@@ -52,6 +52,7 @@ const formSchema = z.object({
 const HostelListingForm = () => {
   const [image, setImage] = useState<File | null>(null);
   const [region, setRegion] = useState("");
+  const [submitted,setSubmitted] = useState<boolean>(false)
   console.log('region',region)
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -90,11 +91,12 @@ const HostelListingForm = () => {
           },
         })
         .then((res) => {
-          console.log(res)
           toast.success("Hostel Listed successfully");
-          return  <SuccessfulListing/>
+          setSubmitted(true)
+          return res.data
         })
         .catch((error) => {
+          setSubmitted(false)
           if (axios.isAxiosError(error) && error.response) {
             const errorMessage =
               error.response.data.message || "Failed to List Hostel";
@@ -118,6 +120,9 @@ const HostelListingForm = () => {
           <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
             List Your Hostel
           </h1>
+          {submitted ? (
+           <SuccessfulListing/>
+          ) : (
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
@@ -292,6 +297,7 @@ const HostelListingForm = () => {
                 </Button>
               </form>
             </Form>
+          )}
         </div>
         {/* Right Section: Static Image */}
         <div className="hidden md:block relative">
