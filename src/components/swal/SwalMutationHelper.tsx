@@ -1,6 +1,7 @@
 import Swal from "sweetalert2";
 import type { SweetAlertIcon } from "sweetalert2";
 import { toast } from "react-hot-toast";
+import axios from "axios";
 
 export const showConfirmDialog = async ({
   title = "Are you sure?",
@@ -86,26 +87,15 @@ export const handleSwalMutation = async ({
         text: `The item has been ${title.toLowerCase()}d successfully.`,
         icon: "success",
       });
-    } catch (error: unknown) {
-      // Try to extract error message safely
+    } catch (error ) {
       let errorMessage = `Failed to ${title.toLowerCase()} the item. Please try again.`;
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "response" in error &&
-        typeof (error as any).response === "object" &&
-        (error as any).response !== null &&
-        "data" in (error as any).response &&
-        typeof (error as any).response.data === "object" &&
-        (error as any).response.data !== null &&
-        "message" in (error as any).response.data
-      ) {
-        errorMessage = (error as any).response.data.message;
+      if (axios.isAxiosError(error) && error.response?.data?.message) {
+        errorMessage = error.response.data.message;
       }
       toast.error(errorMessage);
       Swal.fire({
         title: "Error!",
-        text: errorMessage,
+        text: errorMessage || 'An unexpected error occured',
         icon: "error",
       });
 

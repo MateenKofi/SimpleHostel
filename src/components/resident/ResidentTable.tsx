@@ -48,11 +48,15 @@ const ResidentTable = () => {
         toast.success("Resident deleted successfully");
         refetchResident();
         return response.data;
-      } catch (error: any) {
-        const errorMessage =
-          error?.response?.data?.message || "Failed to delete Resident";
-        toast.error(errorMessage);
-        throw error;
+      } catch (error) {
+        if(axios.isAxiosError(error)){
+          const errorMessage =
+            error?.response?.data?.message || "Failed to delete Resident";
+          toast.error(errorMessage);
+        }
+        else{
+          toast.error('An unexpected error occured')
+        }
       }
     },
   });
