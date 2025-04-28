@@ -133,5 +133,27 @@ export type Users = {
   imageKey: string | null;
   delFlag: boolean;
   hostelId: string | null;
-  hostel: string | null;
+  hostel: Hostel;
+};
+
+export type Hostel = {
+  id: string;
+  name:string;
+  description: string | null;
+  address: string;
+  location:string;
+  manager:string;
+  email: string;
+  phone: string;
+  imageKey:string;
+  imageUrl:string;
+  ghCard:string;
+  createdAt: string;
+  updatedAt: string;
+  isVerifeid: boolean;
+  delFlag: boolean;
+  state: "PUBLISHED" | "UNPULISHED";
+  Rooms: Room [];
+  Staffs?: Staff [];
+  User?:Users [];
 };

@@ -4,7 +4,6 @@ import axios from "axios";
 import { Eye, Edit, Trash2, Ellipsis } from "lucide-react";
 import React, { useState } from "react";
 import CustomDataTable from "../CustomDataTable";
-import Swal from "sweetalert2";
 import toast from "react-hot-toast";
 import EditRoomModal from "@/components/rooms/EditRoomModal";
 import { useModal } from "../Modal";
@@ -17,12 +16,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { handleSwalMutation } from "../swal/SwalMutationHelper";
 
 const RoomTable = () => {
   const navigate = useNavigate()
   const { open: openEditRoomModal, close: closeEditRoomModal } =
     useModal("editroom_modal");
   const [selectedRoom, setSelectedRoom] = useState<Room>({} as Room);
+
 
   const hostelId = localStorage.getItem("hostelId") || "";
 
@@ -73,42 +74,10 @@ const RoomTable = () => {
 
   // Confirm and delete a room
   const handleDelete = async (id: string) => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to delete this room?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes, delete!",
+    handleSwalMutation({
+      mutation: () => deleteMutation.mutateAsync(id),
+      title: "Delete Room",
     });
-
-    if (result.isConfirmed) {
-      Swal.fire({
-        title: "Deleting...",
-        text: "Please wait while we delete the room.",
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
-      try {
-        await deleteMutation.mutateAsync(id);
-        Swal.fire({
-          title: "Deleted!",
-          text: "The room has been deleted successfully.",
-          icon: "success",
-        });
-      } catch (error: any) {
-        const errorMessage =
-          error?.response?.data?.message ||
-          "Failed to delete the room. Please try again.";
-        toast.error(errorMessage);
-        Swal.fire({
-          title: "Error!",
-          text: errorMessage,
-          icon: "error",
-        });
-      }
-    }
   };
 
   const columns = [

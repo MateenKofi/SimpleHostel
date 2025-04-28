@@ -1,22 +1,13 @@
 import React from 'react'
 import  { TableColumn } from 'react-data-table-component';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 import { Loader } from 'lucide-react';
 import CustomDataTable from '@/components/CustomDataTable';
+import { Hostel } from '@/helper/types/types';
 
-interface Hostel {
-    id: string;
-    name: string;
-    address: string;
-    location: string;
-    phone: string;
-    email: string;
-    ghCard: string;
-    isVerified: boolean;
-}
 
 const ApproveHostelTable = () => {
     const queryClient = useQueryClient();
@@ -34,42 +25,42 @@ const ApproveHostelTable = () => {
 
     const AcceptMutation = useMutation({
         mutationFn: async (hostelId: string) => {
-            const response = await axios.post(`/api/hostels/verify/${hostelId}`, {}, {
+            try {
+                const response = await axios.post(`/api/hostels/verify/${hostelId}`, {}, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
             });
-            return response?.data;
-        },
-        onSuccess: (response) => {
-            toast.success('Hostel Approved Successfully');
-            toast.success(response?.data?.message);
+            toast.success('Hostel Approved Successfully')
             queryClient.invalidateQueries({ queryKey: ['hostels'] });
             refetchUnverifiedHostels()
-        },
-        onError: (error: AxiosError<{message:string}>) => { 
-                const errorMessage = error.response?.data?.message || 'Failed to Approve Hostel';
+            return response?.data;
+            } catch (error) {
+                const err = error as Error
+                  const errorMessage = err?.message || 'Failed to Approve Hostel';
                 toast.error(errorMessage);
+            }
+            
         },
     });
 
     const DeclineMutation = useMutation({
         mutationFn: async (hostelId: string) => {
-            const response = await axios.delete(`/api/hostels/delete/${hostelId}`, {
+            try {
+                 const response = await axios.delete(`/api/hostels/delete/${hostelId}`, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('token')}`,
                 },
             });
-            return response?.data;
-        },
-        onSuccess: () => {
-            toast.success('Hostel Declined Successfully');
+             toast.success('Hostel Declined Successfully');
             queryClient.invalidateQueries({ queryKey: ['hostels'] });
             refetchUnverifiedHostels()
-        },
-        onError: (error: AxiosError<{message:string}>) => {
-                const errorMessage = error.response?.data?.message || 'Failed to Decline Hostel';
+            return response?.data;
+            } catch (error:any) {
+                  const errorMessage = error?.response?.data?.message || 'Failed to Decline Hostel';
                 toast.error(errorMessage);
+            }
+           
         },
     });
 

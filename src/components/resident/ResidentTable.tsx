@@ -4,7 +4,6 @@ import CustomDataTable from "../CustomDataTable";
 import { Resident } from "@/helper/types/types";
 import { HousePlus, Edit, Trash2, Ellipsis } from "lucide-react";
 import toast from "react-hot-toast";
-import Swal from "sweetalert2";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { handleSwalMutation } from "../swal/SwalMutationHelper";
 
 const ResidentTable = () => {
   const hostelId = localStorage.getItem("hostelId");
@@ -63,40 +63,10 @@ const ResidentTable = () => {
 
   // Confirm and delete a room
   const handleDelete = async (id: string) => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to delete this Resident?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes, delete!",
-    });
-
-    if (result.isConfirmed) {
-      Swal.fire({
-        title: "Deleting...",
-        text: "Please wait while we delete the Resident.",
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
-      try {
-        await DeleteResidentMutation.mutateAsync(id);
-        Swal.fire({
-          title: "Deleted!",
-          text: "The Resident has been deleted successfully.",
-          icon: "success",
-        });
-      } catch (error:any) {
-       const errorMessage = error?.response?.data?.message || "Failed to delete Ressident";
-            toast.error(errorMessage);
-        Swal.fire({
-          title: "Error!",
-          text: errorMessage,
-          icon: "error",
-        });
-      }
-    }
+    handleSwalMutation({
+      mutation: ()=>  DeleteResidentMutation.mutateAsync(id),
+      title:'delete resident',
+    })
   };
 
   const columns = [

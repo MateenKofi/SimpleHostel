@@ -52,8 +52,8 @@ const formSchema = z.object({
 const HostelListingForm = () => {
   const [image, setImage] = useState<File | null>(null);
   const [region, setRegion] = useState("");
-  const [submitted,setSubmitted] = useState<boolean>(false)
-  console.log('region',region)
+  const [submitted, setSubmitted] = useState<boolean>(false);
+  console.log("region", region);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -70,13 +70,12 @@ const HostelListingForm = () => {
     },
   });
 
-  
   const AddListingMutation = useMutation({
     mutationFn: async (data: z.infer<typeof formSchema>) => {
       const formData = new FormData();
       formData.append("name", data.hostelName.toUpperCase());
       formData.append("description", data.description || "");
-      formData.append("location", 'sunyani'.toUpperCase());
+      formData.append("location", "sunyani".toUpperCase());
       formData.append("address", data.address.toUpperCase());
       formData.append("manager", data.managerName.toUpperCase());
       formData.append("email", data.email);
@@ -106,11 +105,10 @@ const HostelListingForm = () => {
       }
     },
   });
- 
+
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     AddListingMutation.mutate(data);
   };
-
 
   return (
     <div className="min-h-screen w-full flex justify-center items-center p-4 md:p-8">
@@ -120,14 +118,14 @@ const HostelListingForm = () => {
             List Your Hostel
           </h1>
           {submitted ? (
-           <SuccessfulListing/>
+            <SuccessfulListing />
           ) : (
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-4"
               >
-               <UploadSingleImage image={image} setImage={setImage}/>
+                <UploadSingleImage image={image} setImage={setImage} />
                 {/* Hostel Name */}
                 <FormField
                   control={form.control}
