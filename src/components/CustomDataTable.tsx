@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import DataTable, { TableColumn } from 'react-data-table-component';
-import { Download, RefreshCcw, Search } from 'lucide-react';
+import { Download,  Search } from 'lucide-react';
 import TableLoader from './loaders/TableLoader';
+import CustomeRefetch from './CustomeRefetch';
 
 interface DataTableProps<T> {
   title?: string;
@@ -19,7 +20,7 @@ interface DataTableProps<T> {
   onSearchChange?: (searchText: string) => void; // new prop for server-side search
   isLoading?:boolean;
   isError?:boolean;
-  refetch?:()=>void;
+  refetch?:()=>void ;
 }
 
 function CustomDataTable<T>({
@@ -103,16 +104,7 @@ function CustomDataTable<T>({
   }
   
   if(isError){
-    return <div className='w-full h-[70dvh] grid place-items-center text-red-500'>
-      <div className=' flex flex-col items-center'>
-        <h2 className='text-xl font-serif italic'>Error loading data</h2>
-        <p className='text-xs'>Try reloading data</p>
-      <button className='btn btn-sm btn-black mt-4' onClick={refetch}>
-        <RefreshCcw/>
-        Try Again
-        </button>
-      </div>
-    </div>
+    return <CustomeRefetch refetch={refetch} />
   }
 
   return (
