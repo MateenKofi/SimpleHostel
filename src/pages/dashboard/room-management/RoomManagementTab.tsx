@@ -47,9 +47,13 @@ const RoomManagementTab = () => {
     <main className="flex-1 bg-gray-100 p-4 overflow-y-auto">
       <StatusAlert status={hostel?.state as 'published' | 'unpublished'} />
       <div className="mb-6 w-full flex justify-between items-center">
-        <div>
+        <div className='border p-3 rounded-md shadow-md w-full'>
           <h1 className="text-2xl font-bold text-gray-800">Room Management</h1>
-          <p className="text-gray-600">Manage and plan your room for the semesters</p>
+          <p className="text-gray-400 text-xs">Manage and plan your room for the semesters</p>
+            <p className="text-gray-400 text-xs">Add and Edit Rooms</p>
+            <p className="text-gray-500 text-xs mt-1">
+            Start by adding rooms, specifying their details and amenities. You can edit or remove rooms as needed. Use the tabs below to switch between managing rooms and amenities.
+            </p>
         </div>
       </div>
 

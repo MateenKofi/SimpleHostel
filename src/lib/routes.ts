@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { LayoutDashboard, Users, Building, Calendar, Settings, FileText } from 'lucide-react';
 import StaffManagement from '../pages/dashboard/staff-management/StaffManagement';
-import AddStaff from '../pages/dashboard/staff-management/AddStaff';
+import AddStaff from '../components/staff/AddStaff';
 
 export const routes = [
   {

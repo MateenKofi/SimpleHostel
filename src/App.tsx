@@ -5,14 +5,13 @@ import Layout from '@components/layout/Layout';
 import LandingPageLayout from './components/layout/LandingPageLayout';
 import { Loader} from 'lucide-react';
 
-// Lazy load components
 const Dashboard = lazy(() => import('@pages/dashboard/Dashboard'));
 const RoomManagementTab = lazy(() => import('@pages/dashboard/room-management/RoomManagementTab'));
-const RoomAssignmentAndPayment = lazy(() => import('@pages/dashboard/resident-management/room-assignment/RoomAssignmentAndPayment'));
+const RoomAssignmentAndPayment = lazy(() => import('@/components/rooms/room-assignment/RoomAssignmentAndPayment'));
 const ResidentManagement = lazy(() => import('@pages/dashboard/resident-management/ResidentManagement'));
 const VisitorManagement = lazy(() => import('@pages/dashboard/visitor-management/VisitorManagement'));
 const StaffManagement = lazy(() => import('@pages/dashboard/staff-management/StaffManagement'));
-const AddStaff = lazy(() => import('@pages/dashboard/staff-management/AddStaff'));
+const AddStaff = lazy(() => import('@/components/staff/AddStaff'));
 const Maintenance = lazy(() => import('@/pages/dashboard/maintenance&Tracking/maintenace'));
 const DeptorsList = lazy(() => import('./pages/dashboard/deptors-list/DeptorsList'));
 const Home = lazy(() => import('./pages/landing-page/page'));
@@ -23,9 +22,8 @@ const ResidentForm = lazy(() => import('./pages/landing-page/component/resident-
 const LoginForm = lazy(() => import('./pages/Authentication/login/login-form'));
 const ApproveHostel = lazy(() => import('./pages/dashboard/approvals/Approve-Hostel'));
 const ProfileForm = lazy(() => import('./pages/dashboard/profile/Profile-From'));
-const EditStaff = lazy(() => import('./pages/dashboard/staff-management/EditStaff'));
+const EditStaff = lazy(() => import('./components/staff/EditStaff'));
 const CalendarYear = lazy(() => import('./pages/dashboard/calendarYear/CalendarYear'));
-const Payment = lazy(() => import('./pages/dashboard/resident-management/room-assignment/Payment'));
 const Transactions = lazy(()=> import('./pages/dashboard/transactions/Transactions'))
 const Users = lazy(() => import('./pages/dashboard/users/Users'));
 const ViewRoom = lazy(()=> import('./components/rooms/ViewRoom'))
@@ -59,7 +57,6 @@ function App() {
           <Route path="staff-management/add" element={<AddStaff />} />
           <Route path="approve-hostel" element={<ApproveHostel />} />
           <Route path="profile" element={<ProfileForm />} />
-          <Route path='payment' element={<Payment />} />
           <Route path='transactions' element={<Transactions />} />
           <Route path='users' element={<Users />} />
          <Route path='view-room/:id' element={<ViewRoom/>} />

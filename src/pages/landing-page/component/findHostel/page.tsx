@@ -1,4 +1,3 @@
-import { Header } from '../header'
 import { FindHostel } from './find-hostel'
 
 const FindHostelPage = () => {

@@ -144,6 +144,7 @@ export type Hostel = {
   location:string;
   manager:string;
   email: string;
+  gender:string;
   phone: string;
   imageKey:string;
   imageUrl:string;
@@ -152,6 +153,7 @@ export type Hostel = {
   updatedAt: string;
   isVerifeid: boolean;
   delFlag: boolean;
+  HostelImages: images [];
   state: "PUBLISHED" | "UNPULISHED";
   Rooms: Room [];
   Staffs?: Staff [];

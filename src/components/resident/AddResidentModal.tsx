@@ -74,14 +74,14 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
   return (
     <Modal modalId="add_resident_modal" onClose={onClose}>
       <div className="p-6">
-        <h1 className="text-3xl font-bold">Add Resident </h1>
+        <h1 className="text-3xl font-bold text-gray-400">Add Resident </h1>
       </div>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-4 p-6"
       >
         <div className="flex flex-col gap-1">
-          <label htmlFor="name" className="text-sm font-medium">
+          <label htmlFor="name" className="text-sm font-medium text-gray-400">
             Full Name*
           </label>
           <input
@@ -99,7 +99,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="studentId" className="text-sm font-medium">
+          <label htmlFor="studentId" className="text-sm font-medium text-gray-400">
             Student ID*
           </label>
           <input
@@ -117,7 +117,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="course" className="text-sm font-medium">
+          <label htmlFor="course" className="text-sm font-medium text-gray-400">
             Course*
           </label>
           <input
@@ -135,7 +135,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="email" className="text-sm font-medium">
+          <label htmlFor="email" className="text-sm font-medium text-gray-400">
             Email*
           </label>
           <input
@@ -157,7 +157,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="phone" className="text-sm font-medium">
+          <label htmlFor="phone" className="text-sm font-medium text-gray-400">
             Phone Number*
           </label>
           <input
@@ -179,7 +179,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
         </div>
 
         <div className="flex flex-col gap-1">
-          <label htmlFor="gender" className="text-sm font-medium">
+          <label htmlFor="gender" className="text-sm font-medium text-gray-400">
             Gender*
           </label>
           <select
@@ -202,7 +202,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
           <div className="flex flex-col gap-1">
             <label
               htmlFor="emergencyContactName"
-              className="text-sm font-medium"
+              className="text-sm font-medium text-gray-400"
             >
               Contact Name*
             </label>
@@ -225,7 +225,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
           <div className="flex flex-col gap-1 mt-4">
             <label
               htmlFor="emergencyContactPhone"
-              className="text-sm font-medium"
+              className="text-sm font-medium text-gray-400"
             >
               Contact Phone*
             </label>
@@ -252,7 +252,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
           <div className="flex flex-col gap-1 mt-4">
             <label
               htmlFor="relationship"
-              className="text-sm font-medium"
+              className="text-sm font-medium text-gray-400"
             >
               Relationship*
             </label>
@@ -277,7 +277,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 border rounded-md hover:bg-gray-100"
+            className="px-4 py-2 border rounded-md hover:bg-red-500 text-white bg-red-600"
           >
             Cancel
           </button>

@@ -12,9 +12,10 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
-import RoomAssignmentLoader from "../../../../components/loaders/RoomAssignmentLoader";
-import { axiosConfig } from "../../../../helper/axiosConfig";
-import { Room, Amenity } from "../../../../helper/types/types";
+import RoomAssignmentLoader from "../../loaders/RoomAssignmentLoader";
+import { axiosConfig } from "../../../helper/axiosConfig";
+import { Room, Amenity } from "../../../helper/types/types";
+import CustomeRefetch from "@/components/CustomeRefetch";
 
 const RoomAssignment = () => {
   const navigate = useNavigate();
@@ -49,41 +50,38 @@ const RoomAssignment = () => {
       residentId: string;
       initialPayment: number;
     }) => {
-      const response = await axios.post(
+      try {
+        const response = await axios.post(
         `/api/payments/init`,
         data,
         axiosConfig
       );
-      return response.data;
-    },
-    onSuccess: (response: { paymentUrl: { authorizationUrl: string }; message: string }) => {
-      if (response && response.paymentUrl) {
+        if (response && response.data && response.data.paymentUrl) {
         navigate("/dashboard/resident-management");
         localStorage.removeItem("residentId");
-        toast(response.message || "Redirecting to payment...");
-        window.location.href = response.paymentUrl.authorizationUrl;
+        toast(response.data.message || "Redirecting to payment...");
+        window.location.href = response.data.paymentUrl.authorizationUrl;
       }
-    },
-    onError: (error: unknown) => {
-      if (axios.isAxiosError(error)) {
+      return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
         const errorMessage = error.response?.data?.message || "Failed to initialize payment.";
         toast.error(errorMessage);
       } else {
         toast.error("An unexpected error occurred. Please try again.");
       }
+      }
     },
   });
 
   // Fetch rooms data
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, refetch:refetchRooms } = useQuery({
     queryKey: ["rooms"],
     queryFn: async () => {
-      if (!hostelId) {
-        throw new Error("Hostel ID is not available in local storage.");
-      }
       const response = await axios.get(`/api/rooms/hostel/${hostelId}`, axiosConfig);
       return response.data.data;
     },
+    enabled:!!hostelId
   });
 
   // Transform the API data to match the Room interface and filter available rooms
@@ -104,7 +102,7 @@ const RoomAssignment = () => {
     : [];
 
   if (isLoading) return <RoomAssignmentLoader />;
-  if (isError) return <div>Error loading rooms. Please try again later.</div>;
+  if (isError) return <CustomeRefetch refetch={refetchRooms}/>;
 
   return (
     <div className="bg-white rounded-lg shadow-sm p-4">
@@ -118,7 +116,7 @@ const RoomAssignment = () => {
         {rooms.map((room) => (
           <div
             key={room.id}
-            className="border rounded-lg overflow-hidden hover:border-primary cursor-pointer transition-all"
+            className="border rounded-lg overflow-hidden cursor-pointer transition-all"
           >
             {/* Image Carousel */}
             <div className="relative h-48 w-full">
@@ -230,7 +228,7 @@ const RoomAssignment = () => {
 
                 <div className="flex justify-between items-center mt-3">
                   <button
-                    className="w-full text-base font-medium text-center bg-black text-white rounded-md px-4 py-2 hover:bg-gray-800 transition-all"
+                    className="w-full flex justify-center items-center text-base font-medium text-center bg-black text-white rounded-md px-4 py-2 hover:bg-gray-800 transition-all"
                     disabled={initializePaymentMutation.isPending}
                     onClick={(e) => {
                       e.stopPropagation();

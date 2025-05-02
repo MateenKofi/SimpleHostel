@@ -23,7 +23,6 @@ const RoomAssignmentAndPayment = () => {
                     </button>
                 </div>
             </div>
-
             <div className="w-full ">
                 <RoomAssignment />
             </div>
