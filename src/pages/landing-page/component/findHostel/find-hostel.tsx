@@ -257,7 +257,7 @@ export function FindHostel() {
                       </div>
                     </a>
                   </div>
-                  <Link to={"/resident-form"} className="mt-4 block">
+                  <Link to={`/find/${hostel?.id}/room`} className="mt-4 block">
                     <Button className="w-full">Find Room</Button>
                   </Link>
                 </CardContent>
