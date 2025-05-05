@@ -16,6 +16,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   onRemoveDefaultImage,
 }) => {
   const [images, setImages] = useState<File[]>([]);
+  
 
   // Handle new file drops and update state
   const onDrop = useCallback(

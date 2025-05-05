@@ -20,7 +20,7 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { RegionDropdown } from "react-country-region-selector";
 import SuccessfulListing from "@/components/SuccessfulListing";
-import UploadSingleImage from "@/components/UploadSingleImage";
+import UploadMultipleImages from "@/components/UploadMultipleImages";
 
 const formSchema = z.object({
   hostelImage: z.string().optional(),
@@ -50,10 +50,10 @@ const formSchema = z.object({
 });
 
 const HostelListingForm = () => {
-  const [image, setImage] = useState<File | null>(null);
+  const [images, setImages] = useState<File[]>([]);
   const [region, setRegion] = useState("");
   const [submitted, setSubmitted] = useState<boolean>(false);
-  console.log("region", region);
+  console.log("images", images);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -75,15 +75,16 @@ const HostelListingForm = () => {
       const formData = new FormData();
       formData.append("name", data.hostelName.toUpperCase());
       formData.append("description", data.description || "");
-      formData.append("location", "sunyani".toUpperCase());
+      formData.append("location", region.toUpperCase());
       formData.append("address", data.address.toUpperCase());
       formData.append("manager", data.managerName.toUpperCase());
       formData.append("email", data.email);
       formData.append("phone", data.phone);
       formData.append("ghCard", data.ghanaCard);
-      if (image) {
+      images.forEach((image) => {
         formData.append("photo", image);
-      }
+      });
+
       try {
         const res = await axios.post("/api/hostels/add", formData, {
           headers: {
@@ -106,6 +107,14 @@ const HostelListingForm = () => {
     },
   });
 
+  //  const handleImagesChange = (newImages: File[]) => {
+  //   const imageArray = Array.from(newImages).map((image) => {
+  //     const file = new File([image], image.name, { type: image.type });
+  //     return file;
+  //   });
+  //   setImages(imageArray);
+  // };
+
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     AddListingMutation.mutate(data);
   };
@@ -118,14 +127,14 @@ const HostelListingForm = () => {
             List Your Hostel
           </h1>
           {submitted ? (
-            <SuccessfulListing />
+            <SuccessfulListing  />
           ) : (
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
                 className="space-y-4"
               >
-                <UploadSingleImage image={image} setImage={setImage} />
+               <UploadMultipleImages images={images} setImages={setImages}/>
                 {/* Hostel Name */}
                 <FormField
                   control={form.control}
