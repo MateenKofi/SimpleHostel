@@ -280,7 +280,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
             className="px-4 py-2 border rounded-md hover:bg-red-500 text-white bg-red-600"
           >
             Cancel
-          </button>
+          </button> 
           <button
             type="submit"
             className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"

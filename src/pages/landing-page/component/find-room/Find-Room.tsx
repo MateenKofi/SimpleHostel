@@ -22,13 +22,20 @@ import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { Room } from "@/helper/types/types";
+import { useNavigate } from "react-router-dom";
+import { useSelectedRoomStore } from "@/controllers/SelectedRoomStore";
 
 const FindRoom = () => {
+  const navigate = useNavigate();
   const { id: hostelId } = useParams();
   const [roomType, setRoomType] = useState<string>("");
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 3000]);
   const [gender, setGender] = useState<string>("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const { room:roomstore,setRoom } = useSelectedRoomStore();
+
+ 
 
   const { data: hostelData } = useQuery({
     queryKey: ["hostel", hostelId],
@@ -42,14 +49,13 @@ const FindRoom = () => {
     },
   });
 
+const availableRooms = useMemo(() => {
   const rooms = hostelData?.Rooms || [];
-  const availableRooms = useMemo(
-    () => rooms.filter((room) => room.status === "AVAILABLE"),
-    [rooms]
-  );
+  return rooms.filter((room: Room) => room.status === "AVAILABLE");
+}, [hostelData?.Rooms]);
 
   const filteredRooms = useMemo(() => {
-    return availableRooms.filter((room) => {
+    return availableRooms.filter((room:Room) => {
       const matchesType = roomType ? room.type === roomType : true;
       const matchesPrice =
         room.price >= priceRange[0] && room.price <= priceRange[1];
@@ -80,6 +86,14 @@ const FindRoom = () => {
         return "bg-gray-500";
     }
   };
+
+const handleRoomClick = (room: Room) => {
+  setRoom(room);
+  console.log("Selected Room", room);
+  console.log("Room Store", roomstore);
+  navigate("/resident-form");
+};
+
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -245,7 +259,7 @@ const FindRoom = () => {
       
       {/* Rooms Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredRooms?.map((room) => (
+        {filteredRooms?.map((room: Room) => (
           <Card
             key={room.id}
             className="overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200"
@@ -301,7 +315,9 @@ const FindRoom = () => {
                   <p className="text-xs text-gray-500 mb-1">Price</p>
                   <p className="font-semibold">GHS {room.price}</p>
                 </div>
-                <Button>Book Now</Button>
+                <Button 
+                onClick={()=>handleRoomClick(room)}
+                >Book Now</Button>
               </div>
             </CardFooter>
           </Card>

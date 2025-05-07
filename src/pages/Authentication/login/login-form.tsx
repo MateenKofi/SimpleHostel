@@ -77,15 +77,9 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                     </div>
                     {errors.password && <p className="text-red-500">{errors.password.message}</p>}
                   </div>
-                  <Button type="submit" className="w-full">
+                  <Button type="submit" className="w-full" disabled={data.isProcessing}>
                     {data.isProcessing ? <Loader className='animate-spin' /> : 'Log In'}
                   </Button>
-                  <div className="text-center text-sm">
-                    Don&apos;t have an account?{" "}
-                    <Link to="/signup" className="underline underline-offset-4">
-                      Sign up
-                    </Link>
-                  </div>
                 </div>
               </form>
               <div className="relative hidden bg-muted md:block">

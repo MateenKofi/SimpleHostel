@@ -11,6 +11,7 @@ import { MapPin, MapPinHouse, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useDebounce } from "@/helper/useDebounce";
 import FilterPanel from "@components/FilterPanel";
+import FindHostelSkeleton from "@components/loaders/HostelCardSkeleton"
 
 interface ActiveFilters {
   [key: string]: string[];
@@ -61,7 +62,7 @@ export function FindHostel() {
     }));
   };
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <FindHostelSkeleton/>;
   if (isError) return <CustomeRefetch refetch={refetch} />;
 
   const PublishedHostels = rooms?.filter(
@@ -119,7 +120,7 @@ export function FindHostel() {
             )}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {filteredHostels?.map((hostel) => (
+            {filteredHostels?.map((hostel:Hostel) => (
               <div
                 key={hostel.id}
                 className="border rounded-md overflow-hidden"

@@ -1,5 +1,5 @@
 export type Resident = {
-  id: string;
+  id: string | null;
   name: string;
   studentId: string;
   course: string;
@@ -39,6 +39,7 @@ export type Visitor = {
 export type Room = {
   id: string;
   hallId: string;
+  hostelId:string;
   gender: string;
   name: string;
   roomNumber: string;
