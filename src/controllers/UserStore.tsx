@@ -20,7 +20,7 @@ type User = {
   hostelId: string | null;
   isProcessing: boolean;
   login: (data: { email: string; password: string }) => Promise<boolean>;
-  logout: (navigate: (path: string) => void) => void;
+  logout: () => void;
   setUser: (token: string) => void;
 };
 
@@ -69,7 +69,7 @@ export const useUserStore = create<User>((set) => ({
   },
 
   // Logout function
-  logout: (navigate: (path: string) => void) => {
+  logout: () => {
     set({
       name: "",
       email: "",
@@ -83,7 +83,6 @@ export const useUserStore = create<User>((set) => ({
     localStorage.removeItem("role");
     localStorage.removeItem("residentId");
     toast.success("Logout successful");
-    navigate('/login');
   },
 
   // Function to set user from token (useful for refreshing state)

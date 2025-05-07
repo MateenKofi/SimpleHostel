@@ -31,6 +31,8 @@ import { UserIcon } from "@/components/animateIcons/User"
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import {useUserStore} from '@/controllers/UserStore'
+import { useEffect } from "react"
+import toast from "react-hot-toast"
 
 export function NavUser() {
 
@@ -50,8 +52,16 @@ export function NavUser() {
     },
   });
 
+ 
+  useEffect(() => {
+    if (User?.changedPassword === false) {
+      toast('You are using default password. Change password')
+      navigate('/dashboard/profile')
+    }
+  }, [User,navigate])
+
   const handlelogout = async () => {
-    logout(navigate)
+    logout()
   }
   return (
     <SidebarMenu>

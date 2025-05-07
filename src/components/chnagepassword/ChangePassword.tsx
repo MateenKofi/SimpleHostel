@@ -61,7 +61,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onClose }) => {
 
   return (
     <Modal modalId="change_password" onClose={onClose}>
-      <h2 className="mb-6 text-lg font-semibold text-gray-500">Reset Password</h2>
+      <h2 className="mb-6 text-lg font-semibold text-gray-500">Change Password</h2>
       <form onSubmit={resetPasswordForm.handleSubmit(handleResetPassword)}>
         <div className="space-y-2">
           <label htmlFor="password" className="text-gray-500">New Password</label>

@@ -4,6 +4,7 @@ import axios from 'axios';
 import Layout from '@components/layout/Layout';
 import LandingPageLayout from './components/layout/LandingPageLayout';
 import { Loader} from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = lazy(() => import('@pages/dashboard/Dashboard'));
 const RoomManagementTab = lazy(() => import('@pages/dashboard/room-management/RoomManagementTab'));
@@ -35,6 +36,10 @@ axios.defaults.headers.common["Content-Type"] = "application/json";
 axios.defaults.baseURL = `${import.meta.env.VITE_API_BASE_URL}`;
 
 function App() {
+  const naviagte = useNavigate();
+  if (`${localStorage.getItem('token')}` === 'undefined') {
+    naviagte('/login')
+  }
   return (
     <Suspense fallback={
     (
