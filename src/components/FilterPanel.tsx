@@ -13,7 +13,7 @@ const FilterPanel = ({ activeFilters, handleFilterChange }: Props) => {
   const [showMobileFilter, setShowMobileFilter] = useState(false);
 
   const filterContent = (
-    <div className="space-y-6">
+    <div className="space-y-6 ">
       <h2 className="text-lg font-semibold">Filter</h2>
       {HostetFilterConfig.map((filter) => (
         <div className="space-y-2" key={filter.category}>
@@ -38,7 +38,7 @@ const FilterPanel = ({ activeFilters, handleFilterChange }: Props) => {
   return (
     <>
       {/* 🖥️ Desktop Sidebar */}
-      <div className="hidden md:block p-4 border rounded-lg">
+      <div className="hidden md:block p-4 border bg-white shadow-sm rounded-lg">
         {filterContent}
       </div>
 

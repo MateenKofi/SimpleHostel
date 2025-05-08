@@ -1,13 +1,10 @@
-'use client'
-
-import { useState } from 'react'
-import { Menu, X, Home, Search, User,KeyRound } from 'lucide-react'
+import { Menu,KeyRound } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Link } from 'react-router-dom'
 
 export function Header() {
-  const [isOpen, setIsOpen] = useState(false)
+  
 
   return (
     <header className="grid place-items-center sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-4 overflow-hidden">
@@ -20,9 +17,7 @@ export function Header() {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6 ml-32">
           <Link to="/" className="text-sm font-medium hover:text-primary">Home</Link>
-          <Link to="/find-hostel" className="text-sm font-medium hover:text-primary">Find Hostels</Link>
-          <Link to="/dashboard" className="text-sm font-medium hover:text-primary">Dashbaord</Link>
-          
+          <Link to="/find-hostel" className="text-sm font-medium hover:text-primary">Find Hostels</Link>          
           <a href="#" className="text-sm font-medium hover:text-primary">About Us</a>
           <a href="#" className="text-sm font-medium hover:text-primary">Contact</a>
         </nav>

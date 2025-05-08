@@ -82,10 +82,12 @@ const ProfileForm = () => {
           queryClient.invalidateQueries({ queryKey: ["userProfile"] });
           return res.data;
         })
-        .catch((err) => {
-          const errorMessage =
-            err.response?.data?.message || "Failed to update user details";
-          toast.error(errorMessage);
+        .catch((error) => {
+          if (axios.isAxiosError(error)) {
+            const errorMessage =
+              error.response?.data?.error || "Failed to update user details";
+            toast.error(errorMessage);
+          }
         });
     },
   });
@@ -215,7 +217,7 @@ const ProfileForm = () => {
                 {updatePersonalInfoMutation.isPending ? (
                   <Loader className="animate-spin" />
                 ) : (
-                  "Update"
+                  "Save Changes"
                 )}
               </Button>
             </div>

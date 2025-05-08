@@ -28,7 +28,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onClose }) => {
 
   const resetPasswordMutation = useMutation({
     mutationFn: async (data: { password: string }) => {
-      const response = await axios.put(
+      await axios.put(
         `/api/users/update/${userId}`,
         { password: data.password },
         {
@@ -36,8 +36,16 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onClose }) => {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         }
-      );
-      return response?.data;
+      ).then((response)=>{
+        onClose()
+        return response.data
+      }).catch((error)=>{
+        if (axios.isAxiosError(error)) {
+          const errorMessage = error.response?.data?.error || "Failed to Update Password";
+          toast.error(errorMessage);
+        }
+      })
+    
     },
     onSuccess: () => {
       toast.success("Password Updated Successfully");

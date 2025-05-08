@@ -11,7 +11,7 @@ import { MapPin, MapPinHouse, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useDebounce } from "@/helper/useDebounce";
 import FilterPanel from "@components/FilterPanel";
-import FindHostelSkeleton from "@components/loaders/HostelCardSkeleton"
+import FindHostelSkeleton from "@components/loaders/HostelCardSkeleton";
 
 interface ActiveFilters {
   [key: string]: string[];
@@ -23,7 +23,6 @@ export function FindHostel() {
 
   const [activeFilters, setActiveFilters] = useState<ActiveFilters>({
     locations: [],
-    genders: [],
   });
 
   const {
@@ -33,6 +32,7 @@ export function FindHostel() {
     isLoading,
   } = useQuery({
     queryKey: ["find_hostel"],
+
     queryFn: async () => {
       const response = await axios.get(`/api/hostels/get`, {
         headers: {
@@ -62,7 +62,7 @@ export function FindHostel() {
     }));
   };
 
-  if (isLoading) return <FindHostelSkeleton/>;
+  if (isLoading) return <FindHostelSkeleton />;
   if (isError) return <CustomeRefetch refetch={refetch} />;
 
   const PublishedHostels = rooms?.filter(
@@ -78,23 +78,19 @@ export function FindHostel() {
       activeFilters.locations.length === 0 ||
       activeFilters.locations.includes(hostel.location);
 
-    const matchesGender =
-      activeFilters.genders.length === 0 ||
-      activeFilters.genders.includes(hostel.gender);
-
-    return matchesSearch && matchesLocation && matchesGender;
+    return matchesSearch && matchesLocation;
   });
 
   return (
     <div className="container mx-auto py-8">
       <div className="flex flex-col lg:flex-row gap-8">
-        <div className="w-full lg:w-64">
+        <div className="w-full lg:w-64 ">
           <FilterPanel
             activeFilters={activeFilters}
             handleFilterChange={handleFilterChange}
           />
         </div>
-        <div className="flex-1 space-y-6">
+        <div className="flex-1 space-y-6 bg-white p-4 shadow rounded">
           <Input
             placeholder="Search For Hostel By name"
             value={searchQuery}
@@ -119,60 +115,72 @@ export function FindHostel() {
               ))
             )}
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {filteredHostels?.map((hostel:Hostel) => (
-              <div
-                key={hostel.id}
-                className="border rounded-md overflow-hidden"
-              >
-                <ImageSlider
-                  images={hostel?.HostelImages?.map((i) => i.imageUrl)}
-                />
-                <div className="p-4 space-y-2">
-                  <div className="flex gap-2">
-                    <a
-                      href={`https://www.ghanapostgps.com/map/?search=${encodeURIComponent(
-                        hostel.address
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 border rounded p-2 flex items-center gap-2 hover:bg-gray-100 transition"
-                    >
-                      <MapPinHouse className="w-4 h-4" />
-                      <div>
-                        <p className="text-xs font-bold">{hostel.address}</p>
-                        <p className="text-[10px] text-gray-500">
-                          click to search
-                        </p>
-                      </div>
-                    </a>
+         
+            {filteredHostels?.length === 0 ? (
+              <p className="text-center ">No hostels match your search.</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {filteredHostels?.map((hostel: Hostel) => (
+                  <div
+                    key={hostel.id}
+                    className="border rounded-md overflow-hidden"
+                  >
+                    <ImageSlider
+                      images={hostel?.HostelImages?.map((i) => i.imageUrl)}
+                    />
+                    <div className="p-4 space-y-2">
+                      <p className="font-bold text-black ">{hostel.name}</p>
+                      <div className="flex gap-2">
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                            hostel.address
+                          )}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex-1 border rounded p-2 flex items-center gap-2 hover:bg-gray-100 transition"
+                        >
+                          <MapPinHouse className="w-4 h-4" />
+                          <div>
+                            <p className="text-xs font-bold truncate">
+                              {hostel.address}
+                            </p>
+                            <p className="text-[10px] text-gray-500">
+                              click to search
+                            </p>
+                          </div>
+                        </a>
 
-                    <div className="flex-1 border rounded p-2 flex items-center gap-2">
-                      <MapPin className="w-4 h-4" />
-                      <p className="text-sm">{hostel.location}</p>
+                        <div className="flex-1 border rounded p-2 flex items-center gap-2">
+                          <MapPin className="w-4 h-4" />
+                          <p className="text-sm">{hostel.location}</p>
+                        </div>
+                      </div>
+
+                      <a
+                        href={`tel:${hostel.phone}`}
+                        className="border rounded p-2 flex items-center gap-2"
+                      >
+                        <Phone className="w-4 h-4" />
+                        <div>
+                          <p className="text-xs font-bold">{hostel.phone}</p>
+                          <p className="text-[10px] text-gray-500">
+                            click to call
+                          </p>
+                        </div>
+                      </a>
+                      <Link to={`/find/${hostel.id}/room`}>
+                        <button className="w-full mt-2 btn btn-black text-white">
+                          Find Room
+                        </button>
+                      </Link>
                     </div>
                   </div>
-                  <a
-                    href={`tel:${hostel.phone}`}
-                    className="border rounded p-2 flex items-center gap-2"
-                  >
-                    <Phone className="w-4 h-4" />
-                    <div>
-                      <p className="text-xs font-bold">{hostel.phone}</p>
-                      <p className="text-[10px] text-gray-500">click to call</p>
-                    </div>
-                  </a>
-                  <Link to={`/find/${hostel.id}/room`}>
-                    <button className="w-full mt-2 btn btn-primary">
-                      Find Room
-                    </button>
-                  </Link>
-                </div>
-              </div>
-            ))}
+                ))}
+               </div>
+            )}
           </div>
         </div>
       </div>
-    </div>
+   
   );
 }

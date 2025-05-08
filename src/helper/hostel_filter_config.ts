@@ -3,14 +3,14 @@ export const HostetFilterConfig = [
     category: "locations",
     label: "Location",
     options: [
-      "Ahafo", "Ashanti", "Bono", "Bono East", "Central", "Eastern",
-      "Greater Accra", "Northern", "Oti", "Savannah", "Upper East",
-      "Upper West", "Volta", "Western", "Western North",
+      "AHAFO", "ASHANTI", "BONO", "BONO EAST", "CENTRAL", "EASTERN",
+      "GREATER ACCRA", "NORTHERN", "OTI", "SAVANNAH", "UPPER EAST",
+      "UPPER WEST", "VOLTA", "WESTERN", "WESTERN NORTH",
     ],
   },
-  {
-    category: "genders",
-    label: "Gender",
-    options: ["Male", "Female", "Mix"],
-  },
+  // {
+  //   category: "genders",
+  //   label: "Gender",
+  //   options: ["Male", "Female", "Mix"],
+  // },
 ];

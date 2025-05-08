@@ -43,7 +43,7 @@ export const useUserStore = create<User>((set) => ({
       const decoded: DecodedToken = jwtDecode(token);
 
       set({
-        name: "", // Name should be fetched separately
+        name: "", 
         email: data.email,
         token,
         role: decoded.role,
@@ -83,14 +83,15 @@ export const useUserStore = create<User>((set) => ({
     localStorage.removeItem("role");
     localStorage.removeItem("residentId");
     toast.success("Logout successful");
+    window.location.reload();
   },
 
   // Function to set user from token (useful for refreshing state)
   setUser: (token) => {
     const decoded: DecodedToken = jwtDecode(token);
     set({
-      name: "", // Should be fetched separately
-      email: "", // Needs to be retrieved
+      name: "", 
+      email: "", 
       token,
       role: decoded.role,
       hostelId: decoded.hostelId,
