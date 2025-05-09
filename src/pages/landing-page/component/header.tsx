@@ -1,9 +1,12 @@
+"use client"
+
 import { Menu, KeyRound } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Link } from "react-router-dom"
 import { motion } from "framer-motion"
 import { useState } from "react"
+import { ThemeToggle } from "./theme-toggle"
 
 export function Header() {
   const [activeLink, setActiveLink] = useState("home")
@@ -13,7 +16,7 @@ export function Header() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, type: "spring", stiffness: 120 }}
-      className="grid place-items-center sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 py-4 overflow-hidden"
+      className="grid place-items-center sticky top-0 z-50 w-full border-b bg-background backdrop-blur supports-[backdrop-filter]:bg-background/100 py-4 overflow-hidden"
     >
       <div className="container flex">
         <motion.div
@@ -34,7 +37,7 @@ export function Header() {
               ease: "easeInOut",
             }}
           />
-          <span className="text-2xl font-bold">Fuse</span>
+          <span className="text-2xl font-bold text-black">Fuse</span>
         </motion.div>
 
         {/* Desktop Navigation */}
@@ -48,7 +51,7 @@ export function Header() {
             <motion.div key={item.id} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
               <Link
                 to={item.path}
-                className={`text-sm font-medium relative ${activeLink === item.id ? "text-red-500" : "hover:text-red-500"}`}
+                className={`text-sm text-black font-medium relative ${activeLink === item.id ? "text-red-500" : "hover:text-red-500"}`}
                 onClick={() => setActiveLink(item.id)}
               >
                 {item.name}
@@ -61,6 +64,8 @@ export function Header() {
         </nav>
 
         <div className="flex items-center ml-auto space-x-4">
+          <ThemeToggle />
+
           <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link to="/login">
               <Button size="icon" className="w-full flex px-4">
@@ -98,7 +103,7 @@ export function Header() {
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    <Link to={item.path} className="text-sm font-medium hover:text-red-500 transition-colors">
+                    <Link to={item.path} className="text-sm font-medium text-black hover:text-red-500 transition-colors">
                       {item.name}
                     </Link>
                   </motion.div>
