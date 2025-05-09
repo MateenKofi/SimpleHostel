@@ -1,14 +1,14 @@
-import { Header } from '@/pages/landing-page/component/header'
-import React from 'react'
-import { Outlet } from 'react-router-dom'
+import { ScrollToTop } from "@pages/landing-page/component/scroll-to-top";
+import { ThemeProvider } from "@components/theme-provider";
+import { Outlet } from "react-router-dom";
 
 const LandingPageLayout = () => {
   return (
-    <div className=" bg-gray-100 w-full min-h-screen">
-        <Header />
+    <ThemeProvider attribute="class" defaultTheme="light">
       <Outlet />
-  </div>
-  )
-}
+      <ScrollToTop />
+    </ThemeProvider>
+  );
+};
 
-export default LandingPageLayout
+export default LandingPageLayout;

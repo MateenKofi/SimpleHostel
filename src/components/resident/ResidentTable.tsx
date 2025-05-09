@@ -139,7 +139,7 @@ const ResidentTable = () => {
               <button
                 title="Delete"
                 className=" w-full p-1 bg-red-600 text-white hover:bg-red-800 flex gap-1 items-center rounded-md"
-                onClick={() => handleDelete(row.id)}
+                onClick={() => row.id !== null && handleDelete(row.id)}
               >
                 <Trash2 className="w-4 h-4" />
                 Delete
