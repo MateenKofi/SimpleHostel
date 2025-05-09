@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { useDebounce } from "@/helper/useDebounce";
 import FilterPanel from "@components/FilterPanel";
 import FindHostelSkeleton from "@components/loaders/HostelCardSkeleton";
+import { HostetFilterConfig } from "@/helper/hostel_filter_config";
 
 interface ActiveFilters {
   [key: string]: string[];
@@ -32,7 +33,6 @@ export function FindHostel() {
     isLoading,
   } = useQuery({
     queryKey: ["find_hostel"],
-
     queryFn: async () => {
       const response = await axios.get(`/api/hostels/get`, {
         headers: {
@@ -86,6 +86,7 @@ export function FindHostel() {
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="w-full lg:w-64 ">
           <FilterPanel
+            FilterConfig={HostetFilterConfig}
             activeFilters={activeFilters}
             handleFilterChange={handleFilterChange}
           />

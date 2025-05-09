@@ -2,20 +2,24 @@ import { useState } from "react";
 import { SlidersHorizontal, X } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { HostetFilterConfig } from "@/helper/hostel_filter_config";
 
 type Props = {
   activeFilters: { [key: string]: string[] };
   handleFilterChange: (category: string, value: string) => void;
+  FilterConfig: {
+    category: string;
+    label: string;
+    options: string[];
+  }[];
 };
 
-const FilterPanel = ({ activeFilters, handleFilterChange }: Props) => {
+const FilterPanel = ({ activeFilters, handleFilterChange ,FilterConfig}: Props) => {
   const [showMobileFilter, setShowMobileFilter] = useState(false);
 
   const filterContent = (
     <div className="space-y-6 ">
       <h2 className="text-lg font-semibold">Filter</h2>
-      {HostetFilterConfig.map((filter) => (
+      {FilterConfig.map((filter) => (
         <div className="space-y-2" key={filter.category}>
           <Label className="font-semibold">{filter.label}</Label>
           {filter.options.map((option) => (
