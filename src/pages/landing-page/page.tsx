@@ -1,15 +1,19 @@
-// import { Header } from "./component/header"
 import { HeroCarousel } from "./component/hero-carousel"
 import { ContactSection } from "./component/contact-section"
 import { FeatureCard } from "./component/feature-card"
 import { DestinationCard } from "./component/destination-card"
 import { HostelCard } from "./component/hostel-card"
 import { AppPromotion } from "./component/app-promotion"
+import { TestimonialsSection } from "./component/TestimonialsSection"
+import { StatisticsSection } from "./component/StatisticsSection"
+import { HowItWorksSection } from "./component/HowItWorks"
+import { NewsletterSection } from "./component/NewsLetter"
+import { BlogSection } from "./component/BlogSection"
+import { PartnersSection } from "./component/PartnersSections"
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen overflow-hidden">
-      {/* <Header /> */}
       <main>
         <HeroCarousel />
         <div className="w-full grid place-items-center">
@@ -45,6 +49,12 @@ export default function LandingPage() {
             </div>
           </section>
 
+          {/* How It Works Section */}
+          <HowItWorksSection />
+
+          {/* Statistics Section */}
+          <StatisticsSection />
+
           <section className="container py-16">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Popular Destinations</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -74,6 +84,9 @@ export default function LandingPage() {
               />
             </div>
           </section>
+
+          {/* Testimonials Section */}
+          <TestimonialsSection />
 
           <section className="container py-16">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Featured Hostels</h2>
@@ -116,7 +129,16 @@ export default function LandingPage() {
             </div>
           </section>
 
+          {/* Blog Section */}
+          <BlogSection />
+
+          {/* Newsletter Section */}
+          <NewsletterSection />
+
           <AppPromotion />
+
+          {/* Partners Section */}
+          <PartnersSection />
 
           <section className="container pt-16">
             <ContactSection />

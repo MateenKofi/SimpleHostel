@@ -60,7 +60,7 @@ export default function ContactPage() {
 function ContactFormSection() {
   const [ref, inView] = useInView({
     triggerOnce: true,
-    threshold: 0.1,
+    threshold: 0.2,
   });
 
   const [formState, setFormState] = useState({
