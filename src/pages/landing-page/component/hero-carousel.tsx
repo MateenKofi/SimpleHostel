@@ -31,7 +31,7 @@ export function HeroCarousel() {
     intervalRef.current = setInterval(() => {
       setDirection(1)
       setCurrentSlide((prev) => (prev + 1) % slides.length)
-    }, 5000)
+    }, 10000)
   }
 
   useEffect(() => {

@@ -45,8 +45,8 @@ export function Header() {
           {[
             { name: "Home", path: "/", id: "home" },
             { name: "Find Hostels", path: "/find-hostel", id: "find-hostel" },
-            { name: "About Us", path: "#", id: "about" },
-            { name: "Contact", path: "#", id: "contact" },
+            { name: "About Us", path: "/about", id: "about" },
+            { name: "Contact", path: "/contact", id: "contact" },
           ].map((item) => (
             <motion.div key={item.id} whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}>
               <Link
@@ -94,8 +94,8 @@ export function Header() {
                   { name: "Home", path: "/" },
                   { name: "Find Hostel", path: "/find-hostel" },
                   { name: "Dashboard", path: "/dashboard" },
-                  { name: "About Us", path: "#" },
-                  { name: "Contact", path: "#" },
+                  { name: "About Us", path: "/about" },
+                  { name: "Contact", path: "/contact" },
                 ].map((item, index) => (
                   <motion.div
                     key={index}

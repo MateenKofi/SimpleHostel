@@ -1,4 +1,4 @@
-import { Header } from "./component/header"
+// import { Header } from "./component/header"
 import { HeroCarousel } from "./component/hero-carousel"
 import { ContactSection } from "./component/contact-section"
 import { FeatureCard } from "./component/feature-card"
@@ -9,7 +9,7 @@ import { AppPromotion } from "./component/app-promotion"
 export default function LandingPage() {
   return (
     <div className="min-h-screen overflow-hidden">
-      <Header />
+      {/* <Header /> */}
       <main>
         <HeroCarousel />
         <div className="w-full grid place-items-center">

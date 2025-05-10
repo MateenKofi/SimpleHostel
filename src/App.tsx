@@ -6,6 +6,11 @@ import { Loader } from "lucide-react";
 import Layout from "@components/layout/Layout";
 import LandingPageLayout from "./components/layout/LandingPageLayout";
 import PrivateRoute from "./components/routes/PrivateRoute";
+import Home from './pages/landing-page/page'
+import About from './pages/landing-page/About'
+import Contact from './pages/landing-page/Contact'
+import FindHostel from './pages/landing-page/component/findHostel/page'
+import LoginForm from "./pages/Authentication/login/login-form";
 
 // Axios base config
 axios.defaults.headers.common["Accept"] = "application/json";
@@ -22,12 +27,9 @@ const StaffManagement = lazy(() => import("@pages/dashboard/staff-management/Sta
 const AddStaff = lazy(() => import("@/components/staff/AddStaff"));
 const Maintenance = lazy(() => import("@/pages/dashboard/maintenance&Tracking/maintenace"));
 const DeptorsList = lazy(() => import("./pages/dashboard/deptors-list/DeptorsList"));
-const Home = lazy(() => import("./pages/landing-page/page"));
-const FindHostel = lazy(() => import("./pages/landing-page/component/findHostel/page"));
 const HostelListingForm = lazy(() => import("./pages/landing-page/component/hostel-listing/Hostel-Listing-Form"));
 const PaymentForm = lazy(() => import("./components/payment/Payment"));
 const ResidentForm = lazy(() => import("./pages/landing-page/component/resident-forms/ResidentForm"));
-const LoginForm = lazy(() => import("./pages/Authentication/login/login-form"));
 const ApproveHostel = lazy(() => import("./pages/dashboard/approvals/Approve-Hostel"));
 const ProfileForm = lazy(() => import("./pages/dashboard/profile/Profile-From"));
 const EditStaff = lazy(() => import("./components/staff/EditStaff"));
@@ -59,6 +61,8 @@ function App() {
         {/* Landing Routes */}
         <Route element={<LandingPageLayout />}>
           <Route index element={<Home />} />
+          <Route path="about" element={<About/>}/>
+          <Route path="contact" element={<Contact/>}/>
           <Route path="find-hostel" element={<FindHostel />} />
           <Route path="hostel-listing" element={<HostelListingForm />} />
           <Route path="payment" element={<PaymentForm amount={26666} description="" />} />

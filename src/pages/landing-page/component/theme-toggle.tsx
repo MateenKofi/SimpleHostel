@@ -1,4 +1,4 @@
-import { useTheme } from "next-themes"
+import { useTheme } from "../../../hooks/useTheme"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Moon, Sun } from "lucide-react"
