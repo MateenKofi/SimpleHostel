@@ -1,13 +1,5 @@
 import { useState, useMemo } from "react";
-import {
-  Building,
-  Users,
-  Phone,
-  Mail,
-  MapPin,
-  Calendar,
-  ArrowLeft,
-} from "lucide-react";
+import { Building, Users, ArrowLeft } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -25,7 +17,9 @@ import { useSelectedRoomStore } from "@/controllers/SelectedRoomStore";
 import FilterPanel from "@/components/FilterPanel";
 import { RoomFilterConfig } from "@/helper/room_filter_config";
 import { parseRange } from "@/utils/parseRange";
-import FindHostelSkeleton from '@components/loaders/HostelCardSkeleton'
+import FindHostelSkeleton from "@components/loaders/HostelCardSkeleton";
+import ImageSlider from "@/components/ImageSlider";
+import CustomeRefetch from "@/components/CustomeRefetch";
 
 interface ActiveFilters {
   [key: string]: string[];
@@ -41,10 +35,15 @@ const FindRoom = () => {
   });
   const { setRoom } = useSelectedRoomStore();
 
-  const { data: hostelData, isLoading, isError } = useQuery({
-    queryKey: ["hostel", hostelId],
+  const {
+    data: RoomData,
+    isLoading,
+    isError,
+    refetch: refetchRooms,
+  } = useQuery({
+    queryKey: ["rooms", hostelId],
     queryFn: async () => {
-      const response = await axios.get(`/api/hostels/get/${hostelId}`, {
+      const response = await axios.get(`/api/rooms/hostel/${hostelId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
@@ -52,23 +51,24 @@ const FindRoom = () => {
       return response.data?.data;
     },
   });
+  console.log("rooms", RoomData);
 
-const handleFilterChange = (category: string, value: string) => {
-  setActiveFilters((prev) => {
-    const updated = { ...prev };
-    if (updated[category]?.includes(value)) {
-      updated[category] = updated[category]?.filter((item) => item !== value);
-    } else {
-      updated[category] = [...(updated[category] || []), value];
-    }
-    return updated;
-  });
-};
+  const handleFilterChange = (category: string, value: string) => {
+    setActiveFilters((prev) => {
+      const updated = { ...prev };
+      if (updated[category]?.includes(value)) {
+        updated[category] = updated[category]?.filter((item) => item !== value);
+      } else {
+        updated[category] = [...(updated[category] || []), value];
+      }
+      return updated;
+    });
+  };
 
   const availableRooms = useMemo(() => {
-    const rooms = hostelData?.Rooms || [];
+    const rooms = RoomData?.rooms || [];
     return rooms.filter((room: Room) => room.status === "AVAILABLE");
-  }, [hostelData?.Rooms]);
+  }, [RoomData?.rooms]);
 
   const filteredRooms = useMemo(() => {
     return availableRooms.filter((room: Room) => {
@@ -77,11 +77,11 @@ const handleFilterChange = (category: string, value: string) => {
         activeFilters.gender.includes(room.gender);
 
       const matchesPriceRange =
-  activeFilters.priceRange.length === 0 ||
-  activeFilters.priceRange.some((range) => {
-    const { min, max } = parseRange(range);
-    return room.price >= min && room.price <= max;
-  });
+        activeFilters.priceRange.length === 0 ||
+        activeFilters.priceRange.some((range) => {
+          const { min, max } = parseRange(range);
+          return room.price >= min && room.price <= max;
+        });
 
       const matchesRoomType =
         activeFilters.roomType.length === 0 ||
@@ -90,6 +90,8 @@ const handleFilterChange = (category: string, value: string) => {
       return matchesGender && matchesPriceRange && matchesRoomType;
     });
   }, [availableRooms, activeFilters]);
+
+  console.log("filtered rooms", filteredRooms);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -106,11 +108,11 @@ const handleFilterChange = (category: string, value: string) => {
   };
 
   if (isLoading) {
-    return <FindHostelSkeleton/>;
+    return <FindHostelSkeleton />;
   }
 
   if (isError) {
-    return <div className="text-center mt-8 text-red-500">Error fetching hostel data.</div>;
+    return <CustomeRefetch refetch={refetchRooms} />;
   }
 
   return (
@@ -122,57 +124,6 @@ const handleFilterChange = (category: string, value: string) => {
         <ArrowLeft className="w-6 h-6 mr-2" />
         Back
       </button>
-
-      {/* Hostel Header */}
-      <div className="mb-8">
-        <div className="flex flex-col md:flex-row gap-6">
-          <div className="w-full md:w-1/3 rounded-lg overflow-hidden">
-            {hostelData?.HostelImages?.length > 0 ? (
-              <img
-                src={hostelData.HostelImages[0].imageUrl || "/placeholder.svg"}
-                alt={hostelData.name}
-                className="w-full h-64 object-cover"
-              />
-            ) : (
-              <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
-                <Building size={48} className="text-gray-400" />
-              </div>
-            )}
-          </div>
-
-          <div className="w-full md:w-2/3 shadow-md p-4 border rounded-md">
-            <h1 className="text-3xl font-bold mb-2">{hostelData?.name}</h1>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="flex items-center gap-2">
-                <MapPin size={18} />
-                <span>
-                  {hostelData?.address}, {hostelData?.location}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Users size={18} />
-                <span>Manager: {hostelData?.manager}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Phone size={18} />
-                <span>{hostelData?.phone}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Mail size={18} />
-                <span>{hostelData?.email}</span>
-              </div>
-              {hostelData?.CalendarYear?.[0]?.isActive && (
-                <div className="flex items-center gap-2 md:col-span-2">
-                  <Calendar size={18} />
-                  <span>Academic Year: {hostelData.CalendarYear[0].name}</span>
-                </div>
-              )}
-            </div>
-            <p className="text-gray-600 mt-4">{hostelData?.description}</p>
-          </div>
-        </div>
-      </div>
 
       <div className="w-full flex flex-col md:flex-row gap-6">
         <div className="w-full lg:w-64">
@@ -193,7 +144,7 @@ const handleFilterChange = (category: string, value: string) => {
             filteredRooms.map((room: Room) => (
               <Card
                 key={room.id}
-                className="w-full min-w-[300px] overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200"
+                className="w-full max-w-[300px] overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200"
               >
                 <CardHeader className="pb-2 border-b bg-gray-50">
                   <div className="flex justify-between items-center">
@@ -214,31 +165,59 @@ const handleFilterChange = (category: string, value: string) => {
                     </Badge>
                   </div>
                 </CardHeader>
+                <div>
+                  <ImageSlider
+                    images={room?.RoomImage?.map((i) => i.imageUrl) ?? []}
+                  />
+                </div>
                 <CardContent className="pt-4">
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-gray-50 p-3 rounded-md">
-                        <p className="text-xs text-gray-500 mb-1">Type</p>
-                        <p className="font-semibold">
-                          {room.type.charAt(0) + room.type.slice(1).toLowerCase()}
-                        </p>
-                      </div>
-                      <div className="bg-gray-50 p-3 rounded-md">
-                        <p className="text-xs text-gray-500 mb-1">Gender</p>
-                        <p className="font-semibold">
-                          {room.gender.charAt(0) + room.gender.slice(1).toLowerCase()}
-                        </p>
-                      </div>
+                  <div className="flex items-center justify-between">
+                    <div className="bg-gray-50 p-2 rounded-md">
+                      <p className="text-xs text-gray-600 ">Type</p>
+                      <p className="font-semibold text-xs">
+                        {room.type.charAt(0) + room.type.slice(1).toLowerCase()}
+                      </p>
+                    </div>
+                    <div className="bg-gray-50 p-2 rounded-md">
+                      <p className="text-xs text-gray-600 ">Gender</p>
+                      <p className="font-semibold text-xs">
+                        {room.gender.charAt(0) +
+                          room.gender.slice(1).toLowerCase()}
+                      </p>
                     </div>
 
-                    <div className="flex items-center gap-2 bg-gray-50 p-3 rounded-md">
-                      <Users size={18} className="text-gray-500" />
+                    <div className="flex items-center gap-2 p-1 bg-gray-50 rounded-md">
+                      <Users size={18} className="text-gray-600" />
                       <div>
-                        <p className="text-xs text-gray-500 mb-1">Capacity</p>
-                        <p className="font-semibold">
+                        <p className="text-xs text-gray-600 mb-1">Capacity</p>
+                        <p className="font-semibold text-xs">
                           {room.currentResidentCount}/{room.maxCap} residents
                         </p>
                       </div>
+                    </div>
+                  </div>
+                </CardContent>
+                <CardContent>
+                  <div className="flex items-center gap-2 p-1 bg-gray-50 rounded-md">
+                    <Building size={18} className="text-gray-600" />
+                    <div className="flex flex-col">
+                      <p className="text-xs text-gray-600 mb-1">Amenities</p>
+                      <p className="w-full font-semibold text-xs">
+                        {room?.Amenities?.length as number < 1 ? (
+                          <span>No Amenities</span>
+                        ) : (
+                          <>
+                            {room?.Amenities?.map((amenity) => (
+                              <span
+                                key={amenity.id}
+                                className="mr-[2px] bg-green-300 px-1 rounded-md text-xs"
+                              >
+                                {amenity.name}
+                              </span>
+                            ))}
+                          </>
+                        )}
+                      </p>
                     </div>
                   </div>
                 </CardContent>

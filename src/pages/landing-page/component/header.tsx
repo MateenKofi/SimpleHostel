@@ -6,7 +6,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Link } from "react-router-dom"
 import { motion } from "framer-motion"
 import { useState } from "react"
-import { ThemeToggle } from "./theme-toggle"
+// import { ThemeToggle } from "./theme-toggle"
 
 export function Header() {
   const [activeLink, setActiveLink] = useState("home")
