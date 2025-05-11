@@ -15,7 +15,9 @@ const UploadMultipleImages: React.FC<UploadMultipleImagesProps> = ({
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
-      setImages([...images, ...Array.from(files)]);
+      const availableSlots = Math.max(0, 3 - images.length);
+      const newImages = Array.from(files).slice(0, availableSlots);
+      setImages([...images, ...newImages]);
     }
   };
 
@@ -35,26 +37,27 @@ const UploadMultipleImages: React.FC<UploadMultipleImagesProps> = ({
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="flex flex-col gap-4 p-6"
     >
-        <motion.label
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          className="flex flex-col items-center justify-center gap-4 p-6 border-2 border-dashed border-gray-400 rounded-2xl"
-        >
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleImageChange}
-            className="hidden"
-          />
-          <div className="flex flex-col items-center gap-3">
-            <UploadCloud className="w-10 h-10 text-gray-500 animate-bounce" />
-            <span className="text-gray-600 text-sm">Click to upload images</span>
-          </div>
-        </motion.label>
+      <motion.label
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        className="flex flex-col items-center justify-center gap-4 p-6 border-2 border-dashed border-gray-400 rounded-2xl"
+      >
+        <input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={handleImageChange}
+          className="hidden"
+        />
+        <div className="flex flex-col items-center gap-3">
+          <UploadCloud className="w-10 h-10 text-gray-500 animate-bounce" />
+          <span className="text-gray-600 text-sm">Click to upload images</span>
+        </div>
+      </motion.label>
 
       {images.length > 0 && (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-wrap gap-2">
           {images.map((image, index) => (
             <motion.div
               key={index}
@@ -76,8 +79,10 @@ const UploadMultipleImages: React.FC<UploadMultipleImagesProps> = ({
                 <XCircle className="w-4 h-4 text-red-500" />
               </button>
             </motion.div>
-
           ))}
+          </div>
+          <button className="px-4 py-2 bg-red-500 text-white rounded-md" onClick={handleClearAll}>Remove all
+          </button>
         </div>
       )}
     </motion.div>
@@ -85,3 +90,4 @@ const UploadMultipleImages: React.FC<UploadMultipleImagesProps> = ({
 };
 
 export default UploadMultipleImages;
+

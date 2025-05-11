@@ -154,7 +154,7 @@ export function ContactSection() {
           >
             <img
               src="/logo.png"
-              alt="HostelFinder Logo"
+              alt="Fuse Logo"
               className="w-full h-full object-contain bg-white rounded-full"
             />
           </motion.div>
@@ -168,7 +168,7 @@ export function ContactSection() {
         </motion.div>
 
         <motion.div variants={itemVariants} className="pt-8 text-sm text-zinc-500">
-          <p>&copy; {new Date().getFullYear()} HostelFinder. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Fuse. All rights reserved.</p>
         </motion.div>
       </div>
     </motion.div>

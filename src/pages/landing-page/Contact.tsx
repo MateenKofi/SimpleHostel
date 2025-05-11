@@ -396,7 +396,7 @@ function FAQSection() {
         "Yes, you can cancel or modify your booking according to the hostel's cancellation policy. Log in to your account, go to 'My Bookings', and follow the instructions for cancellation or modification.",
     },
     {
-      question: "How do I list my hostel on HostelFinder?",
+      question: "How do I list my hostel on Fuse?",
       answer:
         "To list your hostel, click on 'List Your Hostel' in the navigation menu. You'll need to create an account, provide details about your property, and follow our verification process.",
     },
@@ -408,7 +408,7 @@ function FAQSection() {
     {
       question: "How can I contact customer support?",
       answer:
-        "You can reach our customer support team through this contact form, by emailing support@hostelfinder.com, or by calling +1 (555) 123-4567. We're available Monday through Friday from 9am to 6pm.",
+        "You can reach our customer support team through this contact form, by emailing fusesupport@gmail.com, or by calling +1 (555) 123-4567. We're available Monday through Friday from 9am to 6pm.",
     },
   ];
 

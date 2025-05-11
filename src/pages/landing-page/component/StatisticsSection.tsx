@@ -86,7 +86,7 @@ export function StatisticsSection() {
           transition={{ duration: 0.5 }}
           className="text-center max-w-3xl mx-auto mb-12"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">HostelFinder by the Numbers</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Fuse by the Numbers</h2>
           <p className="text-lg text-zinc-600 dark:text-zinc-300">
             Join our global community of travelers and hostel owners
           </p>

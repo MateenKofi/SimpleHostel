@@ -25,7 +25,7 @@ export default function AboutPage() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
               >
-                About <span className="text-red-500">HostelFinder</span>
+                About <span className="text-red-500">Fuse</span>
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -79,7 +79,7 @@ function StorySection() {
             <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Story</h2>
             <div className="space-y-4 text-zinc-700 dark:text-zinc-300">
               <p>
-                HostelFinder began with a simple idea: make hostel booking as easy as possible for travelers around the
+                Fuse began with a simple idea: make hostel booking as easy as possible for travelers around the
                 world. Founded by a group of avid backpackers who were frustrated with existing booking platforms, we
                 set out to create something better.
               </p>
@@ -89,7 +89,7 @@ function StorySection() {
                 friendships across the globe.
               </p>
               <p>
-                Today, HostelFinder partners with over 10,000 hostels in more than 120 countries, but our mission
+                Today, Fuse partners with over 10,000 hostels in more than 120 countries, but our mission
                 remains the same: to make travel accessible, social, and memorable for everyone.
               </p>
             </div>
@@ -181,32 +181,32 @@ function MissionSection() {
 function TimelineSection() {
   const [ref, inView] = useInView({
     triggerOnce: true,
-    threshold: 0.1,
+    threshold: 0.2,
   })
 
   const timelineEvents = [
     {
-      year: "2015",
-      title: "HostelFinder Founded",
-      description: "Started with just 100 hostels in 10 countries.",
+      year: "2021",
+      title: "Fuse Founded",
+      description: "Started with just 100 hostels in 16 regions.",
     },
     {
-      year: "2017",
+      year: "2022",
       title: "Mobile App Launch",
       description: "Expanded our reach with iOS and Android applications.",
     },
     {
-      year: "2019",
+      year: "2023",
       title: "1,000,000 Bookings",
       description: "Reached our millionth booking milestone.",
     },
     {
-      year: "2021",
+      year: "2024",
       title: "Global Expansion",
-      description: "Expanded to over 10,000 hostels in 120+ countries.",
+      description: "Expanded to over 10,000 hostels in 12 regions.",
     },
     {
-      year: "2023",
+      year: "2025",
       title: "Community Features",
       description: "Launched social networking features for travelers.",
     },
@@ -223,7 +223,7 @@ function TimelineSection() {
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Journey</h2>
           <p className="text-lg text-zinc-700 dark:text-zinc-300">
-            From humble beginnings to a global platform, here's how HostelFinder has evolved over the years.
+            From humble beginnings to a global platform, here's how Fuse has evolved over the years.
           </p>
         </motion.div>
 
@@ -245,7 +245,7 @@ function TimelineSection() {
                   <span className="text-white font-bold">{event.year}</span>
                 </div>
                 <div
-                  className={`w-1/2 bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-md ${
+                  className={`w-1/2 bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-md border ${
                     index % 2 === 0 ? "text-right ml-8" : "text-left mr-8"
                   }`}
                 >
@@ -264,7 +264,7 @@ function TimelineSection() {
 function TeamSection() {
   const [ref, inView] = useInView({
     triggerOnce: true,
-    threshold: 0.1,
+    threshold: 0.2,
   })
 
   const team = [
@@ -300,12 +300,12 @@ function TeamSection() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.5 }}
+          transition={{ duration: 0.9 }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-6">Meet Our Team</h2>
           <p className="text-lg text-zinc-700 dark:text-zinc-300">
-            The passionate people behind HostelFinder who are dedicated to making your travel experiences unforgettable.
+            The passionate people behind Fuse who are dedicated to making your travel experiences unforgettable.
           </p>
         </motion.div>
 

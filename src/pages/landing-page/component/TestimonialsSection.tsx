@@ -22,7 +22,7 @@ export function TestimonialsSection() {
       location: "London, UK",
       image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80",
       rating: 5,
-      text: "HostelFinder made my backpacking trip through Europe so much easier! I found amazing hostels in every city, met incredible people, and saved a ton of money. The reviews were spot-on and the booking process was seamless.",
+      text: "Fuse made my backpacking trip through Europe so much easier! I found amazing hostels in every city, met incredible people, and saved a ton of money. The reviews were spot-on and the booking process was seamless.",
     },
     {
       id: 2,
@@ -30,7 +30,7 @@ export function TestimonialsSection() {
       location: "Barcelona, Spain",
       image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
       rating: 5,
-      text: "As a solo traveler, finding the right hostel is crucial. HostelFinder helped me discover social hostels with great vibes. The filter options let me find exactly what I was looking for - places with good common areas and organized activities.",
+      text: "As a solo traveler, finding the right hostel is crucial. Fuse helped me discover social hostels with great vibes. The filter options let me find exactly what I was looking for - places with good common areas and organized activities.",
     },
     {
       id: 3,
@@ -38,7 +38,7 @@ export function TestimonialsSection() {
       location: "Sydney, Australia",
       image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80",
       rating: 4,
-      text: "I've been using HostelFinder for years across multiple continents. The platform is reliable, the photos are accurate, and the community reviews help me avoid bad experiences. It's my go-to app for budget travel accommodation.",
+      text: "I've been using Fuse for years across multiple continents. The platform is reliable, the photos are accurate, and the community reviews help me avoid bad experiences. It's my go-to app for budget travel accommodation.",
     },
     {
       id: 4,
@@ -46,7 +46,7 @@ export function TestimonialsSection() {
       location: "Toronto, Canada",
       image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80",
       rating: 5,
-      text: "The best feature of HostelFinder is how easy it makes comparing different options. I can quickly see which hostels have the amenities I need, check their locations on the map, and read honest reviews from other travelers.",
+      text: "The best feature of Fuse is how easy it makes comparing different options. I can quickly see which hostels have the amenities I need, check their locations on the map, and read honest reviews from other travelers.",
     },
   ]
 
@@ -102,7 +102,7 @@ export function TestimonialsSection() {
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">What Our Travelers Say</h2>
           <p className="text-lg text-zinc-600 dark:text-zinc-300">
-            Discover why thousands of travelers choose HostelFinder for their adventures
+            Discover why thousands of travelers choose Fuse for their adventures
           </p>
         </motion.div>
 

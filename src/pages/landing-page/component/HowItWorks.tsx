@@ -92,7 +92,7 @@ export function HowItWorksSection() {
           transition={{ duration: 0.5 }}
           className="text-center max-w-3xl mx-auto mb-12"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">How HostelFinder Works</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">How Fuse Works</h2>
           <p className="text-lg text-zinc-600 dark:text-zinc-300">
             Finding and booking your perfect hostel is quick and easy with our simple process
           </p>

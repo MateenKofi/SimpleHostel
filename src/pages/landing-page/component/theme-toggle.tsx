@@ -1,6 +1,6 @@
 import { useTheme } from "../../../hooks/useTheme"
 import { useEffect, useState } from "react"
-import { Button } from "@/components/ui/button"
+import { Button } from "@components/ui/button"
 import { Moon, Sun } from "lucide-react"
 import { motion } from "framer-motion"
 
@@ -8,7 +8,6 @@ export function ThemeToggle() {
   const { theme, setTheme } = useTheme()
   const [mounted, setMounted] = useState(false)
 
-  // Avoid hydration mismatch
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -17,7 +16,7 @@ export function ThemeToggle() {
 
   return (
     <Button
-      variant="outline"
+      variant="ghost"
       size="icon"
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       className="rounded-full"
@@ -28,7 +27,7 @@ export function ThemeToggle() {
         className="relative w-6 h-6"
       >
         {theme === "dark" ? (
-          <Moon className="absolute inset-0 h-6 w-6 rotate-90 transform transition-all duration-300 " />
+          <Moon className="absolute inset-0 h-6 w-6 rotate-90 transform transition-all duration-300" />
         ) : (
           <Sun className="absolute inset-0 h-6 w-6 rotate-0 transform transition-all duration-300" />
         )}

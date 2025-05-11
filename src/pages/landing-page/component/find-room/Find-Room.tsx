@@ -25,6 +25,7 @@ import { useSelectedRoomStore } from "@/controllers/SelectedRoomStore";
 import FilterPanel from "@/components/FilterPanel";
 import { RoomFilterConfig } from "@/helper/room_filter_config";
 import { parseRange } from "@/utils/parseRange";
+import FindHostelSkeleton from '@components/loaders/HostelCardSkeleton'
 
 interface ActiveFilters {
   [key: string]: string[];
@@ -105,7 +106,7 @@ const handleFilterChange = (category: string, value: string) => {
   };
 
   if (isLoading) {
-    return <div className="text-center mt-8">Loading hostel data...</div>;
+    return <FindHostelSkeleton/>;
   }
 
   if (isError) {

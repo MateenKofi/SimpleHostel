@@ -19,7 +19,7 @@ export default function LandingPage() {
         <div className="w-full grid place-items-center">
           <section className="container py-16 md:py-24">
             <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
-              Why Choose <span className="text-red-500">HostelFinder</span>?
+              Why Choose <span className="text-red-500">Fuse</span>?
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <FeatureCard

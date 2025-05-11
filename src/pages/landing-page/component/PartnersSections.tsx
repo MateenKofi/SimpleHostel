@@ -46,7 +46,7 @@ export function PartnersSection() {
               className="flex items-center justify-center"
             >
               <div className="h-12 w-32 bg-zinc-100 dark:bg-zinc-800 rounded-md flex items-center justify-center">
-                <span className="font-semibold text-zinc-500 dark:text-zinc-400">{partner.name}</span>
+                <span className="font-semibold text-zinc-500 dark:text-zinc-400 p-2 text-center">{partner.name}</span>
               </div>
             </motion.div>
           ))}

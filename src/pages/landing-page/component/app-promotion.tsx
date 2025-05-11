@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button"
+// import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { useInView } from "react-intersection-observer"
 
@@ -20,16 +20,16 @@ export function AppPromotion() {
           <div>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Download Our Mobile App</h2>
             <p className="text-lg text-muted-foreground">
-              Take HostelFinder with you everywhere. Book hostels on the go, manage your reservations, and connect with
+              Take Fuse with you everywhere. Book hostels on the go, manage your reservations, and connect with
               fellow travelers - all from your pocket. Our mobile app makes your travel experience seamless and
               worry-free, so you can focus on what matters most - creating unforgettable memories.
             </p>
           </div>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          {/* <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button size="lg" className="mt-4 bg-red-500 hover:bg-red-600">
               Get the App
             </Button>
-          </motion.div>
+          </motion.div> */}
         </motion.div>
         <motion.div
           className="relative"
