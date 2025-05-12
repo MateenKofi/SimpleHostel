@@ -21,7 +21,8 @@ import {
   Wallet2,
   LucideProps,
   LogOut,
-  Layout
+  Layout,
+  Hotel
 } from "lucide-react";
 import { useUserStore } from "@/controllers/UserStore";
 
@@ -83,12 +84,13 @@ export function NavMain() {
       },
       { title: "Transactions", icon: Wallet2, path: "/dashboard/transactions" },
       { title: "Users", icon: UserCog, path: "/dashboard/users" },
+      { title: "Hostel Management", icon: Hotel, path: '/dashboard/hostel-management' },
     ];
   }
 
   return (
-    <>
-     <SidebarGroup>
+    <div className="overflow-x-hidden">
+     <SidebarGroup className="m-0 p-0 ">
         <SidebarMenuButton
           onClick={() => navigate("/")}
           tooltip="landing page"
@@ -98,7 +100,7 @@ export function NavMain() {
           <span>Home</span>  
         </SidebarMenuButton>
       </SidebarGroup>
-      <SidebarGroup>
+      <SidebarGroup className="m-0 p-0 ">
         <SidebarGroupLabel>Navigation</SidebarGroupLabel>
         <SidebarMenu>
           {navItems.map((item) => (
@@ -106,7 +108,7 @@ export function NavMain() {
               <SidebarMenuButton
                 onClick={() => navigate(item.path)}
                 tooltip={item.title}
-                className="w-full transition-all duration-500 ease-in-out hover:bg-black hover:text-white hover:translate-x-2 rounded-md"
+                className="w-full transition-all duration-500 ease-in-out hover:bg-black hover:text-white hover:translate-x-1 rounded-md"
               >
                 {item.icon && <item.icon className="w-4 h-4" />}
                 <span>{item.title}</span>
@@ -115,8 +117,8 @@ export function NavMain() {
           ))}
         </SidebarMenu>
       </SidebarGroup>
-      <div className="mx-auto w-4/5 bg-black border"></div> 
-      <SidebarGroup>
+      <div className="mx-auto w-4/5 bg-black border border-gray-300 my-3"></div>
+      <SidebarGroup className="m-0 p-0 ">
         <SidebarMenuButton
           onClick={() => logout()}
           tooltip="Log Out"
@@ -126,7 +128,7 @@ export function NavMain() {
           <span>Log Out</span>  
         </SidebarMenuButton>
       </SidebarGroup>
-    </>
+    </div>
   );
 }
 export default NavMain;

@@ -120,14 +120,14 @@ function CustomDataTable<T>({
               placeholder="Search..."
               value={searchText}
               onChange={handleSearchChange}
-              className="input input-bordered input-sm"
+              className="input input-bordered border rounded input-sm border-gray-300 "
             />
           </div>
         )}
 
         <button
           onClick={exportToCSV}
-          className="btn btn-sm btn-outline flex items-center gap-1"
+          className="btn btn-sm btn-black flex items-center gap-2"
         >
           <Download size={16} />
           Export CSV

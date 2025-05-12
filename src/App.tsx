@@ -38,6 +38,7 @@ const Transactions = lazy(() => import("./pages/dashboard/transactions/Transacti
 const Users = lazy(() => import("./pages/dashboard/users/Users"));
 const ViewRoom = lazy(() => import("./components/rooms/ViewRoom"));
 const FindRoom = lazy(() => import("./pages/landing-page/component/find-room/Find-Room"));
+const HostelManagement = lazy(() => import("./pages/dashboard/hostelManagement/HostelManagement"));
 
 function App() {
   
@@ -83,6 +84,7 @@ function App() {
             <Route path="transactions" element={<Transactions />} />
             <Route path="users" element={<Users />} />
             <Route path="view-room/:id" element={<ViewRoom />} />
+            <Route path="hostel-management" element={<HostelManagement />} />
           </Route>
         </Route>
 

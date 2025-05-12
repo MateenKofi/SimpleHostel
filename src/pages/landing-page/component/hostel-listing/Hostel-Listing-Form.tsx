@@ -216,7 +216,7 @@ const HostelListingForm = () => {
                         <FormLabel>Address*</FormLabel>
                         <FormControl>
                           <Input
-                            placeholder="Enter google address here "
+                            placeholder="e.g. 21-23 Boundary Rd, East Legon, Accra, Ghana"
                             {...field}
                             className="Capitalize"
                           />
