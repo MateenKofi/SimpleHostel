@@ -1,7 +1,4 @@
-"use client"
-
 import * as React from "react"
-
 
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"

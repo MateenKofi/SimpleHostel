@@ -40,14 +40,7 @@ const ViewRoom = lazy(() => import("./components/rooms/ViewRoom"));
 const FindRoom = lazy(() => import("./pages/landing-page/component/find-room/Find-Room"));
 
 function App() {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token || token === "undefined") {
-      navigate("/login");
-    }
-  }, [navigate]);
+  
 
   return (
     <Suspense

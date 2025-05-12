@@ -1,8 +1,9 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { toast } from "react-hot-toast";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-
+import { Users } from "@/helper/types/types";
 
 type DecodedToken = {
   id: string;
@@ -12,91 +13,124 @@ type DecodedToken = {
   exp: number;
 };
 
-type User = {
+type UserStore = {
   name: string;
   email: string;
+  imageUrl: string | null;
   token: string | null;
   role: string | null;
   hostelId: string | null;
   isProcessing: boolean;
+  user: Users | null;
   login: (data: { email: string; password: string }) => Promise<boolean>;
   logout: () => void;
-  setUser: (token: string) => void;
+  fetchUser: (userId: string) => Promise<void>;
 };
 
-// Create Zustand Store
-export const useUserStore = create<User>((set) => ({
-  name: "",
-  email: "",
-  token: null,
-  role: null,
-  hostelId: null,
-  isProcessing: false,
-  
-
-  // Login function
-  login: async (data) => {
-    set({ isProcessing: true });
-    try {
-      const response = await axios.post("/api/users/login", data);
-      const { token } = response.data;
-      const decoded: DecodedToken = jwtDecode(token);
-
-      set({
-        name: "", 
-        email: data.email,
-        token,
-        role: decoded.role,
-        hostelId: decoded.hostelId,
-        isProcessing: false,
-      });
-
-      localStorage.setItem("token", token);
-      localStorage.setItem("hostelId", decoded.hostelId);
-      localStorage.setItem("userId", decoded.id);
-      localStorage.setItem('role',decoded.role);
-
-      toast.success("Login successful");
-      return true;
-    } catch (error: unknown) {
-      const errorMessage = axios.isAxiosError(error) && error.response?.data?.message
-        ? error.response.data.message
-        : "Login failed";
-      toast.error(errorMessage);
-      set({ isProcessing: false });
-      return false;
-    }
-  },
-
-  // Logout function
-  logout: () => {
-    set({
+export const useUserStore = create<UserStore>()(
+  persist(
+    (set, get) => ({
       name: "",
       email: "",
+      imageUrl: null,
       token: null,
       role: null,
       hostelId: null,
-    });
-    localStorage.removeItem("token");
-    localStorage.removeItem("hostelId");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("role");
-    localStorage.removeItem("residentId");
-    toast.success("Logout successful");
-    window.location.reload();
-  },
+      isProcessing: false,
+      user: null,
 
-  // Function to set user from token (useful for refreshing state)
-  setUser: (token) => {
-    const decoded: DecodedToken = jwtDecode(token);
-    set({
-      name: "", 
-      email: "", 
-      token,
-      role: decoded.role,
-      hostelId: decoded.hostelId,
-    });
-  },
-}));
+      login: async (data) => {
+        set({ isProcessing: true });
+        try {
+          const response = await axios.post("/api/users/login", data);
+          const { token } = response.data;
+          const decoded: DecodedToken = jwtDecode(token);
 
+          // Set token + other basics first
+          set({
+            token,
+            role: decoded.role,
+            hostelId: decoded.hostelId,
+            isProcessing: false,
+          });
 
+          // Save token to localStorage
+          localStorage.setItem("token", token);
+          localStorage.setItem("hostelId", decoded.hostelId);
+          localStorage.setItem("userId", decoded.id);
+          localStorage.setItem("role", decoded.role);
+
+          // Now fetch user data and store it
+          await get().fetchUser(decoded.id);
+
+          toast.success("Login successful");
+          return true;
+        } catch (error: unknown) {
+          const errorMessage =
+            axios.isAxiosError(error) && error.response?.data?.error
+              ? error.response.data.error
+              : "Login failed";
+          toast.error(errorMessage);
+          set({ isProcessing: false });
+          return false;
+        }
+      },
+
+      logout: () => {
+        set({
+          name: "",
+          email: "",
+          imageUrl: null,
+          token: null,
+          role: null,
+          hostelId: null,
+          isProcessing: false,
+          user: null,
+        });
+
+        localStorage.removeItem("token");
+        localStorage.removeItem("hostelId");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("role");
+        localStorage.removeItem("residentId");
+
+        toast.success("Logout successful");
+        window.location.reload();
+      },
+
+      fetchUser: async (userId: string) => {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await axios.get(`/api/users/get/${userId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          const user: Users = response.data;
+
+          set({
+            name: user.name,
+            email: user.email,
+            imageUrl: user.imageUrl || null,
+            user,
+          });
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      },
+    }),
+    {
+      name: "user-storage",
+      partialize: (state) => ({
+        name: state.name,
+        email: state.email,
+        imageUrl: state.imageUrl,
+        token: state.token,
+        role: state.role,
+        hostelId: state.hostelId,
+        user: state.user,
+      }),
+    }
+  )
+);

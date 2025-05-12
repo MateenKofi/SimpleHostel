@@ -7,9 +7,13 @@ import { Link } from "react-router-dom"
 import { motion } from "framer-motion"
 import { useState } from "react"
 // import { ThemeToggle } from "./theme-toggle"
+import { useUserStore } from "@/controllers/UserStore"
+import UserSection from "./UserSection"
 
 export function Header() {
-  const [activeLink, setActiveLink] = useState("home")
+  const user = useUserStore((state) => state.user);
+
+  const [activeLink, setActiveLink] = useState("home");
 
   return (
     <motion.header
@@ -65,21 +69,28 @@ export function Header() {
 
         <div className="flex items-center ml-auto space-x-4">
           {/* <ThemeToggle /> */}
-
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Link to="/login">
-              <Button size="icon" className="w-full flex px-4">
-                <KeyRound className="h-5 w-5 mr-2" />
-                Log In
-              </Button>
-            </Link>
-          </motion.div>
-
-          <motion.div className="hidden md:block" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          {user ? (
+            <UserSection />
+          ):(
+            <>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link to="/login">
+                <Button size="icon" className="w-full flex px-4">
+                  <KeyRound className="h-5 w-5 mr-2" />
+                  Log In
+                </Button>
+              </Link>
+            </motion.div>
+               <motion.div className="hidden md:block" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Link to="/hostel-listing">
               <Button className="w-full bg-red-500 hover:bg-red-600 text-white">List Your Hostel</Button>
             </Link>
           </motion.div>
+          </>
+          )}
+          
+
+       
 
           {/* Mobile Menu */}
           <Sheet>

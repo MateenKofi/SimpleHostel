@@ -1,7 +1,5 @@
-import { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import { AppSidebar } from "./side-bar/App-Sidebar";
-import { useNavigate } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
@@ -9,18 +7,19 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import ErrorBoundary from "../ErrorBoundary";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Layout = () => {
   const navigate = useNavigate();
-  useEffect(() => {
-    if (localStorage.getItem("token") === null) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      localStorage.removeItem("role");
-      localStorage.removeItem("userId");
-      navigate("/login");
-    }
-  });
+  
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+      if (!token || token === "undefined") {
+        navigate("/login");
+      }
+    }, [navigate]);
+
   return (
     <SidebarProvider>
       <AppSidebar />

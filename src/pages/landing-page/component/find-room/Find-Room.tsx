@@ -43,11 +43,7 @@ const FindRoom = () => {
   } = useQuery({
     queryKey: ["rooms", hostelId],
     queryFn: async () => {
-      const response = await axios.get(`/api/rooms/hostel/${hostelId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(`/api/rooms/hostel/${hostelId}`);
       return response.data?.data;
     },
   });
