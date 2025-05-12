@@ -18,7 +18,7 @@ const ResidentManagement = () => {
             <Users className="w-6 h-6" />
             <h1 className="text-2xl font-bold">Resident Management</h1>
           </span>
-          <p className="text-sm text-gray-400 text-xs">
+          <p className=" text-gray-400 text-xs">
             Manage all hostel residents here. Add new residents, verify room
             assignments, and view resident details.
           </p>

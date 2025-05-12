@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
+import { useNavigate } from "react-router-dom"
 
 const slides = [
   {
@@ -22,6 +23,7 @@ const slides = [
 ]
 
 export function HeroCarousel() {
+  const navigate = useNavigate()
   const [currentSlide, setCurrentSlide] = useState(0)
   const [direction, setDirection] = useState(0)
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
@@ -118,6 +120,7 @@ export function HeroCarousel() {
                 <Button
                   size="lg"
                   className="mt-4 bg-red-500 hover:bg-red-600 transition-all duration-300 transform hover:scale-105"
+                  onClick={() => navigate("/find-hostel")}
                 >
                   Start Exploring
                 </Button>

@@ -269,25 +269,19 @@ function TeamSection() {
 
   const team = [
     {
-      name: "Alex Johnson",
-      role: "Founder & CEO",
+      name: "Abdul Mateen Kofi Yeboah",
+      role: "Chief Executive Officer & Developer",
       image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
-      bio: "Former backpacker with a passion for connecting travelers.",
+      bio: "Former backpacker with a passion for connecting travelers. Tech enthusiast focused on creating seamless user experiences.",
     },
     {
-      name: "Sarah Chen",
-      role: "Chief Technology Officer",
-      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=400&q=80",
-      bio: "Tech enthusiast focused on creating seamless user experiences.",
-    },
-    {
-      name: "Miguel Rodriguez",
+      name: "Amponsah Danquah Junior",
       role: "Head of Partnerships",
       image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80",
       bio: "Building relationships with hostels around the world.",
     },
     {
-      name: "Priya Sharma",
+      name: "Amponsah Danquah Senior",
       role: "Customer Experience",
       image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80",
       bio: "Dedicated to ensuring travelers have the best experience possible.",
@@ -309,7 +303,7 @@ function TeamSection() {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {team.map((member, index) => (
             <motion.div
               key={index}

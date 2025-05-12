@@ -142,7 +142,7 @@ const FindRoom = () => {
                 key={room.id}
                 className="w-full max-w-[300px] overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200"
               >
-                <CardHeader className="pb-2 border-b bg-gray-50">
+                <CardHeader className="p-2 border-b bg-gray-50">
                   <div className="flex justify-between items-center">
                     <div>
                       <CardTitle className="text-xl font-bold">
@@ -166,7 +166,7 @@ const FindRoom = () => {
                     images={room?.RoomImage?.map((i) => i.imageUrl) ?? []}
                   />
                 </div>
-                <CardContent className="pt-4">
+                <CardContent className="p-2">
                   <div className="flex items-center justify-between">
                     <div className="bg-gray-50 p-2 rounded-md">
                       <p className="text-xs text-gray-600 ">Type</p>
@@ -193,7 +193,7 @@ const FindRoom = () => {
                     </div>
                   </div>
                 </CardContent>
-                <CardContent>
+                <CardContent className="p-2">
                   <div className="flex items-center gap-2 p-1 bg-gray-50 rounded-md">
                     <Building size={18} className="text-gray-600" />
                     <div className="flex flex-col">
@@ -217,7 +217,7 @@ const FindRoom = () => {
                     </div>
                   </div>
                 </CardContent>
-                <CardFooter>
+                <CardFooter className=" p-2 bg-gray-50">
                   <div className="w-full flex justify-between items-center p-0 m-0">
                     <div>
                       <p className="text-xs text-gray-500 mb-1">Price</p>

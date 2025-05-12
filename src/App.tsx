@@ -1,5 +1,5 @@
-import { Routes, Route, Navigate,  useNavigate } from "react-router-dom";
-import { lazy, Suspense, useEffect } from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import axios from "axios";
 import { Loader } from "lucide-react";
 

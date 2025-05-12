@@ -1,4 +1,3 @@
-
 import React from "react"
 
 import { motion } from "framer-motion"
@@ -32,7 +31,7 @@ function Step({ icon, title, description, step, delay }: StepProps) {
           initial={{ scale: 0.8, opacity: 0 }}
           animate={inView ? { scale: 1, opacity: 1 } : { scale: 0.8, opacity: 0 }}
           transition={{ duration: 0.4, delay: delay + 0.2 }}
-          className="w-12 h-12 rounded-full bg-red-500 text-white flex items-center justify-center font-bold text-lg"
+          className="w-12 h-12 rounded-full bg-red-500 text-white flex items-center justify-center font-bold text-lg z-50"
         >
           {step}
         </motion.div>
@@ -84,7 +83,7 @@ export function HowItWorksSection() {
   ]
 
   return (
-    <section ref={ref} className="py-16 md:py-24 bg-zinc-50 dark:bg-zinc-800">
+    <section ref={ref} className="py-16 md:py-24 bg-zinc-50 dark:bg-zinc-800 -z-20">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -101,7 +100,7 @@ export function HowItWorksSection() {
         <div className="max-w-4xl mx-auto">
           <div className="relative">
             {/* Vertical line connecting steps */}
-            <div className="absolute left-6 top-6 bottom-6 w-0.5 bg-red-200 dark:bg-red-900/50 hidden md:block"></div>
+            <div className="absolute left-6 top-6 bottom-6 w-0.5 bg-red-200 dark:bg-red-900/50 hidden md:block -z-10"></div>
 
             <div className="space-y-12">
               {steps.map((step, index) => (

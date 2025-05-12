@@ -3,8 +3,10 @@ import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { useInView } from "react-intersection-observer"
 import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 export function ContactSection() {
+  const navigate = useNavigate()
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
@@ -87,7 +89,9 @@ export function ContactSection() {
         </motion.div>
 
         <motion.div variants={itemVariants} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <Button size="lg" className="bg-red-500 hover:bg-red-600 text-white">
+          <Button size="lg" className="bg-red-500 hover:bg-red-600 text-white"
+          onClick={() => navigate("/find-hostel")}
+          >
             Book Your Stay
           </Button>
         </motion.div>
