@@ -21,10 +21,17 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { ResidentFormSchema } from "@/schemas/ResidentForm.schema";
 import { z } from "zod";
+import { useSelectedCalendarYearStore } from "@/controllers/SelectedCalendarYear";
+import { useAddedResidentStore } from "@/controllers/AddedResident";
 
 type ResidentFormInputs = z.infer<typeof ResidentFormSchema>;
 
 const ResidentForm = () => {
+  const setResident = useAddedResidentStore((state)=> state.setResident)
+  const calendarYear = useSelectedCalendarYearStore(
+    (state) => state.calendarYear
+  );
+
   const { room } = useSelectedRoomStore();
   const navigate = useNavigate();
 
@@ -45,22 +52,36 @@ const ResidentForm = () => {
       formData.append("course", resident_data.course);
       formData.append("phone", resident_data.phone || "");
       formData.append("email", resident_data.email);
-      formData.append("emergencyContactName", resident_data.emergencyContactName);
-      formData.append("emergencyContactPhone", resident_data.emergencyContactPhone || "");
+      formData.append(
+        "emergencyContactName",
+        resident_data.emergencyContactName
+      );
+      formData.append(
+        "emergencyContactPhone",
+        resident_data.emergencyContactPhone || ""
+      );
       formData.append("relationship", resident_data.relationship);
       formData.append("gender", resident_data.gender.toUpperCase());
       formData.append("hostelId", room?.hostelId || "");
-      formData.append("calendarYearId", "d37b0e5a-0f52-4488-a1ec-cfc00c19310a");
+      formData.append("calendarYearId", calendarYear?.id || "");
 
       try {
-        const response = await axios.post(`/api/residents/add`, formData);
-         reset();
-    navigate("/payment");
+        const response = await axios.post(`/api/residents/add`, formData,{
+          headers:{
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          }
+        });
+        reset();
+        setResident(response.data?.data);
+        setTimeout(() => {
+          navigate("/payment");
+        }, 50);
         return response.data;
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.log(error.response);
-          const errorMessage = error.response?.data?.error || "Failed to Add Resident";
+          const errorMessage =
+            error.response?.data?.error || "Failed to Add Resident";
           toast.error(errorMessage);
         } else {
           toast.error("An unexpected error occurred");
@@ -69,9 +90,14 @@ const ResidentForm = () => {
     },
   });
 
-  
   const onSubmit: SubmitHandler<ResidentFormInputs> = (values) => {
-    AddResidentMutation.mutate(values);
+    if (room?.gender === values.gender) {
+      AddResidentMutation.mutate(values);
+    }
+    else {
+      toast.error("Gender does not match selected room gender");
+      toast.error("Make sure you select room according to your gender");
+    }
   };
 
   return (
@@ -92,35 +118,72 @@ const ResidentForm = () => {
             <div>
               <label className="font-medium">Full Name*</label>
               <Input placeholder="Enter full name" {...register("name")} />
-              {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+              {errors.name && (
+                <p className="text-red-500 text-sm">{errors.name.message}</p>
+              )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="font-medium">Student ID*</label>
-                <Input placeholder="Enter student ID" {...register("studentId")} />
-                {errors.studentId && <p className="text-red-500 text-sm">{errors.studentId.message}</p>}
+                <Input
+                  placeholder="Enter student ID"
+                  {...register("studentId")}
+                />
+                {errors.studentId && (
+                  <p className="text-red-500 text-sm">
+                    {errors.studentId.message}
+                  </p>
+                )}
               </div>
 
               <div>
                 <label className="font-medium">Course*</label>
                 <Input placeholder="Enter course" {...register("course")} />
-                {errors.course && <p className="text-red-500 text-sm">{errors.course.message}</p>}
+                {errors.course && (
+                  <p className="text-red-500 text-sm">
+                    {errors.course.message}
+                  </p>
+                )}
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="font-medium">Email*</label>
-                <Input type="email" placeholder="Enter email" {...register("email")} />
-                {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+                <Input
+                  type="email"
+                  placeholder="Enter email"
+                  {...register("email")}
+                />
+                {errors.email && (
+                  <p className="text-red-500 text-sm">{errors.email.message}</p>
+                )}
               </div>
 
               <div>
                 <label className="font-medium">Phone Number*</label>
-                <Input placeholder="Enter phone number" {...register("phone")} />
-                {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
+                <Input
+                  placeholder="Enter phone number"
+                  {...register("phone")}
+                />
+                {errors.phone && (
+                  <p className="text-red-500 text-sm">{errors.phone.message}</p>
+                )}
               </div>
+            </div>
+            <div>
+              <label className="font-medium">Gender*</label>
+              <select
+                {...register("gender")}
+                className="w-full border rounded px-3 py-2 bg-white text-gray-500"
+              >
+                <option value="MALE">Male</option>
+                <option value="FEMALE">Female</option>
+              </select>
+              {errors.gender && (
+                <p className="text-red-500 text-sm">{errors.gender.message}</p>
+              )}
             </div>
           </div>
 
@@ -130,36 +193,52 @@ const ResidentForm = () => {
 
             <div>
               <label className="font-medium">Contact Name*</label>
-              <Input placeholder="Enter emergency contact name" {...register("emergencyContactName")} />
-              {errors.emergencyContactName && <p className="text-red-500 text-sm">{errors.emergencyContactName.message}</p>}
+              <Input
+                placeholder="Enter emergency contact name"
+                {...register("emergencyContactName")}
+              />
+              {errors.emergencyContactName && (
+                <p className="text-red-500 text-sm">
+                  {errors.emergencyContactName.message}
+                </p>
+              )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="font-medium">Contact Phone*</label>
-                <Input placeholder="Enter contact phone" {...register("emergencyContactPhone")} />
-                {errors.emergencyContactPhone && <p className="text-red-500 text-sm">{errors.emergencyContactPhone.message}</p>}
+                <Input
+                  placeholder="Enter contact phone"
+                  {...register("emergencyContactPhone")}
+                />
+                {errors.emergencyContactPhone && (
+                  <p className="text-red-500 text-sm">
+                    {errors.emergencyContactPhone.message}
+                  </p>
+                )}
               </div>
 
               <div>
                 <label className="font-medium">Relationship*</label>
-                <Input placeholder="e.g. Parent, Sibling" {...register("relationship")} />
-                {errors.relationship && <p className="text-red-500 text-sm">{errors.relationship.message}</p>}
+                <Input
+                  placeholder="e.g. Parent, Sibling"
+                  {...register("relationship")}
+                />
+                {errors.relationship && (
+                  <p className="text-red-500 text-sm">
+                    {errors.relationship.message}
+                  </p>
+                )}
               </div>
             </div>
           </div>
 
-          <div>
-            <label className="font-medium">Gender*</label>
-            <select {...register("gender")} className="w-full border rounded px-3 py-2 bg-white text-gray-500">
-              <option value="MALE">Male</option>
-              <option value="FEMALE">Female</option>
-            </select>
-            {errors.gender && <p className="text-red-500 text-sm">{errors.gender.message}</p>}
-          </div>
-
           <CardFooter className="px-0 pb-0 pt-2">
-            <Button type="submit" className="w-full" disabled={AddResidentMutation.isPending}>
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={AddResidentMutation.isPending}
+            >
               {AddResidentMutation.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />

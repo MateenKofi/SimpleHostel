@@ -159,4 +159,5 @@ export type Hostel = {
   Rooms: Room [];
   Staffs?: Staff [];
   User?:Users [];
+  CalendarYear?: CalendarYearT[];
 };

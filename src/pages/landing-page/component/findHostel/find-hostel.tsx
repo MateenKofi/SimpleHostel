@@ -8,17 +8,20 @@ import { Hostel } from "@/helper/types/types";
 import CustomeRefetch from "@/components/CustomeRefetch";
 import ImageSlider from "@/components/ImageSlider";
 import { MapPin, MapPinHouse, Phone } from "lucide-react";
-import { Link } from "react-router-dom";
 import { useDebounce } from "@/helper/useDebounce";
 import FilterPanel from "@components/FilterPanel";
 import FindHostelSkeleton from "@components/loaders/HostelCardSkeleton";
 import { HostetFilterConfig } from "@/helper/hostel_filter_config";
+import { useSelectedCalendarYearStore } from "@/controllers/SelectedCalendarYear";
+import { useNavigate } from "react-router-dom";
 
 interface ActiveFilters {
   [key: string]: string[];
 }
 
 export function FindHostel() {
+  const navigate = useNavigate()
+  const setCalendarYear = useSelectedCalendarYearStore((state) => state.setCalendarYear);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedQuery = useDebounce(searchQuery, 500);
 
@@ -61,6 +64,18 @@ export function FindHostel() {
       [category]: prev[category].filter((item) => item !== value),
     }));
   };
+
+ const handleFindRoom = (hostel: Hostel) => {
+
+  setTimeout(() => {
+    if (hostel.CalendarYear) {
+      setCalendarYear(hostel.CalendarYear[0] || null); 
+    } else {
+      setCalendarYear(null);
+    }
+    navigate(`/find/${hostel.id}/room`);
+  }, 50);
+};
 
   if (isLoading) return <FindHostelSkeleton />;
   if (isError) return <CustomeRefetch refetch={refetch} />;
@@ -169,11 +184,12 @@ export function FindHostel() {
                           </p>
                         </div>
                       </a>
-                      <Link to={`/find/${hostel.id}/room`}>
-                        <button className="w-full mt-2 btn btn-black text-white">
+                        <button className="w-full mt-2 btn btn-black text-white"
+                        onClick={() => handleFindRoom(hostel)}
+                        >
                           Find Room
                         </button>
-                      </Link>
+
                     </div>
                   </div>
                 ))}
