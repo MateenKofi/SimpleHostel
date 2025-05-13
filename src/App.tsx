@@ -76,6 +76,7 @@ function App() {
             <Route path="room-assignment" element={<RoomAssignmentAndPayment />} />
             <Route path="resident-management" element={<ResidentManagement />} />
             <Route path="deptors-list" element={<DeptorsList />} />
+             <Route path="payment" element={<PaymentSummaryForm/>} />
             <Route path="top-up" element={<TopUpPaymentForm/>} />
             <Route path="visitor-management" element={<VisitorManagement />} />
             <Route path="staff-management" element={<StaffManagement />} />

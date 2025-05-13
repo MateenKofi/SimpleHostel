@@ -13,8 +13,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { handleSwalMutation } from "../swal/SwalMutationHelper";
+import { useNavigate } from "react-router-dom";
+import { useAddedResidentStore } from "@/controllers/AddedResident";
 
 const ResidentTable = () => {
+  const navigate = useNavigate();
+  const setResident = useAddedResidentStore((state) => state.setResident)
   const hostelId = localStorage.getItem("hostelId");
   const {
     data: resident,
@@ -51,7 +55,7 @@ const ResidentTable = () => {
       } catch (error) {
         if(axios.isAxiosError(error)){
           const errorMessage =
-            error?.response?.data?.message || "Failed to delete Resident";
+            error?.response?.data?.error || "An unexpected error occured";
           toast.error(errorMessage);
         }
         else{
@@ -62,7 +66,10 @@ const ResidentTable = () => {
   });
 
   const handleAssignRoom = (resident: Resident) => {
-    console.log("Assign room for", resident);
+    setResident(resident)
+    setTimeout(()=>{
+      navigate('/dashboard/room-assignment')
+    },50)
   };
 
   // Confirm and delete a room
@@ -117,7 +124,7 @@ const ResidentTable = () => {
                 {" "}
                 <button
                   title="Assign Room"
-                  className="text-blue-600 hover:text-blue-800"
+                  className="w-full p-1 bg-blue-600 text-white hover:bg-blue-800 flex gap-1 items-center rounded-md"
                   onClick={() => handleAssignRoom(row)}
                 >
                   <HousePlus className="w-4 h-4" />

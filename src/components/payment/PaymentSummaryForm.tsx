@@ -237,12 +237,12 @@ const PaymentSummaryForm = () => {
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div className="bg-white rounded-lg p-3 shadow-sm">
                       <div className="text-sm text-gray-500">Total Amount</div>
-                      <div className="text-xl font-bold text-gray-900">GH₵{totalAmount.toLocaleString()}</div>
+                      <div className="text-xl font-bold text-gray-900">GH₵{totalAmount?.toLocaleString()}</div>
                     </div>
                     <div className="bg-white rounded-lg p-3 shadow-sm">
                       <div className="text-sm text-gray-500">Balance Owed</div>
                       <div className="text-xl font-bold text-red-600">
-                        GH₵{(totalAmount - (resident?.amountPaid || 0)).toLocaleString()}
+                        GH₵{(totalAmount - (resident?.amountPaid || 0))?.toLocaleString()}
                       </div>
                     </div>
                   </div>
@@ -265,7 +265,7 @@ const PaymentSummaryForm = () => {
                           </FormControl>
                           <div className="space-y-1 leading-none">
                             <FormLabel>Make Partial Payment (70%)</FormLabel>
-                            <FormDescription>Pay GH₵{partialAmount.toLocaleString()} now, rest later.</FormDescription>
+                            <FormDescription>Pay GH₵{partialAmount?.toLocaleString()} now, rest later.</FormDescription>
                           </div>
                         </FormItem>
                       )}
@@ -302,7 +302,7 @@ const PaymentSummaryForm = () => {
                       ) : (
                         <>
                           <CreditCard className="mr-2 h-5 w-5" />
-                          Pay GH₵{form.getValues("paymentAmount").toLocaleString()}
+                          Pay GH₵{form.getValues("paymentAmount")?.toLocaleString()}
                         </>
                       )}
                     </Button>

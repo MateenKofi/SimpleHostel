@@ -39,7 +39,12 @@ const ResidentManagement = () => {
           </button>
         </div>
       </div>
+     <div className="p-4 border rounded-md shadow-md">
+       <p className="text-gray-500 text-sm mb-2">
+        All residents are listed below. You can edit or delete them as needed.
+      </p>
       <ResidentTable />
+     </div>
       <AddResidentModal onClose={closeAddResidentModal} />
     </div>
   );
