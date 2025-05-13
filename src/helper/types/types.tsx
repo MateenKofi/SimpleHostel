@@ -22,6 +22,8 @@ export type Resident = {
   room?: Omit<Room, "resident">;
 };
 
+export type Deptors = Resident
+
 export type Visitor = {
   id: string;
   name: string;

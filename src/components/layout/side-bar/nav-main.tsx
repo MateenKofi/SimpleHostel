@@ -56,7 +56,7 @@ export function NavMain() {
         icon: BookOpenCheck,
         path: "/dashboard/resident-management",
       },
-      { title: "Debtors List", icon: List, path: "/dashboard/debtors-list" },
+      { title: "Debtors List", icon: List, path: "/dashboard/deptors-list" },
       {
         title: "Visitor Management",
         icon: CalendarCheck,

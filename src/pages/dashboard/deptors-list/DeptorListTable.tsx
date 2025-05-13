@@ -1,98 +1,104 @@
 import React, { useState } from 'react';
-import DataTable from 'react-data-table-component';
-import { useModal } from '@/components/Modal';
-import DeptorPayment from './DeptorPayment';
+import CustomDataTable from '@/components/CustomDataTable';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { Deptors } from '@/helper/types/types';
 
 const DebtorListTable: React.FC = () => {
-  const { open: openDeptorsListPaymentModal, close: closeDeptorsListPamentModal } = useModal('deptor_payment_modal');
-  const [selectedDebtor, setSelectedDebtor] = useState<any>(null);
+  const [selectedDebtor, setSelectedDebtor] = useState<Deptors | null>(null);
+  const hostelId = localStorage.getItem('hostelId')
 
-  const handlePayment = (row: any) => {
-    // Handle payment logic here
-    openDeptorsListPaymentModal();
+  console.log(selectedDebtor)
+  const {
+    data: DeptorsList,
+    isLoading,
+    isError,
+    refetch: refetchDeptors,
+  } = useQuery({
+    queryKey: ["resident"],
+    queryFn: async () => {
+      const response = await axios.get(`/api/residents/hostel/${hostelId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      return response?.data?.data;
+    },
+    enabled: !!hostelId,
+  });
+
+  const Debtors = DeptorsList?.filter((debtor: Deptors) =>
+    debtor?.room && debtor?.roomPrice !== debtor?.amountPaid
+  );
+  const handlePayment = (row: Deptors) => {
     setSelectedDebtor(row)
   };
 
-  const columns = [
-    {
-      name: 'Full Name',
-      selector: (row: any) => row.fullName,
-      sortable: true,
-    },
-    {
-      name: 'Student ID',
-      selector: (row: any) => row.studentId,
-      sortable: true,
-    },
-    {
-      name: 'Phone',
-      selector: (row: any) => row.phone,
-      sortable: true,
-    },
-    {
-      name: 'Email',
-      selector: (row: any) => row.email,
-      sortable: true,
-    },
-    {
-      name: 'Original Amount',
-      selector: (row: any) => row.originalAmount,
-      sortable: true,
-    },
-    {
-      name: 'Partial Payment',
-      selector: (row: any) => row.partialPayment,
-      sortable: true,
-    },
-    {
-      name: 'Amount Owed',
-      selector: (row: any) => row.originalAmount - row.partialPayment,
-      sortable: true,
-    },
-    {
-      name: 'Action',
-      cell: (row: any) => (
-        <div className="flex gap-2">
-          <button className="px-4 py-2 bg-primary text-white rounded-md"
-          onClick={() => handlePayment(row)}
-          >
-            Pay
-          </button>
-        </div>
-      ),
-    },
-  ];
+ const columns = [
+  {
+    name: 'Full Name',
+    wrap:true,
+    selector: (row: Deptors) => row.name,
+    sortable: true,
+  },
+  {
+    name: 'Student ID',
+    selector: (row: Deptors) => row.studentId,
+    sortable: true,
+    wrap:true,
+  },
+  {
+    name: 'Phone',
+    selector: (row: Deptors) => row.phone,
+    sortable: true,
+    wrap:true,
+  },
+  {
+    name: 'Email',
+    selector: (row: Deptors) => row.email,
+    sortable: true,
+    wrap:true,
+  },
+  {
+    name: 'Room Price',
+    selector: (row: Deptors) => row.roomPrice ?? 0,
+    sortable: true,
+  },
+  {
+    name: 'Amount Paid',
+    selector: (row: Deptors) => row.amountPaid ?? 0,
+    sortable: true,
+  },
+  {
+    name:'Balance Owed',
+    selector: (row:Deptors) => row.balanceOwed ?? 0,
+    sortable:true,
+  },
+  {
+    name: 'Action',
+    cell: (row: Deptors) => (
+      <div className="flex gap-2">
+        <button className="px-4 py-2 bg-primary text-white rounded-md"
+        onClick={() => handlePayment(row)}
+        >
+          Pay
+        </button>
+      </div>
+    ),
+  },
+];
 
-  const data = [
-    {
-      id: 1,
-      fullName: 'John Doe',
-      studentId: 'S12345',
-      phone: '123-456-7890',
-      email: 'john.doe@example.com',
-      originalAmount: 1000,
-      partialPayment: 200,
-    },
-    {
-      id: 2,
-      fullName: 'Jane Smith',
-      studentId: 'S67890',
-      phone: '098-765-4321',
-      email: 'jane.smith@example.com',
-      originalAmount: 1500,
-      partialPayment: 500,
-    },
-    // Add more dummy data as needed
-  ];
 
   return (
     <div>
-      <DataTable
+      <CustomDataTable
+        title='Deptors List'
         columns={columns}
-        data={data}
-        pagination
+        data={Debtors}
+        refetch={refetchDeptors}
+        isError={isError}
+        isLoading={isLoading}
       />
-      <DeptorPayment debtor={selectedDebtor} onClose={closeDeptorsListPamentModal} />
     </div>
   );
 };
