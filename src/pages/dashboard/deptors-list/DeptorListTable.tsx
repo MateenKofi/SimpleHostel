@@ -3,8 +3,12 @@ import CustomDataTable from '@/components/CustomDataTable';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Deptors } from '@/helper/types/types';
+import { useAddedResidentStore } from '@/controllers/AddedResident';
+import { useNavigate } from 'react-router-dom';
 
 const DebtorListTable: React.FC = () => {
+  const navigate = useNavigate()
+  const setResidetn = useAddedResidentStore((state) => state.setResident)
   const [selectedDebtor, setSelectedDebtor] = useState<Deptors | null>(null);
   const hostelId = localStorage.getItem('hostelId')
 
@@ -31,7 +35,11 @@ const DebtorListTable: React.FC = () => {
     debtor?.room && debtor?.roomPrice !== debtor?.amountPaid
   );
   const handlePayment = (row: Deptors) => {
+    setResidetn(row)
     setSelectedDebtor(row)
+    setTimeout(()=>{
+     navigate('/dashboard/top-up') 
+    },50)
   };
 
  const columns = [

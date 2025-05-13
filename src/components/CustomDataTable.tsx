@@ -120,7 +120,7 @@ function CustomDataTable<T>({
               placeholder="Search..."
               value={searchText}
               onChange={handleSearchChange}
-              className="input input-bordered border rounded input-sm border-gray-300 "
+              className="input input-bordered border rounded input-sm border-gray-300 p-1 "
             />
           </div>
         )}
