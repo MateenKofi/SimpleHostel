@@ -64,7 +64,7 @@ export function NavUser() {
     logout()
   }
   return (
-    <SidebarMenu>
+    <SidebarMenu className="border-t-2">
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

@@ -27,11 +27,13 @@ const hostelId = localStorage.getItem('hostelId')
       );
       return response?.data?.data;
     },
-    enabled : !hostelId
+    enabled : !!hostelId
   });
 
+  const calendarYearId = data?.CalendarYear?.[0]?.id || null;
+  localStorage.setItem('calendarYear',calendarYearId)
   return (
-    <SidebarMenu>
+    <SidebarMenu className="border-b-2">
       <SidebarMenuItem>
         <DropdownMenu>
           <SidebarMenuButton

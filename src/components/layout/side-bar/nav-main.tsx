@@ -22,7 +22,8 @@ import {
   LucideProps,
   LogOut,
   Layout,
-  Hotel
+  Hotel,
+  Settings
 } from "lucide-react";
 import { useUserStore } from "@/controllers/UserStore";
 
@@ -73,6 +74,7 @@ export function NavMain() {
         path: "/dashboard/staff-management",
       },
       { title: "Transactions", icon: Wallet2, path: "/dashboard/transactions" },
+      { title:"Settings", icon:Settings, path:'/dashboard/settings'}
     ];
   } else if (userRole === "SUPER_ADMIN") {
     navItems = [

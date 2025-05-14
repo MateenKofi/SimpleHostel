@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import {  useMutation, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { Loader } from "lucide-react";
+import { useAddedResidentStore } from "@/controllers/AddedResident";
 
 type AddResidentModalProps = {
   onClose: () => void;
@@ -14,6 +15,7 @@ type ResidentForm = Omit<Resident, "paymentMethod">;
 
 const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
   const navigate = useNavigate();
+  const setResident = useAddedResidentStore((state) => state.setResident);
   const queryClient = useQueryClient();
   const {
     register,
@@ -21,6 +23,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
     formState: { errors },
     reset,
   } = useForm<ResidentForm>();
+  const calendarYearId = localStorage.getItem('calendarYear') || ''
 
   const AddResidentMutation = useMutation({
     mutationFn: async (data: ResidentForm) => {
@@ -35,7 +38,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
         relationship: data.relationship,
         gender: data.gender.toUpperCase(),
         hostelId: localStorage.getItem("hostelId") || "",
-        calendarYearId: "d37b0e5a-0f52-4488-a1ec-cfc00c19310a",
+        calendarYearId: calendarYearId,
       };
 
       const response = await axios.post(`/api/residents/add`, payload, {
@@ -48,17 +51,17 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
       return response.data;
     },
     onSuccess: (response) => {
-      const residentId = response?.data?.id;
-      if(residentId) {
-        localStorage.setItem("residentId", residentId);
-      }
+      const resident = response?.data?.data;
+       reset();
+        setResident(resident);
       toast.success("Room added successfully");
       queryClient.invalidateQueries({ queryKey: [" "] });
       reset();
       toast.success("Resident added successfully");
-      onClose();
+      setTimeout(()=>{
+onClose();
       navigate("/dashboard/room-assignment");
-
+      },50)
     },
     onError: (error: AxiosError<{ message?: string }>) => {
       const errorMessage =

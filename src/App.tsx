@@ -11,6 +11,7 @@ import About from './pages/landing-page/About'
 import Contact from './pages/landing-page/Contact'
 import FindHostel from './pages/landing-page/component/findHostel/page'
 import LoginForm from "./pages/Authentication/login/login-form";
+import Settings  from "./pages/dashboard/settings/Settings"
 
 // Axios base config
 axios.defaults.headers.common["Accept"] = "application/json";
@@ -89,6 +90,7 @@ function App() {
             <Route path="users" element={<Users />} />
             <Route path="view-room/:id" element={<ViewRoom />} />
             <Route path="hostel-management" element={<HostelManagement />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
         </Route>
 

@@ -1,0 +1,331 @@
+import { useState, useEffect } from "react"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { Building, Loader, Mail, MapPin, Phone, UserCheck } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { toast } from "react-hot-toast"
+import { useQuery, useMutation } from "@tanstack/react-query"
+import axios from 'axios'
+import UploadMultipleImages from "@/components/UploadMultipleImages"
+import CustomeRefetch from "@/components/CustomeRefetch"
+// import { images } from "@/helper/types/types"
+
+// Validation schema
+const formSchema = z.object({
+  name: z.string().min(2),
+  description: z.string().min(10),
+  address: z.string().min(5),
+  location: z.string().min(2),
+  manager: z.string().min(2),
+  email: z.string().email(),
+  phone: z.string().min(10),
+  ghCard: z.string().min(5),
+})
+
+const Settings = () => {
+  const [images, setImages] = useState<File[]>([])
+  const hostelId = localStorage.getItem('hostelId')
+
+  const {
+    data: hostelData,
+    isLoading,
+    isError,
+    refetch: refetchHostel,
+  } = useQuery({
+    queryKey: ['hostel'],
+    queryFn: async () => {
+      const resp = await axios.get(`/api/hostels/get/${hostelId}`, {
+        headers: {
+             Authorization: `Bearer ${localStorage.getItem('token')}` 
+            },
+      })
+      return resp.data.data
+    },
+  })
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+      description: '',
+      address: '',
+      location: '',
+      manager: '',
+      email: '',
+      phone: '',
+      ghCard: '',
+    },
+  })
+
+ useEffect(() => {
+  if (hostelData) {
+    form.reset(hostelData);
+
+    const hostelImages = hostelData.HostelImages?.map((hostelImage: { imageUrl: string }) => {
+      return hostelImage.imageUrl;
+    });
+
+    setImages(hostelImages || []);
+  }
+}, [hostelData, form]);
+
+const updateMutation = useMutation({
+  mutationFn: async (data: z.infer<typeof formSchema>) => {
+    const formData = new FormData();
+    formData.append("name", data.name.toUpperCase());
+    formData.append("description", data.description || "");
+    formData.append("address", data.address.toUpperCase());
+    formData.append("manager", data.manager.toUpperCase());
+    formData.append("email", data.email);
+    formData.append("phone", data.phone);
+    images.forEach((image) => {
+      formData.append("photo", image);
+    });
+
+    try {
+      const res = await axios.put(`/api/hostels/update/${hostelId}`, formData, {
+        headers: {
+          "Content-type": "multipart/form-data",
+        },
+      });
+      toast.success("Hostel Listed successfully");
+      return res.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response) {
+        const errorMessage =
+          error.response.data.error || "Failed to Update Hostel";
+        toast.error(errorMessage);
+      } else {
+        toast.error("Failed to Update Hostel");
+      }
+    }
+  },
+});
+
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    updateMutation.mutate(values);
+  }
+
+  if (isLoading) return <p>Loading settings...</p>
+  if (isError) return <CustomeRefetch refetch={refetchHostel}/>
+
+  return (
+    <div className="container mx-auto py-10 px-4 max-w-5xl">
+      <h1 className="text-3xl font-bold tracking-tight mb-6">Hostel Settings</h1>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          {/* General Info */}
+          <Card>
+            <CardHeader>
+              <CardTitle>General Information</CardTitle>
+              <CardDescription>Manage your hostel’s basic details.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hostel Name</FormLabel>
+                      <FormControl>
+                        <div className="flex items-center space-x-2">
+                          <Building className="h-4 w-4 text-muted-foreground" />
+                          <Input {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="location"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Location</FormLabel>
+                      <FormControl>
+                        <div className="flex items-center space-x-2">
+                          <MapPin className="h-4 w-4 text-muted-foreground" />
+                          <Input {...field} />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Textarea {...field} className="min-h-[120px]" />
+                    </FormControl>
+                    <FormDescription>Write a vivid portrait of your hostel.</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Address</FormLabel>
+                    <FormControl>
+                      <div className="flex space-x-2 items-center">
+                        <MapPin className="h-4 w-4 text-muted-foreground" />
+                        <Input {...field} />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="manager"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Manager Name</FormLabel>
+                    <FormControl>
+                      <div className="flex items-center space-x-2">
+                        <UserCheck className="h-4 w-4 text-muted-foreground" />
+                        <Input {...field} />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Contact Info */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Contact Information</CardTitle>
+              <CardDescription>How can folks reach you?</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Email</FormLabel>
+                      <FormControl>
+                        <div className="flex space-x-2 items-center">
+                          <Mail className="h-4 w-4 text-muted-foreground" />
+                          <Input {...field} type="email" />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone</FormLabel>
+                      <FormControl>
+                        <div className="flex space-x-2 items-center">
+                          <Phone className="h-4 w-4 text-muted-foreground" />
+                          <Input {...field} type="tel" />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="ghCard"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Ghana Card ID</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </CardContent>
+          </Card>
+
+          {/* Images */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Hostel Images</CardTitle>
+              <CardDescription>Max 3 pictures to paint your story.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {hostelData.HostelImages?.length < 1 ? (
+                <div className="text-center py-10 border rounded-lg">
+                  <p className="text-muted-foreground">No images yet.</p>
+                  <UploadMultipleImages images={images} setImages={setImages} />
+                </div>
+              ) : (
+                <>
+                <span className="text-sm text-muted-foreground">
+                      {3 - hostelData.HostelImages.length} slots left
+                    </span>
+                <UploadMultipleImages images={images} setImages={setImages} />
+                </>
+                
+              )}
+            </CardContent>
+          </Card>
+
+          <div className="flex justify-end">
+            <Button type="submit" size="lg"
+            disabled={updateMutation.isPending}
+            >
+                {updateMutation.isPending ? (
+                    <span>
+                        <Loader className="h-4 w-4 animate-spin"/>
+                        ...Saving changes
+                    </span>
+                ):'Save Changes'}
+                
+                </Button>
+          </div>
+        </form>
+      </Form>
+    </div>
+  )
+}
+export default Settings

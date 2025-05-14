@@ -53,7 +53,6 @@ const HostelListingForm = () => {
   const [images, setImages] = useState<File[]>([]);
   const [region, setRegion] = useState("");
   const [submitted, setSubmitted] = useState<boolean>(false);
-  console.log("images", images);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -98,7 +97,7 @@ const HostelListingForm = () => {
         setSubmitted(false);
         if (axios.isAxiosError(error) && error.response) {
           const errorMessage =
-            error.response.data.message || "Failed to List Hostel";
+            error.response.data.error || "Failed to List Hostel";
           toast.error(errorMessage);
         } else {
           toast.error("Failed to List Hostel");
