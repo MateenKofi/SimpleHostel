@@ -35,7 +35,7 @@ const RoomTable = () => {
   } = useQuery({
     queryKey: ["rooms"],
     queryFn: async () => {
-      const response = await axios.get(`/api/rooms/hostel/${hostelId}`, {
+      const response = await axios.get(`/api/rooms/get/hostel/${hostelId}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },

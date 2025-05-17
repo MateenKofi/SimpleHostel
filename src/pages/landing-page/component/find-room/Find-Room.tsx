@@ -43,11 +43,10 @@ const FindRoom = () => {
   } = useQuery({
     queryKey: ["rooms", hostelId],
     queryFn: async () => {
-      const response = await axios.get(`/api/rooms/hostel/${hostelId}`);
+      const response = await axios.get(`/api/rooms/get/hostel/${hostelId}`);
       return response.data?.data;
     },
   });
-  console.log("rooms", RoomData);
 
   const handleFilterChange = (category: string, value: string) => {
     setActiveFilters((prev) => {

@@ -67,7 +67,7 @@ const UploadMultipleImages: React.FC<UploadMultipleImagesProps> = ({
               className="relative"
             >
               <img
-                src={URL.createObjectURL(image)}
+                src={URL.createObjectURL  (image)}
                 alt={`Uploaded Preview ${index}`}
                 className="w-32 h-32 object-cover rounded-md"
               />

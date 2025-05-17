@@ -66,11 +66,7 @@ const ResidentForm = () => {
       formData.append("calendarYearId", calendarYear?.id || "");
 
       try {
-        const response = await axios.post(`/api/residents/add`, formData,{
-          headers:{
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          }
-        });
+        const response = await axios.post(`/api/residents/register`, formData);
         reset();
         setResident(response.data?.data);
         setTimeout(() => {

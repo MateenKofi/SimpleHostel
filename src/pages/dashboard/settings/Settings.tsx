@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { Building, Loader, Mail, MapPin, Phone, UserCheck } from "lucide-react"
+import { Building, Loader, Mail, MapPin, Phone } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -26,8 +26,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { toast } from "react-hot-toast"
 import { useQuery, useMutation } from "@tanstack/react-query"
 import axios from 'axios'
-import UploadMultipleImages from "@/components/UploadMultipleImages"
 import CustomeRefetch from "@/components/CustomeRefetch"
+import ImageUpload from "@/components/ImageUpload"
 // import { images } from "@/helper/types/types"
 
 // Validation schema
@@ -44,6 +44,7 @@ const formSchema = z.object({
 
 const Settings = () => {
   const [images, setImages] = useState<File[]>([])
+   const [defaultImages, setDefaultImages] = useState<string[]>([]);
   const hostelId = localStorage.getItem('hostelId')
 
   const {
@@ -85,9 +86,23 @@ const Settings = () => {
       return hostelImage.imageUrl;
     });
 
-    setImages(hostelImages || []);
+    setDefaultImages(hostelImages || []);
   }
 }, [hostelData, form]);
+
+
+  // Remove a default image from the UI
+  const handleRemoveDefaultImage = (index: number) => {
+    setDefaultImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+ const handleImagesChange = (newImages: File[]) => {
+    const imageArray = Array.from(newImages).map((image) => {
+      const file = new File([image], image.name, { type: image.type });
+      return file;
+    });
+    setImages(imageArray);
+  };
 
 const updateMutation = useMutation({
   mutationFn: async (data: z.infer<typeof formSchema>) => {
@@ -95,17 +110,22 @@ const updateMutation = useMutation({
     formData.append("name", data.name.toUpperCase());
     formData.append("description", data.description || "");
     formData.append("address", data.address.toUpperCase());
-    formData.append("manager", data.manager.toUpperCase());
     formData.append("email", data.email);
     formData.append("phone", data.phone);
     images.forEach((image) => {
-      formData.append("photo", image);
+      formData.append("photos", image);
     });
+
+    // Add default image URLs as a JSON blob
+   defaultImages.forEach((image) => {
+  formData.append("photos", image);
+});
 
     try {
       const res = await axios.put(`/api/hostels/update/${hostelId}`, formData, {
         headers: {
           "Content-type": "multipart/form-data",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
       toast.success("Hostel Listed successfully");
@@ -142,7 +162,7 @@ const updateMutation = useMutation({
               <CardDescription>Manage your hostel’s basic details.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 w-full gap-6">
                 <FormField
                   control={form.control}
                   name="name"
@@ -152,22 +172,6 @@ const updateMutation = useMutation({
                       <FormControl>
                         <div className="flex items-center space-x-2">
                           <Building className="h-4 w-4 text-muted-foreground" />
-                          <Input {...field} />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="location"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Location</FormLabel>
-                      <FormControl>
-                        <div className="flex items-center space-x-2">
-                          <MapPin className="h-4 w-4 text-muted-foreground" />
                           <Input {...field} />
                         </div>
                       </FormControl>
@@ -201,23 +205,6 @@ const updateMutation = useMutation({
                     <FormControl>
                       <div className="flex space-x-2 items-center">
                         <MapPin className="h-4 w-4 text-muted-foreground" />
-                        <Input {...field} />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="manager"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Manager Name</FormLabel>
-                    <FormControl>
-                      <div className="flex items-center space-x-2">
-                        <UserCheck className="h-4 w-4 text-muted-foreground" />
                         <Input {...field} />
                       </div>
                     </FormControl>
@@ -292,18 +279,22 @@ const updateMutation = useMutation({
               <CardTitle>Hostel Images</CardTitle>
               <CardDescription>Max 3 pictures to paint your story.</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="mx-10">
               {hostelData.HostelImages?.length < 1 ? (
                 <div className="text-center py-10 border rounded-lg">
                   <p className="text-muted-foreground">No images yet.</p>
-                  <UploadMultipleImages images={images} setImages={setImages} />
+                  <ImageUpload onImagesChange={handleImagesChange} />
                 </div>
               ) : (
                 <>
                 <span className="text-sm text-muted-foreground">
-                      {3 - hostelData.HostelImages.length} slots left
+                      {3 - hostelData?.HostelImages?.length} slots left
                     </span>
-                <UploadMultipleImages images={images} setImages={setImages} />
+                 <ImageUpload
+          onImagesChange={handleImagesChange}
+          defaultImages={defaultImages}
+          onRemoveDefaultImage={handleRemoveDefaultImage}
+        />
                 </>
                 
               )}
@@ -315,9 +306,9 @@ const updateMutation = useMutation({
             disabled={updateMutation.isPending}
             >
                 {updateMutation.isPending ? (
-                    <span>
+                    <span className="flex gap-2">
                         <Loader className="h-4 w-4 animate-spin"/>
-                        ...Saving changes
+                       <span> ...Saving changes</span>
                     </span>
                 ):'Save Changes'}
                 

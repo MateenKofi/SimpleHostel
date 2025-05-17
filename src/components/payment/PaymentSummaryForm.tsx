@@ -1,5 +1,3 @@
-"use client"
-
 import { z } from "zod"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
