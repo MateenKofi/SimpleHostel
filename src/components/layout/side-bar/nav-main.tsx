@@ -13,7 +13,6 @@ import {
   BookOpenCheck,
   List,
   CalendarCheck,
-  Wrench,
   Users,
   CheckSquare,
   Calendar,
@@ -63,11 +62,7 @@ export function NavMain() {
         icon: CalendarCheck,
         path: "/dashboard/visitor-management",
       },
-      {
-        title: "Maintenance & Tracking",
-        icon: Wrench,
-        path: "/dashboard/maintenance-and-tracking",
-      },
+      
       {
         title: "Staff Management",
         icon: Users,

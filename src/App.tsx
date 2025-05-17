@@ -26,7 +26,6 @@ const ResidentManagement = lazy(() => import("@pages/dashboard/resident-manageme
 const VisitorManagement = lazy(() => import("@pages/dashboard/visitor-management/VisitorManagement"));
 const StaffManagement = lazy(() => import("@pages/dashboard/staff-management/StaffManagement"));
 const AddStaff = lazy(() => import("@/components/staff/AddStaff"));
-const Maintenance = lazy(() => import("@/pages/dashboard/maintenance&Tracking/maintenace"));
 const DeptorsList = lazy(() => import("./pages/dashboard/deptors-list/DeptorsList"));
 const HostelListingForm = lazy(() => import("./pages/landing-page/component/hostel-listing/Hostel-Listing-Form"));
 const PaymentSummaryForm = lazy(() => import("./components/payment/PaymentSummaryForm"));
@@ -83,7 +82,6 @@ function App() {
             <Route path="staff-management" element={<StaffManagement />} />
             <Route path="staff-management/add" element={<AddStaff />} />
             <Route path="staff-management/edit/:id" element={<EditStaff />} />
-            <Route path="maintenance-and-tracking" element={<Maintenance />} />
             <Route path="approve-hostel" element={<ApproveHostel />} />
             <Route path="profile" element={<ProfileForm />} />
             <Route path="transactions" element={<Transactions />} />

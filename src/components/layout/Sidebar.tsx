@@ -7,13 +7,11 @@ import {
   BookOpenCheck,
   CalendarCheck,
   BedDouble,
-  Wrench,
-  BarChart3,
+    BarChart3,
   Users,
   List
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import path from 'path';
 
 const Sidebar = () => {
   const [isExpanded, setIsExpanded] = useState(true);
@@ -23,7 +21,6 @@ const Sidebar = () => {
     { title: 'Resident Management', icon: BookOpenCheck, path: '/dashboard/resident-management' },
     { title: 'Deptors List', icon: List, path: '/dashboard/deptors-list' },
     { title: 'Visitor Management', icon: CalendarCheck, path: '/dashboard/visitor-management' },
-    { title: 'Maintenance & Tracking', icon: Wrench, path: '/dashboard/maintenance-and-tracking' },
     { title: 'Reports & Analytics', icon: BarChart3, path: '/dashboard/report-and-analytics' },
     {
       title: 'Staff Management',

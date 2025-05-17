@@ -10,7 +10,6 @@ import {
   LayoutDashboard,
   List,
   Users,
-  Wrench,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -43,11 +42,6 @@ const Header = ({ user }: HeaderProps) => {
       title: "Visitor Management",
       icon: CalendarCheck,
       path: "/visitor-management",
-    },
-    {
-      title: "Maintenance & Tracking",
-      icon: Wrench,
-      path: "/maintenance-and-tracking",
     },
     {
       title: "Reports & Analytics",
