@@ -114,7 +114,7 @@ const FindRoom = () => {
     <div className="container mx-auto px-4 py-8">
       <button
         className="my-2 bg-primary text-white px-4 py-2 rounded-md flex items-center"
-        onClick={() => window.history.back()}
+        onClick={() => navigate(-1)}
       >
         <ArrowLeft className="w-6 h-6 mr-2" />
         Back

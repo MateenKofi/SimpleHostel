@@ -1,14 +1,10 @@
 import React from "react";
-import AddResidentModal from "../../../components/resident/AddResidentModal";
 import { Plus, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useModal } from "@components/Modal";
 import ResidentTable from "@/components/resident/ResidentTable";
 
 const ResidentManagement = () => {
   const navigate = useNavigate();
-  const { open: openAddResidentModal, close: closeAddResidentModal } =
-    useModal("add_resident_modal");
 
   return (
     <div className="p-6">
@@ -32,7 +28,7 @@ const ResidentManagement = () => {
           </button>
           <button
             className="px-4 py-2 bg-primary text-white rounded-md flex items-center gap-2"
-            onClick={openAddResidentModal}
+            onClick={()=> navigate("/dashboard/resident-management/add-resident")}
           >
             <Plus className="w-4 h-4" />
             <span>Resident</span>
@@ -45,7 +41,6 @@ const ResidentManagement = () => {
       </p>
       <ResidentTable />
      </div>
-      <AddResidentModal onClose={closeAddResidentModal} />
     </div>
   );
 };

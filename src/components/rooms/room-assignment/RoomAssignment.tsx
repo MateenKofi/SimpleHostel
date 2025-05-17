@@ -27,7 +27,7 @@ const RoomAssignment = () => {
   const { data:Rooms, isLoading, isError, refetch:refetchRooms } = useQuery({
     queryKey: ["rooms"],
     queryFn: async () => {
-      const response = await axios.get(`/api/rooms/hostel/${hostelId}`, axiosConfig);
+      const response = await axios.get(`/api/rooms/get/hostel/${hostelId}`, axiosConfig);
       return response.data.data;
     },
     enabled:!!hostelId

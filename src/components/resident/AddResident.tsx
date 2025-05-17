@@ -16,25 +16,21 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
-import { useSelectedRoomStore } from "@/controllers/SelectedRoomStore";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { ResidentFormSchema } from "@/schemas/ResidentForm.schema";
 import { z } from "zod";
-import { useSelectedCalendarYearStore } from "@/controllers/SelectedCalendarYear";
 import { useAddedResidentStore } from "@/controllers/AddedResident";
 
 
-type ResidentFormInputs = z.infer<typeof ResidentFormSchema>;
+type AddResidentInputs = z.infer<typeof ResidentFormSchema>;
 
-const ResidentForm = () => {
+const AddResident = () => {
   const setResident = useAddedResidentStore((state)=> state.setResident)
+ const calendarYearId = localStorage.getItem("calendarYear") || "";
+  const hostelId = localStorage.getItem("hostelId") || "";
+  const token = localStorage.getItem('token')
 
-  const calendarYear = useSelectedCalendarYearStore(
-    (state) => state.calendarYear
-  );
-
-  const { room } = useSelectedRoomStore();
   const navigate = useNavigate();
 
   const {
@@ -42,12 +38,12 @@ const ResidentForm = () => {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<ResidentFormInputs>({
+  } = useForm<AddResidentInputs>({
     resolver: zodResolver(ResidentFormSchema),
   });
 
   const AddResidentMutation = useMutation({
-    mutationFn: async (resident_data: ResidentFormInputs) => {
+    mutationFn: async (resident_data: AddResidentInputs) => {
       const formData = new FormData();
       formData.append("name", resident_data.name);
       formData.append("studentId", resident_data.studentId);
@@ -64,16 +60,19 @@ const ResidentForm = () => {
       );
       formData.append("relationship", resident_data.relationship);
       formData.append("gender", resident_data.gender.toUpperCase());
-      formData.append("hostelId", room?.hostelId || "");
-      formData.append("calendarYearId", calendarYear?.id || "");
-      formData.append("roomId", room?.id || "");
+      formData.append("hostelId", hostelId);
+      formData.append("calendarYearId", calendarYearId);
 
       try {
-        const response = await axios.post(`/api/residents/register`, formData);
+        const response = await axios.post(`/api/residents/add`, formData,{
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+        });
         reset();
         setResident(response.data?.data);
         setTimeout(() => {
-          navigate("/payment");
+         navigate("/dashboard/room-assignment");
         }, 50);
         return response.data;
       } catch (error) {
@@ -90,24 +89,18 @@ const ResidentForm = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<ResidentFormInputs> = (values) => {
-    if (room?.gender === values.gender) {
+  const onSubmit: SubmitHandler<AddResidentInputs> = (values) => {
       AddResidentMutation.mutate(values);
-    }
-    else {
-      toast.error("Gender does not match selected room gender");
-      toast.error("Make sure you select room according to your gender");
-    }
   };
 
   return (
-    <div className='py-4'>
+    <div className="flex flex-col items-start mx-auto border w-full justify-between py-4">
       <div className="w-full max-w-2xl mx-auto">
-              <button onClick={() => navigate(-1)} className="y-2 bg-primary text-white px-4 py-2 rounded-md flex items-center">
-               <ArrowLeft className="w-6 h-6 mr-2" />
-              Back
-              </button>
-            </div>
+        <button onClick={() => navigate(-1)} className="y-2 bg-primary text-white px-4 py-2 rounded-md flex items-center">
+         <ArrowLeft className="w-6 h-6 mr-2" />
+        Back
+        </button>
+      </div>
     <Card className="w-full max-w-2xl mx-auto shadow-lg my-4">
       <CardHeader className="space-y-1 bg-black text-white rounded-t-lg">
         <div className="flex items-center gap-2">
@@ -267,4 +260,4 @@ const ResidentForm = () => {
   );
 };
 
-export default ResidentForm;
+export default AddResident;

@@ -31,6 +31,7 @@ const HostelListingForm = lazy(() => import("./pages/landing-page/component/host
 const PaymentSummaryForm = lazy(() => import("./components/payment/PaymentSummaryForm"));
 const TopUpPaymentForm = lazy(() => import("./components/payment/TopUpPaymentForm"))
 const ResidentForm = lazy(() => import("./pages/landing-page/component/resident-forms/ResidentForm"));
+const AddResident = lazy(() => import("./components/resident/AddResident"));
 const ApproveHostel = lazy(() => import("./pages/dashboard/approvals/Approve-Hostel"));
 const ProfileForm = lazy(() => import("./pages/dashboard/profile/Profile-From"));
 const EditStaff = lazy(() => import("./components/staff/EditStaff"));
@@ -75,6 +76,7 @@ function App() {
             <Route path="calendar-year-management" element={<CalendarYear />} />
             <Route path="room-assignment" element={<RoomAssignmentAndPayment />} />
             <Route path="resident-management" element={<ResidentManagement />} />
+            <Route path="resident-management/add-resident" element={<AddResident />} />
             <Route path="deptors-list" element={<DeptorsList />} />
              <Route path="payment" element={<PaymentSummaryForm/>} />
             <Route path="top-up" element={<TopUpPaymentForm/>} />
