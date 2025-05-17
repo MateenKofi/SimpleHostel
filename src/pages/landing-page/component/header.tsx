@@ -17,7 +17,7 @@ export function Header() {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5, type: "spring", stiffness: 120 }}
-      className="grid place-items-center sticky top-0 z-50 w-full border-b bg-background backdrop-blur supports-[backdrop-filter]:bg-background/100 py-2 overflow-hidden"
+      className="grid place-items-center sticky top-0 z-50 w-full border-b bg-background dark:bg-zinc-900 backdrop-blur supports-[backdrop-filter]:bg-background/100 py-2 overflow-hidden"
     >
       <div className="container flex">
         <motion.div
@@ -38,7 +38,7 @@ export function Header() {
               ease: "easeInOut",
             }}
           />
-          <span className="text-2xl font-bold text-black">Fuse</span>
+          <span className="text-2xl font-bold text-black dark:text-white">Fuse</span>
         </motion.div>
 
         {/* Desktop Navigation */}
@@ -56,15 +56,17 @@ export function Header() {
             >
               <Link
                 to={item.path}
-                className={`text-sm text-black font-medium relative ${
-                  activeLink === item.id ? "text-red-500" : "hover:text-red-500"
-                }`}
+                className={`text-sm font-medium relative transition-colors
+                  ${activeLink === item.id
+                    ? "text-red-500 dark:text-red-400"
+                    : "text-black dark:text-white hover:text-red-500 dark:hover:text-red-400"
+                  }`}
                 onClick={() => setActiveLink(item.id)}
               >
                 {item.name}
                 {activeLink === item.id && (
                   <motion.span
-                    className="absolute -bottom-1 left-0 w-full h-0.5 bg-red-500"
+                    className="absolute -bottom-1 left-0 w-full h-0.5 bg-red-500 dark:bg-red-400"
                     layoutId="underline"
                   />
                 )}
@@ -110,7 +112,7 @@ export function Header() {
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[400px]">
+            <SheetContent side="right" className="w-[300px] sm:w-[400px] bg-background dark:bg-zinc-900">
               <nav className="flex flex-col space-y-4 mt-8">
                 {[
                   { name: "Home", path: "/" },
@@ -127,7 +129,7 @@ export function Header() {
                   >
                     <Link
                       to={item.path}
-                      className="text-sm font-medium text-black dark:secondary hover:text-red-500 dark:hover:text-red-400 transition-colors"
+                      className="text-sm font-medium text-black dark:text-white hover:text-red-500 dark:hover:text-red-400 transition-colors"
                     >
                       {item.name}
                     </Link>
