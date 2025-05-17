@@ -106,11 +106,12 @@ export function FindHostel() {
             handleFilterChange={handleFilterChange}
           />
         </div>
-        <div className="flex-1 space-y-6 bg-white p-4 shadow rounded">
+        <div className="flex-1 space-y-6 bg-white dark:bg-zinc-900 p-4 shadow rounded transition-colors">
           <Input
             placeholder="Search For Hostel By name"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            className="bg-white dark:bg-zinc-800 text-black dark:text-white border border-gray-300 dark:border-zinc-700"
           />
           <div className="flex flex-wrap gap-2">
             {Object.entries(activeFilters).map(([category, values]) =>
@@ -118,7 +119,7 @@ export function FindHostel() {
                 <Badge
                   key={`${category}-${value}`}
                   variant="secondary"
-                  className="flex items-center gap-1"
+                  className="flex items-center gap-1 bg-gray-100 dark:bg-zinc-800 text-black dark:text-white"
                 >
                   {value}
                   <button
@@ -133,19 +134,19 @@ export function FindHostel() {
           </div>
          
             {filteredHostels?.length === 0 ? (
-              <p className="text-center ">No hostels match your search.</p>
+              <p className="text-center text-black dark:text-white">No hostels match your search.</p>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {filteredHostels?.map((hostel: Hostel) => (
                   <div
                     key={hostel.id}
-                    className="border rounded-md overflow-hidden"
+                    className="border dark:border-zinc-700 rounded-md overflow-hidden bg-white dark:bg-zinc-800 transition-colors"
                   >
                     <ImageSlider
                       images={hostel?.HostelImages?.map((i) => i.imageUrl)}
                     />
                     <div className="p-4 space-y-2">
-                      <p className="font-bold text-black ">{hostel.name}</p>
+                      <p className="font-bold text-black dark:text-white">{hostel.name}</p>
                       <div className="flex gap-2">
                         <a
                           href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
@@ -153,39 +154,40 @@ export function FindHostel() {
                           )}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="flex-1 border rounded p-2 flex items-center gap-2 hover:bg-gray-100 transition"
+                          className="flex-1 border dark:border-zinc-700 rounded p-2 flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-zinc-700 transition-colors"
                         >
-                          <MapPinHouse className="w-4 h-4" />
+                          <MapPinHouse className="w-4 h-4 text-black dark:text-white" />
                           <div>
-                            <p className="text-xs font-bold truncate">
+                            <p className="text-xs font-bold truncate text-black dark:text-white">
                               {hostel.address}
                             </p>
-                            <p className="text-[10px] text-gray-500">
+                            <p className="text-[10px] text-gray-500 dark:text-gray-400">
                               click to search
                             </p>
                           </div>
                         </a>
 
-                        <div className="flex-1 border rounded p-2 flex items-center gap-2">
-                          <MapPin className="w-4 h-4" />
-                          <p className="text-sm">{hostel.location}</p>
+                        <div className="flex-1 border dark:border-zinc-700 rounded p-2 flex items-center gap-2">
+                          <MapPin className="w-4 h-4 text-black dark:text-white" />
+                          <p className="text-sm text-black dark:text-white">{hostel.location}</p>
                         </div>
                       </div>
 
                       <a
                         href={`tel:${hostel.phone}`}
-                        className="border rounded p-2 flex items-center gap-2"
+                        className="border dark:border-zinc-700 rounded p-2 flex items-center gap-2"
                       >
-                        <Phone className="w-4 h-4" />
+                        <Phone className="w-4 h-4 text-black dark:text-white" />
                         <div>
-                          <p className="text-xs font-bold">{hostel.phone}</p>
-                          <p className="text-[10px] text-gray-500">
+                          <p className="text-xs font-bold text-black dark:text-white">{hostel.phone}</p>
+                          <p className="text-[10px] text-gray-500 dark:text-gray-400">
                             click to call
                           </p>
                         </div>
                       </a>
-                        <button className="w-full mt-2 btn btn-black text-white"
-                        onClick={() => handleFindRoom(hostel)}
+                        <button
+                          className="w-full mt-2 btn btn-black bg-black dark:bg-white text-white dark:text-black hover:bg-gray-900 dark:hover:bg-gray-200 transition-colors"
+                          onClick={() => handleFindRoom(hostel)}
                         >
                           Find Room
                         </button>

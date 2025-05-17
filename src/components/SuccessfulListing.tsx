@@ -12,7 +12,7 @@ const SuccessfulListing = () => {
                 <p>Your Hostel Has been listed successfully.</p>
                 <p>
                   Your hostel will be Reviewed and approved within 24 hours{" "}
-                  <strong>Fuse</strong> will get in toruch.
+                  <strong>Fuse</strong> will get in touch.
                 </p>
                 <p>
                   Or you can call us at:{" "}
