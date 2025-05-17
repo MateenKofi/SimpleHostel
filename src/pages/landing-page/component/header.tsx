@@ -4,7 +4,6 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState } from "react";
-// import { ThemeToggle } from "./theme-toggle"
 import { useUserStore } from "@/controllers/UserStore";
 import UserSection from "./UserSection";
 
@@ -75,7 +74,6 @@ export function Header() {
         </nav>
 
         <div className="flex items-center ml-auto space-x-4">
-          {/* <ThemeToggle /> */}
           {user ? (
             <UserSection />
           ) : (
@@ -129,7 +127,7 @@ export function Header() {
                   >
                     <Link
                       to={item.path}
-                      className="text-sm font-medium text-black hover:text-red-500 transition-colors"
+                      className="text-sm font-medium text-black dark:secondary hover:text-red-500 dark:hover:text-red-400 transition-colors"
                     >
                       {item.name}
                     </Link>
