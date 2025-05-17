@@ -20,12 +20,15 @@ const UserSection = () => {
     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
+          <div className="flex flex-col items-center space-x-2 cursor-pointer">
           <Avatar className="h-10 w-10 cursor-pointer border-2 border-primary/10 hover:border-primary/30 transition-colors">
             <AvatarImage src={user?.imageUrl || 'AV'} alt="User avatar" />
             <AvatarFallback>
               <User className="h-5 w-5 text-muted-foreground" />
             </AvatarFallback>
           </Avatar>
+          <span className="text-xs lowercase">{user?.name || 'N/A'}</span>
+          </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-56">
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
