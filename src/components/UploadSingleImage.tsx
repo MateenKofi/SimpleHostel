@@ -1,19 +1,42 @@
-// ImageUploader.jsx
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { UploadCloud, XCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
 type UploadSingleImageProps = {
-  image: File | null;
-  setImage: (file: File | null) => void;
+  image: File | string | null;
+  setImage: (file: File | string | null) => void;
+  previewImage?: string;
 };
 
-const UploadSingleImage: React.FC<UploadSingleImageProps> = ({ image, setImage }) => {
+const UploadSingleImage: React.FC<UploadSingleImageProps> = ({
+  image,
+  setImage,
+  previewImage,
+}) => {
+  const [previewUrl, setPreviewUrl] = useState<string>("");
+
+  useEffect(() => {
+    // Priority: uploaded image > fallback preview image > empty
+    if (image instanceof File) {
+      const url = URL.createObjectURL(image);
+      setPreviewUrl(url);
+
+      return () => {
+        URL.revokeObjectURL(url);
+      };
+    } else if (typeof image === "string") {
+      setPreviewUrl(image);
+    } else if (previewImage) {
+      setPreviewUrl(previewImage);
+    } else {
+      setPreviewUrl("");
+    }
+  }, [image, previewImage]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files && e.target.files[0];
+    const file = e.target.files?.[0];
     if (file) {
-      setImage(file); // pass the File object to parent
+      setImage(file);
     }
   };
 
@@ -28,7 +51,7 @@ const UploadSingleImage: React.FC<UploadSingleImageProps> = ({ image, setImage }
       transition={{ duration: 0.4, ease: "easeOut" }}
       className="flex flex-col items-center justify-center gap-4 p-6 border-2 border-dashed border-gray-400 rounded-2xl"
     >
-      {image ? (
+      {previewUrl ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -36,22 +59,25 @@ const UploadSingleImage: React.FC<UploadSingleImageProps> = ({ image, setImage }
           className="flex flex-col items-center gap-4"
         >
           <img
-            src={URL.createObjectURL(image)}
+            src={previewUrl}
             alt="Uploaded Preview"
             className="w-48 h-48 object-cover rounded-xl shadow-lg"
           />
           <button
+            type="button"
             onClick={handleRemoveImage}
+            aria-label="Remove image"
             className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition"
           >
             <XCircle size={20} />
-            Remove
+            <span className="sr-only">Remove image</span>
           </button>
         </motion.div>
       ) : (
         <motion.label
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 300 }}
           className="flex flex-col items-center justify-center cursor-pointer"
         >
           <input
@@ -59,6 +85,7 @@ const UploadSingleImage: React.FC<UploadSingleImageProps> = ({ image, setImage }
             accept="image/*"
             onChange={handleImageChange}
             className="hidden"
+            aria-label="Upload logo"
           />
           <div className="flex flex-col items-center gap-3">
             <UploadCloud className="w-10 h-10 text-gray-500 animate-bounce" />

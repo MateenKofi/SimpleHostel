@@ -137,7 +137,7 @@ const FindRoom = () => {
             filteredRooms.map((room: Room) => (
               <Card
                 key={room.id}
-                className="w-full max-w-[300px] overflow-hidden border border-gray-200 dark:border-zinc-700 shadow-sm hover:shadow-md transition-shadow duration-200 bg-white dark:bg-zinc-900"
+                className=" w-full md:max-w-[300px] overflow-hidden border border-gray-200 dark:border-zinc-700 shadow-sm hover:shadow-md transition-shadow duration-200 bg-white dark:bg-zinc-900"
               >
                 <CardHeader className="p-2 border-b bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700">
                   <div className="flex justify-between items-center">
