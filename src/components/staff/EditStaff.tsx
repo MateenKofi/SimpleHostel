@@ -14,7 +14,7 @@ const EditStaff: React.FC = () => {
   const { id:staffId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [image, setImage] = useState<File | null>(null);
+  const [image, setImage] = useState<string | File | null>(null);
   const hostelId = localStorage.getItem("hostelId");
 
   const {

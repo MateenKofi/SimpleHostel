@@ -11,7 +11,7 @@ import UploadSingleImage from "../UploadSingleImage";
 
 const AddStaff: React.FC = () => {
   const navigate = useNavigate();
-  const [image, setImage] = useState<File | null>(null);
+  const [image, setImage] = useState<string | File | null>(null);
   const {
     register,
     handleSubmit,
