@@ -163,3 +163,35 @@ export type Hostel = {
   User?:Users [];
   CalendarYear?: CalendarYearT[];
 };
+
+export type Analytics = {
+  totalRevenue: number;
+  totalDebt: number;
+  debtPercentage: number;
+  expectedIncome: number;
+  totalPayments: number;
+  averagePaymentAmount: number;
+  occupancyRate: number;
+  totalRooms: number;
+  activeRooms: number;
+  occupiedRooms: number;
+  totalResidents: number;
+  totalDebtors: number;
+  debtorsPercentage: number;
+  averageDebtPerResident: number;
+  totalStaff: number;
+  averageRoomPrice: number;
+  currentYearStats: {
+    totalPayments: number;
+    expectedRevenue: number;
+    collectedRevenue: number;
+    outstandingAmount: number;
+  };
+  totalHostels: number;
+  verifiedHostels: number;
+  unverifiedHostels: number;
+  publishedHostels: number;
+  averageOccupancyRate: number;
+  systemWideDebtPercentage: number;
+  activeCalendarYears: number;
+};
