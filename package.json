@@ -52,6 +52,7 @@
     "react-day-picker": "8.10.1",
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.3.5",
+    "react-helmet-async": "^2.0.5",
     "react-hook-form": "^7.53.2",
     "react-hot-toast": "^2.4.1",
     "react-intersection-observer": "^9.16.0",
@@ -64,6 +65,7 @@
     "tailwindcss": "^3.4.14",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^11.0.3",
+    "vite-plugin-sitemap": "^0.8.2",
     "zod": "^3.24.1",
     "zustand": "^5.0.1"
   },

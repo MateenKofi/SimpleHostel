@@ -2,6 +2,7 @@ import { motion } from "framer-motion"
 import { useInView } from "react-intersection-observer"
 import { ContactSection } from "./component/contact-section"
 import { Users, Target, Clock, Award, ChevronRight } from "lucide-react"
+import SEOHelmet from "@/components/SEOHelmet"
 
 export default function AboutPage() {
   return (
@@ -290,6 +291,11 @@ function TeamSection() {
 
   return (
     <section ref={ref} className="py-16 md:py-24 bg-zinc-50 dark:bg-zinc-800">
+      <SEOHelmet
+        title="About Us - Fuse"
+        description="Learn more about Fuse and our mission to connect travelers with the best hostels."
+        keywords="about, Fuse, hostels, travel"
+      />
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

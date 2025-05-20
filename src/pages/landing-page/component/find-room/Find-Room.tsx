@@ -20,6 +20,7 @@ import { parseRange } from "@/utils/parseRange";
 import FindHostelSkeleton from "@components/loaders/HostelCardSkeleton";
 import ImageSlider from "@/components/ImageSlider";
 import CustomeRefetch from "@/components/CustomeRefetch";
+import SEOHelmet from "@/components/SEOHelmet";
 
 interface ActiveFilters {
   [key: string]: string[];
@@ -110,6 +111,11 @@ const FindRoom = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <SEOHelmet
+        title="Find Room - Fuse"
+        description="Search for the best rooms on Fuse."
+        keywords="find room, Fuse, student accommodation"
+      />
       <button
         className="my-2 bg-primary text-white px-4 py-2 rounded-md flex items-center"
         onClick={() => navigate(-1)}

@@ -10,10 +10,15 @@ import { HowItWorksSection } from "./component/HowItWorks"
 import { NewsletterSection } from "./component/NewsLetter"
 import { BlogSection } from "./component/BlogSection"
 import { PartnersSection } from "./component/PartnersSections"
-
+import SEOHelment from '@components/SEOHelmet'
 export default function LandingPage() {
   return (
     <div className="min-h-screen overflow-hidden">
+      <SEOHelment
+        title="Landing Page - Fuse"
+        description="Discover the best hostels with Fuse"
+        keywords="hostels, budget travel, Fuse"
+      />
       <main>
         <HeroCarousel />
         <div className="w-full grid place-items-center">

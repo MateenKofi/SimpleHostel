@@ -4,6 +4,7 @@ import Amenities from './amenities/Amenities';
 import StatusAlert from '@/components/StatusAlert';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import SEOHelmet from '@/components/SEOHelmet';
 
 interface TabData {
   id: string;
@@ -45,6 +46,11 @@ const RoomManagementTab = () => {
 
   return (
     <main className="flex-1 bg-gray-100 p-4 overflow-y-auto">
+      <SEOHelmet
+      title='Room Management - Fuse'
+      description='Manage your hostel rooms and amenities efficiently with our user-friendly interface.'
+      keywords='room management, hostel, amenities, Fuse'
+      />
       <StatusAlert status={hostel?.state as 'published' | 'unpublished'} />
       <div className="mb-6 w-full flex justify-between items-center">
         <div className='border p-3 rounded-md shadow-md w-full'>

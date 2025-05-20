@@ -1,10 +1,16 @@
 import React from "react";
 import DebtorListTable from "./DeptorListTable";
 import { Users } from "lucide-react";
+import SEOHelmet from "@/components/SEOHelmet";
 
 const DeptorsList = () => {
   return (
     <div className="p-6">
+      <SEOHelmet
+        title="Deptors List - Fuse"
+        description="Manage your hostel deptors efficiently with our user-friendly interface."
+        keywords="deptors list, hostel, Fuse"
+        />
       <div className="flex justify-between items-center mb-6 border p-2 rounded-md shadow-md">
         <div className="flex flex-col gap-2">
           <span className="flex gap-1">

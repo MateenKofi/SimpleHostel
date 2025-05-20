@@ -1,11 +1,17 @@
 import UserTable from '@/components/UserTable'
 import { useModal } from '@/components/Modal'
 import AddUser from '@/components/AddUser';
+import SEOHelmet from '@/components/SEOHelmet';
 
 const Users = () => {
   const { open: openUserModal, close: closeUserModal } = useModal('add_user');
   return (
     <div className='p-6'>
+      <SEOHelmet
+        title='User Management - Fuse'
+        description='Manage users effectively with Fuse.'
+        keywords='user management, Fuse, hostel'
+      />
         <div className='flex  justify-between items-center  p-6 border shadow-md rounded-lg bg-white mb-3'>
            <div> <h1 className='text-2xl font-bold'>User Managment</h1>
             <p className='text-gray-500'>Manage hostels here</p>

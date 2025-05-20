@@ -21,6 +21,7 @@ import axios from "axios";
 import { RegionDropdown } from "react-country-region-selector";
 import SuccessfulListing from "@/components/SuccessfulListing";
 import UploadMultipleImages from "@/components/UploadMultipleImages";
+import SEOHelmet from "@/components/SEOHelmet";
 
 const formSchema = z.object({
   hostelImage: z.string().optional(),
@@ -112,6 +113,11 @@ const HostelListingForm = () => {
 
   return (
     <div className="min-h-screen w-full p-4 md:p-8 flex justify-center items-center">
+      <SEOHelmet
+        title="List Your Hostel - Fuse"
+        description="List your hostel on Fuse and reach more students."
+        keywords="list hostel, Fuse, student accommodation"
+      />
       <div className="max-w-4xl w-full bg-white shadow-lg rounded-md overflow-hidden">
         <div className="p-4 md:p-6 overflow-y-auto max-h-[80vh] md:max-h-none">
           <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">

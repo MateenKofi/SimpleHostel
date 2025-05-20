@@ -23,6 +23,7 @@ import { ResidentFormSchema } from "@/schemas/ResidentForm.schema";
 import { z } from "zod";
 import { useSelectedCalendarYearStore } from "@/controllers/SelectedCalendarYear";
 import { useAddedResidentStore } from "@/controllers/AddedResident";
+import SEOHelmet from "@/components/SEOHelmet";
 
 
 type ResidentFormInputs = z.infer<typeof ResidentFormSchema>;
@@ -102,6 +103,11 @@ const ResidentForm = () => {
 
   return (
     <div className='py-4'>
+      <SEOHelmet
+        title="Add Resident - Fuse"
+        description="Add a new resident to the system."
+        keywords="add resident, Fuse, hostel" 
+      />
       <div className="w-full max-w-2xl mx-auto">
               <button onClick={() => navigate(-1)} className="y-2 bg-primary text-white px-4 py-2 rounded-md flex items-center">
                <ArrowLeft className="w-6 h-6 mr-2" />

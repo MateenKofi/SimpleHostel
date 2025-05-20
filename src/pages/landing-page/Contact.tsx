@@ -6,6 +6,7 @@ import { Button } from "@components/ui/button";
 import { Input } from "@components/ui/input";
 import { Textarea } from "@components/ui/textarea";
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle,Facebook,Twitter,Linkedin,Instagram } from "lucide-react";
+import SEOHelmet from "@/components/SEOHelmet";
 
 export default function ContactPage() {
   return (
@@ -419,6 +420,11 @@ function FAQSection() {
   return (
     <section ref={ref} className="py-16 md:py-24 bg-white dark:bg-zinc-900">
       <div className="container">
+        <SEOHelmet
+          title="Contact Us - Fuse"
+          description="Get in touch with Fuse for any inquiries or support."
+          keywords="contact, support, Fuse"
+        />
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}

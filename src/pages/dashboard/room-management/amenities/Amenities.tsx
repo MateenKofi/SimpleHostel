@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { useState } from "react";
 import CustomDataTable from "@/components/CustomDataTable";
 import { Amenity } from "@/helper/types/types";
+import SEOHelmet from "@/components/SEOHelmet";
 
 const Amenities = () => {
   const queryClient = useQueryClient();
@@ -127,6 +128,11 @@ const Amenities = () => {
 
   return (
     <div className="p-6">
+      <SEOHelmet
+      title="Amenities Management - Fuse"
+      description="Manage your hostel amenities efficiently with our user-friendly interface."
+      keywords="amenities management, hostel, Fuse"
+      />
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-2">
           <Building className="w-6 h-6" />

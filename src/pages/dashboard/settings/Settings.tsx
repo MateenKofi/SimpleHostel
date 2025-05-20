@@ -29,6 +29,7 @@ import axios from "axios";
 import CustomeRefetch from "@/components/CustomeRefetch";
 import ImageUpload from "@/components/ImageUpload";
 import UploadSingleImage from "@/components/UploadSingleImage";
+import SEOHelmet from "@/components/SEOHelmet";
 // import { images } from "@/helper/types/types"
 
 // Validation schema
@@ -158,6 +159,11 @@ const Settings = () => {
 
   return (
     <div className="container mx-auto py-10 px-4 max-w-5xl">
+      <SEOHelmet
+      title="Settings - Fuse"
+      description="Manage your hostel settings and information."
+      keywords="settings, hostel, information, management"
+      />
       <h1 className="text-3xl font-bold tracking-tight mb-6">
         Hostel Settings
       </h1>

@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import LogoLoader from "@/components/loaders/logoLoader";
 import { useModal } from "@components/Modal";
 import ChangePassword from "@/components/chnagepassword/ChangePassword";
+import SEOHelmet from "@/components/SEOHelmet";
 
 interface PersonalInfoFormValues {
   name: string;
@@ -129,6 +130,11 @@ const ProfileForm = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 md:p-6 lg:p-8">
+      <SEOHelmet
+      title="Profile - Fuse"
+      description="Manage your profile settings and personal information."
+      keywords="profile, settings, Fuse"
+      />
       <div className="mx-auto max-w-3xl space-y-6">
         <div className="border shadow-md rounded-md p-3">
           <h1 className="text-3xl font-bold">Account Settings</h1>

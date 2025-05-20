@@ -9,6 +9,7 @@ import HistoricalYearsList from "@/components/HistoricalYearsList";
 import { CalendarYearT } from "@/helper/types/types";
 import HistoricalYearsSkeleton from "@/components/loaders/HIstoricalYearsSkeleton";
 import CurrentYearSkeleton from "@/components/loaders/CurrentYearSkeleton";
+import SEOHelmet from "@/components/SEOHelmet";
 
 interface FormValues {
   yearName: string;
@@ -90,6 +91,11 @@ const CalendarYear = () => {
 
   return (
     <div className="container mx-auto py-8 px-4">
+      <SEOHelmet
+      title="Calendar Year Management - Fuse"
+      description="Manage your calendar years efficiently with our user-friendly interface. Add, view, and manage historical years seamlessly."
+      keywords="calendar year management, academic year, Fuse"
+      />
       <AddCalendarYearForm
         onSubmit={onSubmit}
         isPending={AddCalendarYearMutation.isPending}

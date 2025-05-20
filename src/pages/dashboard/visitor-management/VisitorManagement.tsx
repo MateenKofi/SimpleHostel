@@ -4,6 +4,7 @@ import { useModal } from '../../../components/Modal'
 import AddVisitorModal from '../../../components/visitor/AddVisitorModal'
 import ActiveVisitor from '@/components/visitor/ActiveVisitor'
 import VisitorHistory from '@/components/visitor/VisitorHistory'
+import SEOHelmet from '@/components/SEOHelmet'
 
 
 type TabData = {
@@ -34,6 +35,11 @@ const VisitorManagement = () => {
  
   return (
     <div className="p-6">
+      <SEOHelmet
+        title="Visitor Management - Fuse"
+        description="Manage visitors effectively with Fuse."
+        keywords="visitor management, Fuse, hostel"
+      />
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-2">
           <Users className="w-6 h-6" />

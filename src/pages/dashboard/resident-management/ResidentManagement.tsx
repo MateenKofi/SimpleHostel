@@ -2,12 +2,18 @@ import React from "react";
 import { Plus, Users } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ResidentTable from "@/components/resident/ResidentTable";
+import SEOHelmet from "@/components/SEOHelmet";
 
 const ResidentManagement = () => {
   const navigate = useNavigate();
 
   return (
     <div className="p-6">
+      <SEOHelmet
+        title="Resident Management - Fuse"
+        description="Manage your hostel residents efficiently with our user-friendly interface."
+        keywords="resident management, hostel, Fuse"
+        />
       <div className="flex justify-between items-center mb-6 border p-2 rounded-md shadow-md">
         <div className="flex flex-col gap-2">
           <span className="flex gap-1">
