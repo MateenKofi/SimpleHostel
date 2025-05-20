@@ -21,7 +21,7 @@ const navigate = useNavigate();
           </button>
         </div>
       </div>
-      <div className="bg-white rounded-lg shadow-sm p-4">
+      <div className="bg-white border rounded-lg shadow-sm p-4">
        <StaffTable/>
       </div>
     </div>

@@ -85,9 +85,9 @@ const AddStaff: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-screen flex justify-cente">
-      <div className="w-[90%] ">
-        <div className="flex items-center justify-between mb-6 mt-6 bg-white p-4 rounded-lg">
+    <div className="w-full  flex justify-cente">
+      <div className="w-[90%] mx-auto">
+        <div className="flex items-center justify-between my6 bg-white p-4 rounded-lg">
           <h1 className="text-2xl font-bold">Add Staff</h1>
           <button
             onClick={() => navigate(-1)}
@@ -359,20 +359,25 @@ const AddStaff: React.FC = () => {
                 <label className="block text-sm font-medium mb-1">
                   Staff Type
                 </label>
-                <input
-                  {...register("role", { required: "Staff type is required" })}
-                  type="text"
-                  className="w-full p-2 border rounded-md"
-                  placeholder="Enter Staff Type"
-                />
+               <select
+                {...register("staffType", {
+                  required: "Staff type is required",
+                })}
+                className="w-full p-2 border rounded-md"
+              >
+                <option value="">-- Select Staff Type -- </option>
+                <option value="ADMIN">Admin</option>
+                <option value="OTHERS">Others</option>
+                </select>
                 {errors.staffType && (
                   <span className="text-red-500 text-sm">
                     {errors.staffType.message?.toString()}
                   </span>
                 )}
+                
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Block</label>
+                <label className="block text-sm font-medium mb-1">Block(optional)</label>
                 <input
                   {...register("block", { required: "Block is required" })}
                   type="text"
