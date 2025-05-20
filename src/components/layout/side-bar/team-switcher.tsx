@@ -12,7 +12,13 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 export function TeamSwitcher() {
+  const user_role = localStorage.getItem('role')
+  if (user_role !== 'ADMIN') return null;
+  
 const hostelId = localStorage.getItem('hostelId')
+
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { data } = useQuery({
     queryKey: ["hostel"],
     queryFn: async () => {
