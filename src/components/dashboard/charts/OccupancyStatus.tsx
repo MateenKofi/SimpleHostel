@@ -6,8 +6,8 @@ import { Analytics } from '@/helper/types/types'
 type analyticsData = Analytics
 const OccupancyStatus = ({ analyticsData }: { analyticsData: analyticsData }) => {
   const occupancyData = [
-    { name: "Occupied", value: analyticsData?.occupiedRooms },
-    { name: "Vacant", value: analyticsData?.activeRooms - analyticsData?.occupiedRooms },
+    { name: "Occupied", value: analyticsData?.occupiedRooms || 0 },
+    { name: "Vacant", value: analyticsData?.activeRooms - analyticsData?.occupiedRooms || 0 },
   ]
 
   return (
@@ -30,7 +30,7 @@ const OccupancyStatus = ({ analyticsData }: { analyticsData: analyticsData }) =>
                         dataKey="value"
                         label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                       >
-                        {occupancyData.map((entry, index) => (
+                        {occupancyData.map((_, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
                       </Pie>

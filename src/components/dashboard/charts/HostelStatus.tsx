@@ -43,7 +43,7 @@ const HostelStatus = ({ analyticsData }: { analyticsData: analyticsData }) => {
                   `${name}: ${(percent * 100).toFixed(0)}%`
                 }
               >
-                {hostelStatusData.map((entry, index) => (
+                {hostelStatusData.map((_, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={COLORS[index % COLORS.length]}

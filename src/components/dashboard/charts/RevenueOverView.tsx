@@ -10,9 +10,9 @@ type analyticsData = Analytics
         const revenueBarData = [
   {
     name: "Revenue",
-    Collected: analyticsData?.currentYearStats.collectedRevenue,
-    Expected: analyticsData?.currentYearStats.expectedRevenue,
-    Outstanding: analyticsData?.currentYearStats.outstandingAmount,
+    Collected: analyticsData?.currentYearStats?.collectedRevenue,
+    Expected: analyticsData?.currentYearStats?.expectedRevenue,
+    Outstanding: analyticsData?.currentYearStats?.outstandingAmount,
   },
 ]
   return (
@@ -38,19 +38,19 @@ type analyticsData = Analytics
                   <div>
                     <div className="text-sm font-medium text-gray-500">Collected</div>
                     <div className="text-lg font-bold">
-                      GH₵{analyticsData && analyticsData.currentYearStats.collectedRevenue.toFixed(2)}
+                      GH₵{(analyticsData?.currentYearStats?.collectedRevenue ?? 0).toFixed(2)}
                     </div>
                   </div>
                   <div>
                     <div className="text-sm font-medium text-gray-500">Expected</div>
                     <div className="text-lg font-bold">
-                      GH₵{analyticsData && analyticsData.currentYearStats.expectedRevenue.toFixed(2)}
+                      GH₵{(analyticsData?.currentYearStats?.expectedRevenue ?? 0).toFixed(2)}
                     </div>
                   </div>
                   <div>
                     <div className="text-sm font-medium text-gray-500">Outstanding</div>
                     <div className="text-lg font-bold">
-                      GH₵{analyticsData && analyticsData.currentYearStats.outstandingAmount.toFixed(2)}
+                      GH₵{(analyticsData?.currentYearStats?.outstandingAmount ?? 0).toFixed(2)}
                     </div>
                   </div>
                 </div>

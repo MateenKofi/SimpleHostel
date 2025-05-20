@@ -27,9 +27,7 @@ const SystemOverviewTable = ({ analyticsData }: { analyticsData: analyticsData }
                         Average Room Price
                       </TableCell>
                       <TableCell>
-                        GH₵
-                        {analyticsData &&
-                          analyticsData.averageRoomPrice.toFixed(2)}
+                        GH₵{analyticsData ? analyticsData.averageRoomPrice?.toFixed(2) : 'N/A'}
                       </TableCell>
                       <TableCell>Average price across all rooms</TableCell>
                     </TableRow>
@@ -38,8 +36,7 @@ const SystemOverviewTable = ({ analyticsData }: { analyticsData: analyticsData }
                         System-wide Debt Percentage
                       </TableCell>
                       <TableCell>
-                        {analyticsData &&
-                          analyticsData.systemWideDebtPercentage.toFixed(2)}
+                        {analyticsData ? analyticsData.systemWideDebtPercentage?.toFixed(2) : 'N/A'}
                         %
                       </TableCell>
                       <TableCell>
@@ -51,8 +48,7 @@ const SystemOverviewTable = ({ analyticsData }: { analyticsData: analyticsData }
                         Average Occupancy Rate
                       </TableCell>
                       <TableCell>
-                        {analyticsData &&
-                          analyticsData.averageOccupancyRate.toFixed(2)}
+                        {analyticsData ? analyticsData.averageOccupancyRate?.toFixed(2) : 'N/A'}
                         %
                       </TableCell>
                       <TableCell>
@@ -64,7 +60,7 @@ const SystemOverviewTable = ({ analyticsData }: { analyticsData: analyticsData }
                         Active Calendar Years
                       </TableCell>
                       <TableCell>
-                        {analyticsData && analyticsData.activeCalendarYears}
+                        {analyticsData ? analyticsData.activeCalendarYears : 'N/A'}
                       </TableCell>
                       <TableCell>
                         Number of active calendar years in the system
@@ -75,9 +71,7 @@ const SystemOverviewTable = ({ analyticsData }: { analyticsData: analyticsData }
                         Average Debt Per Resident
                       </TableCell>
                       <TableCell>
-                        GH₵
-                        {analyticsData &&
-                          analyticsData.averageDebtPerResident.toFixed(2)}
+                        GH₵{analyticsData ? analyticsData.averageDebtPerResident?.toFixed(2) : 'N/A'}
                       </TableCell>
                       <TableCell>
                         Average debt amount per resident with debt
