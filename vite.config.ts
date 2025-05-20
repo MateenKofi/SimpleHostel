@@ -2,12 +2,16 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path, { dirname } from 'path';
 import { fileURLToPath } from 'url';
+import Sitemap from 'vite-plugin-sitemap'
 
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+     Sitemap({ hostname: 'https://simple-hostel.vercel.app' }),
+  ],
   server: {
     port: 2020,        // Change to your desired port
   },

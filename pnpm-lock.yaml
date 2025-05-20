@@ -173,9 +173,6 @@ importers:
       uuid:
         specifier: ^11.0.3
         version: 11.0.3
-      vite-plugin-sitemap:
-        specifier: ^0.8.2
-        version: 0.8.2
       zod:
         specifier: ^3.24.1
         version: 3.24.1
@@ -228,6 +225,9 @@ importers:
       vite:
         specifier: ^5.4.11
         version: 5.4.11(@types/node@22.10.2)
+      vite-plugin-sitemap:
+        specifier: ^0.8.2
+        version: 0.8.2
 
 packages:
 
