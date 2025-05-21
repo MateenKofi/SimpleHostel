@@ -89,7 +89,9 @@ const AdminTransactions = () => {
           (methodFilter === "none" && transaction.method === null) ||
           transaction.method?.toLowerCase() === methodFilter.toLowerCase()
 
-        return searchMatch && statusMatch && methodMatch
+        const dateMatch = transaction.date.toLowerCase().includes(searchTerm.toLowerCase())
+
+        return searchMatch && statusMatch && methodMatch && dateMatch
       })
       .sort((a:any, b:any) => {
         const key = sortConfig.key
