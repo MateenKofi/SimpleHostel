@@ -195,3 +195,18 @@ export type Analytics = {
   systemWideDebtPercentage: number;
   activeCalendarYears: number;
 };
+
+export type Transaction = {
+  id: string;
+  amount: number;
+  date: string;
+  residentId: string;
+  status: "PENDING" | "CONFIRMED" | "FAILED" | "success";
+  roomId: string;
+  reference: string;
+  method: string | null;
+  updatedAt: string;
+  delFlag: boolean;
+  calendarYearId: string;
+  historicalResidentId: string | null;
+}
