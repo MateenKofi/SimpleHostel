@@ -9,7 +9,7 @@ export default function AboutPage() {
     <div className="min-h-screen">
       <main>
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-b from-zinc-900 to-zinc-800 text-white py-20 md:py-28">
+        <section className="relative py-20 text-white bg-gradient-to-b from-zinc-900 to-zinc-800 md:py-28">
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center opacity-20"></div>
           </div>
@@ -24,7 +24,7 @@ export default function AboutPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
+                className="mb-6 text-4xl font-bold md:text-5xl lg:text-6xl"
               >
                 About <span className="text-red-500">Fuse</span>
               </motion.h1>
@@ -69,15 +69,15 @@ function StorySection() {
   })
 
   return (
-    <section ref={ref} className="py-16 md:py-24 bg-white dark:bg-zinc-900">
+    <section ref={ref} className="py-16 bg-white md:py-24 dark:bg-zinc-900">
       <div className="container">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="grid items-center gap-12 md:grid-cols-2">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
             transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Story</h2>
+            <h2 className="mb-6 text-3xl font-bold md:text-4xl">Our Story</h2>
             <div className="space-y-4 text-zinc-700 dark:text-zinc-300">
               <p>
                 Fuse began with a simple idea: make hostel booking as easy as possible for travelers around the
@@ -105,7 +105,7 @@ function StorySection() {
             <img
               src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=800&q=80"
               alt="Travelers at a hostel"
-              className="absolute inset-0 w-full h-full object-cover"
+              className="absolute inset-0 object-cover w-full h-full"
             />
           </motion.div>
         </div>
@@ -122,22 +122,22 @@ function MissionSection() {
 
   const values = [
     {
-      icon: <Users className="h-8 w-8 text-red-500" />,
+      icon: <Users className="w-8 h-8 text-red-500" />,
       title: "Community",
       description: "We believe travel is better when shared with others.",
     },
     {
-      icon: <Target className="h-8 w-8 text-red-500" />,
+      icon: <Target className="w-8 h-8 text-red-500" />,
       title: "Accessibility",
       description: "Making travel possible for everyone, regardless of budget.",
     },
     {
-      icon: <Clock className="h-8 w-8 text-red-500" />,
+      icon: <Clock className="w-8 h-8 text-red-500" />,
       title: "Reliability",
       description: "Providing accurate information and seamless bookings.",
     },
     {
-      icon: <Award className="h-8 w-8 text-red-500" />,
+      icon: <Award className="w-8 h-8 text-red-500" />,
       title: "Quality",
       description: "Curating the best hostels that meet our high standards.",
     },
@@ -150,26 +150,26 @@ function MissionSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-16"
+          className="max-w-3xl mx-auto mb-16 text-center"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Mission & Values</h2>
+          <h2 className="mb-6 text-3xl font-bold md:text-4xl">Our Mission & Values</h2>
           <p className="text-lg text-zinc-700 dark:text-zinc-300">
             We're on a mission to make hostel travel accessible to everyone. Our platform is built on core values that
             guide everything we do.
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {values.map((value, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="bg-white dark:bg-zinc-900 p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+              className="p-6 transition-shadow duration-300 bg-white rounded-lg shadow-md dark:bg-zinc-900 hover:shadow-lg"
             >
               <div className="mb-4">{value.icon}</div>
-              <h3 className="text-xl font-semibold mb-2">{value.title}</h3>
+              <h3 className="mb-2 text-xl font-semibold">{value.title}</h3>
               <p className="text-zinc-600 dark:text-zinc-400">{value.description}</p>
             </motion.div>
           ))}
@@ -214,15 +214,15 @@ function TimelineSection() {
   ]
 
   return (
-    <section ref={ref} className="py-16 md:py-24 bg-white dark:bg-zinc-900">
+    <section ref={ref} className="py-16 bg-white md:py-24 dark:bg-zinc-900">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-16"
+          className="max-w-3xl mx-auto mb-16 text-center"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Journey</h2>
+          <h2 className="mb-6 text-3xl font-bold md:text-4xl">Our Journey</h2>
           <p className="text-lg text-zinc-700 dark:text-zinc-300">
             From humble beginnings to a global platform, here's how Fuse has evolved over the years.
           </p>
@@ -230,7 +230,7 @@ function TimelineSection() {
 
         <div className="relative">
           {/* Timeline line */}
-          <div className="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-red-200 dark:bg-red-900"></div>
+          <div className="absolute w-1 h-full transform -translate-x-1/2 bg-red-200 left-1/2 dark:bg-red-900"></div>
 
           <div className="space-y-12">
             {timelineEvents.map((event, index) => (
@@ -242,15 +242,15 @@ function TimelineSection() {
                 className={`relative flex items-center ${index % 2 === 0 ? "flex-row" : "flex-row-reverse"}`}
               >
                 <div className="w-1/2"></div>
-                <div className="absolute left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full bg-red-500 flex items-center justify-center z-10">
-                  <span className="text-white font-bold">{event.year}</span>
+                <div className="absolute z-10 flex items-center justify-center w-12 h-12 transform -translate-x-1/2 bg-red-500 rounded-full left-1/2">
+                  <span className="font-bold text-white">{event.year}</span>
                 </div>
                 <div
                   className={`w-1/2 bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-md border ${
                     index % 2 === 0 ? "text-right ml-8" : "text-left mr-8"
                   }`}
                 >
-                  <h3 className="text-xl font-semibold mb-2">{event.title}</h3>
+                  <h3 className="mb-2 text-xl font-semibold">{event.title}</h3>
                   <p className="text-zinc-600 dark:text-zinc-400">{event.description}</p>
                 </div>
               </motion.div>
@@ -272,7 +272,7 @@ function TeamSection() {
     {
       name: "Abdul Mateen Kofi Yeboah",
       role: "Chief Executive Officer & Developer",
-      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
+      image: "/mateen2.jpg",
       bio: "Former backpacker with a passion for connecting travelers. Tech enthusiast focused on creating seamless user experiences.",
     },
     {
@@ -301,15 +301,15 @@ function TeamSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.9 }}
-          className="text-center max-w-3xl mx-auto mb-16"
+          className="max-w-3xl mx-auto mb-16 text-center"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Meet Our Team</h2>
+          <h2 className="mb-6 text-3xl font-bold md:text-4xl">Meet Our Team</h2>
           <p className="text-lg text-zinc-700 dark:text-zinc-300">
             The passionate people behind Fuse who are dedicated to making your travel experiences unforgettable.
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {team.map((member, index) => (
             <motion.div
               key={index}
@@ -317,26 +317,26 @@ function TeamSection() {
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               whileHover={{ y: -10 }}
-              className="bg-white dark:bg-zinc-900 rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-all duration-300"
+              className="overflow-hidden transition-all duration-300 bg-white rounded-lg shadow-md dark:bg-zinc-900 hover:shadow-lg"
             >
               <div className="h-64 overflow-hidden">
                 <img
                   src={member.image || "/placeholder.svg"}
                   alt={member.name}
-                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
                 />
               </div>
               <div className="p-6">
-                <h3 className="text-xl font-semibold mb-1">{member.name}</h3>
-                <p className="text-red-500 font-medium mb-3">{member.role}</p>
-                <p className="text-zinc-600 dark:text-zinc-400 mb-4">{member.bio}</p>
+                <h3 className="mb-1 text-xl font-semibold">{member.name}</h3>
+                <p className="mb-3 font-medium text-red-500">{member.role}</p>
+                <p className="mb-4 text-zinc-600 dark:text-zinc-400">{member.bio}</p>
                 <motion.a
                   href="#"
                   className="inline-flex items-center text-red-500 hover:text-red-600"
                   whileHover={{ x: 5 }}
                   transition={{ duration: 0.2 }}
                 >
-                  Read more <ChevronRight className="ml-1 h-4 w-4" />
+                  Read more <ChevronRight className="w-4 h-4 ml-1" />
                 </motion.a>
               </div>
             </motion.div>
