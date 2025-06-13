@@ -10,7 +10,7 @@ export function AppPromotion() {
 
   return (
     <section ref={ref} className="container py-16 md:py-24">
-      <div className="grid md:grid-cols-2 gap-12 items-center">
+      <div className="grid items-center gap-12 md:grid-cols-2">
         <motion.div
           className="space-y-6"
           initial={{ x: -100, opacity: 0 }}
@@ -18,7 +18,7 @@ export function AppPromotion() {
           transition={{ duration: 0.6 }}
         >
           <div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Download Our Mobile App</h2>
+            <h2 className="mb-4 text-3xl font-bold md:text-4xl">Mobile App : Cooming Soon</h2>
             <p className="text-lg text-muted-foreground">
               Take Fuse with you everywhere. Book hostels on the go, manage your reservations, and connect with
               fellow travelers - all from your pocket. Our mobile app makes your travel experience seamless and
@@ -38,7 +38,7 @@ export function AppPromotion() {
           transition={{ duration: 0.6, delay: 0.2 }}
         >
           <motion.div
-            className="aspect-square rounded-3xl overflow-hidden bg-muted"
+            className="overflow-hidden aspect-square rounded-3xl bg-muted"
             animate={{
               y: [0, -10, 0],
             }}
@@ -51,7 +51,7 @@ export function AppPromotion() {
             <img
               src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&q=80"
               alt="Mobile app preview"
-              className="w-full h-full object-cover"
+              className="object-cover w-full h-full"
             />
           </motion.div>
         </motion.div>
