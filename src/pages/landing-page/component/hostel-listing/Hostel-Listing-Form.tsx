@@ -22,6 +22,7 @@ import { RegionDropdown } from "react-country-region-selector";
 import SuccessfulListing from "@/components/SuccessfulListing";
 import UploadMultipleImages from "@/components/UploadMultipleImages";
 import SEOHelmet from "@/components/SEOHelmet";
+import UploadSingleImage from "@/components/UploadSingleImage";
 
 const formSchema = z.object({
   hostelImage: z.string().optional(),
@@ -54,6 +55,7 @@ const HostelListingForm = () => {
   const [images, setImages] = useState<File[]>([]);
   const [region, setRegion] = useState("");
   const [submitted, setSubmitted] = useState<boolean>(false);
+  const [logo, setLogo] = useState<string | File | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -84,6 +86,9 @@ const HostelListingForm = () => {
       images.forEach((image) => {
         formData.append("photo", image);
       });
+        if (logo) {
+        formData.append("logo", logo);
+      }
 
       try {
         const res = await axios.post("/api/hostels/add", formData, {
@@ -112,15 +117,15 @@ const HostelListingForm = () => {
   };
 
   return (
-    <div className="min-h-screen w-full p-4 md:p-8 flex justify-center items-center">
+    <div className="flex items-center justify-center w-full min-h-screen p-4 md:p-8">
       <SEOHelmet
         title="List Your Hostel - Fuse"
         description="List your hostel on Fuse and reach more students."
         keywords="list hostel, Fuse, student accommodation"
       />
-      <div className="max-w-4xl w-full bg-white shadow-lg rounded-md overflow-hidden">
+      <div className="w-full max-w-4xl overflow-hidden bg-white rounded-md shadow-lg">
         <div className="p-4 md:p-6 overflow-y-auto max-h-[80vh] md:max-h-none">
-          <h1 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">
+          <h1 className="mb-4 text-xl font-bold md:text-2xl md:mb-6">
             List Your Hostel
           </h1>
           {submitted ? (
@@ -129,15 +134,20 @@ const HostelListingForm = () => {
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
-                className=" w-full space-y-4 flex flex-col md:flex-row gap-10 p-4"
+                className="flex flex-col w-full gap-10 p-4 space-y-4 md:flex-row"
               >
                 <div className="w-full">
-                  <p className="text-gray-400 italic">
+                  <p className="italic text-gray-400">
                     Please fill out the hostel information below:
                   </p>
-                  <div className="w-full flex flex-col gap-2">
+                    <div className="flex flex-col w-full gap-2">
+                    <span className="font-semibold">Hostel Logo*</span>
+
+                  <UploadSingleImage image={logo} setImage={setLogo} />
+                  </div>
+                  <div className="flex flex-col w-full gap-2">
                     <span className="font-semibold">Hostel Image*</span>
-                    <p className="text-gray-400 italic">
+                    <p className="italic text-gray-400">
                       Upload images of your hostel, at most 3 images are
                       required
                     </p>
@@ -197,7 +207,7 @@ const HostelListingForm = () => {
                               field.onChange(val);
                             }}
                             value={region}
-                            className="region rounded-md bg-white p-1"
+                            className="p-1 bg-white rounded-md region"
                             name="region-field"
                             style={{
                               width: "100%",
@@ -231,9 +241,9 @@ const HostelListingForm = () => {
                     )}
                   />
                 </div>
-                <div className="w-full flex flex-col gap-2">
+                <div className="flex flex-col w-full gap-2">
                   <div>
-                    <p className="text-gray-400 italic">
+                    <p className="italic text-gray-400">
                       Please fill out the manager's information below:
                     </p>
                     <FormField
@@ -308,7 +318,7 @@ const HostelListingForm = () => {
                     >
                       {AddListingMutation.isPending ? (
                         <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                           Submitting...
                         </>
                       ) : (

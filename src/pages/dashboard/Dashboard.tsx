@@ -7,7 +7,7 @@ const Dashboard = () => {
   const { user } = useUserStore();
 
   return (
-    <main className="flex-1 bg-white overflow-y-auto p-4">
+    <main className="flex-1 p-4 overflow-y-auto bg-white">
       <SEOHelmet
         title="Dashboard - Fuse"
         description="Manage your account and settings on Fuse."

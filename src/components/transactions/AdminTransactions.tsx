@@ -40,7 +40,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { Transaction } from "@/helper/types/types";
+import { Resident, Transaction } from "@/helper/types/types";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import TransactionsSkeleton from "../loaders/TransactionLoader";
@@ -84,6 +84,20 @@ const AdminTransactions = () => {
     enabled: !!hostel_id,
   });
 
+
+  const hostelId = localStorage.getItem('hostelId')
+   const { data: Residents} = useQuery({
+    queryKey: ['residents'],
+    queryFn: async () => {
+      const response = await axios.get(`/api/residents/hostel/${hostelId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      })
+      return response?.data?.data
+    },
+  })
+  
   // Calculate total amount
   const totalAmount = useMemo(() => {
     return transactionsData
@@ -146,7 +160,7 @@ const AdminTransactions = () => {
 
         return searchMatch && statusMatch && methodMatch && dateMatch;
       })
-      .sort((a:any, b:any) => {
+      .sort((a: Transaction, b: Transaction) => {
         const key = sortConfig.key;
 
         if (key === "amount") {
@@ -192,9 +206,9 @@ const AdminTransactions = () => {
         return (
           <Badge
             variant="outline"
-            className="bg-yellow-50 text-yellow-700 border-yellow-200"
+            className="text-yellow-700 border-yellow-200 bg-yellow-50"
           >
-            <Clock className="mr-1 h-3 w-3" /> Pending
+            <Clock className="w-3 h-3 mr-1" /> Pending
           </Badge>
         );
       case "SUCCESS":
@@ -202,9 +216,9 @@ const AdminTransactions = () => {
         return (
           <Badge
             variant="outline"
-            className="bg-green-50 text-green-700 border-green-200"
+            className="text-green-700 border-green-200 bg-green-50"
           >
-            <CheckCircle2 className="mr-1 h-3 w-3" />{" "}
+            <CheckCircle2 className="w-3 h-3 mr-1" />{" "}
             {status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}
           </Badge>
         );
@@ -215,13 +229,13 @@ const AdminTransactions = () => {
 
   // Get payment method icon
   const getMethodIcon = (method: string | null) => {
-    if (!method) return <CreditCard className="h-4 w-4 text-gray-400" />;
+    if (!method) return <CreditCard className="w-4 h-4 text-gray-400" />;
 
     switch (method.toLowerCase()) {
       case "mobile_money":
-        return <Smartphone className="h-4 w-4 text-purple-500" />;
+        return <Smartphone className="w-4 h-4 text-purple-500" />;
       default:
-        return <CreditCard className="h-4 w-4 text-blue-500" />;
+        return <CreditCard className="w-4 h-4 text-blue-500" />;
     }
   };
 
@@ -234,7 +248,7 @@ const AdminTransactions = () => {
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -243,10 +257,10 @@ const AdminTransactions = () => {
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <DollarSign className="h-5 w-5 text-muted-foreground mr-2" />
-              <div className="text-2xl font-bold">${totalAmount}</div>
+              <DollarSign className="w-5 h-5 mr-2 text-muted-foreground" />
+              <div className="text-2xl font-bold">GH¢{totalAmount}</div>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="mt-1 text-xs text-muted-foreground">
               {transactionsData.length} transactions
             </p>
           </CardContent>
@@ -260,12 +274,12 @@ const AdminTransactions = () => {
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <CheckCircle2 className="h-5 w-5 text-green-500 mr-2" />
+              <CheckCircle2 className="w-5 h-5 mr-2 text-green-500" />
               <div className="text-2xl font-bold text-green-600">
-                ${successfulAmount}
+                GH¢{successfulAmount}
               </div>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="mt-1 text-xs text-muted-foreground">
               {
                 transactionsData.filter(
                   (t: Transaction) =>
@@ -285,12 +299,12 @@ const AdminTransactions = () => {
           </CardHeader>
           <CardContent>
             <div className="flex items-center">
-              <Clock className="h-5 w-5 text-yellow-500 mr-2" />
+              <Clock className="w-5 h-5 mr-2 text-yellow-500" />
               <div className="text-2xl font-bold text-yellow-600">
-                ${pendingAmount}
+                GH¢{pendingAmount}
               </div>
             </div>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="mt-1 text-xs text-muted-foreground">
               {
                 transactionsData.filter(
                   (t: Transaction) => t.status === "PENDING"
@@ -303,7 +317,7 @@ const AdminTransactions = () => {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row">
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -315,20 +329,20 @@ const AdminTransactions = () => {
         </div>
 
         <div className="flex gap-2">
-           <div className="w-40 flex gap-2">
+           <div className="flex w-40 gap-2">
             {/* date picker */}
             <DatePicker
               selected={selectedDate}
               onChange={(date) => setSelectedDate(date)}
               placeholderText="Filter by date"
-              className="w-full border p-1 rounded-md shadow-sm"
+              className="w-full p-1 border rounded-md shadow-sm"
             />
             {selectedDate && (
               <button
                 onClick={() => setSelectedDate(null)}
-                className="grid place-items-center w-8  bg-red-200 rounded-md hover:bg-red-300"
+                className="grid w-8 bg-red-200 rounded-md place-items-center hover:bg-red-300"
               >
-                <X className="h-4 w-4 text-gray-500" />
+                <X className="w-4 h-4 text-gray-500" />
               </button>
             )}
           
@@ -336,7 +350,7 @@ const AdminTransactions = () => {
           <div className="w-40">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger>
-                <Filter className="mr-2 h-4 w-4" />
+                <Filter className="w-4 h-4 mr-2" />
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
@@ -351,7 +365,7 @@ const AdminTransactions = () => {
           <div className="w-40">
             <Select value={methodFilter} onValueChange={setMethodFilter}>
               <SelectTrigger>
-                <CreditCard className="mr-2 h-4 w-4" />
+                <CreditCard className="w-4 h-4 mr-2" />
                 <SelectValue placeholder="Payment Method" />
               </SelectTrigger>
               <SelectContent>
@@ -375,44 +389,44 @@ const AdminTransactions = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border">
+          <div className="border rounded-md">
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[100px]">
                     <Button
                       variant="ghost"
-                      className="p-0 h-8 font-medium"
+                      className="h-8 p-0 font-medium"
                       onClick={() => handleSort("reference")}
                     >
                       Reference
-                      <ArrowUpDown className="ml-2 h-3 w-3" />
+                      <ArrowUpDown className="w-3 h-3 ml-2" />
                     </Button>
                   </TableHead>
                   <TableHead>
                     <Button
                       variant="ghost"
-                      className="p-0 h-8 font-medium"
+                      className="h-8 p-0 font-medium"
                       onClick={() => handleSort("amount")}
                     >
                       Amount
-                      <ArrowUpDown className="ml-2 h-3 w-3" />
+                      <ArrowUpDown className="w-3 h-3 ml-2" />
                     </Button>
                   </TableHead>
                   <TableHead>
                     <Button
                       variant="ghost"
-                      className="p-0 h-8 font-medium"
+                      className="h-8 p-0 font-medium"
                       onClick={() => handleSort("date")}
                     >
                       Date
-                      <ArrowUpDown className="ml-2 h-3 w-3" />
+                      <ArrowUpDown className="w-3 h-3 ml-2" />
                     </Button>
                   </TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Method</TableHead>
                   <TableHead className="hidden md:table-cell">
-                    Resident ID
+                    Resident
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -437,7 +451,7 @@ const AdminTransactions = () => {
                             : "text-green-600"
                         )}
                       >
-                        ${transaction.amount.toFixed(2)}
+                        GH¢{transaction.amount.toFixed(2)}
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col">
@@ -463,7 +477,20 @@ const AdminTransactions = () => {
                         </div>
                       </TableCell>
                       <TableCell className="hidden md:table-cell  max-w-[150px]">
-                        {transaction.residentId}
+                        {(() => {
+                          const resident = Residents?.find(
+                            (resident: Resident) => resident.id === transaction.residentId
+                          );
+                          if (!resident) return "Unknown Resident";
+                          return (
+                            <div>
+                              <div>{resident.name}</div>
+                              <div className="text-xs text-muted-foreground">
+                                Room: {resident.room?.number || "N/A"}
+                              </div>
+                            </div>
+                          );
+                        })()}
                       </TableCell>
                     </TableRow>
                   ))
