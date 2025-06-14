@@ -69,7 +69,7 @@ export function NavMain() {
         path: "/dashboard/staff-management",
       },
       { title: "Transactions", icon: Wallet2, path: "/dashboard/transactions" },
-      { title:"Settings", icon:Settings, path:'/dashboard/settings'}
+      { title:"Hostel Settings", icon:Settings, path:'/dashboard/settings'}
     ];
   } else if (userRole === "SUPER_ADMIN") {
     navItems = [
