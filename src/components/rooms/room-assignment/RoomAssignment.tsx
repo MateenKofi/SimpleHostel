@@ -8,7 +8,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import RoomAssignmentLoader from "../../loaders/RoomAssignmentLoader";
-import { axiosConfig } from "../../../helper/axiosConfig";
 import { Room } from "../../../helper/types/types";
 import CustomeRefetch from "@/components/CustomeRefetch";
 import { useQuery } from "@tanstack/react-query";
@@ -27,7 +26,7 @@ const RoomAssignment = () => {
   const { data:Rooms, isLoading, isError, refetch:refetchRooms } = useQuery({
     queryKey: ["rooms"],
     queryFn: async () => {
-      const response = await axios.get(`/api/rooms/get/hostel/${hostelId}`, axiosConfig);
+      const response = await axios.get(`/api/rooms/get/hostel/${hostelId}`);
       return response.data.data;
     },
     enabled:!!hostelId
@@ -50,51 +49,51 @@ const RoomAssignment = () => {
   if (isError) return <CustomeRefetch refetch={refetchRooms}/>;
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4">
+    <div className="p-4 bg-white rounded-lg shadow-sm">
       <div className="mb-4">
         <h2 className="text-2xl font-semibold">Room Assignment</h2>
-        <p className="text-gray-600 font-thin max-w-2xl">
+        <p className="max-w-2xl font-thin text-gray-600">
           Select a room for the resident. The selected room will be reserved until payment is completed.
         </p>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
         {availableRooms?.map((room:Room) => (
           <div
             key={room.id}
-            className="border rounded-lg overflow-hidden cursor-pointer transition-all"
+            className="overflow-hidden transition-all border rounded-lg cursor-pointer"
           >
             {/* Image Carousel */}
-            <div className="relative h-48 w-full">
+            <div className="relative w-full h-48">
              <ImageSlider
                     images={room?.RoomImage?.map((i) => i.imageUrl) ?? []}
                   />
             </div>
 
             <div className="p-4">
-              <div className="flex justify-between items-start mb-3">
-                <h5 className="text-lg font-medium flex items-center gap-2">
+              <div className="flex items-start justify-between mb-3">
+                <h5 className="flex items-center gap-2 text-lg font-medium">
                   <House className="w-4 h-4" />
                   <span>{room.roomNumber}</span>
                 </h5>
-                <span className="flex gap-2 items-center bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                <span className="flex items-center gap-2 px-2 py-1 text-xs font-semibold text-white bg-red-500 rounded-full">
                   <ShieldPlus />
                   <span>
                     {room.currentResidentCount} / {room.maxCap} Occupants
                   </span>
                 </span>
-                <span className="text-primary font-semibold">
+                <span className="font-semibold text-primary">
                   GH{room?.price?.toLocaleString()}
                 </span>
               </div>
 
               <div className="space-y-2">
-                <div className="flex gap-2 text-gray-600 text-sm">
-                  <span className="flex items-center gap-1 bg-gray-100 text-gray-900 px-2 py-1 rounded-full shadow">
+                <div className="flex gap-2 text-sm text-gray-600">
+                  <span className="flex items-center gap-1 px-2 py-1 text-gray-900 bg-gray-100 rounded-full shadow">
                     <Bed className="w-4 h-4" />
                     <div className="h-4/5 w-[0.2px] bg-gray-500 "></div>
                     <span>{room.maxOccupancy} Bed(s)</span>
                   </span>
-                  <span className="flex items-center gap-1 bg-gray-100 text-gray-900 px-2 py-1 rounded-full shadow capitalize">
+                  <span className="flex items-center gap-1 px-2 py-1 text-gray-900 capitalize bg-gray-100 rounded-full shadow">
                     <User className="w-4 h-4" />
                     <div className="h-4/5 w-[0.2px] bg-gray-500 "></div>
                     <span>{room.gender}</span>
@@ -105,17 +104,17 @@ const RoomAssignment = () => {
                   {room?.amenities?.map((amenity, index) => (
                     <span
                       key={index}
-                      className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-900"
+                      className="px-2 py-1 text-xs text-gray-900 bg-gray-100 rounded-full"
                     >
                       {amenity}
                     </span>
                   ))}
                 </div>
 
-                <div className="flex justify-between items-center mt-3">
+                <div className="flex items-center justify-between mt-3">
                   <button
                   type="button"
-                    className="w-full flex justify-center items-center text-base font-medium text-center bg-black text-white rounded-md px-4 py-2 hover:bg-gray-800 transition-all"
+                    className="flex items-center justify-center w-full px-4 py-2 text-base font-medium text-center text-white transition-all bg-black rounded-md hover:bg-gray-800"
                     onClick={
                       () => {
                         handleBookRoom(room);

@@ -18,11 +18,7 @@ const ApproveHostelTable = () => {
   } = useQuery<Hostel[]>({
     queryKey: ["unverifiedHostels"],
     queryFn: async () => {
-      const response = await axios.get("/api/hostels/unverified", {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get("/api/hostels/unverified");
       return response?.data?.data;
     },
   });
@@ -33,11 +29,6 @@ const ApproveHostelTable = () => {
         const response = await axios.post(
           `/api/hostels/verify/${hostelId}`,
           {},
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
         );
         toast.success("Hostel Approved Successfully");
         queryClient.invalidateQueries({ queryKey: ["hostels"] });
@@ -54,11 +45,7 @@ const ApproveHostelTable = () => {
   const DeclineMutation = useMutation({
     mutationFn: async (hostelId: string) => {
       try {
-        const response = await axios.delete(`/api/hostels/delete/${hostelId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const response = await axios.delete(`/api/hostels/delete/${hostelId}`);
         toast.success("Hostel Declined Successfully");
         queryClient.invalidateQueries({ queryKey: ["hostels"] });
         refetchUnverifiedHostels();
@@ -136,9 +123,9 @@ const ApproveHostelTable = () => {
     {
       name: "Actions",
       cell: (row) => (
-        <div className="w-full flex flex-col lg:flex-row gap-2 my-2">
+        <div className="flex flex-col w-full gap-2 my-2 lg:flex-row">
           <button
-            className="w-full flex justify-center items-center bg-black text-white rounded px-2 py-1 text-nowrap"
+            className="flex items-center justify-center w-full px-2 py-1 text-white bg-black rounded text-nowrap"
             onClick={() => handleAccept(row.id)}
           >
             {AcceptMutation.isPending ? (
@@ -148,7 +135,7 @@ const ApproveHostelTable = () => {
             )}
           </button>
           <button
-            className="w-full flex justify-center items-center bg-red-400 text-white text-nowrap rounded px-2 py-1"
+            className="flex items-center justify-center w-full px-2 py-1 text-white bg-red-400 rounded text-nowrap"
             onClick={() => handleDecline(row.id)}
           >
             {DeclineMutation.isPending ? (
@@ -163,7 +150,7 @@ const ApproveHostelTable = () => {
   ];
 
   return (
-    <div className="p-6 border shadow-md rounded-lg bg-white">
+    <div className="p-6 bg-white border rounded-lg shadow-md">
       <CustomDataTable
         columns={columns}
         data={UnverifiedHostels || []}

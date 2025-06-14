@@ -32,23 +32,14 @@ const Amenities = () => {
   } = useQuery({
     queryKey: ["amenities"],
     queryFn: async () => {
-      const response = await axios.get(`/api/amenities/hostel/${hostelId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(`/api/amenities/hostel/${hostelId}`);
       return response?.data;
     },
   });
 
   const DeleteAmenitiesMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await axios.delete(`/api/amenities/delete/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.delete(`/api/amenities/delete/${id}`);
       return response?.data;
     },
     onSuccess: () => {
@@ -102,14 +93,14 @@ const Amenities = () => {
       cell: (row: Amenity) => (
         <div className="flex gap-2 text-nowrap">
           <button
-            className="text-white bg-black p-1 rounded flex items-center gap-1"
+            className="flex items-center gap-1 p-1 text-white bg-black rounded"
             onClick={() => handleEditAmenities(row)}
           >
             <Edit className="w-4 h-4" />
             <span>Edit</span>
           </button>
           <button
-            className="text-white bg-black p-1 rounded flex items-center gap-1"
+            className="flex items-center gap-1 p-1 text-white bg-black rounded"
             onClick={() => handleDeleteAmenities(row.id)}
           >
             {deletingAmenityId === row.id ? (
@@ -133,14 +124,14 @@ const Amenities = () => {
       description="Manage your hostel amenities efficiently with our user-friendly interface."
       keywords="amenities management, hostel, Fuse"
       />
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Building className="w-6 h-6" />
           <h1 className="text-2xl font-bold">Amenities Management</h1>
         </div>
         <div className="flex gap-2">
           <button
-            className="flex gap-2 px-4 py-2 bg-black text-white rounded-md"
+            className="flex gap-2 px-4 py-2 text-white bg-black rounded-md"
             onClick={() => openAmenitiesModal()}
           >
             <Plus />
@@ -151,11 +142,11 @@ const Amenities = () => {
       </div>
 
       {amenities?.length === 0 ? (
-        <div className="w-full flex justify-center flex-col items-center gap-4 text-center py-4 mt-20">
+        <div className="flex flex-col items-center justify-center w-full gap-4 py-4 mt-20 text-center">
           <p>No amenities found. Please add some amenities.</p>
           <div>
             <button
-              className="flex gap-2 px-4 py-2 bg-black text-white rounded-md"
+              className="flex gap-2 px-4 py-2 text-white bg-black rounded-md"
               onClick={() => openAmenitiesModal()}
             >
               <Plus />
@@ -164,7 +155,7 @@ const Amenities = () => {
           </div>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow-sm p-4 ">
+        <div className="p-4 bg-white rounded-lg shadow-sm ">
           <CustomDataTable
             title="Amenities Table"
             columns={columns}

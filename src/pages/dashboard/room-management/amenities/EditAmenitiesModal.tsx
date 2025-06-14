@@ -28,12 +28,7 @@ const EditAmenitiesModal: React.FC<EditAmenitiesModalProps> = ({ onClose, formda
          const formData = new FormData();
             formData.append('name', data.name);
             formData.append('price', data.price.toString());
-            const response = await axios.put(`/api/amenities/update/${formdata.id}`, formData, {
-                headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
-                    "Content-Type": "multipart/form-data",
-                },
-            });
+            const response = await axios.put(`/api/amenities/update/${formdata.id}`);
             return response?.data;
         },
         onSuccess: () => {
@@ -66,8 +61,8 @@ const EditAmenitiesModal: React.FC<EditAmenitiesModalProps> = ({ onClose, formda
 
     return (
         <Modal modalId='edit_amenities_modal' onClose={handleClose}>
-            <h1 className="text-2xl font-bold mb-4 text-gray-500">Update Amenity</h1>
-            <form onSubmit={handleSubmit(onSubmit)} className="mb-4 p-4">
+            <h1 className="mb-4 text-2xl font-bold text-gray-500">Update Amenity</h1>
+            <form onSubmit={handleSubmit(onSubmit)} className="p-4 mb-4">
                 <div className="flex gap-2">
                     <input
                         {...register('name', { required: 'Amenity name is required' })}
@@ -75,7 +70,7 @@ const EditAmenitiesModal: React.FC<EditAmenitiesModalProps> = ({ onClose, formda
                         placeholder="Enter amenity name"
                         className="flex-1 px-3 py-2 border rounded-md"
                     />
-                    {errors.name && <span className="text-red-500 text-sm">{errors.name.message}</span>}
+                    {errors.name && <span className="text-sm text-red-500">{errors.name.message}</span>}
                     <input
                         {...register('price', { required: 'Price is required', min: { value: 0, message: 'Price cannot be negative' } })}
                         type="number"
@@ -84,10 +79,10 @@ const EditAmenitiesModal: React.FC<EditAmenitiesModalProps> = ({ onClose, formda
                         min="0"
                         step="0.01"
                     />
-                    {errors.price && <span className="text-red-500 text-sm">{errors.price.message}</span>}
+                    {errors.price && <span className="text-sm text-red-500">{errors.price.message}</span>}
                     <button
                         type="submit"
-                        className="px-4 py-2 bg-black text-white rounded-md flex items-center gap-2"
+                        className="flex items-center gap-2 px-4 py-2 text-white bg-black rounded-md"
                     >
                         {AddAmenitiesMutation.isPending ? <Loader className="w-4 h-4 animate-spin" /> :
                             (

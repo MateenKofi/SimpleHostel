@@ -91,11 +91,7 @@ const HostelListingForm = () => {
       }
 
       try {
-        const res = await axios.post("/api/hostels/add", formData, {
-          headers: {
-            "Content-type": "multipart/form-data",
-          },
-        });
+        const res = await axios.post("/api/hostels/add", formData);
         toast.success("Hostel Listed successfully");
         setSubmitted(true);
         return res.data;

@@ -19,11 +19,7 @@ const Rooms = () => {
      const { data:rooms, } = useQuery({
         queryKey: ["rooms"],
         queryFn: async () => {
-          const response = await axios.get(`/api/rooms/get/hostel/${hostelId}`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          });
+          const response = await axios.get(`/api/rooms/get/hostel/${hostelId}`);
           return response?.data.data;
         },
         enabled : !!hostelId
@@ -31,7 +27,7 @@ const Rooms = () => {
 
   return (
     <div>
-         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 my-3">
+         <div className="grid gap-4 my-3 md:grid-cols-2 lg:grid-cols-4">
                 <StatCard
                   icon={Home}
                   title="Total Rooms"
@@ -73,16 +69,16 @@ const Rooms = () => {
                   descriptionColor="text-gray-600"
                 />
               </div>
-          <div className="flex gap-2 justify-end">
+          <div className="flex justify-end gap-2">
           <button
-            className="flex gap-2 px-4 py-2 bg-black text-white rounded-md"
+            className="flex gap-2 px-4 py-2 text-white bg-black rounded-md"
             onClick={openAddRoomModal}
           >
             <Plus />
             <span>Room</span>
           </button>
           <button
-            className="flex gap-2 px-4 py-2 bg-black text-white rounded-md"
+            className="flex gap-2 px-4 py-2 text-white bg-black rounded-md"
             onClick={openAmenitiesModal}
           >
             <Plus />
@@ -93,10 +89,10 @@ const Rooms = () => {
         </div>
        <div>
         {rooms?.rooms?.length === 0 ? (
-        <div className="w-full flex justify-center flex-col items-center gap-4 text-center py-4 mt-20">
+        <div className="flex flex-col items-center justify-center w-full gap-4 py-4 mt-20 text-center">
           <p>No rooms found. Please add some rooms.</p>
           <button
-            className="flex gap-2 px-4 py-2 bg-black text-white rounded-md"
+            className="flex gap-2 px-4 py-2 text-white bg-black rounded-md"
             onClick={openAddRoomModal}
           >
             <Plus />

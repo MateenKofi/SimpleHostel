@@ -19,12 +19,7 @@ const AmenitiesModal = ({ onClose }: AmenitiesModalProps) => {
 
   const AddAmenitiesMutation = useMutation({
     mutationFn: async (data: AmenityFormData) => {
-      const response = await axios.post(`/api/amenities/add`, data, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.post(`/api/amenities/add`, data);
       return response?.data;
     },
     onSuccess: () => {
@@ -50,8 +45,8 @@ const AmenitiesModal = ({ onClose }: AmenitiesModalProps) => {
 
   return (
     <Modal modalId='amenities_modal' onClose={onClose}>
-      <h1 className="text-2xl font-bold mb-4 text-gray-500">Add Amenity</h1>
-      <form onSubmit={handleSubmit(onSubmit)} className="mb-4 p-4">
+      <h1 className="mb-4 text-2xl font-bold text-gray-500">Add Amenity</h1>
+      <form onSubmit={handleSubmit(onSubmit)} className="p-4 mb-4">
         <div className="flex gap-2">
           <input
             {...register('name', { required: 'Amenity name is required' })}
@@ -59,7 +54,7 @@ const AmenitiesModal = ({ onClose }: AmenitiesModalProps) => {
             placeholder="Enter amenity name"
             className="flex-1 px-3 py-2 border rounded-md"
           />
-          {errors.name && <span className="text-red-500 text-sm">{errors.name.message}</span>}
+          {errors.name && <span className="text-sm text-red-500">{errors.name.message}</span>}
           <input
             {...register('price', { required: 'Price is required', min: { value: 0, message: 'Price cannot be negative' } })}
             type="number"
@@ -68,10 +63,10 @@ const AmenitiesModal = ({ onClose }: AmenitiesModalProps) => {
             min="0"
             step="0.01"
           />
-          {errors.price && <span className="text-red-500 text-sm">{errors.price.message}</span>}
+          {errors.price && <span className="text-sm text-red-500">{errors.price.message}</span>}
           <button
             type="submit"
-            className="px-4 py-2 bg-black text-white rounded-md flex items-center gap-2"
+            className="flex items-center gap-2 px-4 py-2 text-white bg-black rounded-md"
           >
             {AddAmenitiesMutation.isPending ? <Loader className="w-4 h-4 animate-spin" /> :
             (

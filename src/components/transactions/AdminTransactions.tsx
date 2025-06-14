@@ -72,12 +72,7 @@ const AdminTransactions = () => {
     queryKey: ["transaction_admin"],
     queryFn: async () => {
       const response = await axios.get(
-        `/api/payments/get/hostel/${hostel_id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-          },
-        }
+        `/api/payments/get/hostel/${hostel_id}`
       );
       return response.data?.data;
     },
@@ -89,11 +84,7 @@ const AdminTransactions = () => {
    const { data: Residents} = useQuery({
     queryKey: ['residents'],
     queryFn: async () => {
-      const response = await axios.get(`/api/residents/hostel/${hostelId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      })
+      const response = await axios.get(`/api/residents/hostel/${hostelId}`)
       return response?.data?.data
     },
   })

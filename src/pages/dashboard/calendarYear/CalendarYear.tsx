@@ -21,12 +21,7 @@ const CalendarYear = () => {
       queryKey: ["currentYear"],
       queryFn: async () => {
         const hostelId = localStorage.getItem("hostelId");
-        const response = await axios.get(`/api/calendar/current/${hostelId}`, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const response = await axios.get(`/api/calendar/current/${hostelId}` );
         return response?.data?.data;
       },
     });
@@ -40,12 +35,7 @@ const CalendarYear = () => {
           throw new Error("Hostel ID is not available in local storage.");
         }
         const response = await axios.get(
-          `/api/calendar/historical/${hostelId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
+          `/api/calendar/historical/${hostelId}`
         );
         return response.data;
       },
@@ -63,11 +53,7 @@ const CalendarYear = () => {
         name: data.yearName,
         hostelId: hostelId || "",
       };
-      await axios.post(`/api/calendar/start`, payload, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }).then((res)=>{
+      await axios.post(`/api/calendar/start`, payload).then((res)=>{
          refectCurrentYear()
       refectHistoricalYears()
       toast.success("Academic Year added successfully");
@@ -90,7 +76,7 @@ const CalendarYear = () => {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container px-4 py-8 mx-auto">
       <SEOHelmet
       title="Calendar Year Management - Fuse"
       description="Manage your calendar years efficiently with our user-friendly interface. Add, view, and manage historical years seamlessly."

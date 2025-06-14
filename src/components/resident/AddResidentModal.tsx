@@ -43,12 +43,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
       };
 
       try {
-        const response = await axios.post(`/api/residents/add`, payload, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const response = await axios.post(`/api/residents/add`, payload);
 
         return response.data;
       } catch (error) {
@@ -107,10 +102,10 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
             type="text"
             id="name"
             placeholder="Enter full name"
-            className="border rounded-md p-2"
+            className="p-2 border rounded-md"
           />
           {errors.name && (
-            <span className="text-red-500 text-sm">{errors.name.message}</span>
+            <span className="text-sm text-red-500">{errors.name.message}</span>
           )}
         </div>
 
@@ -126,10 +121,10 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
             type="text"
             id="studentId"
             placeholder="Enter student ID"
-            className="border rounded-md p-2"
+            className="p-2 border rounded-md"
           />
           {errors.studentId && (
-            <span className="text-red-500 text-sm">
+            <span className="text-sm text-red-500">
               {errors.studentId.message}
             </span>
           )}
@@ -144,10 +139,10 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
             type="text"
             id="course"
             placeholder="Enter course name"
-            className="border rounded-md p-2"
+            className="p-2 border rounded-md"
           />
           {errors.course && (
-            <span className="text-red-500 text-sm">{errors.course.message}</span>
+            <span className="text-sm text-red-500">{errors.course.message}</span>
           )}
         </div>
 
@@ -166,10 +161,10 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
             type="email"
             id="email"
             placeholder="Enter email address"
-            className="border rounded-md p-2"
+            className="p-2 border rounded-md"
           />
           {errors.email && (
-            <span className="text-red-500 text-sm">{errors.email.message}</span>
+            <span className="text-sm text-red-500">{errors.email.message}</span>
           )}
         </div>
 
@@ -188,10 +183,10 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
             type="tel"
             id="phone"
             placeholder="Enter phone number"
-            className="border rounded-md p-2"
+            className="p-2 border rounded-md"
           />
           {errors.phone && (
-            <span className="text-red-500 text-sm">{errors.phone.message}</span>
+            <span className="text-sm text-red-500">{errors.phone.message}</span>
           )}
         </div>
 
@@ -202,19 +197,19 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
           <select
             {...register("gender", { required: "Gender is required" })}
             id="gender"
-            className="border rounded-md p-2"
+            className="p-2 border rounded-md"
           >
             <option value="">Select gender</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
           </select>
           {errors.gender && (
-            <span className="text-red-500 text-sm">{errors.gender.message}</span>
+            <span className="text-sm text-red-500">{errors.gender.message}</span>
           )}
         </div>
 
-        <div className="border-t pt-4 mt-2">
-          <h2 className="text-lg font-semibold mb-4">Emergency Contact</h2>
+        <div className="pt-4 mt-2 border-t">
+          <h2 className="mb-4 text-lg font-semibold">Emergency Contact</h2>
 
           <div className="flex flex-col gap-1">
             <label
@@ -230,10 +225,10 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
               type="text"
               id="emergencyContactName"
               placeholder="Enter emergency contact name"
-              className="border rounded-md p-2"
+              className="p-2 border rounded-md"
             />
             {errors.emergencyContactName && (
-              <span className="text-red-500 text-sm">
+              <span className="text-sm text-red-500">
                 {errors.emergencyContactName.message}
               </span>
             )}
@@ -257,10 +252,10 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
               type="tel"
               id="emergencyContactPhone"
               placeholder="Enter emergency contact phone"
-              className="border rounded-md p-2"
+              className="p-2 border rounded-md"
             />
             {errors.emergencyContactPhone && (
-              <span className="text-red-500 text-sm">
+              <span className="text-sm text-red-500">
                 {errors.emergencyContactPhone.message}
               </span>
             )}
@@ -280,10 +275,10 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
               type="text"
               id="relationship"
               placeholder="Enter relationship (e.g. Parent, Sibling)"
-              className="border rounded-md p-2"
+              className="p-2 border rounded-md"
             />
             {errors.relationship && (
-              <span className="text-red-500 text-sm">
+              <span className="text-sm text-red-500">
                 {errors.relationship.message}
               </span>
             )}
@@ -294,16 +289,16 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 border rounded-md hover:bg-red-500 text-white bg-red-600"
+            className="px-4 py-2 text-white bg-red-600 border rounded-md hover:bg-red-500"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90"
+            className="px-4 py-2 text-white rounded-md bg-primary hover:bg-primary/90"
           >
             {AddResidentMutation.isPending ? (
-              <span className="w-full flex gap-2 items-center">
+              <span className="flex items-center w-full gap-2">
                 <Loader className="animate-spin" size={16} />
                 <span className="ml-2">Adding Resident...</span>
               </span>

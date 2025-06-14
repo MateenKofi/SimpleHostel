@@ -24,12 +24,7 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
   const PublishHostelMutation = useMutation({
     mutationFn: async () => {
       const hostelId = localStorage.getItem('hostelId');
-      const response = await axios.put(`/api/hostels/publish/${hostelId}`,{},{
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-      }); 
+      const response = await axios.put(`/api/hostels/publish/${hostelId}`,{}); 
       return response?.data;
     },
     onSuccess: () => {
@@ -45,12 +40,7 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
   const UnpublishHostelMutation = useMutation({
     mutationFn: async () => {
       const hostelId = localStorage.getItem('hostelId');
-      const response = await axios.put(`/api/hostels/unpublish/${hostelId}`,{}, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-          "Content-Type": "application/json",
-        },
-      }); 
+      const response = await axios.put(`/api/hostels/unpublish/${hostelId}`,{}); 
       return response?.data;
     },
     onSuccess: () => {
@@ -111,14 +101,14 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
           type: 'success',
           title: 'Rooms Published',
           description: 'The rooms have been published. Click to unpublish.',
-          icon: <Globe className="h-5 w-5 text-green-700" />,
+          icon: <Globe className="w-5 h-5 text-green-700" />,
           action: (
             <button
-              className="btn btn-success btn-sm mt-2"
+              className="mt-2 btn btn-success btn-sm"
               onClick={handleUpdateResultsStatus}
               disabled={isLoading}
             >
-              <EyeOff className="mr-2 h-4 w-4 text-white" />
+              <EyeOff className="w-4 h-4 mr-2 text-white" />
               <span className='text-white'>Unpublish Rooms</span>
             </button>
           ),
@@ -128,14 +118,14 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
           type: 'info',
           title: 'Rooms Unpublished',
           description: 'The rooms are currently unpublished. Residents won\'t be able to find rooms on room finder. Click to publish.',
-          icon: <CheckCircle className="h-5 w-5 text-blue-700" />,
+          icon: <CheckCircle className="w-5 h-5 text-blue-700" />,
           action: (
             <button
-              className="btn btn-error text-white btn-sm mt-2"
+              className="mt-2 text-white btn btn-error btn-sm"
               onClick={handleUpdateResultsStatus}
               disabled={isLoading}
             >
-              <Eye className="mr-2 h-4 w-4 text-white" />
+              <Eye className="w-4 h-4 mr-2 text-white" />
               <span className='text-white'>Publish Rooms</span>
             </button>
           ),
@@ -150,9 +140,9 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
 
   return (
     <div className={`mb-4 ${alertBgColors[config.type]} text-black border-none shadow-sm p-4 rounded-md`}>
-      <div className="flex gap-2 items-start w-full">
+      <div className="flex items-start w-full gap-2">
         {config.icon}
-        <div className="text-left flex-1">
+        <div className="flex-1 text-left">
           <h3 className="font-bold">{config.title}</h3>
           <div className="text-sm">{config.description}</div>
           <div>{config.action}</div>

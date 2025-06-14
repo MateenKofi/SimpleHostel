@@ -37,12 +37,7 @@ const AddUser = ({ onClose }: AddUserProps) => {
         formData.append("photo", image);
       }
       await axios
-        .post("/api/users/signup", formData, {
-          headers: {
-           ' Authorization': `Bearer ${localStorage.getItem("oken")}`,
-             'Content-Type': 'accept/multipart/form-data'
-          }, 
-        })
+        .post("/api/users/signup", formData)
         .then((res) => {
           toast.success("User Added successfully");
          handleClose()
@@ -79,7 +74,7 @@ const AddUser = ({ onClose }: AddUserProps) => {
   };
   return (
     <Modal modalId="add_user" onClose={()=> handleClose()}>
-      <h2 className="text-gray-400 font-sans font-bold text-2xl mb-3">
+      <h2 className="mb-3 font-sans text-2xl font-bold text-gray-400">
         Add User
       </h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -89,12 +84,12 @@ const AddUser = ({ onClose }: AddUserProps) => {
             <img
               src={imagePreview}
               alt="preview"
-              className="w-40 h-40 rounded-2xl object-cover"
+              className="object-cover w-40 h-40 rounded-2xl"
             />
           )}
             </div>
           <Label htmlFor="photo" className="text-gray-500">
-            <span className="text-gray-500 cursor-pointer flex items-center gap-2">
+            <span className="flex items-center gap-2 text-gray-500 cursor-pointer">
                 {imagePreview ? <RefreshCcw/> : <ImagePlus/>}
             uploade Image</span>
           </Label>
@@ -104,7 +99,7 @@ const AddUser = ({ onClose }: AddUserProps) => {
             accept="image/*"
             {...register("photo")}
             onChange={handleImage}
-            className="text-gray-500 hidden"
+            className="hidden text-gray-500"
           />
         
         </div>
@@ -161,22 +156,22 @@ const AddUser = ({ onClose }: AddUserProps) => {
           <select
             id="role"
             {...register("role", { required: "Role is required" })}
-            className="border border-gray-300 rounded-md p-2"
+            className="p-2 border border-gray-300 rounded-md"
           >
             <option value=""> -- select option --</option>
             <option value="ADMIN">Admin</option>
             <option value="SUPER_ADMIN">Super Admin</option>
           </select>
         </div>
-        <div className="flex gap-2 justify-end items-center">
+        <div className="flex items-center justify-end gap-2">
           <Button
             onClick={()=> handleClose()}
             type="button"
-            className="bg-red-500 rounded-md text-white"
+            className="text-white bg-red-500 rounded-md"
           >
             Cancel
           </Button>
-          <Button type="submit" className="bg-black rounded-md text-white">
+          <Button type="submit" className="text-white bg-black rounded-md">
             Add User
           </Button>
         </div>

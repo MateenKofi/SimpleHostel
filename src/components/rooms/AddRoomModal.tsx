@@ -55,11 +55,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
   } = useQuery<{ data: { id: string; name: string; price: number }[] }>({
     queryKey: ["amenities"],
     queryFn: async () => {
-      const response = await axios.get(`/api/amenities/hostel/${hostelId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(`/api/amenities/hostel/${hostelId}`);
       return response?.data;
     },
   });
@@ -91,12 +87,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
         formData.append("photos", image);
       });
 
-      const response = await axios.post(`/api/rooms/add`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.post(`/api/rooms/add`, formData);
 
       return response.data;
     },
@@ -149,7 +140,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
             Images
           </label>
           <ImageUpload key={imageUploadKey} onImagesChange={handleImagesChange} />
-          <p className="text-gray-500 text-sm font-thin italic">you can only upload a max of 5 images</p>
+          <p className="text-sm italic font-thin text-gray-500">you can only upload a max of 5 images</p>
         </div>
 
         {/* Rest of the form fields */}
@@ -166,10 +157,10 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
               type="text"
               id="number"
               placeholder="e.g., A101"
-              className="border rounded-md p-2"
+              className="p-2 border rounded-md"
             />
             {errors.roomNumber && (
-              <span className="text-red-500 text-sm">
+              <span className="text-sm text-red-500">
                 {errors.roomNumber.message}
               </span>
             )}
@@ -185,10 +176,10 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
               type="text"
               id="block"
               placeholder="e.g., A"
-              className="border rounded-md p-2"
+              className="p-2 border rounded-md"
             />
             {errors.block && (
-              <span className="text-red-500 text-sm">
+              <span className="text-sm text-red-500">
                 {errors.block.message}
               </span>
             )}
@@ -205,10 +196,10 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
               })}
               type="number"
               id="floor"
-              className="border rounded-md p-2"
+              className="p-2 border rounded-md"
             />
             {errors.floor && (
-              <span className="text-red-500 text-sm">
+              <span className="text-sm text-red-500">
                 {errors.floor.message}
               </span>
             )}
@@ -222,7 +213,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
             <select
               {...register("roomType", { required: "Room type is required" })}
               id="type"
-              className="border rounded-md p-2 "
+              className="p-2 border rounded-md "
             >
               <option value="">-- Select Room Type --</option>
               <option value="single">Single</option>
@@ -231,7 +222,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
               <option value="quad">Quad</option>
             </select>
             {errors.roomType && (
-              <span className="text-red-500 text-sm">
+              <span className="text-sm text-red-500">
                 {errors.roomType.message}
               </span>
             )}
@@ -246,7 +237,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
               {...register("maxOccupancy")}
               type="number"
               id="maxOccupancy"
-              className="border rounded-md p-2"
+              className="p-2 border rounded-md"
               readOnly
             />
           </div>
@@ -260,11 +251,11 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
               {...register("basePrice", { required: "Base price is required" })}
               type="number"
               id="basePrice"
-              className="border rounded-md p-2"
+              className="p-2 border rounded-md"
               step="0.01"
             />
             {errors.basePrice && (
-              <span className="text-red-500 text-sm">
+              <span className="text-sm text-red-500">
                 {errors.basePrice.message}
               </span>
             )}
@@ -279,7 +270,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
           <select
             {...register("gender")}
             id="gender"
-            className="border rounded-md p-2"
+            className="p-2 border rounded-md"
           >
             <option value="">-- select gender --</option>
             {GENDER.map((gender) => (
@@ -298,7 +289,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
           <select
             {...register("status")}
             id="status"
-            className="border rounded-md p-2"
+            className="p-2 border rounded-md"
           >
             <option value="">-- Select Status --</option>
             {ROOM_STATUS.map((status) => (
@@ -347,7 +338,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
             {...register("description")}
             id="description"
             rows={3}
-            className="border rounded-md p-2"
+            className="p-2 border rounded-md"
             placeholder="Additional details about the room..."
           />
         </div>
@@ -356,13 +347,13 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
           <button
             type="button"
             onClick={handleClose}
-            className="px-4 py-2 border rounded-md  bg-red-500 text-white hover:bg-red-600 transition-colors duration-200"
+            className="px-4 py-2 text-white transition-colors duration-200 bg-red-500 border rounded-md hover:bg-red-600"
           >
             Cancel
           </button>
           <button
             type="submit"
-            className="flex justify-center items-center px-4 py-2 bg-black text-white rounded-md"
+            className="flex items-center justify-center px-4 py-2 text-white bg-black rounded-md"
             disabled={mutation.isPending}
           >
             {mutation.isPending ? (

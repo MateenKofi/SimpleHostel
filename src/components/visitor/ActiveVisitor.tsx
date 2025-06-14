@@ -19,11 +19,7 @@ const ActiveVisitor = () => {
   } = useQuery({
     queryKey: ["visitors"],
     queryFn: async () => {
-      const response = await axios.get(`/api/visitors/hostel/${hostelId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(`/api/visitors/hostel/${hostelId}`);
       return response?.data?.data;
     },
     enabled: !!hostelId,
@@ -118,7 +114,7 @@ const ActiveVisitor = () => {
         row.status === "ACTIVE" ? (
           <button
             onClick={() => handleCheckOut(row.id)}
-            className="px-3 py-1 text-sm bg-blue-500 text-white rounded-md"
+            className="px-3 py-1 text-sm text-white bg-blue-500 rounded-md"
           >
             Check Out
           </button>
@@ -127,7 +123,7 @@ const ActiveVisitor = () => {
   ];
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow-sm border">
+    <div className="p-4 bg-white border rounded-lg shadow-sm">
       <CustomDataTable
         title="Active Visitors Table"
         columns={columns}

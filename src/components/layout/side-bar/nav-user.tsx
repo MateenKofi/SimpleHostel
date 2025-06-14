@@ -43,11 +43,7 @@ export function NavUser() {
     queryKey: ["user"],
     queryFn: async () => {
       const userId = localStorage.getItem('userId')
-      const response = await axios.get(`/api/users/get/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(`/api/users/get/${userId}`);
       return response?.data;
     },
   });
@@ -72,13 +68,13 @@ export function NavUser() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Avatar className="h-8 w-8 rounded-lg">
+              <Avatar className="w-8 h-8 rounded-lg">
                 <AvatarImage src={User?.imageUrl} alt={User?.name} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
-              <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{User?.name || 'User Name'}</span>
-                <span className="truncate text-xs">{User?.email|| 'User Email'}</span>
+              <div className="grid flex-1 text-sm leading-tight text-left">
+                <span className="font-semibold truncate">{User?.name || 'User Name'}</span>
+                <span className="text-xs truncate">{User?.email|| 'User Email'}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -91,13 +87,13 @@ export function NavUser() {
           >
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                <Avatar className="h-8 w-8 rounded-lg">
+                <Avatar className="w-8 h-8 rounded-lg">
                   <AvatarImage src={User?.imageUrl} alt={User?.name} />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">{User?.name}</span>
-                  <span className="truncate text-xs">{User?.email}</span>
+                <div className="grid flex-1 text-sm leading-tight text-left">
+                  <span className="font-semibold truncate">{User?.name}</span>
+                  <span className="text-xs truncate">{User?.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>

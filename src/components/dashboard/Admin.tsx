@@ -13,9 +13,7 @@ const Admin = () => {
    const { data: analyticsData, isLoading } = useQuery({
       queryKey: ["analytics_admin"],
       queryFn: async () => {
-        const response = await axios.get(`/api/analytics/get/hostel/${hostel_id}`, {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        });
+        const response = await axios.get(`/api/analytics/get/hostel/${hostel_id}`);
         return response.data?.data;
       },
     });
@@ -25,17 +23,17 @@ const Admin = () => {
   }
   
   return (
-      <div className="flex min-h-screen flex-col bg-white">
+      <div className="flex flex-col min-h-screen bg-white">
       <div className="flex flex-1">
         <main className="flex-1 p-4 md:p-6">
           <AnalyticsCard analyticsData={analyticsData} />
 
-          <div className="mt-6 grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+          <div className="grid gap-4 mt-6 md:grid-cols-2 lg:grid-cols-7">
             <RevenueOverView analyticsData={analyticsData} />
             <OccupancyStatus analyticsData={analyticsData}/>
           </div>
 
-          <div className="mt-6 grid gap-4">
+          <div className="grid gap-4 mt-6">
             <PaymentStat analyticsData={analyticsData}/>
           </div>
         </main>

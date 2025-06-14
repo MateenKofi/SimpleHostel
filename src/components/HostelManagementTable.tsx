@@ -17,11 +17,7 @@ const HostelManagementTable = () => {
   } = useQuery({
     queryKey: ["AllHostels"],
     queryFn: async () => {
-      const response = await axios.get(`/api/hostels/get`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(`/api/hostels/get`);
       return response.data?.data;
     },
   });
@@ -29,12 +25,7 @@ const HostelManagementTable = () => {
   const DeleteHostelMutation = useMutation({
     mutationFn: async (id: string) => {
       try {
-        const response = await axios.delete(`/api/hostels/delete/${id}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        const response = await axios.delete(`/api/hostels/delete/${id}`);
         toast.success("Hostel deleted successfully");
         refetchAllHostels();
         return response.data;
@@ -72,7 +63,7 @@ const HostelManagementTable = () => {
       cell: (row) => (
         <span>
           <button
-            className="bg-red-500 text-white rounded-md px-2 py-1 ml-2"
+            className="px-2 py-1 ml-2 text-white bg-red-500 rounded-md"
             onClick={() => handleDeleteHostel(row.id)}
           >
             <Trash2 />
@@ -83,7 +74,7 @@ const HostelManagementTable = () => {
     },
   ];
   return (
-    <div className="p-6 border shadow-sm rounded-md">
+    <div className="p-6 border rounded-md shadow-sm">
       <CustomDataTable
         title="Hostel Management Table"
         data={AllHostels}

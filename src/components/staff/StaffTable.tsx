@@ -19,23 +19,15 @@ const StaffTable = () => {
   } = useQuery({
     queryKey: ["staffs"],
     queryFn: async () => {
-      const response = await axios.get(`/api/Staffs/get/hostel/${hostelId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(`/api/Staffs/get/hostel/${hostelId}`);
       return response?.data.data;
     },
   });
-
+  
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       try {
-        await axios.delete(`/api/Staffs/delete/${id}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        await axios.delete(`/api/Staffs/delete/${id}`);
         refetchStaff();
       } catch (error) {
         if (axios.isAxiosError(error)) {
@@ -96,9 +88,9 @@ const StaffTable = () => {
       width: "100px",
 
       cell: (row: Staff) => (
-        <div className="my-1 flex flex-col items-center justify-center space-y-1 text-nowrap">
+        <div className="flex flex-col items-center justify-center my-1 space-y-1 text-nowrap">
           <button
-            className="w-full flex gap-2 items-center px-2 py-1 bg-black text-white rounded-md"
+            className="flex items-center w-full gap-2 px-2 py-1 text-white bg-black rounded-md"
             onClick={() =>
               navigate(`/dashboard/staff-management/edit/${row.id}`)
             }
@@ -107,7 +99,7 @@ const StaffTable = () => {
             <span>Edit</span>
           </button>
           <button
-            className="w-full flex gap-2 items-center px-2 py-1 bg-red-500 text-white rounded-md"
+            className="flex items-center w-full gap-2 px-2 py-1 text-white bg-red-500 rounded-md"
             onClick={() => handleDelete(row.id)}
           >
             <>

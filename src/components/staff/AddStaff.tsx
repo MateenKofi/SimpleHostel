@@ -47,12 +47,7 @@ const AddStaff: React.FC = () => {
           formData.append("photo", image);
         }
 
-        const response = await axios.post(`/api/staffs/add`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const response = await axios.post(`/api/staffs/add`, formData);
         queryClient.invalidateQueries({ queryKey: ["staffs"] });
         toast.success("Staff added successfully");
         reset();
@@ -85,13 +80,13 @@ const AddStaff: React.FC = () => {
   };
 
   return (
-    <div className="w-full  flex justify-cente">
+    <div className="flex w-full justify-cente">
       <div className="w-[90%] mx-auto">
-        <div className="flex items-center justify-between my6 bg-white p-4 rounded-lg">
+        <div className="flex items-center justify-between p-4 bg-white rounded-lg my6">
           <h1 className="text-2xl font-bold">Add Staff</h1>
           <button
             onClick={() => navigate(-1)}
-            className="flex gap-2 px-4 py-2 bg-black text-white rounded-md"
+            className="flex gap-2 px-4 py-2 text-white bg-black rounded-md"
           >
             <ChevronLeft />
             <span>Back</span>
@@ -100,7 +95,7 @@ const AddStaff: React.FC = () => {
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="w-full space-y-6 p-6 rounded-lg shadow-sm bg-white"
+          className="w-full p-6 space-y-6 bg-white rounded-lg shadow-sm"
         >
           <div className="max-w-sm min" >
             <UploadSingleImage image={image} setImage={setImage} />
@@ -108,7 +103,7 @@ const AddStaff: React.FC = () => {
 
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-1">
+              <label className="block mb-1 text-sm font-medium">
                 First Name
               </label>
               <input
@@ -120,14 +115,14 @@ const AddStaff: React.FC = () => {
                 placeholder="Enter your first name"
               />
               {errors.firstName && (
-                <span className="text-red-500 text-sm">
+                <span className="text-sm text-red-500">
                   {errors.firstName.message?.toString()}
                 </span>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">
+              <label className="block mb-1 text-sm font-medium">
                 Middle Name
               </label>
               <input
@@ -139,7 +134,7 @@ const AddStaff: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">
+              <label className="block mb-1 text-sm font-medium">
                 Last Name
               </label>
               <input
@@ -149,14 +144,14 @@ const AddStaff: React.FC = () => {
                 placeholder="Enter your last name"
               />
               {errors.lastName && (
-                <span className="text-red-500 text-sm">
+                <span className="text-sm text-red-500">
                   {errors.lastName.message?.toString()}
                 </span>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">
+              <label className="block mb-1 text-sm font-medium">
                 Date of Birth
               </label>
               <input
@@ -167,14 +162,14 @@ const AddStaff: React.FC = () => {
                 className="w-full p-2 border rounded-md"
               />
               {errors.dateOfBirth && (
-                <span className="text-red-500 text-sm">
+                <span className="text-sm text-red-500">
                   {errors.dateOfBirth.message?.toString()}
                 </span>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">
+              <label className="block mb-1 text-sm font-medium">
                 Nationality
               </label>
               <input
@@ -186,14 +181,14 @@ const AddStaff: React.FC = () => {
                 placeholder="Enter Nationality"
               />
               {errors.nationality && (
-                <span className="text-red-500 text-sm">
+                <span className="text-sm text-red-500">
                   {errors.nationality.message?.toString()}
                 </span>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Gender</label>
+              <label className="block mb-1 text-sm font-medium">Gender</label>
               <select
                 {...register("gender", { required: "Gender is required" })}
                 className="w-full p-2 border rounded-md"
@@ -203,14 +198,14 @@ const AddStaff: React.FC = () => {
                 <option value="Female">Female</option>
               </select>
               {errors.gender && (
-                <span className="text-red-500 text-sm">
+                <span className="text-sm text-red-500">
                   {errors.gender.message?.toString()}
                 </span>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Religion</label>
+              <label className="block mb-1 text-sm font-medium">Religion</label>
               <select
                 {...register("religion", { required: "Religion is required" })}
                 className="w-full p-2 border rounded-md"
@@ -221,14 +216,14 @@ const AddStaff: React.FC = () => {
                 <option value="Traditionalist">Traditionalist</option>
               </select>
               {errors.religion && (
-                <span className="text-red-500 text-sm">
+                <span className="text-sm text-red-500">
                   {errors.religion.message?.toString()}
                 </span>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">
+              <label className="block mb-1 text-sm font-medium">
                 Marital Status
               </label>
               <select
@@ -244,14 +239,14 @@ const AddStaff: React.FC = () => {
                 <option value="Widowed">Widowed</option>
               </select>
               {errors.maritalStatus && (
-                <span className="text-red-500 text-sm">
+                <span className="text-sm text-red-500">
                   {errors.maritalStatus.message?.toString()}
                 </span>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">
+              <label className="block mb-1 text-sm font-medium">
                 Ghana Card Number
               </label>
               <input
@@ -263,7 +258,7 @@ const AddStaff: React.FC = () => {
                 placeholder="GHA-XXXX-XXXX-XXXX"
               />
               {errors.ghanaCardNumber && (
-                <span className="text-red-500 text-sm">
+                <span className="text-sm text-red-500">
                   {errors.ghanaCardNumber.message?.toString()}
                 </span>
               )}
@@ -272,10 +267,10 @@ const AddStaff: React.FC = () => {
 
           {/* Contact Details */}
           <div className="mt-6">
-            <h2 className="text-lg font-semibold mb-4">Contact Details</h2>
+            <h2 className="mb-4 text-lg font-semibold">Contact Details</h2>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block mb-1 text-sm font-medium">
                   Phone Number
                 </label>
                 <input
@@ -287,13 +282,13 @@ const AddStaff: React.FC = () => {
                   placeholder="Enter Phone Number"
                 />
                 {errors.phoneNumber && (
-                  <span className="text-red-500 text-sm">
+                  <span className="text-sm text-red-500">
                     {errors.phoneNumber.message?.toString()}
                   </span>
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Email</label>
+                <label className="block mb-1 text-sm font-medium">Email</label>
                 <input
                   {...register("email", {
                     required: "Email is required",
@@ -307,13 +302,13 @@ const AddStaff: React.FC = () => {
                   placeholder="someone@something.com"
                 />
                 {errors.email && (
-                  <span className="text-red-500 text-sm">
+                  <span className="text-sm text-red-500">
                     {errors.email.message?.toString()}
                   </span>
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block mb-1 text-sm font-medium">
                   Residence
                 </label>
                 <input
@@ -325,7 +320,7 @@ const AddStaff: React.FC = () => {
                   placeholder="Enter Residence"
                 />
                 {errors.residence && (
-                  <span className="text-red-500 text-sm">
+                  <span className="text-sm text-red-500">
                     {errors.residence.message?.toString()}
                   </span>
                 )}
@@ -335,10 +330,10 @@ const AddStaff: React.FC = () => {
 
           {/* Job Details */}
           <div className="mt-6">
-            <h2 className="text-lg font-semibold mb-4">Job Details</h2>
+            <h2 className="mb-4 text-lg font-semibold">Job Details</h2>
             <div className="grid grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block mb-1 text-sm font-medium">
                   Qualification
                 </label>
                 <input
@@ -350,13 +345,13 @@ const AddStaff: React.FC = () => {
                   placeholder="Enter Qualification"
                 />
                 {errors.qualification && (
-                  <span className="text-red-500 text-sm">
+                  <span className="text-sm text-red-500">
                     {errors.qualification.message?.toString()}
                   </span>
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block mb-1 text-sm font-medium">
                   Staff Type
                 </label>
                <select
@@ -370,14 +365,14 @@ const AddStaff: React.FC = () => {
                 <option value="OTHERS">Others</option>
                 </select>
                 {errors.staffType && (
-                  <span className="text-red-500 text-sm">
+                  <span className="text-sm text-red-500">
                     {errors.staffType.message?.toString()}
                   </span>
                 )}
                 
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">Block(optional)</label>
+                <label className="block mb-1 text-sm font-medium">Block(optional)</label>
                 <input
                   {...register("block", { required: "Block is required" })}
                   type="text"
@@ -385,13 +380,13 @@ const AddStaff: React.FC = () => {
                   placeholder="Enter Block"
                 />
                 {errors.block && (
-                  <span className="text-red-500 text-sm">
+                  <span className="text-sm text-red-500">
                     {errors.block.message?.toString()}
                   </span>
                 )}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-1">
+                <label className="block mb-1 text-sm font-medium">
                   Date of Appointment
                 </label>
                 <input
@@ -402,7 +397,7 @@ const AddStaff: React.FC = () => {
                   className="w-full p-2 border rounded-md"
                 />
                 {errors.dateOfAppointment && (
-                  <span className="text-red-500 text-sm">
+                  <span className="text-sm text-red-500">
                     {errors.dateOfAppointment.message?.toString()}
                   </span>
                 )}
@@ -413,7 +408,7 @@ const AddStaff: React.FC = () => {
           <div>
             <button
               type="submit"
-              className="px-4 py-2 bg-black text-white rounded-md"
+              className="px-4 py-2 text-white bg-black rounded-md"
             >
               {mutation.isPending ? (
                 <Loader className="animate-spin" />

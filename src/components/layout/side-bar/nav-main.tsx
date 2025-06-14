@@ -11,7 +11,7 @@ import {
   LayoutDashboard,
   BedDouble,
   BookOpenCheck,
-  List,
+  // List,
   CalendarCheck,
   Users,
   CheckSquare,
@@ -56,7 +56,7 @@ export function NavMain() {
         icon: BookOpenCheck,
         path: "/dashboard/resident-management",
       },
-      { title: "Debtors List", icon: List, path: "/dashboard/deptors-list" },
+      // { title: "Debtors List", icon: List, path: "/dashboard/deptors-list" },
       {
         title: "Visitor Management",
         icon: CalendarCheck,
@@ -87,17 +87,17 @@ export function NavMain() {
 
   return (
     <div className="overflow-x-hidden">
-     <SidebarGroup className="m-0 p-0 ">
+     <SidebarGroup className="p-0 m-0 ">
         <SidebarMenuButton
           onClick={() => navigate("/")}
           tooltip="landing page"
-          className="w-full transition-all duration-500 ease-in-out hover:bg-black hover:text-white hover:translate-x-2 rounded-md"
+          className="w-full transition-all duration-500 ease-in-out rounded-md hover:bg-black hover:text-white hover:translate-x-2"
         >
           <Layout className="w-4 h-4" />
           <span>Home</span>  
         </SidebarMenuButton>
       </SidebarGroup>
-      <SidebarGroup className="m-0 p-0 ">
+      <SidebarGroup className="p-0 m-0 ">
         <SidebarGroupLabel>Navigation</SidebarGroupLabel>
         <SidebarMenu>
           {navItems.map((item) => (
@@ -105,7 +105,7 @@ export function NavMain() {
               <SidebarMenuButton
                 onClick={() => navigate(item.path)}
                 tooltip={item.title}
-                className="w-full transition-all duration-500 ease-in-out hover:bg-black hover:text-white hover:translate-x-1 rounded-md"
+                className="w-full transition-all duration-500 ease-in-out rounded-md hover:bg-black hover:text-white hover:translate-x-1"
               >
                 {item.icon && <item.icon className="w-4 h-4" />}
                 <span>{item.title}</span>
@@ -114,12 +114,12 @@ export function NavMain() {
           ))}
         </SidebarMenu>
       </SidebarGroup>
-      <div className="mx-auto w-4/5 bg-black border border-gray-300 my-3"></div>
-      <SidebarGroup className="m-0 p-0 ">
+      <div className="w-4/5 mx-auto my-3 bg-black border border-gray-300"></div>
+      <SidebarGroup className="p-0 m-0 ">
         <SidebarMenuButton
           onClick={() => logout()}
           tooltip="Log Out"
-          className="w-full transition-all duration-500 ease-in-out hover:bg-black hover:text-white hover:translate-x-2 rounded-md"
+          className="w-full transition-all duration-500 ease-in-out rounded-md hover:bg-black hover:text-white hover:translate-x-2"
         >
           <LogOut className="w-4 h-4" />
           <span>Log Out</span>  

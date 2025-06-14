@@ -28,11 +28,7 @@ const ResidentTable = () => {
   } = useQuery({
     queryKey: ["resident"],
     queryFn: async () => {
-      const response = await axios.get(`/api/residents/hostel/${hostelId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(`/api/residents/hostel/${hostelId}`);
       return response?.data?.data;
     },
     enabled: !!hostelId,
@@ -124,7 +120,7 @@ const ResidentTable = () => {
                 {" "}
                 <button
                   title="Assign Room"
-                  className="w-full p-1 bg-blue-600 text-white hover:bg-blue-800 flex gap-1 items-center rounded-md"
+                  className="flex items-center w-full gap-1 p-1 text-white bg-blue-600 rounded-md hover:bg-blue-800"
                   onClick={() => handleAssignRoom(row)}
                 >
                   <HousePlus className="w-4 h-4" />
@@ -135,7 +131,7 @@ const ResidentTable = () => {
             <DropdownMenuItem>
               <button
                 title="Edit"
-                className=" w-full p-1 bg-blue-600 text-white hover:bg-blue-800 flex gap-1 items-center rounded-md"
+                className="flex items-center w-full gap-1 p-1 text-white bg-blue-600 rounded-md  hover:bg-blue-800"
                 onClick={() => console.log(`Edit resident ${row.id}`)}
               >
                 <Edit className="w-4 h-4" />
@@ -145,7 +141,7 @@ const ResidentTable = () => {
             <DropdownMenuItem>
               <button
                 title="Delete"
-                className=" w-full p-1 bg-red-600 text-white hover:bg-red-800 flex gap-1 items-center rounded-md"
+                className="flex items-center w-full gap-1 p-1 text-white bg-red-600 rounded-md  hover:bg-red-800"
                 onClick={() => row.id !== null && handleDelete(row.id)}
               >
                 <Trash2 className="w-4 h-4" />

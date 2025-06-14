@@ -59,11 +59,7 @@ const Settings = () => {
   } = useQuery({
     queryKey: ["hostel"],
     queryFn: async () => {
-      const resp = await axios.get(`/api/hostels/get/${hostelId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const resp = await axios.get(`/api/hostels/get/${hostelId}`);
       return resp.data.data;
     },
   });
@@ -129,12 +125,7 @@ const Settings = () => {
         const res = await axios.put(
           `/api/hostels/update/${hostelId}`,
           formData,
-          {
-            headers: {
-              "Content-type": "multipart/form-data",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
+         
         );
         toast.success("Hostel Listed successfully");
         return res.data;
@@ -158,13 +149,13 @@ const Settings = () => {
   if (isError) return <CustomeRefetch refetch={refetchHostel} />;
 
   return (
-    <div className="container mx-auto py-10 px-4 max-w-5xl">
+    <div className="container max-w-5xl px-4 py-10 mx-auto">
       <SEOHelmet
       title="Settings - Fuse"
       description="Manage your hostel settings and information."
       keywords="settings, hostel, information, management"
       />
-      <h1 className="text-3xl font-bold tracking-tight mb-6">
+      <h1 className="mb-6 text-3xl font-bold tracking-tight">
         Hostel Settings
       </h1>
 
@@ -183,7 +174,7 @@ const Settings = () => {
               <div className="flex items-center space-x-2">
                <UploadSingleImage image={logo} setImage={setLogo} previewImage={previewLogo}/>
               </div>
-              <div className="grid grid-cols-1 w-full gap-6">
+              <div className="grid w-full grid-cols-1 gap-6">
                 <FormField
                   control={form.control}
                   name="name"
@@ -192,7 +183,7 @@ const Settings = () => {
                       <FormLabel>Hostel Name</FormLabel>
                       <FormControl>
                         <div className="flex items-center space-x-2">
-                          <Building className="h-4 w-4 text-muted-foreground" />
+                          <Building className="w-4 h-4 text-muted-foreground" />
                           <Input {...field} />
                         </div>
                       </FormControl>
@@ -226,8 +217,8 @@ const Settings = () => {
                   <FormItem>
                     <FormLabel>Address</FormLabel>
                     <FormControl>
-                      <div className="flex space-x-2 items-center">
-                        <MapPin className="h-4 w-4 text-muted-foreground" />
+                      <div className="flex items-center space-x-2">
+                        <MapPin className="w-4 h-4 text-muted-foreground" />
                         <Input {...field} />
                       </div>
                     </FormControl>
@@ -245,7 +236,7 @@ const Settings = () => {
               <CardDescription>How can folks reach you?</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <FormField
                   control={form.control}
                   name="email"
@@ -253,8 +244,8 @@ const Settings = () => {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <div className="flex space-x-2 items-center">
-                          <Mail className="h-4 w-4 text-muted-foreground" />
+                        <div className="flex items-center space-x-2">
+                          <Mail className="w-4 h-4 text-muted-foreground" />
                           <Input {...field} type="email" />
                         </div>
                       </FormControl>
@@ -269,8 +260,8 @@ const Settings = () => {
                     <FormItem>
                       <FormLabel>Phone</FormLabel>
                       <FormControl>
-                        <div className="flex space-x-2 items-center">
-                          <Phone className="h-4 w-4 text-muted-foreground" />
+                        <div className="flex items-center space-x-2">
+                          <Phone className="w-4 h-4 text-muted-foreground" />
                           <Input {...field} type="tel" />
                         </div>
                       </FormControl>
@@ -292,7 +283,7 @@ const Settings = () => {
             </CardHeader>
             <CardContent className="mx-10">
               {hostelData.HostelImages?.length < 1 ? (
-                <div className="text-center p-10 border rounded-lg">
+                <div className="p-10 text-center border rounded-lg">
                   <p className="text-muted-foreground">No images yet.</p>
                   <ImageUpload onImagesChange={handleImagesChange} />
                 </div>
@@ -315,7 +306,7 @@ const Settings = () => {
             <Button type="submit" size="lg" disabled={updateMutation.isPending}>
               {updateMutation.isPending ? (
                 <span className="flex gap-2">
-                  <Loader className="h-4 w-4 animate-spin" />
+                  <Loader className="w-4 h-4 animate-spin" />
                   <span> Saving changes</span>
                 </span>
               ) : (

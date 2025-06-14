@@ -29,7 +29,6 @@ const AddResident = () => {
   const setResident = useAddedResidentStore((state)=> state.setResident)
  const calendarYearId = localStorage.getItem("calendarYear") || "";
   const hostelId = localStorage.getItem("hostelId") || "";
-  const token = localStorage.getItem('token')
 
   const navigate = useNavigate();
 
@@ -64,11 +63,7 @@ const AddResident = () => {
       formData.append("calendarYearId", calendarYearId);
 
       try {
-        const response = await axios.post(`/api/residents/add`, formData,{
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-        });
+        const response = await axios.post(`/api/residents/add`, formData);
         reset();
         setResident(response.data?.data);
         setTimeout(() => {
@@ -94,17 +89,17 @@ const AddResident = () => {
   };
 
   return (
-    <div className="flex flex-col items-start mx-auto border w-full justify-between py-4">
+    <div className="flex flex-col items-start justify-between w-full py-4 mx-auto border">
       <div className="w-full max-w-2xl mx-auto">
-        <button onClick={() => navigate(-1)} className="y-2 bg-primary text-white px-4 py-2 rounded-md flex items-center">
+        <button onClick={() => navigate(-1)} className="flex items-center px-4 py-2 text-white rounded-md y-2 bg-primary">
          <ArrowLeft className="w-6 h-6 mr-2" />
         Back
         </button>
       </div>
-    <Card className="w-full max-w-2xl mx-auto shadow-lg my-4">
-      <CardHeader className="space-y-1 bg-black text-white rounded-t-lg">
+    <Card className="w-full max-w-2xl mx-auto my-4 shadow-lg">
+      <CardHeader className="space-y-1 text-white bg-black rounded-t-lg">
         <div className="flex items-center gap-2">
-          <UserPlus className="h-6 w-6" />
+          <UserPlus className="w-6 h-6" />
           <CardTitle className="text-2xl font-bold">Add Resident</CardTitle>
         </div>
         <CardDescription className="text-primary-foreground/80">
@@ -119,11 +114,11 @@ const AddResident = () => {
               <label className="font-medium">Full Name*</label>
               <Input placeholder="Enter full name" {...register("name")} />
               {errors.name && (
-                <p className="text-red-500 text-sm">{errors.name.message}</p>
+                <p className="text-sm text-red-500">{errors.name.message}</p>
               )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
                 <label className="font-medium">Student ID*</label>
                 <Input
@@ -131,7 +126,7 @@ const AddResident = () => {
                   {...register("studentId")}
                 />
                 {errors.studentId && (
-                  <p className="text-red-500 text-sm">
+                  <p className="text-sm text-red-500">
                     {errors.studentId.message}
                   </p>
                 )}
@@ -141,14 +136,14 @@ const AddResident = () => {
                 <label className="font-medium">Course*</label>
                 <Input placeholder="Enter course" {...register("course")} />
                 {errors.course && (
-                  <p className="text-red-500 text-sm">
+                  <p className="text-sm text-red-500">
                     {errors.course.message}
                   </p>
                 )}
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
                 <label className="font-medium">Email*</label>
                 <Input
@@ -157,7 +152,7 @@ const AddResident = () => {
                   {...register("email")}
                 />
                 {errors.email && (
-                  <p className="text-red-500 text-sm">{errors.email.message}</p>
+                  <p className="text-sm text-red-500">{errors.email.message}</p>
                 )}
               </div>
 
@@ -168,7 +163,7 @@ const AddResident = () => {
                   {...register("phone")}
                 />
                 {errors.phone && (
-                  <p className="text-red-500 text-sm">{errors.phone.message}</p>
+                  <p className="text-sm text-red-500">{errors.phone.message}</p>
                 )}
               </div>
             </div>
@@ -176,14 +171,14 @@ const AddResident = () => {
               <label className="font-medium">Gender*</label>
               <select
                 {...register("gender")}
-                className="w-full border rounded px-3 py-2 bg-white text-gray-500"
+                className="w-full px-3 py-2 text-gray-500 bg-white border rounded"
               >
                 <option>-- Select Gender --</option>
                 <option value="MALE">Male</option>
                 <option value="FEMALE">Female</option>
               </select>
               {errors.gender && (
-                <p className="text-red-500 text-sm">{errors.gender.message}</p>
+                <p className="text-sm text-red-500">{errors.gender.message}</p>
               )}
             </div>
           </div>
@@ -199,13 +194,13 @@ const AddResident = () => {
                 {...register("emergencyContactName")}
               />
               {errors.emergencyContactName && (
-                <p className="text-red-500 text-sm">
+                <p className="text-sm text-red-500">
                   {errors.emergencyContactName.message}
                 </p>
               )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
                 <label className="font-medium">Contact Phone*</label>
                 <Input
@@ -213,7 +208,7 @@ const AddResident = () => {
                   {...register("emergencyContactPhone")}
                 />
                 {errors.emergencyContactPhone && (
-                  <p className="text-red-500 text-sm">
+                  <p className="text-sm text-red-500">
                     {errors.emergencyContactPhone.message}
                   </p>
                 )}
@@ -226,7 +221,7 @@ const AddResident = () => {
                   {...register("relationship")}
                 />
                 {errors.relationship && (
-                  <p className="text-red-500 text-sm">
+                  <p className="text-sm text-red-500">
                     {errors.relationship.message}
                   </p>
                 )}
@@ -234,7 +229,7 @@ const AddResident = () => {
             </div>
           </div>
 
-          <CardFooter className="px-0 pb-0 pt-2">
+          <CardFooter className="px-0 pt-2 pb-0">
             <Button
               type="submit"
               className="w-full"
@@ -242,12 +237,12 @@ const AddResident = () => {
             >
               {AddResidentMutation.isPending ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Adding Resident...
                 </>
               ) : (
                 <>
-                  <UserPlus className="mr-2 h-4 w-4" />
+                  <UserPlus className="w-4 h-4 mr-2" />
                   Add Resident
                 </>
               )}

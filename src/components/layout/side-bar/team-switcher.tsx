@@ -23,12 +23,7 @@ const hostelId = localStorage.getItem('hostelId')
     queryKey: ["hostel"],
     queryFn: async () => {
       const response = await axios.get(
-        `/api/hostels/get/${hostelId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
+        `/api/hostels/get/${hostelId}`
       );
       return response?.data?.data;
     },
@@ -45,14 +40,14 @@ const hostelId = localStorage.getItem('hostelId')
             size="lg"
             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
           >
-            <div className="flex aspect-square size-10 items-center justify-center ">
+            <div className="flex items-center justify-center aspect-square size-10 ">
               <img src={data?.logoUrl || "/logo.png"} alt="logo" className="rounded-lg"/>
             </div>
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-semibold">
+            <div className="grid flex-1 text-sm leading-tight text-left">
+              <span className="font-semibold truncate">
                 {data?.name || "Fuse"}
               </span>
-              <span className="truncate text-xs">
+              <span className="text-xs truncate">
                 {" "}
                 {data?.email || "Dashboard"}
               </span>

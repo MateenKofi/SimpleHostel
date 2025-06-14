@@ -65,9 +65,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
   } = useQuery<{ data: { id: string; name: string; price: number }[] }>({
     queryKey: ["amenities"],
     queryFn: async () => {
-      const response = await axios.get(`/api/amenities/hostel/${hostelId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      const response = await axios.get(`/api/amenities/hostel/${hostelId}`);
       return response.data;
     },
   });
@@ -100,12 +98,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
         formData.append("photos", image);
       });
 
-      const response = await axios.put(`/api/rooms/updateall/${formdata.id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.put(`/api/rooms/updateall/${formdata.id}`, formData);
       return response.data;
     },
     onSuccess: () => {
@@ -192,10 +185,10 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
               type="text"
               id="number"
               placeholder="e.g., A101"
-              className="border rounded-md p-2"
+              className="p-2 border rounded-md"
             />
             {errors.roomNumber && (
-              <span className="text-red-500 text-sm">{errors.roomNumber.message}</span>
+              <span className="text-sm text-red-500">{errors.roomNumber.message}</span>
             )}
           </div>
 
@@ -209,9 +202,9 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
               type="text"
               id="block"
               placeholder="e.g., A"
-              className="border rounded-md p-2"
+              className="p-2 border rounded-md"
             />
-            {errors.block && <span className="text-red-500 text-sm">{errors.block.message}</span>}
+            {errors.block && <span className="text-sm text-red-500">{errors.block.message}</span>}
           </div>
 
           {/* Floor */}
@@ -226,9 +219,9 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
               })}
               type="number"
               id="floor"
-              className="border rounded-md p-2"
+              className="p-2 border rounded-md"
             />
-            {errors.floor && <span className="text-red-500 text-sm">{errors.floor.message}</span>}
+            {errors.floor && <span className="text-sm text-red-500">{errors.floor.message}</span>}
           </div>
 
           {/* Room Type */}
@@ -239,7 +232,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
             <select
               {...register("roomType", { required: "Room type is required" })}
               id="type"
-              className="border rounded-md p-2"
+              className="p-2 border rounded-md"
             >
               <option value="">Select Room Type</option>
               <option value="single">Single</option>
@@ -248,7 +241,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
               <option value="quard">Quard</option>
             </select>
             {errors.roomType && (
-              <span className="text-red-500 text-sm">{errors.roomType.message}</span>
+              <span className="text-sm text-red-500">{errors.roomType.message}</span>
             )}
           </div>
 
@@ -261,7 +254,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
               {...register("maxOccupancy")}
               type="number"
               id="maxOccupancy"
-              className="border rounded-md p-2 "
+              className="p-2 border rounded-md "
               readOnly
             />
           </div>
@@ -275,11 +268,11 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
               {...register("basePrice", { required: "Base price is required" })}
               type="number"
               id="basePrice"
-              className="border rounded-md p-2"
+              className="p-2 border rounded-md"
               step="0.01"
             />
             {errors.basePrice && (
-              <span className="text-red-500 text-sm">{errors.basePrice.message}</span>
+              <span className="text-sm text-red-500">{errors.basePrice.message}</span>
             )}
           </div>
         </div>
@@ -292,7 +285,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
           <select
             {...register("status", { required: "Status is required" })}
             id="status"
-            className="border rounded-md p-2"
+            className="p-2 border rounded-md"
           >
             {ROOM_STATUS.map((status) => (
               <option key={status} value={status.toLowerCase()}>
@@ -307,10 +300,10 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
           <label className="text-sm font-medium text-gray-500">Amenities</label>
           {isAmenitiesLoading && <Loader className="w-4 h-4 animate-spin" />}
           {isAmenitiesError && (
-            <span className="text-red-500 text-sm">Failed to load amenities</span>
+            <span className="text-sm text-red-500">Failed to load amenities</span>
           )}
           {!isAmenitiesLoading && !isAmenitiesError && amenitiesData?.data?.length === 0 && (
-            <span className="text-gray-500 text-sm">No amenities available</span>
+            <span className="text-sm text-gray-500">No amenities available</span>
           )}
           
           {/* Amenities Checkboxes */}
@@ -359,19 +352,19 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
             {...register("description")}
             id="description"
             rows={3}
-            className="border rounded-md p-2"
+            className="p-2 border rounded-md"
             placeholder="Additional details about the room..."
           />
         </div>
 
         {/* Action Buttons */}
         <div className="flex justify-end gap-2 mt-4">
-          <button type="button" onClick={handleClose} className="px-4 py-2 border rounded-md bg-red-500 text-white">
+          <button type="button" onClick={handleClose} className="px-4 py-2 text-white bg-red-500 border rounded-md">
             Cancel
           </button>
           <button
             type="submit"
-            className="flex justify-center items-center px-4 py-2 bg-black text-white rounded-md"
+            className="flex items-center justify-center px-4 py-2 text-white bg-black rounded-md"
           >
             {mutation.isPending ? <Loader className="w-4 h-4 animate-spin" /> : "Update Room"}
           </button>

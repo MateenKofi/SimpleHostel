@@ -21,11 +21,7 @@ const DebtorListTable: React.FC = () => {
   } = useQuery({
     queryKey: ["resident"],
     queryFn: async () => {
-      const response = await axios.get(`/api/residents/hostel/${hostelId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(`/api/residents/hostel/${hostelId}`);
       return response?.data?.data;
     },
     enabled: !!hostelId,
@@ -86,7 +82,7 @@ const DebtorListTable: React.FC = () => {
     name: 'Action',
     cell: (row: Deptors) => (
       <div className="flex gap-2">
-        <button className="px-4 py-2 bg-primary text-white rounded-md"
+        <button className="px-4 py-2 text-white rounded-md bg-primary"
         onClick={() => handlePayment(row)}
         >
           Pay

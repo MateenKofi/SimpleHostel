@@ -9,11 +9,7 @@ const FeaturedHostels = () => {
   } = useQuery({
     queryKey: ["find_hostel"],
     queryFn: async () => {
-      const response = await axios.get(`/api/hostels/get`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(`/api/hostels/get`);
       return response.data?.data;
     },
   });

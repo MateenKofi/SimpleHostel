@@ -35,11 +35,7 @@ const RoomTable = () => {
   } = useQuery({
     queryKey: ["rooms"],
     queryFn: async () => {
-      const response = await axios.get(`/api/rooms/get/hostel/${hostelId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(`/api/rooms/get/hostel/${hostelId}`);
       return response?.data?.data;
     },
     enabled: !!hostelId,
@@ -48,11 +44,7 @@ const RoomTable = () => {
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       await axios
-        .delete(`/api/rooms/delete/${id}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        })
+        .delete(`/api/rooms/delete/${id}`)
         .then((res) => {
           refetchRooms();
           toast.success("Room deleted successfully");
@@ -155,7 +147,7 @@ const RoomTable = () => {
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <button
-                className="w-full text-xs text-white flex gap-1 items-center justify-center bg-black p-2 rounded "
+                className="flex items-center justify-center w-full gap-1 p-2 text-xs text-white bg-black rounded "
                 onClick={() => navigate(`/dashboard/view-room/:${row.id}`)}
               >
                 <Eye className="w-4 h-4" />
@@ -164,7 +156,7 @@ const RoomTable = () => {
             </DropdownMenuItem>
             <DropdownMenuItem>
               <button
-                className="w-full text-xs text-white flex items-center justify-center gap-1 bg-blue-600 p-2 rounded"
+                className="flex items-center justify-center w-full gap-1 p-2 text-xs text-white bg-blue-600 rounded"
                 onClick={() => handleEditRoom(row)}
               >
                 <Edit className="w-4 h-4" />
@@ -173,7 +165,7 @@ const RoomTable = () => {
             </DropdownMenuItem>
             <DropdownMenuItem>
               <button
-                className="w-full text-xs text-white flex items-center justify-center gap-1 bg-red-600 p-2 rounded"
+                className="flex items-center justify-center w-full gap-1 p-2 text-xs text-white bg-red-600 rounded"
                 onClick={() => handleDelete(row.id)}
                 disabled={deleteMutation.isPending}
               >
@@ -189,7 +181,7 @@ const RoomTable = () => {
   ];
 
   return (
-    <div className="mt-2 shadow-md border rounded-md p-6 bg-white">
+    <div className="p-6 mt-2 bg-white border rounded-md shadow-md">
       <CustomDataTable
         title="Room table"
         columns={columns}

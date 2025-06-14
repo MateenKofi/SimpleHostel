@@ -31,11 +31,6 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onClose }) => {
       await axios.put(
         `/api/users/update/${userId}`,
         { password: data.password },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
       ).then((response)=>{
         onClose()
         return response.data
@@ -82,7 +77,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onClose }) => {
             })}
           />
           {resetPasswordForm.formState.errors.password && (
-            <p className="text-red-600 text-sm">
+            <p className="text-sm text-red-600">
               {resetPasswordForm.formState.errors.password?.message}
             </p>
           )}
@@ -98,7 +93,7 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onClose }) => {
             })}
           />
           {resetPasswordForm.formState.errors.confirmPassword && (
-            <p className="text-red-600 text-sm">
+            <p className="text-sm text-red-600">
               {resetPasswordForm.formState.errors.confirmPassword?.message}
             </p>
           )}

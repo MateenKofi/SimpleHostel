@@ -25,11 +25,7 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
     queryKey: ['residents'],
     queryFn: async () => {
       const hostelId = localStorage.getItem('hostelId')
-      const response = await axios.get(`/api/residents/hostel/${hostelId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-      })
+      const response = await axios.get(`/api/residents/hostel/${hostelId}`)
       return response?.data?.data
     },
   })
@@ -48,9 +44,6 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
       const response = await axios.post(`/api/visitors/add`, formData, {
         params:{
           hostelId: hostelId,
-        },
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       })
       return response.data
@@ -71,15 +64,15 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
 
   return (
     <Modal modalId="add_visitor_modal" onClose={onClose}>
-      <div className="h-full flex flex-col">
+      <div className="flex flex-col h-full">
         <div className="flex items-center justify-between px-6 py-4 border-b">
           <h2 className="text-xl font-bold text-gray-500">New Visitor</h2>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 p-6 overflow-y-auto">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium mb-2 text-gray-500">
+              <label className="block mb-2 text-sm font-medium text-gray-500">
                 Visitor Name
               </label>
               <input
@@ -87,12 +80,12 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
                 className="w-full p-2 border rounded-md"
               />
               {errors.name && (
-                <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2 text-gray-500">
+              <label className="block mb-2 text-sm font-medium text-gray-500">
                 Phone Number
               </label>
               <input
@@ -100,11 +93,11 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
                 className="w-full p-2 border rounded-md"
               />
               {errors.phone && (
-                <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+                <p className="mt-1 text-sm text-red-500">{errors.phone.message}</p>
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2 text-gray-500">
+              <label className="block mb-2 text-sm font-medium text-gray-500">
                 Email
               </label>
               <input
@@ -112,12 +105,12 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
                 className="w-full p-2 border rounded-md"
               />
               {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2 text-gray-500">
+              <label className="block mb-2 text-sm font-medium text-gray-500">
                 Select Resident
               </label>
               <Controller
@@ -141,12 +134,12 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
                 )}
               />
               {errors.residentId && (
-                <p className="text-red-500 text-sm mt-1">{errors.residentId.message}</p>
+                <p className="mt-1 text-sm text-red-500">{errors.residentId.message}</p>
               )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-2 text-gray-500">
+              <label className="block mb-2 text-sm font-medium text-gray-500">
                 Purpose of Visit
               </label>
               <textarea
@@ -155,7 +148,7 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
                 rows={3}
               />
               {errors.purpose && (
-                <p className="text-red-500 text-sm mt-1">{errors.purpose.message}</p>
+                <p className="mt-1 text-sm text-red-500">{errors.purpose.message}</p>
               )}
             </div>
 
@@ -163,13 +156,13 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 border rounded-md bg-red-500 text-white"
+                className="px-4 py-2 text-white bg-red-500 border rounded-md"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 bg-black text-white rounded-md"
+                className="px-4 py-2 text-white bg-black rounded-md"
                 disabled={mutation.isPending}
               >
                 {mutation.isPending ? 'Adding...' : 'Add Visitor'}

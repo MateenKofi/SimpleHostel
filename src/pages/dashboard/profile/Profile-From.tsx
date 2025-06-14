@@ -44,11 +44,7 @@ const ProfileForm = () => {
   } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
-      const response = await axios.get(`/api/users/get/${userId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(`/api/users/get/${userId}`);
       return response?.data;
     },
   });
@@ -71,12 +67,7 @@ const ProfileForm = () => {
         formData.append("photo", uploadedImage);
       }
       await axios
-        .put(`/api/users/update/${userId}`, formData, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "multipart/form-data",
-          },
-        })
+        .put(`/api/users/update/${userId}`, formData)
         .then((res) => {
           refectUser();
           toast.success("User Details Updated Successfully");
@@ -117,10 +108,10 @@ const ProfileForm = () => {
 
   if (isError) {
     return  <div className='w-full h-[70dvh] grid place-items-center text-red-500'>
-      <div className=' flex flex-col items-center'>
-        <h2 className='text-xl font-serif italic'>Error loading data</h2>
+      <div className='flex flex-col items-center '>
+        <h2 className='font-serif text-xl italic'>Error loading data</h2>
         <p className='text-xs'>Try reloading data</p>
-      <button className='btn btn-sm btn-black mt-4' onClick={()=>refectUser()}>
+      <button className='mt-4 btn btn-sm btn-black' onClick={()=>refectUser()}>
         <RefreshCcw/>
         Try Again
         </button>
@@ -129,16 +120,16 @@ const ProfileForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6 lg:p-8">
+    <div className="min-h-screen p-4 bg-gray-50 md:p-6 lg:p-8">
       <SEOHelmet
       title="Profile - Fuse"
       description="Manage your profile settings and personal information."
       keywords="profile, settings, Fuse"
       />
-      <div className="mx-auto max-w-3xl space-y-6">
-        <div className="border shadow-md rounded-md p-3">
+      <div className="max-w-3xl mx-auto space-y-6">
+        <div className="p-3 border rounded-md shadow-md">
           <h1 className="text-3xl font-bold">Account Settings</h1>
-          <p className="text-gray-400 italic text-xs font-thin mt-2">
+          <p className="mt-2 text-xs italic font-thin text-gray-400">
             Manage your account settings and update your personal information
             here. Changes you make will be reflected across your profile.
           </p>
@@ -149,15 +140,15 @@ const ProfileForm = () => {
           <form
             onSubmit={personalInfoForm.handleSubmit(handleUpdatePersonalInfo)}
           >
-            <div className="flex mb-4 items-start space-x-4">
+            <div className="flex items-start mb-4 space-x-4">
               <div className="relative w-fit">
                 <img
                   src={image || User?.imageUrl || '/logo.png'}
                   alt="Profile"
-                  className="h-24 w-24 rounded-full object-cover"
+                  className="object-cover w-24 h-24 rounded-full"
                 />
-                <label className="mt-2 flex gap-2 text-sm text-blue-600 cursor-pointer">
-                  <span className="bg-black text-white rounded py-1 px-2 text-xs">
+                <label className="flex gap-2 mt-2 text-sm text-blue-600 cursor-pointer">
+                  <span className="px-2 py-1 text-xs text-white bg-black rounded">
                   {!(image || User?.imageUrl) ? (<span className="flex items-center gap-1">
                     <ImageUp/> Upload
                   </span>) : (<span className="flex items-center gap-1">
@@ -182,7 +173,7 @@ const ProfileForm = () => {
                     {...register("name", { required: "User Name is required" })}
                   />
                   {errors.name && (
-                    <p className="text-red-600 text-sm">
+                    <p className="text-sm text-red-600">
                       {errors.name.message}
                     </p>
                   )}
@@ -196,7 +187,7 @@ const ProfileForm = () => {
                     })}
                   />
                   {errors.phoneNumber && (
-                    <p className="text-red-600 text-sm">
+                    <p className="text-sm text-red-600">
                       {errors.phoneNumber.message}
                     </p>
                   )}
@@ -211,7 +202,7 @@ const ProfileForm = () => {
                   })}
                 />
                 {errors.email && (
-                  <p className="text-red-600 text-sm">{errors.email.message}</p>
+                  <p className="text-sm text-red-600">{errors.email.message}</p>
                 )}
               </div>
             </div>

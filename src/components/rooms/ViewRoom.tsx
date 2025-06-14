@@ -22,11 +22,7 @@ const ViewRoom = () => {
   const { data: room, isLoading } = useQuery<Room>({
     queryKey: ['room_details', roomId],
     queryFn: async () => {
-      const response = await axios.get(`/api/rooms/get/${roomId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      })
+      const response = await axios.get(`/api/rooms/get/${roomId}`)
       return response.data.data
     },
     enabled: !!roomId
@@ -74,23 +70,23 @@ const ViewRoom = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-5xl">
+    <div className="container max-w-5xl px-4 py-6 mx-auto">
       {/* Back button */}
       <Button variant="ghost" onClick={() => navigate('/dashboard/room-management')} className="mb-4">
         ← Back to rooms
       </Button>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {/* Left column - Room images */}
         <div className="md:col-span-2">
           <Card className="overflow-hidden">
             {room?.RoomImage && room.RoomImage.length > 0 ? (
               <div className="relative">
-                <div className="aspect-video relative overflow-hidden">
+                <div className="relative overflow-hidden aspect-video">
                   <img
                     src={room.RoomImage[activeImageIndex]?.imageUrl || "/placeholder.svg?height=400&width=600"}
                     alt={`${room.number} - Image ${activeImageIndex + 1}`}
-                    className="object-cover h-full w-full"
+                    className="object-cover w-full h-full"
                   />
                 </div>
 
@@ -106,7 +102,7 @@ const ViewRoom = () => {
                         <img
                           src={image.imageUrl || "/placeholder.svg"}
                           alt={`${room.number} thumbnail ${index + 1}`}
-                          className="object-cover h-full w-full"
+                          className="object-cover w-full h-full"
                         />
                       </div>
                     ))}
@@ -114,9 +110,9 @@ const ViewRoom = () => {
                 )}
               </div>
             ) : (
-              <div className="aspect-video bg-muted flex items-center justify-center relative">
-                <Home className="h-24 w-24 text-muted-foreground opacity-20" />
-                <p className="text-muted-foreground absolute">No images available</p>
+              <div className="relative flex items-center justify-center aspect-video bg-muted">
+                <Home className="w-24 h-24 text-muted-foreground opacity-20" />
+                <p className="absolute text-muted-foreground">No images available</p>
               </div>
             )}
           </Card>
@@ -126,11 +122,11 @@ const ViewRoom = () => {
         <div className="space-y-6">
           <Card>
             <CardHeader>
-              <div className="flex justify-between items-start">
+              <div className="flex items-start justify-between">
                 <div>
                   <CardTitle className="text-2xl">{room?.number}</CardTitle>
                   <CardDescription className="flex items-center mt-1">
-                    <MapPin className="h-4 w-4 mr-1" />
+                    <MapPin className="w-4 h-4 mr-1" />
                     Block {room?.block}, Floor {room?.floor}
                   </CardDescription>
                 </div>
@@ -146,8 +142,8 @@ const ViewRoom = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex flex-col">
                   <span className="text-sm text-muted-foreground">Capacity</span>
-                  <span className="font-medium flex items-center">
-                    <Users className="h-4 w-4 mr-1" />
+                  <span className="flex items-center font-medium">
+                    <Users className="w-4 h-4 mr-1" />
                     {room?.maxCap} students
                   </span>
                 </div>
@@ -163,7 +159,7 @@ const ViewRoom = () => {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-sm text-muted-foreground">Last Updated</span>
-                  <span className="font-medium text-sm">{room?.updatedAt ? formatDate(room.updatedAt) : "Unknown date"}</span>
+                  <span className="text-sm font-medium">{room?.updatedAt ? formatDate(room.updatedAt) : "Unknown date"}</span>
                 </div>
               </div>
             </CardContent>
@@ -176,11 +172,11 @@ const ViewRoom = () => {
         <TabsList>
           <TabsTrigger value="description">Description</TabsTrigger>
         </TabsList>
-        <TabsContent value="description" className="p-4 border rounded-md mt-2">
+        <TabsContent value="description" className="p-4 mt-2 border rounded-md">
           <div className="space-y-4">
             <div>
-              <h3 className="text-lg font-semibold flex items-center">
-                <Info className="h-5 w-5 mr-2" />
+              <h3 className="flex items-center text-lg font-semibold">
+                <Info className="w-5 h-5 mr-2" />
                 About this room
               </h3>
               <p className="mt-2">{room?.description || "No description available."}</p>
@@ -190,7 +186,7 @@ const ViewRoom = () => {
 
             <div>
               <h3 className="text-lg font-semibold">Room Details</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+              <div className="grid grid-cols-1 gap-4 mt-2 sm:grid-cols-2">
                 <div>
                   <h4 className="text-sm font-medium">Room ID</h4>
                   <p className="text-sm text-muted-foreground">{room?.id}</p>

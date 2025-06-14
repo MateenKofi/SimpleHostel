@@ -17,7 +17,8 @@ import Settings  from "./pages/dashboard/settings/Settings"
 axios.defaults.headers.common["Accept"] = "application/json";
 axios.defaults.headers.common["Content-Type"] = "application/json";
 axios.defaults.baseURL = `${import.meta.env.VITE_API_BASE_URL}`;
-
+axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem("token")}`;
+axios.defaults.headers.common["Content-Type"] = "multipart/form-data";
 // Lazy loaded components
 const Dashboard = lazy(() => import("@pages/dashboard/Dashboard"));
 const RoomManagementTab = lazy(() => import("@pages/dashboard/room-management/RoomManagementTab"));
@@ -48,8 +49,8 @@ function App() {
   return (
     <Suspense
       fallback={
-        <div className="w-screen h-screen grid place-items-center">
-          <Loader className="animate-spin w-10 h-10" />
+        <div className="grid w-screen h-screen place-items-center">
+          <Loader className="w-10 h-10 animate-spin" />
         </div>
       }
     >

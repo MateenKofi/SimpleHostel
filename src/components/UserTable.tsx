@@ -17,11 +17,7 @@ const UserTable = () => {
   } = useQuery({
     queryKey: ["AllUsers"],
     queryFn: async () => {
-      const response = await axios.get(`/api/users/get`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(`/api/users/get`);
       return response.data;
     },
   });
@@ -89,7 +85,7 @@ const UserTable = () => {
       cell: (row) => (
         <span>
           <button
-            className="bg-red-500 text-white rounded-md px-2 py-1 ml-2"
+            className="px-2 py-1 ml-2 text-white bg-red-500 rounded-md"
             onClick={() => handleDeleteUser(row.id)}
           >
             <Trash2 />
@@ -100,7 +96,7 @@ const UserTable = () => {
     },
   ];
   return (
-    <div className="p-6 border shadow-sm rounded-md">
+    <div className="p-6 border rounded-md shadow-sm">
       <CustomDataTable
         title="User Management Table"
         data={AllUsers}
