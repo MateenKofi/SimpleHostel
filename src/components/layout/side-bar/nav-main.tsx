@@ -62,7 +62,6 @@ export function NavMain() {
         icon: CalendarCheck,
         path: "/dashboard/visitor-management",
       },
-      
       {
         title: "Staff Management",
         icon: Users,
