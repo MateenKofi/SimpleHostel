@@ -278,8 +278,8 @@ function TeamSection() {
     {
       name: "Amponsah Danquah Junior",
       role: "Head of Partnerships",
-      image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=400&q=80",
-      bio: "Building relationships with hostels around the world.",
+      image: "/junior.jpg",
+      bio: "Building relationships with hostels all round you.",
     },
     {
       name: "Amponsah Danquah Senior",
@@ -323,7 +323,7 @@ function TeamSection() {
                 <img
                   src={member.image || "/placeholder.svg"}
                   alt={member.name}
-                  className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
+                  className="object-cover w-full h-full transition-transform duration-300 "
                 />
               </div>
               <div className="p-6">
