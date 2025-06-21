@@ -57,6 +57,7 @@ const HostelListingForm = () => {
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [logo, setLogo] = useState<string | File | null>(null);
 
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -83,15 +84,22 @@ const HostelListingForm = () => {
       formData.append("email", data.email);
       formData.append("phone", data.phone);
       formData.append("ghCard", data.ghanaCard);
-      images.forEach((image) => {
+      images.forEach((image: File) => {
+        console.log("image from append image", image);
         formData.append("photo", image);
       });
-        if (logo) {
+      if (logo) {
         formData.append("logo", logo);
       }
 
       try {
-        const res = await axios.post("/api/hostels/add", formData);
+        const res = await axios.post("/api/hostels/add", formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
         toast.success("Hostel Listed successfully");
         setSubmitted(true);
         return res.data;
@@ -136,10 +144,10 @@ const HostelListingForm = () => {
                   <p className="italic text-gray-400">
                     Please fill out the hostel information below:
                   </p>
-                    <div className="flex flex-col w-full gap-2">
+                  <div className="flex flex-col w-full gap-2">
                     <span className="font-semibold">Hostel Logo*</span>
 
-                  <UploadSingleImage image={logo} setImage={setLogo} />
+                    <UploadSingleImage image={logo} setImage={setLogo} />
                   </div>
                   <div className="flex flex-col w-full gap-2">
                     <span className="font-semibold">Hostel Image*</span>
@@ -333,4 +341,3 @@ const HostelListingForm = () => {
 };
 
 export default HostelListingForm;
-

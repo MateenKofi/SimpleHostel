@@ -47,7 +47,7 @@ const formSchema = z.object({
 const Settings = () => {
   const [images, setImages] = useState<File[]>([]);
   const [defaultImages, setDefaultImages] = useState<string[]>([]);
-  const [logo, setLogo] = useState<string  | File | null>(null);
+  const [logo, setLogo] = useState<string | File | null>(null);
   const [previewLogo, setPreviewLogo] = useState<string>("");
   const hostelId = localStorage.getItem("hostelId");
 
@@ -120,12 +120,10 @@ const Settings = () => {
         formData.append("logo", logo);
       }
 
-
       try {
         const res = await axios.put(
           `/api/hostels/update/${hostelId}`,
-          formData,
-         
+          formData
         );
         toast.success("Hostel Listed successfully");
         return res.data;
@@ -151,9 +149,9 @@ const Settings = () => {
   return (
     <div className="container max-w-5xl px-4 py-10 mx-auto">
       <SEOHelmet
-      title="Settings - Fuse"
-      description="Manage your hostel settings and information."
-      keywords="settings, hostel, information, management"
+        title="Settings - Fuse"
+        description="Manage your hostel settings and information."
+        keywords="settings, hostel, information, management"
       />
       <h1 className="mb-6 text-3xl font-bold tracking-tight">
         Hostel Settings
@@ -172,7 +170,11 @@ const Settings = () => {
             <CardContent className="space-y-6">
               {/* Hostel logo*/}
               <div className="flex items-center space-x-2">
-               <UploadSingleImage image={logo} setImage={setLogo} previewImage={previewLogo}/>
+                <UploadSingleImage
+                  image={logo}
+                  setImage={setLogo}
+                  previewImage={previewLogo}
+                />
               </div>
               <div className="grid w-full grid-cols-1 gap-6">
                 <FormField
