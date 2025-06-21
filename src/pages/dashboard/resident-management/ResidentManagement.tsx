@@ -27,7 +27,7 @@ const ResidentManagement = () => {
         </div>
         <div className="flex gap-2">
           <button
-            onClick={() => navigate("/room-verification")}
+            onClick={() => navigate("/dashboard/resident-lookup")}
             className="px-4 py-2 bg-primary text-white rounded-md"
           >
             Verify Resident

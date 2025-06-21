@@ -5,6 +5,7 @@ export type Resident = {
   course: string;
   phone: string;
   email: string;
+  accessCode: string;
   emergencyContactName: string;
   emergencyContactPhone: string;
   relationship: string;

@@ -12,13 +12,18 @@ import Contact from './pages/landing-page/Contact'
 import FindHostel from './pages/landing-page/component/findHostel/page'
 import LoginForm from "./pages/Authentication/login/login-form";
 import Settings  from "./pages/dashboard/settings/Settings"
+import ResidentLookup from "./pages/dashboard/resident-management/Resident-lookup";
 
 // Axios base config
 axios.defaults.headers.common["Accept"] = "application/json";
 axios.defaults.headers.common["Content-Type"] = "application/json";
 axios.defaults.baseURL = `${import.meta.env.VITE_API_BASE_URL}`;
-axios.defaults.headers.common["Authorization"] = `Bearer ${localStorage.getItem("token")}`;
-axios.defaults.headers.common["Content-Type"] = "multipart/form-data";
+const token = localStorage.getItem("token");
+console.log('token',token);
+if (token && token !== "undefined" && token !== null) {
+  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+}
+
 // Lazy loaded components
 const Dashboard = lazy(() => import("@pages/dashboard/Dashboard"));
 const RoomManagementTab = lazy(() => import("@pages/dashboard/room-management/RoomManagementTab"));
@@ -92,6 +97,7 @@ function App() {
             <Route path="view-room/:id" element={<ViewRoom />} />
             <Route path="hostel-management" element={<HostelManagement />} />
             <Route path="settings" element={<Settings />} />
+            <Route path="resident-lookup" element={<ResidentLookup />} />
           </Route>
         </Route>
 
