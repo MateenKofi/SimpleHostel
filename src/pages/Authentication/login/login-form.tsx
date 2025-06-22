@@ -29,10 +29,10 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   };
 
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center bg-muted p-6 md:p-10">
+    <div className="flex flex-col items-center justify-center p-6 min-h-svh bg-muted md:p-10">
       <div className="w-full max-w-sm md:max-w-md">
         <div className={cn("w-full flex flex-col items-center  gap-6", className)} {...props}>
-          <Card className="overflow-hidden w-full border">
+          <Card className="w-full overflow-hidden border">
             <CardContent className="grid p-0">
               <form className="p-6 md:p-8" onSubmit={handleSubmit(onSubmit)}>
                 <div className="flex flex-col gap-6">
@@ -41,7 +41,7 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                       <img
                         src="/logo.png"
                         alt="Image"
-                        className=" h-20 w-22 object-cover"
+                        className="object-cover h-20 w-22"
                       />
                     </div>
                     <h1 className="text-2xl font-bold">Welcome back</h1>
@@ -63,7 +63,7 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                     <div className="flex items-center">
                       <Label htmlFor="password">Password</Label>
                       <a
-                        href="#"
+                        href="/forget-password"
                         className="ml-auto text-sm underline-offset-2 hover:underline"
                       >
                         Forgot your password?
@@ -81,7 +81,7 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                         className="absolute inset-y-0 right-0 flex items-center pr-3"
                         onClick={() => setShowPassword(!showPassword)}
                       >
-                        {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                       </button>
                     </div>
                     {errors.password && <p className="text-red-500">{errors.password.message}</p>}

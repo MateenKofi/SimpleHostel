@@ -14,6 +14,7 @@ import LoginForm from "./pages/Authentication/login/login-form";
 import Settings  from "./pages/dashboard/settings/Settings"
 import ResidentLookup from "./pages/dashboard/resident-management/Resident-lookup";
 import ChangePassword from "./components/changepassword/ChangePassword";
+import ForgetPassword from "./pages/Authentication/forget-password/ForgetPassword";
 // Axios base config
 axios.defaults.headers.common["Accept"] = "application/json";
 axios.defaults.headers.common["Content-Type"] = "application/json";
@@ -72,6 +73,7 @@ function App() {
           <Route path="login" element={<LoginForm />} />
           <Route path="find/:id/room" element={<FindRoom />} />
           <Route path="change-password" element={<ChangePassword />} />
+          <Route path="forget-password" element={<ForgetPassword />} />
         </Route>
 
         {/* Protected Dashboard Routes */}

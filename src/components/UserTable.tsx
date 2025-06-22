@@ -86,6 +86,7 @@ const UserTable = () => {
     {
       name: "Hostel",
       cell: (row) => <span>{(row.hostel && row.hostel?.name) || "N/A"}</span>,
+      sortable: true,
     },
     { name: "Email", wrap: true, selector: (row) => row.email, sortable: true },
     
@@ -96,9 +97,9 @@ const UserTable = () => {
         <span
           className={` rounded-md text-center text-[10px] px-2 py-1 ${
             row.role === "SUPER_ADMIN"
-              ? "bg-green-400/50 text-white"
+              ? "bg-green-200/50 "
               : row.role === "ADMIN"
-              ? "bg-blue-500 text-white"
+              ? "bg-blue-200/50 "
               : "bg-yellow-400/50 text-white"
           }`}
         >
