@@ -138,6 +138,7 @@ export type Users = {
   delFlag: boolean;
   hostelId: string | null;
   hostel: Hostel;
+  changePassword: boolean;
 };
 
 export type Hostel = {
@@ -152,6 +153,8 @@ export type Hostel = {
   phone: string;
   imageKey:string;
   imageUrl:string;
+  logoUrl:string;
+  logoKey:string;
   ghCard:string;
   createdAt: string;
   updatedAt: string;

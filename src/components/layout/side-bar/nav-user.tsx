@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/sidebar"
 import {useNavigate} from 'react-router-dom'
 import { LogoutIcon } from "@/components/animateIcons/Logout"
-import { BellIcon } from "@/components/animateIcons/bell"
+// import { BellIcon } from "@/components/animateIcons/bell"
 import { UserIcon } from "@/components/animateIcons/User"
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
@@ -103,9 +103,9 @@ export function NavUser() {
               >
                 <UserIcon label="Account"/>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              {/* <DropdownMenuItem>
                 <BellIcon label="Notification"/>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem

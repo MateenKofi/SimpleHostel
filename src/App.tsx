@@ -13,13 +13,12 @@ import FindHostel from './pages/landing-page/component/findHostel/page'
 import LoginForm from "./pages/Authentication/login/login-form";
 import Settings  from "./pages/dashboard/settings/Settings"
 import ResidentLookup from "./pages/dashboard/resident-management/Resident-lookup";
-
+import ChangePassword from "./components/changepassword/ChangePassword";
 // Axios base config
 axios.defaults.headers.common["Accept"] = "application/json";
 axios.defaults.headers.common["Content-Type"] = "application/json";
 axios.defaults.baseURL = `${import.meta.env.VITE_API_BASE_URL}`;
 const token = localStorage.getItem("token");
-console.log('token',token);
 if (token && token !== "undefined" && token !== null) {
   axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 }
@@ -72,6 +71,7 @@ function App() {
           <Route path="resident-form" element={<ResidentForm />} />
           <Route path="login" element={<LoginForm />} />
           <Route path="find/:id/room" element={<FindRoom />} />
+          <Route path="change-password" element={<ChangePassword />} />
         </Route>
 
         {/* Protected Dashboard Routes */}

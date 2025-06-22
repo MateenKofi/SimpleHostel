@@ -10,7 +10,7 @@ import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import LogoLoader from "@/components/loaders/logoLoader";
 import { useModal } from "@components/Modal";
-import ChangePassword from "@/components/chnagepassword/ChangePassword";
+import ChangePassword from "@/components/changepassword/ChangePasswordModal";
 import SEOHelmet from "@/components/SEOHelmet";
 
 interface PersonalInfoFormValues {

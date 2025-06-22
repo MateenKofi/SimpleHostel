@@ -1,23 +1,20 @@
 import { useMutation } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import Modal from "../Modal";
 import { Loader } from "lucide-react";
 import { Input } from "../ui/input";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 interface ResetPasswordFormValues {
   password: string;
   confirmPassword: string;
 }
 
-interface ChangePasswordProps {
-  onClose: () => void;
-}
-
-const ChangePassword: React.FC<ChangePasswordProps> = ({ onClose }) => {
+ const ChangePassword = () => {
+  const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
   const resetPasswordForm = useForm<ResetPasswordFormValues>({
     defaultValues: {
@@ -32,23 +29,14 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onClose }) => {
         `/api/users/update/${userId}`,
         { password: data.password },
       ).then((response)=>{
-        onClose()
+        navigate('/login')
         return response.data
       }).catch((error)=>{
         if (axios.isAxiosError(error)) {
-          const errorMessage = error.response?.data?.error || "Failed to Update Password";
+          const errorMessage = error.response?.data?.message || "Failed to Update Password";
           toast.error(errorMessage);
         }
       })
-    
-    },
-    onSuccess: () => {
-      toast.success("Password Updated Successfully");
-    },
-    onError: (error: AxiosError<{ message?: string }>) => {
-      const errorMessage =
-        error.response?.data?.message || "Failed to Update Password";
-      toast.error(errorMessage);
     },
   });
 
@@ -63,9 +51,10 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onClose }) => {
   };
 
   return (
-    <Modal modalId="change_password" onClose={onClose}>
-      <h2 className="mb-6 text-lg font-semibold text-gray-500">Change Password</h2>
-      <form onSubmit={resetPasswordForm.handleSubmit(handleResetPassword)}>
+    <div className="grid w-full h-screen place-items-center">
+     <div className="max-w-xl p-4 mx-auto border rounded-md min-w-[600px]">
+         <h2 className="mb-6 text-lg font-semibold text-gray-500">Change Password</h2>
+      <form onSubmit={resetPasswordForm.handleSubmit(handleResetPassword)} className="space-y-4">
         <div className="space-y-2">
           <label htmlFor="password" className="text-gray-500">New Password</label>
           <Input
@@ -106,7 +95,8 @@ const ChangePassword: React.FC<ChangePasswordProps> = ({ onClose }) => {
           )}
         </Button>
       </form>
-    </Modal>
+     </div>
+    </div>
   );
 };
 

@@ -7,6 +7,8 @@ import CustomDataTable from "./CustomDataTable";
 import { Trash2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { handleSwalMutation } from "./swal/SwalMutationHelper";
+import { AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar } from "@radix-ui/react-avatar";
 
 const UserTable = () => {
   const {
@@ -54,13 +56,39 @@ const UserTable = () => {
   };
 
   const columns: TableColumn<Users>[] = [
-    { name: "Name", selector: (row) => row.name, sortable: true, wrap: true },
+    {
+      name: "Name",
+      cell: (row) => (
+        <div className="flex flex-col items-start justify-center gap-2 py-3">
+        <div className="flex items-center gap-3">
+          <Avatar className="w-8 h-8 *:rounded-full">
+            <AvatarImage
+              src={row.imageUrl || "/placeholder.svg"}
+              alt={row.name}
+            />
+            <AvatarFallback>
+              {row.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <div className="font-medium">{row.name}</div>
+          </div>
+        </div>
+        <span className="text-xs">{row.phoneNumber}</span>
+        </div>
+      ),
+      sortable: true,
+      wrap: true,
+    },
     {
       name: "Hostel",
       cell: (row) => <span>{(row.hostel && row.hostel?.name) || "N/A"}</span>,
     },
     { name: "Email", wrap: true, selector: (row) => row.email, sortable: true },
-    { name: "Phone", selector: (row) => row.phoneNumber },
+    
     {
       name: "Role",
       center: true,

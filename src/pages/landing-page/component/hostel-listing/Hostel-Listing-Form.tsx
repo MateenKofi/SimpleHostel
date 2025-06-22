@@ -86,7 +86,7 @@ const HostelListingForm = () => {
       formData.append("ghCard", data.ghanaCard);
       images.forEach((image: File) => {
         console.log("image from append image", image);
-        formData.append("photo", image);
+        formData.append("photos", image);
       });
       if (logo) {
         formData.append("logo", logo);

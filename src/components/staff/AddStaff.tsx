@@ -9,6 +9,18 @@ import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
 import UploadSingleImage from "../UploadSingleImage";
 
+const roles = [
+  "Manager",
+  "Receptionist",
+  "Cleaner",
+  "Cook",
+  "Security",
+  "Accountant",
+  "Maintenance",
+  "Supervisor",
+  "Other"
+];
+
 const AddStaff: React.FC = () => {
   const navigate = useNavigate();
   const [image, setImage] = useState<string | File | null>(null);
@@ -27,9 +39,9 @@ const AddStaff: React.FC = () => {
       try {
         const formData = new FormData();
         formData.append("hostelId", hostelId || "");
-        formData.append("maritalStatus", data.maritalStatus.toUpperCase());
-        formData.append("religion", data.religion.toUpperCase());
-        formData.append("gender", data.gender.toUpperCase());
+        formData.append("maritalStatus", data.maritalStatus?.toUpperCase());
+        formData.append("religion", data.religion?.toUpperCase());
+        formData.append("gender", data.gender?.toUpperCase());
         formData.append("nationality", data.nationality);
         formData.append("dateOfBirth", data.dateOfBirth);
         formData.append("lastName", data.lastName);
@@ -40,14 +52,19 @@ const AddStaff: React.FC = () => {
         formData.append("email", data.email);
         formData.append("residence", data.residence);
         formData.append("qualification", data.qualification);
-        formData.append("role", data.role.toUpperCase());
+        formData.append("role", data.role);
         formData.append("block", data.block);
         formData.append("dateOfAppointment", data.dateOfAppointment);
+        formData.append("type", data.staffType?.toUpperCase());
         if (image) {
           formData.append("photo", image);
         }
 
-        const response = await axios.post(`/api/staffs/add`, formData);
+        const response = await axios.post(`/api/staffs/add`, formData,{
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
         queryClient.invalidateQueries({ queryKey: ["staffs"] });
         toast.success("Staff added successfully");
         reset();
@@ -370,6 +387,27 @@ const AddStaff: React.FC = () => {
                   </span>
                 )}
                 
+              </div>
+              <div>
+                <label htmlFor="role">Role</label>
+                <select
+                  {...register("role", {
+                    required: "Role is required",
+                  })}
+                  className="w-full p-2 border rounded-md"
+                >
+                  <option value="">-- Select Role --</option>
+                  {roles.map((role) => (
+                    <option key={role} value={role}>
+                      {role}
+                    </option>
+                  ))}
+                </select>
+                {errors.role && (
+                  <span className="text-sm text-red-500">
+                    {errors.role.message?.toString()}
+                  </span>
+                )}
               </div>
               <div>
                 <label className="block mb-1 text-sm font-medium">Block(optional)</label>

@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import { Loader } from "lucide-react";
 import CustomDataTable from "@/components/CustomDataTable";
 import { Hostel } from "@/helper/types/types";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const ApproveHostelTable = () => {
   const queryClient = useQueryClient();
@@ -28,7 +29,7 @@ const ApproveHostelTable = () => {
       try {
         const response = await axios.post(
           `/api/hostels/verify/${hostelId}`,
-          {},
+          {}
         );
         toast.success("Hostel Approved Successfully");
         queryClient.invalidateQueries({ queryKey: ["hostels"] });
@@ -97,7 +98,25 @@ const ApproveHostelTable = () => {
   const columns: TableColumn<Hostel>[] = [
     {
       name: "Name",
-      selector: (row) => row.name,
+      cell: (row) => (
+        <div className="flex items-center gap-3">
+          <Avatar className="w-8 h-8 *:rounded-full">
+            <AvatarImage
+              src={row.logoUrl || "/placeholder.svg"}
+              alt={row.name}
+            />
+            <AvatarFallback>
+              {row.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <div className="font-medium">{row.name}</div>
+          </div>
+        </div>
+      ),
       sortable: true,
     },
     {

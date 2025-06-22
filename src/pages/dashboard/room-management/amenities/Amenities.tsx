@@ -85,7 +85,7 @@ const Amenities = () => {
     },
     {
       name: "Price",
-      selector: (row: { price: number }) => row.price,
+      cell:(row: { price: number }) => `GHC ${row.price}`,
       sortable: true,
     },
     {

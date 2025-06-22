@@ -284,7 +284,7 @@ function TeamSection() {
     {
       name: "Amponsah Danquah Senior",
       role: "Customer Experience",
-      image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=400&q=80",
+      image: "/senior.jpg",
       bio: "Dedicated to ensuring travelers have the best experience possible.",
     },
   ]
