@@ -93,7 +93,10 @@ export const useUserStore = create<UserStore>()(
         localStorage.removeItem("userId");
         localStorage.removeItem("role");
         localStorage.removeItem("residentId");
-
+        localStorage.removeItem("calendarYear");
+        localStorage.removeItem('user')
+        localStorage.removeItem('user-storage');
+        localStorage.removeItem('added-resident-store');
         toast.success("Logout successful");
         window.location.reload();
       },
@@ -130,6 +133,7 @@ export const useUserStore = create<UserStore>()(
         role: state.role,
         hostelId: state.hostelId,
         user: state.user,
+        changedPassword: state.user?.changePassword,
       }),
     }
   )

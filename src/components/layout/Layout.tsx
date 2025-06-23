@@ -8,54 +8,34 @@ import {
 } from "@/components/ui/sidebar";
 import ErrorBoundary from "../ErrorBoundary";
 import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import CustomeRefetch from "../CustomeRefetch";
+import { useUserStore } from "@/controllers/UserStore";
+import { setTime } from "react-datepicker/dist/date_utils";
 
 const Layout = () => {
   const navigate = useNavigate();
-
+const logout = useUserStore((state) => state.logout)
   const token = localStorage.getItem("token");
-  const userId = localStorage.getItem("userId");
-
   
   useEffect(() => {
     if (!token || token === "undefined") {
+      setTimeout(() => {
+        logout();
+      },50)
       navigate("/login", { replace: true });
     }
-  }, [token, navigate]);
+  }, [token, navigate, logout]);
 
-  const {
-    data: user,
-    isLoading,
-    isError,
-    refetch
-  } = useQuery({
-    queryKey: ["changePassword"],
-    queryFn: async () => {
-      const res = await axios.get(`/api/users/get/${userId}`);
-      return res.data;
-    },
-    enabled: !!token, // only fetch user if token exists
-  });
+  
+  const userInfo = JSON.parse(localStorage.getItem("user-store")
+   || "{}");
+   const user = userInfo?.user?.changedPassword
 
  useEffect(() => {
     if (user && user.changedPassword === false) {
       navigate("/change-password");
     }
   }, [user, navigate]);
-  // ⏳ Show a loading state while everything loads
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p className="text-gray-500">Loading...</p>
-      </div>
-    );
-  }
-  if(isError){
-    return <CustomeRefetch refetch={refetch}/>
-  }
-
+ 
   return (
     <SidebarProvider>
       <AppSidebar />

@@ -48,13 +48,6 @@ export function NavUser() {
     },
   });
 
- 
-  // useEffect(() => {
-  //   if (User?.changedPassword === false) {
-  //     toast('You are using default password. Change password')
-  //     navigate('/dashboard/profile')
-  //   }
-  // }, [User,navigate])
 
   const handlelogout = async () => {
     logout()
