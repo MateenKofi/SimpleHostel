@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2 } from "lucide-react";
+import {  Loader2, LucideCircleArrowOutUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -244,6 +244,9 @@ const HostelListingForm = () => {
                       </FormItem>
                     )}
                   />
+                  <a href="https://www.google.com/maps" target="_blank" className="mt-4 italic tracking-tighter text-blue-400 underline">
+                   <p className="flex items-center gap-1"> Get Google Map Location Here <LucideCircleArrowOutUpRight size={12}/></p>
+                    </a>
                 </div>
                 <div className="flex flex-col w-full gap-2">
                   <div>

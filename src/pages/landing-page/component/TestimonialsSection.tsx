@@ -18,35 +18,35 @@ export function TestimonialsSection() {
   const testimonials: Testimonial[] = [
     {
       id: 1,
-      name: "Sarah Johnson",
-      location: "London, UK",
-      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&q=80",
+      name: "Abena Owusu",
+      location: "Accra, Ghana",
+      image: "/Beautiful Young Woman applying facial cream fresh Healthy Skin Beauty Cosmetics and Facial treatment _ Premium AI-generated image.jpeg",
       rating: 5,
-      text: "Fuse made my backpacking trip through Europe so much easier! I found amazing hostels in every city, met incredible people, and saved a ton of money. The reviews were spot-on and the booking process was seamless.",
+      text: "I used Fuse to plan my trip to Ghana. The app helped me find affordable and safe accommodation in Accra, and I was able to book a hostel that was perfect for my needs. The community reviews were spot-on and the booking process was seamless.",
     },
     {
       id: 2,
-      name: "Miguel Rodriguez",
-      location: "Barcelona, Spain",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
+      name: "Kofi Mensah",
+      image: "/Download free image of Happy young man headphones headset adult_  by ae about face, light, person, neon, and men 13067768.jpeg",
+      location: "Kumasi, Ghana",
       rating: 5,
-      text: "As a solo traveler, finding the right hostel is crucial. Fuse helped me discover social hostels with great vibes. The filter options let me find exactly what I was looking for - places with good common areas and organized activities.",
+      text: "As a solo traveler in Ghana, finding the right hostel is crucial. Fuse helped me discover social hostels with great vibes. The filter options let me find exactly what I was looking for - places with good common areas and organized activities.",
     },
     {
       id: 3,
-      name: "Aisha Patel",
-      location: "Sydney, Australia",
-      image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=150&q=80",
+      name: "Ama Frimpong",
+      location: "Cape Coast, Ghana",
+      image: "download (1).jpeg",
       rating: 4,
-      text: "I've been using Fuse for years across multiple continents. The platform is reliable, the photos are accurate, and the community reviews help me avoid bad experiences. It's my go-to app for budget travel accommodation.",
+      text: "I've been using Fuse for years across multiple continents. The platform is reliable, the photos are accurate, and the community reviews help me avoid bad experiences. It's my go-to app for budget travel accommodation in Ghana.",
     },
     {
       id: 4,
-      name: "Liam Chen",
-      location: "Toronto, Canada",
-      image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=150&q=80",
+      name: "Nana Yaw",
+      location: "Takoradi, Ghana",
+      image: "/Ancestral Guidance for Immigration and 🌍 Navigate Immigration Success ✨ _ Spiritual Support.jpeg",
       rating: 5,
-      text: "The best feature of Fuse is how easy it makes comparing different options. I can quickly see which hostels have the amenities I need, check their locations on the map, and read honest reviews from other travelers.",
+      text: "The best feature of Fuse is how easy it makes comparing different options. I can quickly see which hostels have the amenities I need, check their locations on the map, and read honest reviews from other travelers in Ghana.",
     },
   ]
 
@@ -98,34 +98,34 @@ export function TestimonialsSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-12"
+          className="max-w-3xl mx-auto mb-12 text-center"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">What Our Travelers Say</h2>
+          <h2 className="mb-4 text-3xl font-bold md:text-4xl">What Our Travelers Say</h2>
           <p className="text-lg text-zinc-600 dark:text-zinc-300">
             Discover why thousands of travelers choose Fuse for their adventures
           </p>
         </motion.div>
 
-        <div className="relative max-w-4xl mx-auto px-4">
-          <div className="absolute top-1/2 -translate-y-1/2 -left-4 md:-left-12 z-10">
+        <div className="relative max-w-4xl px-4 mx-auto">
+          <div className="absolute z-10 -translate-y-1/2 top-1/2 -left-4 md:-left-12">
             <Button
               variant="outline"
               size="icon"
               onClick={prevTestimonial}
-              className="rounded-full bg-white dark:bg-zinc-700 shadow-md hover:bg-zinc-100 dark:hover:bg-zinc-600"
+              className="bg-white rounded-full shadow-md dark:bg-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-600"
             >
-              <ChevronLeft className="h-6 w-6" />
+              <ChevronLeft className="w-6 h-6" />
             </Button>
           </div>
 
-          <div className="absolute top-1/2 -translate-y-1/2 -right-4 md:-right-12 z-10">
+          <div className="absolute z-10 -translate-y-1/2 top-1/2 -right-4 md:-right-12">
             <Button
               variant="outline"
               size="icon"
               onClick={nextTestimonial}
-              className="rounded-full bg-white dark:bg-zinc-700 shadow-md hover:bg-zinc-100 dark:hover:bg-zinc-600"
+              className="bg-white rounded-full shadow-md dark:bg-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-600"
             >
-              <ChevronRight className="h-6 w-6" />
+              <ChevronRight className="w-6 h-6" />
             </Button>
           </div>
 
@@ -144,28 +144,28 @@ export function TestimonialsSection() {
                 }}
                 className="absolute w-full h-full"
               >
-                <div className="bg-white dark:bg-zinc-900 rounded-xl shadow-lg p-6 md:p-10 h-full">
-                  <div className="flex flex-col md:flex-row gap-6 h-full">
+                <div className="h-full p-6 bg-white shadow-lg dark:bg-zinc-900 rounded-xl md:p-10">
+                  <div className="flex flex-col h-full gap-6 md:flex-row">
                     <div className="flex flex-col items-center md:items-start">
                       <div className="relative">
-                        <div className="w-20 h-20 rounded-full overflow-hidden mb-4">
+                        <div className="w-20 h-20 mb-4 overflow-hidden rounded-full">
                           <img
                             src={testimonials[currentIndex].image || "/placeholder.svg"}
                             alt={testimonials[currentIndex].name}
-                            className="w-full h-full object-cover"
+                            className="object-cover w-full h-full"
                           />
                         </div>
                         <motion.div
                           initial={{ scale: 0, opacity: 0 }}
                           animate={{ scale: 1, opacity: 1 }}
                           transition={{ delay: 0.3, duration: 0.4 }}
-                          className="absolute -bottom-2 -right-2 bg-red-500 rounded-full p-1"
+                          className="absolute p-1 bg-red-500 rounded-full -bottom-2 -right-2"
                         >
-                          <Quote className="h-4 w-4 text-white" />
+                          <Quote className="w-4 h-4 text-white" />
                         </motion.div>
                       </div>
-                      <h3 className="font-semibold text-lg">{testimonials[currentIndex].name}</h3>
-                      <p className="text-zinc-500 dark:text-zinc-400 text-sm">{testimonials[currentIndex].location}</p>
+                      <h3 className="text-lg font-semibold">{testimonials[currentIndex].name}</h3>
+                      <p className="text-sm text-zinc-500 dark:text-zinc-400">{testimonials[currentIndex].location}</p>
                       <div className="flex mt-2">
                         {[...Array(5)].map((_, i) => (
                           <Star
@@ -179,15 +179,15 @@ export function TestimonialsSection() {
                         ))}
                       </div>
                     </div>
-                    <div className="flex-1 flex items-center">
+                    <div className="flex items-center flex-1">
                       <motion.blockquote
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.2, duration: 0.5 }}
-                        className="text-zinc-700 dark:text-zinc-300 italic relative"
+                        className="relative italic text-zinc-700 dark:text-zinc-300"
                       >
                         <div className="absolute -top-6 -left-6 opacity-10">
-                          <Quote className="h-12 w-12 text-red-500" />
+                          <Quote className="w-12 h-12 text-red-500" />
                         </div>
                         <p className="relative z-10">{testimonials[currentIndex].text}</p>
                       </motion.blockquote>

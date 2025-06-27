@@ -19,38 +19,44 @@ export function BlogSection() {
     threshold: 0.1,
   })
 
-  const blogPosts: BlogPost[] = [
-    {
-      id: 1,
-      title: "Experience the Best Hostels in Your Favorite Locations",
-      excerpt:
-        "Discover the most vibrant and social hostels across your favorite destinations that won't break your budget.",
-      image: "https://images.unsplash.com/photo-1533130061792-64b345e4a833?auto=format&fit=crop&w=600&q=80",
-      date: "2024-06-01",
-      author: "Jane Doe",
-      category: "Destinations",
-    },
-    {
-      id: 2,
-      title: "How to Make Friends While Staying in Hostels",
-      excerpt:
-        "Practical tips for solo travelers on breaking the ice and forming meaningful connections during your hostel stays.",
-      image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=600&q=80",
-      date: "2024-05-25",
-      author: "John Smith",
-      category: "Travel Tips",
-    },
-    {
-      id: 3,
-      title: "Budget-Friendly Luxury Hostels: Hostel Guide",
-      excerpt:
-        "Navigate the expensive Luxury Hostels without emptying your wallet with these affordable hostel recommendations.",
-      image: "https://images.unsplash.com/photo-1493707553966-283afac8c358?auto=format&fit=crop&w=600&q=80",
-      date: "2024-05-15",
-      author: "Emily Johnson",
-      category: "Budget Travel",
-    },
-  ]
+const blogPosts: BlogPost[] = [
+  {
+    id: 1,
+    title: "Experience the Best Hostels in Your Favorite Locations",
+    excerpt:
+      "Discover the most vibrant and social hostels across your favorite destinations that won't break your budget.",
+    image:
+      "/Atlantic Hotel_Takoradi Harbour.jpeg", // cozy hostel interior
+    date: "2024-06-01",
+    author: "Jane Doe",
+    category: "Destinations",
+  },
+  {
+    id: 2,
+    title: "How to Make Friends While Staying in Hostels",
+    excerpt:
+      "Practical tips for solo travelers on breaking the ice and forming meaningful connections during your hostel stays.",
+    image:
+      "/Un groupe de personnes posant pour une photo avec le soleil derrière elles _ Image Premium générée à base d’IA.jpeg", // friends laughing outdoors
+    date: "2024-05-25",
+    author: "John Smith",
+    category: "Travel Tips",
+  },
+  {
+    id: 3,
+    title: "Budget-Friendly Luxury Hostels: Hostel Guide",
+    excerpt:
+      "Navigate the expensive Luxury Hostels without emptying your wallet with these affordable hostel recommendations.",
+    image:
+      "/The Royal Senchi Hotel Room in Akosombo, Ghana_  By me using my iPad_.jpeg", // stylish affordable room
+    date: "2024-05-15",
+    author: "Emily Johnson",
+    category: "Budget Travel",
+  },
+];
+
+
+
 
   return (
     <section ref={ref} className="py-16 md:py-24 bg-zinc-50 dark:bg-zinc-800">

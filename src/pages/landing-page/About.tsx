@@ -11,7 +11,7 @@ export default function AboutPage() {
         {/* Hero Section */}
         <section className="relative py-20 text-white bg-gradient-to-b from-zinc-900 to-zinc-800 md:py-28">
           <div className="absolute inset-0 overflow-hidden">
-            <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center opacity-20"></div>
+            <div className="absolute inset-0 bg-[url('/FiestaResidences.jpeg')] bg-cover bg-center opacity-20"></div>
           </div>
           <div className="container relative z-10">
             <motion.div
@@ -103,7 +103,7 @@ function StorySection() {
             className="relative h-[400px] rounded-lg overflow-hidden"
           >
             <img
-              src="https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&w=800&q=80"
+              src="download (2).jpeg"
               alt="Travelers at a hostel"
               className="absolute inset-0 object-cover w-full h-full"
             />

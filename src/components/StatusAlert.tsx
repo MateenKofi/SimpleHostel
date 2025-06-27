@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Globe, EyeOff, Eye,CheckCircle } from 'lucide-react';
+import { Globe, EyeOff, Eye, ShieldOff } from 'lucide-react';
 import axios, { AxiosError } from 'axios';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -24,32 +24,32 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
   const PublishHostelMutation = useMutation({
     mutationFn: async () => {
       const hostelId = localStorage.getItem('hostelId');
-      const response = await axios.put(`/api/hostels/publish/${hostelId}`,{}); 
-      return response?.data;
-    },
-    onSuccess: () => {
-      toast.success('Hostel published successfully');
-      queryClient.invalidateQueries({ queryKey: ['hostel'] });
-    },
-    onError: (error: AxiosError<{message:string}>) => { 
-        const errorMessage = error.response?.data?.message || 'Failed to publish hostel';
+      try {
+        const response = await axios.put(`/api/hostels/publish/${hostelId}`,{}); 
+          toast.success('Hostel published successfully');
+          queryClient.invalidateQueries({ queryKey: ['hostel'] });
+        return response?.data;
+      } catch (error) {
+        const errorMessage = (error as AxiosError<{message:string}>).response?.data?.message || 'Failed to publish hostel';
         toast.error(errorMessage);
+        throw error;
+      }
     },
   });
 
   const UnpublishHostelMutation = useMutation({
     mutationFn: async () => {
       const hostelId = localStorage.getItem('hostelId');
-      const response = await axios.put(`/api/hostels/unpublish/${hostelId}`,{}); 
-      return response?.data;
-    },
-    onSuccess: () => {
-      toast.success('Hostel unpublished successfully');
+      try {
+        const response = await axios.put(`/api/hostels/unpublish/${hostelId}`, {});
+        toast.success('Hostel unpublished successfully');
       queryClient.invalidateQueries({ queryKey: ['hostel'] });
-    },
-    onError: (error: AxiosError<{message:string}>) => { 
-        const errorMessage = error.response?.data?.message || 'Failed to unpublish hostel';
+        return response?.data;
+      } catch (error) {
+        const errorMessage = (error as AxiosError<{message:string}>).response?.data?.message || 'Failed to unpublish hostel';
         toast.error(errorMessage);
+        throw error;
+      }
     },
   });
 
@@ -104,7 +104,7 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
           icon: <Globe className="w-5 h-5 text-green-700" />,
           action: (
             <button
-              className="mt-2 btn btn-success btn-sm"
+              className="p-2 mt-2 bg-red-500 btn btn-sm"
               onClick={handleUpdateResultsStatus}
               disabled={isLoading}
             >
@@ -118,10 +118,10 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
           type: 'info',
           title: 'Rooms Unpublished',
           description: 'The rooms are currently unpublished. Residents won\'t be able to find rooms on room finder. Click to publish.',
-          icon: <CheckCircle className="w-5 h-5 text-blue-700" />,
+          icon: <ShieldOff className="w-5 h-5 text-red-700" />,
           action: (
             <button
-              className="mt-2 text-white btn btn-error btn-sm"
+              className="p-2 mt-2 text-white bg-green-500 btn btn-sm"
               onClick={handleUpdateResultsStatus}
               disabled={isLoading}
             >
