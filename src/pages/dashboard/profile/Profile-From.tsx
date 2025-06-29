@@ -64,7 +64,7 @@ const ProfileForm = () => {
       formData.append("email", data.email);
       formData.append("phoneNumber", data.phoneNumber);
       if (uploadedImage) {
-        formData.append("photo", uploadedImage);
+        formData.append("photos", uploadedImage);
       }
       await axios
         .put(`/api/users/update/${userId}`, formData)

@@ -31,7 +31,7 @@ export function DestinationCard({ image, title, description, index, id }: Destin
             <motion.img
               src={image || "./logo.png"}
               alt={title}
-              className="object-cover w-full h-full sm:h-full"
+              className="object-cover w-full max-h-[210px] "
               whileHover={{ scale: 1.05 }}
               transition={{ duration: 0.3 }}
             />

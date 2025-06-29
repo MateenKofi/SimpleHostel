@@ -43,7 +43,11 @@ export function NavUser() {
     queryKey: ["user"],
     queryFn: async () => {
       const userId = localStorage.getItem('userId')
-      const response = await axios.get(`/api/users/get/${userId}`);
+      const response = await axios.get(`/api/users/get/${userId}`,{
+          headers:{
+             'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
       return response?.data;
     },
   });

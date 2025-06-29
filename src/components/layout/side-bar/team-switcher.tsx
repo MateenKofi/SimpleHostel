@@ -23,7 +23,11 @@ const hostelId = localStorage.getItem('hostelId')
     queryKey: ["hostel"],
     queryFn: async () => {
       const response = await axios.get(
-        `/api/hostels/get/${hostelId}`
+        `/api/hostels/get/${hostelId}`,{
+          headers:{
+             'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
       );
       return response?.data?.data;
     },

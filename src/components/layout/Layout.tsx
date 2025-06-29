@@ -25,15 +25,15 @@ const logout = useUserStore((state) => state.logout)
   }, [token, navigate, logout]);
 
   
-  const userInfo = JSON.parse(localStorage.getItem("user-store")
+  const changedPassword = JSON.parse(localStorage.getItem("changedPassword")
    || "{}");
-   const user = userInfo?.user?.changedPassword
+ 
 
  useEffect(() => {
-    if (user && user.changedPassword === false) {
+    if (changedPassword === false) {
       navigate("/change-password");
     }
-  }, [user, navigate]);
+  }, [changedPassword, navigate]);
  
   return (
     <SidebarProvider>

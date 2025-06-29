@@ -27,7 +27,11 @@ interface ResetPasswordFormValues {
     mutationFn: async (data: { password: string }) => {
       await axios.put(
         `/api/users/update/${userId}`,
-        { password: data.password },
+        { password: data.password },{
+          headers:{
+             'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
       ).then((response)=>{
         navigate('/login')
         return response.data

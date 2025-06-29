@@ -24,7 +24,7 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
         const response = await login(data);
         if (response) {
             navigate('/dashboard');
-            window.location.reload();
+           
         }
   };
 

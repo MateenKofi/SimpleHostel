@@ -138,7 +138,7 @@ export type Users = {
   delFlag: boolean;
   hostelId: string | null;
   hostel: Hostel;
-  changePassword: boolean;
+  changedPassword: boolean;
 };
 
 export type Hostel = {

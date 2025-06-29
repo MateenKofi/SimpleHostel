@@ -13,7 +13,11 @@ const Admin = () => {
    const { data: analyticsData, isLoading } = useQuery({
       queryKey: ["analytics_admin"],
       queryFn: async () => {
-        const response = await axios.get(`/api/analytics/get/hostel/${hostel_id}`);
+        const response = await axios.get(`/api/analytics/get/hostel/${hostel_id}`,{
+          headers:{
+             'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
         return response.data?.data;
       },
     });

@@ -30,7 +30,11 @@ const ChangePasswordModal: React.FC<ChangePasswordProps> = ({ onClose }) => {
     mutationFn: async (data: { password: string }) => {
       await axios.put(
         `/api/users/update/${userId}`,
-        { password: data.password },
+        { password: data.password },{
+          headers:{
+             'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        }
       ).then((response)=>{
         onClose()
         return response.data

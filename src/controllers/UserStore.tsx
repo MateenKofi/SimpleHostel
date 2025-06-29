@@ -22,6 +22,7 @@ type UserStore = {
   hostelId: string | null;
   isProcessing: boolean;
   user: Users | null;
+  changedPassword: boolean | undefined;
   login: (data: { email: string; password: string }) => Promise<boolean>;
   logout: () => void;
   fetchUser: (userId: string) => Promise<void>;
@@ -38,6 +39,7 @@ export const useUserStore = create<UserStore>()(
       hostelId: null,
       isProcessing: false,
       user: null,
+      changedPassword: undefined,
 
       login: async (data) => {
         set({ isProcessing: true });
@@ -60,8 +62,15 @@ export const useUserStore = create<UserStore>()(
           localStorage.setItem("userId", decoded.id);
           localStorage.setItem("role", decoded.role);
 
-          // Now fetch user data and store it
+          // Fetch user data and store it
           await get().fetchUser(decoded.id);
+
+          // Get the latest user from the store
+          const user = get().user;
+          if (user) {
+            localStorage.setItem("changedPassword", JSON.stringify(user.changedPassword));
+            set({ changedPassword: user.changedPassword });
+          }
 
           toast.success("Login successful");
           return true;
@@ -86,6 +95,7 @@ export const useUserStore = create<UserStore>()(
           hostelId: null,
           isProcessing: false,
           user: null,
+          changedPassword: undefined,
         });
 
         localStorage.removeItem("token");
@@ -97,6 +107,7 @@ export const useUserStore = create<UserStore>()(
         localStorage.removeItem('user')
         localStorage.removeItem('user-storage');
         localStorage.removeItem('added-resident-store');
+        localStorage.removeItem('changedPassword');
         toast.success("Logout successful");
         window.location.reload();
       },
@@ -117,6 +128,7 @@ export const useUserStore = create<UserStore>()(
             email: user.email,
             imageUrl: user.imageUrl || null,
             user,
+            changedPassword: user.changedPassword,
           });
         } catch (error) {
           console.error("Error fetching user data:", error);
@@ -133,7 +145,7 @@ export const useUserStore = create<UserStore>()(
         role: state.role,
         hostelId: state.hostelId,
         user: state.user,
-        changedPassword: state.user?.changePassword,
+        changedPassword: state.changedPassword,
       }),
     }
   )
