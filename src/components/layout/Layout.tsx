@@ -9,6 +9,7 @@ import {
 import ErrorBoundary from "../ErrorBoundary";
 import { useEffect } from "react";
 import { useUserStore } from "@/controllers/UserStore";
+import axios from "axios";
 
 const Layout = () => {
   const navigate = useNavigate();
@@ -28,6 +29,11 @@ const logout = useUserStore((state) => state.logout)
   const changedPassword = JSON.parse(localStorage.getItem("changedPassword")
    || "{}");
  
+  useEffect(() => {
+  if (token) {
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  }
+}, [token]);
 
  useEffect(() => {
     if (changedPassword === false) {

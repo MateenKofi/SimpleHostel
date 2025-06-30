@@ -14,7 +14,11 @@ const SuperAdmin = () => {
   const { data: analyticsData, isLoading } = useQuery({
     queryKey: ["analytics_super_admin"],
     queryFn: async () => {
-      const response = await axios.get("/api/analytics/get/system");
+      const response = await axios.get("/api/analytics/get/system",{
+          headers:{
+             'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
       return response.data?.data;
     },
   });

@@ -19,10 +19,8 @@ import ForgetPassword from "./pages/Authentication/forget-password/ForgetPasswor
 axios.defaults.headers.common["Accept"] = "application/json";
 axios.defaults.headers.common["Content-Type"] = "application/json";
 axios.defaults.baseURL = `${import.meta.env.VITE_API_BASE_URL}`;
-const token = localStorage.getItem("token");
-if (token && token !== "undefined" && token !== null) {
-  axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-}
+
+
 
 // Lazy loaded components
 const Dashboard = lazy(() => import("@pages/dashboard/Dashboard"));
@@ -49,8 +47,6 @@ const FindRoom = lazy(() => import("./pages/landing-page/component/find-room/Fin
 const HostelManagement = lazy(() => import("./pages/dashboard/hostelManagement/HostelManagement"));
 
 function App() {
-  
-
   return (
     <Suspense
       fallback={

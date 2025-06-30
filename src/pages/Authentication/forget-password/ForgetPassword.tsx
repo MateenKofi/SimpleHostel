@@ -26,7 +26,11 @@ const ForgetPassword = () => {
   const ForgetPasswordMutation = useMutation({
     mutationFn: async (data: { email: string }) => {
       await axios
-        .post(`/api/users/reset-password`, { email: data.email })
+        .post(`/api/users/reset-password`, { email: data.email },{
+          headers:{
+             'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        })
         .then((response) => {
           setTimeout(() => {
             toast.success("A default password will be sent to this email");

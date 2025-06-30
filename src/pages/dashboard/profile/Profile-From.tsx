@@ -64,10 +64,14 @@ const ProfileForm = () => {
       formData.append("email", data.email);
       formData.append("phoneNumber", data.phoneNumber);
       if (uploadedImage) {
-        formData.append("photos", uploadedImage);
+        formData.append("photo", uploadedImage);
       }
       await axios
-        .put(`/api/users/update/${userId}`, formData)
+        .put(`/api/users/update/${userId}`, formData,{
+        headers:{
+          "Content-Type":'multipart/form-data',
+        }
+      })
         .then((res) => {
           refectUser();
           toast.success("User Details Updated Successfully");
