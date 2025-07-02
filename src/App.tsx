@@ -15,6 +15,7 @@ import Settings  from "./pages/dashboard/settings/Settings"
 import ResidentLookup from "./pages/dashboard/resident-management/Resident-lookup";
 import ChangePassword from "./components/changepassword/ChangePassword";
 import ForgetPassword from "./pages/Authentication/forget-password/ForgetPassword";
+import TermsAndCondition from "./components/TermsAndConditions";
 // Axios base config
 axios.defaults.headers.common["Accept"] = "application/json";
 axios.defaults.headers.common["Content-Type"] = "application/json";
@@ -70,6 +71,8 @@ function App() {
           <Route path="find/:id/room" element={<FindRoom />} />
           <Route path="change-password" element={<ChangePassword />} />
           <Route path="forget-password" element={<ForgetPassword />} />
+            <Route path='terms-and-conditions' element={<TermsAndCondition />} />
+          
         </Route>
 
         {/* Protected Dashboard Routes */}

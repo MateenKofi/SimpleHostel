@@ -337,6 +337,10 @@ const HostelListingForm = () => {
               </form>
             </Form>
           )}
+          <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
+            By creating an account, you agree to our <a href="terms-and-conditions">Terms of Service</a>{" "}
+            and <a href="terms-and-conditions">Privacy Policy</a>.
+          </div>
         </div>
       </div>
     </div>
