@@ -132,7 +132,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
       setValue("roomNumber", formdata?.number);
       setValue("block", formdata?.block);
       setValue("floor", parseInt(formdata?.floor?.toString() || "0"));
-      setValue("roomType", formdata?.type?.toLowerCase() as "single" | "double" | "suit" | "quard");
+      setValue("type", formdata?.type?.toLowerCase() as "single" | "double" | "suit" | "quard");
       setValue("maxOccupancy", formdata?.maxCap);
       setValue("basePrice", formdata?.price);
       setValue("description", formdata?.description);

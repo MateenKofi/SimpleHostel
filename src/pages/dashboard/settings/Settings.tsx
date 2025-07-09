@@ -114,7 +114,7 @@ const Settings = () => {
       formData.append("email", data.email);
       formData.append("phone", data.phone);
       images.forEach((image) => {
-        formData.append("photos", image);
+        formData.append("photo", image);
       });
       if (logo) {
         formData.append("logo", logo);

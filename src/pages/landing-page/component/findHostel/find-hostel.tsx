@@ -77,7 +77,7 @@ export function FindHostel() {
   if (isError) return <CustomeRefetch refetch={refetch} />;
 
   const PublishedHostels = rooms?.filter(
-    (room: Hostel) => room?.state === "PUBLISHED"
+    (room: Hostel) => room?.state === "PUBLISHED" && room.Rooms.length > 1
   );
 
   const filteredHostels = PublishedHostels?.filter((hostel: Hostel) => {
