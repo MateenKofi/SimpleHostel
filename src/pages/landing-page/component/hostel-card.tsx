@@ -7,12 +7,11 @@ interface HostelCardProps {
   image: string
   title: string
   location: string
-  price: string
   index: number
   id?: string
 }
 
-export function HostelCard({ image, title, location, price, index,id }: HostelCardProps) {
+export function HostelCard({ image, title, location,  index,id }: HostelCardProps) {
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
@@ -25,7 +24,7 @@ export function HostelCard({ image, title, location, price, index,id }: HostelCa
       initial={{ y: 50, opacity: 0 }}
       animate={inView ? { y: 0, opacity: 1 } : { y: 50, opacity: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      whileHover={{ y: -10 }}
+      whileHover={{ y: -2 }}
     >
       <Card className="transition-shadow duration-300 cursor-pointer group hover:shadow-lg">
         <div className="relative aspect-[4/3] overflow-hidden">
@@ -40,13 +39,12 @@ export function HostelCard({ image, title, location, price, index,id }: HostelCa
         <CardContent className="p-4">
           <motion.h3
             className="font-semibold transition-colors group-hover:text-red-500"
-            whileHover={{ x: 5 }}
+            whileHover={{ x: 2 }}
             transition={{ duration: 0.2 }}
           >
             {title}
           </motion.h3>
           <p className="text-sm text-muted-foreground">{location}</p>
-          <p className="mt-2 text-sm font-medium">GH¢{price}</p>
         </CardContent>
       </Card>
     </motion.div>

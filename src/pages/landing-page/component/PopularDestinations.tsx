@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import React from 'react'
+import React from 'react';
 import { DestinationCard } from './destination-card';
 
 const PopularDestinations = () => {
@@ -17,7 +17,9 @@ const PopularDestinations = () => {
   // Get 4 random hostels
   const randomHostels = React.useMemo(() => {
     if (!hostels || hostels.length < 1) return [];
-    return [...hostels].sort(() => Math.random() - 0.5).slice(0, 4);
+    // Only include hostels with state === "PUBLISHED"
+    const published = hostels.filter((h) => h.state === "PUBLISHED" && h.Rooms.length > 1);
+    return [...published].sort(() => Math.random() - 0.5).slice(0, 4);
   }, [hostels]);
 
   return (
@@ -28,7 +30,7 @@ const PopularDestinations = () => {
           <DestinationCard
             key={hostel.id}
             id={hostel.id}
-            image={hostel.logoUrl }
+            image={hostel.logoUrl}
             title={hostel.name}
             description={hostel.description}
             index={idx}
@@ -39,4 +41,4 @@ const PopularDestinations = () => {
   );
 };
 
-export default PopularDestinations
+export default PopularDestinations;

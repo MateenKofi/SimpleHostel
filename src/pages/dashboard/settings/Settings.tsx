@@ -114,8 +114,10 @@ const Settings = () => {
       formData.append("email", data.email);
       formData.append("phone", data.phone);
       images.forEach((image) => {
-        formData.append("photo", image);
-      });
+  if (image instanceof File) {
+    formData.append("photos", image);
+  }
+});
       if (logo) {
         formData.append("logo", logo);
       }
@@ -123,7 +125,11 @@ const Settings = () => {
       try {
         const res = await axios.put(
           `/api/hostels/update/${hostelId}`,
-          formData
+          formData,{
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
         );
         toast.success("Hostel Listed successfully");
         return res.data;

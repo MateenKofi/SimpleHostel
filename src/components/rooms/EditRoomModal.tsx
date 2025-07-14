@@ -23,7 +23,7 @@ const ROOM_STATUS = ["Available", "Maintenance", "Occupied"] as const;
 const ROOM_TYPE_CAPACITY: Record<string, number> = {
   single: 1,
   double: 2,
-  suit: 3,
+  suite: 3,
   quard: 4,
 };
 
@@ -76,11 +76,11 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
   const mutation = useMutation({
     mutationFn: async (data: RoomForm) => {
       const formData = new FormData();
-      // formData.append("hostel", hostelId || "");
+      formData.append("hostel", hostelId || "");
       formData.append("number", data.roomNumber);
       formData.append("block", data.block || "");
       formData.append("floor", data.floor?.toString() || "");
-      formData.append("type", data.roomType.toUpperCase());
+      formData.append("type", data.type.toUpperCase());
       formData.append("maxCap", data.maxOccupancy.toString());
       formData.append("price", data.basePrice.toString());
       formData.append("description", data.description || "");
@@ -94,7 +94,6 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
       }
       // // Append each new image file
       images.forEach((image) => {
-        console.log("Appending image:", image.name);
         formData.append("photos", image);
       });
 
@@ -118,13 +117,13 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
     mutation.mutate(data);
   };
 
-  // Update maxOccupancy when roomType changes
-  const roomType = watch("roomType");
+  // Update maxOccupancy when type changes
+  const type = watch("type");
   useEffect(() => {
-    if (roomType) {
-      setValue("maxOccupancy", ROOM_TYPE_CAPACITY[roomType]);
+    if (type) {
+      setValue("maxOccupancy", ROOM_TYPE_CAPACITY[type]);
     }
-  }, [roomType, setValue]);
+  }, [type, setValue]);
 
   // Initialize form values and default images/amenities from formdata
   useEffect(() => {
@@ -132,7 +131,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
       setValue("roomNumber", formdata?.number);
       setValue("block", formdata?.block);
       setValue("floor", parseInt(formdata?.floor?.toString() || "0"));
-      setValue("type", formdata?.type?.toLowerCase() as "single" | "double" | "suit" | "quard");
+      setValue("type", formdata?.type?.toLowerCase() as "single" | "double" | "suite" | "quard");
       setValue("maxOccupancy", formdata?.maxCap);
       setValue("basePrice", formdata?.price);
       setValue("description", formdata?.description);
@@ -230,7 +229,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
               Room Type*
             </label>
             <select
-              {...register("roomType", { required: "Room type is required" })}
+              {...register("type", { required: "Room type is required" })}
               id="type"
               className="p-2 border rounded-md"
             >
@@ -240,8 +239,8 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
               <option value="suit">Suit</option>
               <option value="quard">Quard</option>
             </select>
-            {errors.roomType && (
-              <span className="text-sm text-red-500">{errors.roomType.message}</span>
+            {errors.type && (
+              <span className="text-sm text-red-500">{errors.type.message}</span>
             )}
           </div>
 

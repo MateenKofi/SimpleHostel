@@ -14,25 +14,29 @@ const FeaturedHostels = () => {
     },
   });
 
+ // Get 4 random hostels
   const randomHostels = React.useMemo(() => {
-      if (!hostels || hostels.length < 1) return [];
-      return [...hostels].sort(() => Math.random() - 0.5).slice(0, 4);
-    }, [hostels]);
+    if (!hostels || hostels.length < 1) return [];
+    // Only include hostels with state === "PUBLISHED"
+    const published = hostels.filter((h) => h.state === "PUBLISHED" && h.Rooms.length > 1);
+    return [...published].sort(() => Math.random() - 0.5).slice(0, 4);
+  }, [hostels]);
     
   return (
      <section className="container py-16">
             <h2 className="mb-12 text-3xl font-bold text-center md:text-4xl">Featured Hostels</h2>
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid justify-between w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {randomHostels.map((hostel, index) => (
+                <div key={index} className="w-full max-w-sm ">
                 <HostelCard
                 id={hostel.id}
                   key={index}
                   image={hostel?.Rooms[0]?.RoomImage[0]?.imageUrl || '/logo.png'}
                   title={hostel.name}
                   location={hostel.location}
-                  price={hostel.Rooms[0]?.price || 0}
                   index={index}
                 />
+                </div>
               ))}
             </div>
           </section>
