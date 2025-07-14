@@ -24,7 +24,7 @@ const ROOM_TYPE_CAPACITY: Record<string, number> = {
   single: 1,
   double: 2,
   suite: 3,
-  quard: 4,
+  quad: 4,
 };
 
 const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
@@ -97,7 +97,11 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
         formData.append("photos", image);
       });
 
-      const response = await axios.put(`/api/rooms/updateall/${formdata.id}`, formData);
+      const response = await axios.put(`/api/rooms/updateall/${formdata.id}`, formData,{
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       return response.data;
     },
     onSuccess: () => {
@@ -131,7 +135,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
       setValue("roomNumber", formdata?.number);
       setValue("block", formdata?.block);
       setValue("floor", parseInt(formdata?.floor?.toString() || "0"));
-      setValue("type", formdata?.type?.toLowerCase() as "single" | "double" | "suite" | "quard");
+      setValue("type", formdata?.type?.toLowerCase() as "single" | "double" | "suite" | "quad");
       setValue("maxOccupancy", formdata?.maxCap);
       setValue("basePrice", formdata?.price);
       setValue("description", formdata?.description);
@@ -234,10 +238,10 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
               className="p-2 border rounded-md"
             >
               <option value="">Select Room Type</option>
-              <option value="single">Single</option>
-              <option value="double">Double</option>
-              <option value="suit">Suit</option>
-              <option value="quard">Quard</option>
+             <option value="single">Single</option>
+<option value="double">Double</option>
+<option value="suite">Suite</option>
+<option value="quad">Quard</option>
             </select>
             {errors.type && (
               <span className="text-sm text-red-500">{errors.type.message}</span>
