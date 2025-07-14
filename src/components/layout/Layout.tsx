@@ -13,34 +13,34 @@ import axios from "axios";
 
 const Layout = () => {
   const navigate = useNavigate();
-const logout = useUserStore((state) => state.logout)
+  const logout = useUserStore((state) => state.logout);
   const token = localStorage.getItem("token");
-  
+
   useEffect(() => {
     if (!token || token === "undefined") {
       setTimeout(() => {
         logout();
-      },50)
-      navigate("/login", { replace: true });
+      }, 50);
+      navigate("/", { replace: true });
     }
   }, [token, navigate, logout]);
 
-  
-  const changedPassword = JSON.parse(localStorage.getItem("changedPassword")
-   || "{}");
- 
-  useEffect(() => {
-  if (token) {
-    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  }
-}, [token]);
+  const changedPassword = JSON.parse(
+    localStorage.getItem("changedPassword") || "{}"
+  );
 
- useEffect(() => {
+  useEffect(() => {
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    }
+  }, [token]);
+
+  useEffect(() => {
     if (changedPassword === false) {
       navigate("/change-password");
     }
   }, [changedPassword, navigate]);
- 
+
   return (
     <SidebarProvider>
       <AppSidebar />

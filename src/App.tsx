@@ -57,22 +57,23 @@ function App() {
       }
     >
       <Routes>
+          <Route path="login" element={<LoginForm />} />
+          <Route path="hostel-listing" element={<HostelListingForm />} />
+          <Route path="payment" element={<PaymentSummaryForm/>} />
+          <Route path='terms-and-conditions' element={<TermsAndCondition />} />
+          <Route path="forget-password" element={<ForgetPassword />} />
+          <Route path="change-password" element={<ChangePassword />} />
+          
         {/* Landing Routes */}
         <Route element={<LandingPageLayout />}>
           <Route index element={<Home />} />
           <Route path="about" element={<About/>}/>
           <Route path="contact" element={<Contact/>}/>
           <Route path="find-hostel" element={<FindHostel />} />
-          <Route path="hostel-listing" element={<HostelListingForm />} />
-          <Route path="payment" element={<PaymentSummaryForm/>} />
           
           <Route path="resident-form" element={<ResidentForm />} />
-          <Route path="login" element={<LoginForm />} />
           <Route path="find/:id/room" element={<FindRoom />} />
-          <Route path="change-password" element={<ChangePassword />} />
-          <Route path="forget-password" element={<ForgetPassword />} />
-            <Route path='terms-and-conditions' element={<TermsAndCondition />} />
-          
+
         </Route>
 
         {/* Protected Dashboard Routes */}

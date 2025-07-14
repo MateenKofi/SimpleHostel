@@ -28,6 +28,7 @@ type UserStore = {
   fetchUser: (userId: string) => Promise<void>;
 };
 
+
 export const useUserStore = create<UserStore>()(
   persist(
     (set, get) => ({

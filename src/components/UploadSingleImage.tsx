@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import { UploadCloud, XCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -14,13 +14,12 @@ const UploadSingleImage: React.FC<UploadSingleImageProps> = ({
   previewImage,
 }) => {
   const [previewUrl, setPreviewUrl] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Priority: uploaded image > fallback preview image > empty
     if (image instanceof File) {
       const url = URL.createObjectURL(image);
       setPreviewUrl(url);
-
       return () => {
         URL.revokeObjectURL(url);
       };
@@ -42,6 +41,10 @@ const UploadSingleImage: React.FC<UploadSingleImageProps> = ({
 
   const handleRemoveImage = () => {
     setImage(null);
+    setPreviewUrl("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   return (
@@ -49,7 +52,7 @@ const UploadSingleImage: React.FC<UploadSingleImageProps> = ({
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="flex flex-col items-center justify-center gap-4 p-6 border-2 border-dashed border-gray-400 rounded-2xl"
+      className="flex flex-col items-center justify-center gap-4 p-6 border-2 border-gray-400 border-dashed rounded-2xl"
     >
       {previewUrl ? (
         <motion.div
@@ -61,16 +64,15 @@ const UploadSingleImage: React.FC<UploadSingleImageProps> = ({
           <img
             src={previewUrl}
             alt="Uploaded Preview"
-            className="w-48 h-48 object-cover rounded-xl shadow-lg"
+            className="object-cover w-48 h-48 shadow-lg rounded-xl"
           />
           <button
             type="button"
             onClick={handleRemoveImage}
             aria-label="Remove image"
-            className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition"
+            className="flex items-center gap-2 px-4 py-2 text-white transition bg-red-500 rounded-xl hover:bg-red-600"
           >
             <XCircle size={20} />
-            <span className="sr-only">Remove image</span>
           </button>
         </motion.div>
       ) : (
@@ -81,6 +83,7 @@ const UploadSingleImage: React.FC<UploadSingleImageProps> = ({
           className="flex flex-col items-center justify-center cursor-pointer"
         >
           <input
+            ref={fileInputRef}
             type="file"
             accept="image/*"
             onChange={handleImageChange}
@@ -89,7 +92,7 @@ const UploadSingleImage: React.FC<UploadSingleImageProps> = ({
           />
           <div className="flex flex-col items-center gap-3">
             <UploadCloud className="w-10 h-10 text-gray-500 animate-bounce" />
-            <span className="text-gray-600 text-sm">Click to upload</span>
+            <span className="text-sm text-gray-600">Click to upload</span>
           </div>
         </motion.label>
       )}

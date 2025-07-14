@@ -2,7 +2,14 @@ import { useState, useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Building, Loader, Mail, MapPin, Phone } from "lucide-react";
+import {
+  Building,
+  Loader,
+  LucideCircleArrowOutUpRight,
+  Mail,
+  MapPin,
+  Phone,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -113,11 +120,12 @@ const Settings = () => {
       formData.append("address", data.address.toUpperCase());
       formData.append("email", data.email);
       formData.append("phone", data.phone);
+      formData.append("hostelId", hostelId || "");
       images.forEach((image) => {
-  if (image instanceof File) {
-    formData.append("photos", image);
-  }
-});
+        if (image instanceof File) {
+          formData.append("photos", image);
+        }
+      });
       if (logo) {
         formData.append("logo", logo);
       }
@@ -125,7 +133,8 @@ const Settings = () => {
       try {
         const res = await axios.put(
           `/api/hostels/update/${hostelId}`,
-          formData,{
+          formData,
+          {
             headers: {
               "Content-Type": "multipart/form-data",
             },
@@ -234,6 +243,17 @@ const Settings = () => {
                   </FormItem>
                 )}
               />
+              <a
+                href="https://www.google.com/maps"
+                target="_blank"
+                className="mt-4 italic tracking-tighter text-blue-400 underline "
+              >
+                <p className="flex items-center gap-1">
+                  {" "}
+                  Get Google Map Location Here{" "}
+                  <LucideCircleArrowOutUpRight size={12} />
+                </p>
+              </a>
             </CardContent>
           </Card>
 
