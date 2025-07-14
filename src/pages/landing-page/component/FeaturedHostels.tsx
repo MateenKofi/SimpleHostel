@@ -31,7 +31,7 @@ const FeaturedHostels = () => {
                 <HostelCard
                 id={hostel.id}
                   key={index}
-                  image={hostel?.Rooms[0]?.RoomImage[0]?.imageUrl || '/logo.png'}
+                  image={hostel?.HostelImages[0]?.imageUrl || '/logo.png'}
                   title={hostel.name}
                   location={hostel.location}
                   index={index}
