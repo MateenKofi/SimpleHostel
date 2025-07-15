@@ -120,7 +120,7 @@ const Settings = () => {
       formData.append("address", data.address.toUpperCase());
       formData.append("email", data.email);
       formData.append("phone", data.phone);
-      formData.append("hostelId", hostelId || "");
+      // formData.append("hostelId", hostelId || "");
       images.forEach((image) => {
         if (image instanceof File) {
           formData.append("photos", image);

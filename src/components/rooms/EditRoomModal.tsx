@@ -76,7 +76,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
   const mutation = useMutation({
     mutationFn: async (data: RoomForm) => {
       const formData = new FormData();
-      formData.append("hostel", hostelId || "");
+      formData.append("hostelId", hostelId || "");
       formData.append("number", data.roomNumber);
       formData.append("block", data.block || "");
       formData.append("floor", data.floor?.toString() || "");

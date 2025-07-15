@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { COLORS } from '@/helper/chartColors'
-import { ResponsiveContainer, Pie, Cell, Tooltip,PieChart } from 'recharts'
+import { ResponsiveContainer, Pie, Cell, Tooltip,PieChart ,  } from 'recharts'
 import { Analytics } from '@/helper/types/types'
 
 type analyticsData = Analytics
@@ -11,7 +11,7 @@ const OccupancyStatus = ({ analyticsData }: { analyticsData: analyticsData }) =>
   ]
 
   return (
-     <Card className="lg:col-span-3 border-gray-200">
+     <Card className="border-gray-200 lg:col-span-3">
               <CardHeader>
                 <CardTitle>Occupancy Status</CardTitle>
                 <CardDescription className="text-gray-500">Current room occupancy breakdown</CardDescription>
@@ -38,7 +38,7 @@ const OccupancyStatus = ({ analyticsData }: { analyticsData: analyticsData }) =>
                     </PieChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="mt-4 grid grid-cols-2 gap-4 text-center">
+                <div className="grid grid-cols-2 gap-4 mt-4 text-center">
                   <div>
                     <div className="text-sm font-medium text-gray-500">Total Rooms</div>
                     <div className="text-lg font-bold">{analyticsData && analyticsData.totalRooms}</div>

@@ -16,7 +16,7 @@ type analyticsData = Analytics
   },
 ]
   return (
-     <Card className="lg:col-span-4 border-gray-200">
+     <Card className="border-gray-200 lg:col-span-4">
               <CardHeader>
                 <CardTitle>Revenue Overview</CardTitle>
                 <CardDescription className="text-gray-500">Current year revenue collection status</CardDescription>
@@ -29,12 +29,12 @@ type analyticsData = Analytics
                       <YAxis />
                       <Tooltip content={<CustomTooltip />} />
                       <Bar dataKey="Collected" fill={CHART_COLORS.green} />
-                      <Bar dataKey="Expected" fill={CHART_COLORS.black} />
-                      <Bar dataKey="Outstanding" fill={CHART_COLORS.red} />
+                      <Bar dataKey="Expected" fill={CHART_COLORS.yellow} />
+                      <Bar dataKey="Outstanding" fill={CHART_COLORS.blue_black} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="mt-4 grid grid-cols-3 gap-4 text-center">
+                <div className="grid grid-cols-3 gap-4 mt-4 text-center">
                   <div>
                     <div className="text-sm font-medium text-gray-500">Collected</div>
                     <div className="text-lg font-bold">
