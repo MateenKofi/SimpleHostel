@@ -46,7 +46,7 @@ const RoomManagementTab = () => {
       description='Manage your hostel rooms and amenities efficiently with our user-friendly interface.'
       keywords='room management, hostel, amenities, Fuse'
       />
-      <StatusAlert status={hostel?.state as 'published' | 'unpublished'} />
+      <StatusAlert status={hostel?.state as 'PUBLISHED' | 'UNPUBLISHED'} />
       <div className="flex items-center justify-between w-full mb-6">
         <div className='w-full p-3 border rounded-md shadow-md'>
           <h1 className="text-2xl font-bold text-gray-800">Room Management</h1>
