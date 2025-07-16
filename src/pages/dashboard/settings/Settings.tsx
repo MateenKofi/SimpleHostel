@@ -37,6 +37,7 @@ import CustomeRefetch from "@/components/CustomeRefetch";
 import ImageUpload from "@/components/ImageUpload";
 import UploadSingleImage from "@/components/UploadSingleImage";
 import SEOHelmet from "@/components/SEOHelmet";
+import SettingsSkeleton from "@/components/loaders/SettingsLoader";
 // import { images } from "@/helper/types/types"
 
 // Validation schema
@@ -158,7 +159,7 @@ const Settings = () => {
     updateMutation.mutate(values);
   };
 
-  if (isLoading) return <p>Loading settings...</p>;
+  if (isLoading) return <SettingsSkeleton/>;
   if (isError) return <CustomeRefetch refetch={refetchHostel} />;
 
   return (
