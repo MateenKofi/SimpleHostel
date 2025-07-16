@@ -20,10 +20,10 @@ const Layout = () => {
     if (!token || token === "undefined") {
       setTimeout(() => {
         logout();
-      }, 50);
-      navigate("/", { replace: true });
+      }, 10);
+     window.location.href = "/";
     }
-  }, [token, navigate, logout]);
+  }, [token, logout]);
 
   const changedPassword = JSON.parse(
     localStorage.getItem("changedPassword") || "{}"

@@ -110,7 +110,7 @@ export const useUserStore = create<UserStore>()(
         localStorage.removeItem('added-resident-store');
         localStorage.removeItem('changedPassword');
         toast.success("Logout successful");
-        window.location.reload();
+        window.location.href = "/";
       },
 
       fetchUser: async (userId: string) => {
@@ -132,7 +132,10 @@ export const useUserStore = create<UserStore>()(
             changedPassword: user.changedPassword,
           });
         } catch (error) {
-          console.error("Error fetching user data:", error);
+          if(axios.isAxiosError(error)) {
+            const errorMessage = error.response?.data?.error || "Failed to fetch user data";
+            toast.error(errorMessage);
+          }
         }
       },
     }),
