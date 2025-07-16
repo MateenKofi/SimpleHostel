@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { lazy, Suspense } from "react";
+import {  Suspense } from "react";
 import axios from "axios";
 import { Loader } from "lucide-react";
 
@@ -23,29 +23,28 @@ axios.defaults.baseURL = `${import.meta.env.VITE_API_BASE_URL}`;
 
 
 
-// Lazy loaded components
-const Dashboard = lazy(() => import("@pages/dashboard/Dashboard"));
-const RoomManagementTab = lazy(() => import("@pages/dashboard/room-management/RoomManagementTab"));
-const RoomAssignmentAndPayment = lazy(() => import("@/components/rooms/room-assignment/RoomAssignmentAndPayment"));
-const ResidentManagement = lazy(() => import("@pages/dashboard/resident-management/ResidentManagement"));
-const VisitorManagement = lazy(() => import("@pages/dashboard/visitor-management/VisitorManagement"));
-const StaffManagement = lazy(() => import("@pages/dashboard/staff-management/StaffManagement"));
-const AddStaff = lazy(() => import("@/components/staff/AddStaff"));
-const DeptorsList = lazy(() => import("./pages/dashboard/deptors-list/DeptorsList"));
-const HostelListingForm = lazy(() => import("./pages/landing-page/component/hostel-listing/Hostel-Listing-Form"));
-const PaymentSummaryForm = lazy(() => import("./components/payment/PaymentSummaryForm"));
-const TopUpPaymentForm = lazy(() => import("./components/payment/TopUpPaymentForm"))
-const ResidentForm = lazy(() => import("./pages/landing-page/component/resident-forms/ResidentForm"));
-const AddResident = lazy(() => import("./components/resident/AddResident"));
-const ApproveHostel = lazy(() => import("./pages/dashboard/approvals/Approve-Hostel"));
-const ProfileForm = lazy(() => import("./pages/dashboard/profile/Profile-From"));
-const EditStaff = lazy(() => import("./components/staff/EditStaff"));
-const CalendarYear = lazy(() => import("./pages/dashboard/calendarYear/CalendarYear"));
-const Transactions = lazy(() => import("./pages/dashboard/transactions/Transactions"));
-const Users = lazy(() => import("./pages/dashboard/users/Users"));
-const ViewRoom = lazy(() => import("./components/rooms/ViewRoom"));
-const FindRoom = lazy(() => import("./pages/landing-page/component/find-room/Find-Room"));
-const HostelManagement = lazy(() => import("./pages/dashboard/hostelManagement/HostelManagement"));
+import Dashboard from "@pages/dashboard/Dashboard";
+import RoomManagementTab from "@pages/dashboard/room-management/RoomManagementTab";
+import RoomAssignmentAndPayment from "@/components/rooms/room-assignment/RoomAssignmentAndPayment";
+import ResidentManagement from "@pages/dashboard/resident-management/ResidentManagement";
+import VisitorManagement from "@pages/dashboard/visitor-management/VisitorManagement";
+import StaffManagement from "@pages/dashboard/staff-management/StaffManagement";
+import AddStaff from "@/components/staff/AddStaff";
+import DeptorsList from "./pages/dashboard/deptors-list/DeptorsList";
+import HostelListingForm from "./pages/landing-page/component/hostel-listing/Hostel-Listing-Form";
+import PaymentSummaryForm from "./components/payment/PaymentSummaryForm";
+import TopUpPaymentForm from "./components/payment/TopUpPaymentForm";
+import ResidentForm from "./pages/landing-page/component/resident-forms/ResidentForm";
+import AddResident from "./components/resident/AddResident";
+import ApproveHostel from "./pages/dashboard/approvals/Approve-Hostel";
+import ProfileForm from "./pages/dashboard/profile/Profile-From";
+import EditStaff from "./components/staff/EditStaff";
+import CalendarYear from "./pages/dashboard/calendarYear/CalendarYear";
+import Transactions from "./pages/dashboard/transactions/Transactions";
+import Users from "./pages/dashboard/users/Users";
+import ViewRoom from "./components/rooms/ViewRoom";
+import FindRoom from "./pages/landing-page/component/find-room/Find-Room";
+import HostelManagement from "./pages/dashboard/hostelManagement/HostelManagement";
 
 function App() {
   return (

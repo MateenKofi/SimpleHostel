@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 
 interface AwardStatusAlertProps {
-  status: 'published' | 'unpublished';
+  status: 'PUBLISHED' | 'UNPUBLISHED';
 }
 
 type AlertType = "info" | "success";
@@ -17,7 +17,6 @@ const alertBgColors: Record<AlertType, string> = {
 };
 
 const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
-  const [showResults, setShowResults] = useState<boolean>(false);
   const [isLoading] = useState<boolean>(false);
   const queryClient = useQueryClient();
 
@@ -86,12 +85,12 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
   };
 
   const handleUpdateResultsStatus = async () => {
-    if (showResults) {
+    if (status?.toUpperCase() === 'PUBLISHED') {
       await handleUnpublish();
     } else {
       await handlePublish();
     }
-    setShowResults(!showResults);
+    
   };
 
   const getAlertConfig = (): { type: AlertType; title: string; description: string; icon: JSX.Element; action: JSX.Element } | null => {
