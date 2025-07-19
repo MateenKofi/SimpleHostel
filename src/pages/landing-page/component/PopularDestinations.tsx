@@ -7,6 +7,7 @@ import { Hostel } from '@/helper/types/types';
 const PopularDestinations = () => {
   const {
     data: hostels,
+    isLoading,
   } = useQuery({
     queryKey: ["find_hostel"],
     queryFn: async () => {
@@ -26,6 +27,21 @@ const PopularDestinations = () => {
   return (
     <section className="container py-16">
       <h2 className="mb-12 text-3xl font-bold text-center md:text-4xl">Popular Destinations</h2>
+      {isLoading && (
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          {Array.from({ length: 4 }).map((_, idx) => (
+            <DestinationCard
+              key={idx}
+              id={idx}
+              image="/logo.png"
+              title="Loading..."
+              description="Loading..."
+              index={idx}
+              loading={isLoading}
+            />
+          ))}
+        </div>
+      )}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {randomHostels.map((hostel, idx) => (
           <DestinationCard

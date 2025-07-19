@@ -20,8 +20,10 @@ interface ActiveFilters {
 }
 
 export function FindHostel() {
-  const navigate = useNavigate()
-  const setCalendarYear = useSelectedCalendarYearStore((state) => state.setCalendarYear);
+  const navigate = useNavigate();
+  const setCalendarYear = useSelectedCalendarYearStore(
+    (state) => state.setCalendarYear
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedQuery = useDebounce(searchQuery, 500);
 
@@ -61,17 +63,16 @@ export function FindHostel() {
     }));
   };
 
- const handleFindRoom = (hostel: Hostel) => {
-
-  setTimeout(() => {
-    if (hostel.CalendarYear) {
-      setCalendarYear(hostel.CalendarYear[0] || null); 
-    } else {
-      setCalendarYear(null);
-    }
-    navigate(`/find/${hostel.id}/room`);
-  }, 50);
-};
+  const handleFindRoom = (hostel: Hostel) => {
+    setTimeout(() => {
+      if (hostel.CalendarYear) {
+        setCalendarYear(hostel.CalendarYear[0] || null);
+      } else {
+        setCalendarYear(null);
+      }
+      navigate(`/find/${hostel.id}/room`);
+    }, 50);
+  };
 
   if (isLoading) return <FindHostelSkeleton />;
   if (isError) return <CustomeRefetch refetch={refetch} />;
@@ -93,7 +94,7 @@ export function FindHostel() {
   });
 
   return (
-    <div className="container py-8 mx-auto">
+    <div className="px-4 py-8 mx-auto ">
       <div className="flex flex-col gap-8 lg:flex-row">
         <div className="w-full lg:w-64 ">
           <FilterPanel
@@ -128,74 +129,79 @@ export function FindHostel() {
               ))
             )}
           </div>
-         
-            {filteredHostels?.length === 0 ? (
-              <p className="text-center text-black dark:text-white">No hostels match your search.</p>
-            ) : (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                {filteredHostels?.map((hostel: Hostel) => (
-                  <div
-                    key={hostel.id}
-                    className="overflow-hidden transition-colors bg-white border rounded-md dark:border-zinc-700 dark:bg-zinc-800"
-                  >
-                    <ImageSlider
-                      images={hostel?.HostelImages?.map((i) => i.imageUrl)}
-                    />
-                    <div className="p-4 space-y-2">
-                      <p className="font-bold text-black dark:text-white">{hostel.name}</p>
-                      <div className="flex gap-2">
-                        <a
-                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                            hostel.address
-                          )}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center flex-1 gap-2 p-2 transition-colors border rounded dark:border-zinc-700 hover:bg-gray-100 dark:hover:bg-zinc-700"
-                        >
-                          <MapPinHouse className="w-4 h-4 text-black dark:text-white" />
-                          <div>
-                            <p className="text-xs font-bold text-black truncate dark:text-white">
-                              {hostel.address}
-                            </p>
-                            <p className="text-[10px] text-gray-500 dark:text-gray-400">
-                              click to search
-                            </p>
-                          </div>
-                        </a>
 
-                        <div className="flex items-center flex-1 gap-2 p-2 border rounded dark:border-zinc-700">
-                          <MapPin className="w-4 h-4 text-black dark:text-white" />
-                          <p className="text-sm text-black dark:text-white">{hostel.location}</p>
-                        </div>
-                      </div>
-
+          {filteredHostels?.length === 0 ? (
+            <p className="text-center text-black dark:text-white">
+              No hostels match your search.
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              {filteredHostels?.map((hostel: Hostel) => (
+                <div
+                  key={hostel.id}
+                  className="overflow-hidden transition-colors bg-white border rounded-md dark:border-zinc-700 dark:bg-zinc-800"
+                >
+                  <ImageSlider
+                    images={hostel?.HostelImages?.map((i) => i.imageUrl)}
+                  />
+                  <div className="p-4 space-y-2">
+                    <p className="font-bold text-black dark:text-white">
+                      {hostel.name}
+                    </p>
+                    <div className="flex w-full gap-2">
                       <a
                         href={`tel:${hostel.phone}`}
-                        className="flex items-center gap-2 p-2 border rounded dark:border-zinc-700"
+                        className="flex items-center w-full gap-2 p-2 border rounded dark:border-zinc-700"
                       >
                         <Phone className="w-4 h-4 text-black dark:text-white" />
                         <div>
-                          <p className="text-xs font-bold text-black dark:text-white">{hostel.phone}</p>
+                          <p className="text-xs font-bold text-black dark:text-white">
+                            {hostel.phone}
+                          </p>
                           <p className="text-[10px] text-gray-500 dark:text-gray-400">
                             click to call
                           </p>
                         </div>
                       </a>
-                        <button
-                          className="w-full mt-2 text-white transition-colors bg-black btn btn-black dark:bg-white dark:text-black hover:bg-gray-900 dark:hover:bg-gray-200"
-                          onClick={() => handleFindRoom(hostel)}
-                        >
-                          Find Room
-                        </button>
-
+                      <div className="flex items-center flex-1 w-full gap-2 p-2 border rounded dark:border-zinc-700">
+                        <MapPin className="w-4 h-4 text-black dark:text-white" />
+                        <p className="text-sm text-black dark:text-white">
+                          {hostel.location}
+                        </p>
+                      </div>
                     </div>
+
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                        hostel.address
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center flex-1 gap-2 p-2 transition-colors border rounded dark:border-zinc-700 hover:bg-gray-100 dark:hover:bg-zinc-700"
+                    >
+                      <MapPinHouse className="w-4 h-4 text-black dark:text-white" />
+                      <div>
+                        <p className="text-xs font-bold text-black truncate dark:text-white trancate">
+                          {hostel.address}
+                        </p>
+                        <p className="text-[10px] text-gray-500 dark:text-gray-400">
+                          click to search
+                        </p>
+                      </div>
+                    </a>
+                    <button
+                      className="w-full mt-2 text-white transition-colors bg-black btn btn-black dark:bg-white dark:text-black hover:bg-gray-900 dark:hover:bg-gray-200"
+                      onClick={() => handleFindRoom(hostel)}
+                    >
+                      Find Room
+                    </button>
                   </div>
-                ))}
-               </div>
-            )}
-          </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
-   
+    </div>
   );
 }

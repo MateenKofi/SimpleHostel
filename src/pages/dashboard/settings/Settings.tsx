@@ -262,7 +262,7 @@ const Settings = () => {
           <Card>
             <CardHeader>
               <CardTitle>Contact Information</CardTitle>
-              <CardDescription>How can folks reach you?</CardDescription>
+              <CardDescription>How can residents reach you?</CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">

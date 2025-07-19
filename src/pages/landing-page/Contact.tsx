@@ -13,7 +13,7 @@ export default function ContactPage() {
     <div className="min-h-screen">
       <main>
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-b from-zinc-900 to-zinc-800 text-white py-20 md:py-28">
+        <section className="relative py-20 text-white bg-gradient-to-b from-zinc-900 to-zinc-800 md:py-28">
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1596386461350-326ccb383e9f?auto=format&fit=crop&w=1920&q=80')] bg-cover bg-center opacity-20"></div>
           </div>
@@ -28,7 +28,7 @@ export default function ContactPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
+                className="mb-6 text-4xl font-bold md:text-5xl lg:text-6xl"
               >
                 Get in <span className="text-red-500">Touch</span>
               </motion.h1>
@@ -100,26 +100,26 @@ function ContactFormSection() {
 
   const contactInfo = [
     {
-      icon: <MapPin className="h-6 w-6 text-red-500" />,
+      icon: <MapPin className="w-6 h-6 text-red-500" />,
       title: "Our Location",
       details: [
-        "123 Travel Street",
-        "Backpacker's District",
-        "Adventure City, AC 10101",
+        "Kumasi",
+        "Tanoso",
+        "AAMUSTED",
       ],
     },
     {
-      icon: <Phone className="h-6 w-6 text-red-500" />,
+      icon: <Phone className="w-6 h-6 text-red-500" />,
       title: "Phone Number",
-      details: ["+233 (543) 983-427"],
+      details: ["+233 54 3983 427"],
     },
     {
-      icon: <Mail className="h-6 w-6 text-red-500" />,
+      icon: <Mail className="w-6 h-6 text-red-500" />,
       title: "Email Address",
       details: ["fuseinfo@gmail.com", "fusesupport@gmail.com"],
     },
     {
-      icon: <Clock className="h-6 w-6 text-red-500" />,
+      icon: <Clock className="w-6 h-6 text-red-500" />,
       title: "Working Hours",
       details: [
         "Monday - Friday: 9am - 6pm",
@@ -130,17 +130,17 @@ function ContactFormSection() {
   ];
 
   return (
-    <section ref={ref} className="py-16 md:py-24 bg-white dark:bg-zinc-900">
+    <section ref={ref} className="py-16 bg-white md:py-24 dark:bg-zinc-900">
       <div className="container">
-        <div className="grid lg:grid-cols-2 gap-12">
+        <div className="grid gap-12 lg:grid-cols-2">
           {/* Contact Form */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
             transition={{ duration: 0.5 }}
-            className="bg-white dark:bg-zinc-800 p-8 rounded-lg shadow-lg"
+            className="p-8 bg-white rounded-lg shadow-lg dark:bg-zinc-800"
           >
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">
+            <h2 className="mb-6 text-2xl font-bold md:text-3xl">
               Send Us a Message
             </h2>
 
@@ -150,26 +150,26 @@ function ContactFormSection() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="flex flex-col items-center justify-center py-12 text-center"
               >
-                <CheckCircle className="h-16 w-16 text-green-500 mb-4" />
-                <h3 className="text-xl font-semibold mb-2">Message Sent!</h3>
-                <p className="text-zinc-600 dark:text-zinc-300 mb-6">
+                <CheckCircle className="w-16 h-16 mb-4 text-green-500" />
+                <h3 className="mb-2 text-xl font-semibold">Message Sent!</h3>
+                <p className="mb-6 text-zinc-600 dark:text-zinc-300">
                   Thank you for reaching out. We'll get back to you as soon as
                   possible.
                 </p>
                 <Button
                   onClick={() => setIsSubmitted(false)}
-                  className="bg-red-500 hover:bg-red-600 text-white"
+                  className="text-white bg-red-500 hover:bg-red-600"
                 >
                   Send Another Message
                 </Button>
               </motion.div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid gap-6 md:grid-cols-2">
                   <div>
                     <label
                       htmlFor="name"
-                      className="block text-sm font-medium mb-2"
+                      className="block mb-2 text-sm font-medium"
                     >
                       Your Name
                     </label>
@@ -185,7 +185,7 @@ function ContactFormSection() {
                   <div>
                     <label
                       htmlFor="email"
-                      className="block text-sm font-medium mb-2"
+                      className="block mb-2 text-sm font-medium"
                     >
                       Your Email
                     </label>
@@ -203,7 +203,7 @@ function ContactFormSection() {
                 <div>
                   <label
                     htmlFor="subject"
-                    className="block text-sm font-medium mb-2"
+                    className="block mb-2 text-sm font-medium"
                   >
                     Subject
                   </label>
@@ -219,7 +219,7 @@ function ContactFormSection() {
                 <div>
                   <label
                     htmlFor="message"
-                    className="block text-sm font-medium mb-2"
+                    className="block mb-2 text-sm font-medium"
                   >
                     Message
                   </label>
@@ -239,7 +239,7 @@ function ContactFormSection() {
                 >
                   <Button
                     type="submit"
-                    className="w-full bg-red-500 hover:bg-red-600 text-white"
+                    className="w-full text-white bg-red-500 hover:bg-red-600"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (
@@ -253,13 +253,13 @@ function ContactFormSection() {
                           }}
                           className="mr-2"
                         >
-                          <Send className="h-4 w-4" />
+                          <Send className="w-4 h-4" />
                         </motion.div>
                         Sending...
                       </>
                     ) : (
                       <>
-                        <Send className="mr-2 h-4 w-4" /> Send Message
+                        <Send className="w-4 h-4 mr-2" /> Send Message
                       </>
                     )}
                   </Button>
@@ -274,7 +274,7 @@ function ContactFormSection() {
             animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <h2 className="text-2xl md:text-3xl font-bold mb-8">
+            <h2 className="mb-8 text-2xl font-bold md:text-3xl">
               Contact Information
             </h2>
             <div className="space-y-8">
@@ -288,11 +288,11 @@ function ContactFormSection() {
                   transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
                   className="flex items-start"
                 >
-                  <div className="bg-red-100 dark:bg-red-900/30 p-3 rounded-lg mr-4">
+                  <div className="p-3 mr-4 bg-red-100 rounded-lg dark:bg-red-900/30">
                     {item.icon}
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+                    <h3 className="mb-2 text-lg font-semibold">{item.title}</h3>
                     <div className="space-y-1 text-zinc-600 dark:text-zinc-400">
                       {item.details.map((detail, i) => (
                         <p key={i}>{detail}</p>
@@ -304,20 +304,20 @@ function ContactFormSection() {
             </div>
 
             <div className="mt-12">
-              <h3 className="text-lg font-semibold mb-4">Follow Us</h3>
+              <h3 className="mb-4 text-lg font-semibold">Follow Us</h3>
               <div className="flex space-x-4">
                 {[
-                  { icon: <Facebook className="h-6 w-6 text-red-500" />, href: "#" },
-                  { icon: <Twitter className="h-6 w-6 text-red-500" />, href: "#" },
-                  { icon: <Instagram className="h-6 w-6 text-red-500" />, href: "#" },
-                  { icon: <Linkedin className="h-6 w-6 text-red-500" />, href: "#" },
+                  { icon: <Facebook className="w-6 h-6 text-red-500" />, href: "#" },
+                  { icon: <Twitter className="w-6 h-6 text-red-500" />, href: "#" },
+                  { icon: <Instagram className="w-6 h-6 text-red-500" />, href: "#" },
+                  { icon: <Linkedin className="w-6 h-6 text-red-500" />, href: "#" },
                 ].map((social, index) => (
                   <motion.a
                     key={index}
                     href={social.href}
                     whileHover={{ y: -5, scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="bg-zinc-100 dark:bg-zinc-700 p-3 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors"
+                    className="p-3 transition-colors rounded-full bg-zinc-100 dark:bg-zinc-700 hover:bg-red-100 dark:hover:bg-red-900/30"
                   >
                     {social.icon}
                   </motion.a>
@@ -344,9 +344,9 @@ function MapSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-12"
+          className="max-w-3xl mx-auto mb-12 text-center"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Find Us</h2>
+          <h2 className="mb-6 text-3xl font-bold md:text-4xl">Find Us</h2>
           <p className="text-lg text-zinc-700 dark:text-zinc-300">
             Visit our headquarters or reach out online. We're always happy to
             connect with travelers and hostel owners.
@@ -418,7 +418,7 @@ function FAQSection() {
   };
 
   return (
-    <section ref={ref} className="py-16 md:py-24 bg-white dark:bg-zinc-900">
+    <section ref={ref} className="py-16 bg-white md:py-24 dark:bg-zinc-900">
       <div className="container">
         <SEOHelmet
           title="Contact Us - Fuse"
@@ -429,9 +429,9 @@ function FAQSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: 0.5 }}
-          className="text-center max-w-3xl mx-auto mb-12"
+          className="max-w-3xl mx-auto mb-12 text-center"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+          <h2 className="mb-6 text-3xl font-bold md:text-4xl">
             Frequently Asked Questions
           </h2>
           <p className="text-lg text-zinc-700 dark:text-zinc-300">
@@ -451,9 +451,9 @@ function FAQSection() {
             >
               <button
                 onClick={() => toggleFaq(index)}
-                className="w-full text-left p-4 bg-zinc-50 dark:bg-zinc-800 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors flex justify-between items-center"
+                className="flex items-center justify-between w-full p-4 text-left transition-colors rounded-lg bg-zinc-50 dark:bg-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-700"
               >
-                <span className="font-medium text-lg">{faq.question}</span>
+                <span className="text-lg font-medium">{faq.question}</span>
                 <motion.span
                   animate={{ rotate: openFaq === index ? 180 : 0 }}
                   transition={{ duration: 0.3 }}
@@ -468,7 +468,7 @@ function FAQSection() {
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="h-5 w-5"
+                    className="w-5 h-5"
                   >
                     <polyline points="6 9 12 15 18 9"></polyline>
                   </svg>
@@ -484,7 +484,7 @@ function FAQSection() {
                 transition={{ duration: 0.3 }}
                 className="overflow-hidden"
               >
-                <div className="p-4 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded-lg">
+                <div className="p-4 bg-white border rounded-lg dark:bg-zinc-900 border-zinc-200 dark:border-zinc-700">
                   <p className="text-zinc-600 dark:text-zinc-400">
                     {faq.answer}
                   </p>

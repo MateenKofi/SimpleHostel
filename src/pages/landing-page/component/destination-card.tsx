@@ -9,10 +9,11 @@ interface DestinationCardProps {
   title: string
   description: string
   index: number
-  id?: string
+  id?: string | number
+  loading?: boolean
 }
 
-export function DestinationCard({ image, title, description, index, id }: DestinationCardProps) {
+export function DestinationCard({ image, title, description, index, id, loading }: DestinationCardProps) {
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.1,
@@ -44,9 +45,10 @@ export function DestinationCard({ image, title, description, index, id }: Destin
               transition={{ duration: 0.2 }}
               className="inline-flex"
             >
+             
               <Link
                 to={`/find/${id}/room`}
-                className="inline-flex items-center tracking-tighter text-red-500 hover:text-red-600"
+                className={`inline-flex items-center tracking-tighter text-red-500 hover:text-red-600 ${loading ? "hidden" : ""}`}
               >
                 Book Your Stay <ChevronRight className="w-4 h-4 ml-1" />
               </Link>

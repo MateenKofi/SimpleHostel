@@ -5,7 +5,7 @@ const SettingsSkeleton = () => {
   return (
     <div className="container max-w-5xl px-4 py-10 mx-auto">
       {/* Title */}
-      <Skeleton className="h-9 w-64 mb-6" />
+      <Skeleton className="w-64 mb-6 h-9" />
 
       <div className="space-y-8">
         {/* General Information Card */}
@@ -17,42 +17,42 @@ const SettingsSkeleton = () => {
           <CardContent className="space-y-6">
             {/* Logo upload area */}
             <div className="flex items-center space-x-2">
-              <Skeleton className="h-24 w-24 rounded-lg" />
+              <Skeleton className="w-24 h-24 rounded-lg" />
               <div className="space-y-2">
-                <Skeleton className="h-4 w-32" />
-                <Skeleton className="h-8 w-24" />
+                <Skeleton className="w-32 h-4" />
+                <Skeleton className="w-24 h-8" />
               </div>
             </div>
 
             {/* Hostel name */}
             <div className="grid w-full grid-cols-1 gap-6">
               <div className="space-y-2">
-                <Skeleton className="h-4 w-24" />
+                <Skeleton className="w-24 h-4" />
                 <div className="flex items-center space-x-2">
-                  <Skeleton className="h-4 w-4" />
-                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="w-4 h-4" />
+                  <Skeleton className="w-full h-10" />
                 </div>
               </div>
             </div>
 
             {/* Description */}
             <div className="space-y-2">
-              <Skeleton className="h-4 w-20" />
+              <Skeleton className="w-20 h-4" />
               <Skeleton className="h-[120px] w-full" />
-              <Skeleton className="h-3 w-64" />
+              <Skeleton className="w-64 h-3" />
             </div>
 
             {/* Address */}
             <div className="space-y-2">
-              <Skeleton className="h-4 w-16" />
+              <Skeleton className="w-16 h-4" />
               <div className="flex items-center space-x-2">
-                <Skeleton className="h-4 w-4" />
-                <Skeleton className="h-10 w-full" />
+                <Skeleton className="w-4 h-4" />
+                <Skeleton className="w-full h-10" />
               </div>
             </div>
 
             {/* Google Maps link */}
-            <Skeleton className="h-4 w-48" />
+            <Skeleton className="w-48 h-4" />
           </CardContent>
         </Card>
 
@@ -60,25 +60,25 @@ const SettingsSkeleton = () => {
         <Card>
           <CardHeader>
             <CardTitle>Contact Information</CardTitle>
-            <CardDescription>How can folks reach you?</CardDescription>
+            <CardDescription>How can residents reach you?</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {/* Email */}
               <div className="space-y-2">
-                <Skeleton className="h-4 w-12" />
+                <Skeleton className="w-12 h-4" />
                 <div className="flex items-center space-x-2">
-                  <Skeleton className="h-4 w-4" />
-                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="w-4 h-4" />
+                  <Skeleton className="w-full h-10" />
                 </div>
               </div>
 
               {/* Phone */}
               <div className="space-y-2">
-                <Skeleton className="h-4 w-12" />
+                <Skeleton className="w-12 h-4" />
                 <div className="flex items-center space-x-2">
-                  <Skeleton className="h-4 w-4" />
-                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="w-4 h-4" />
+                  <Skeleton className="w-full h-10" />
                 </div>
               </div>
             </div>
@@ -93,11 +93,11 @@ const SettingsSkeleton = () => {
           </CardHeader>
           <CardContent className="mx-10">
             <div className="space-y-4">
-              <Skeleton className="h-4 w-24" />
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Skeleton className="h-32 w-full rounded-lg" />
-                <Skeleton className="h-32 w-full rounded-lg" />
-                <Skeleton className="h-32 w-full rounded-lg" />
+              <Skeleton className="w-24 h-4" />
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <Skeleton className="w-full h-32 rounded-lg" />
+                <Skeleton className="w-full h-32 rounded-lg" />
+                <Skeleton className="w-full h-32 rounded-lg" />
               </div>
             </div>
           </CardContent>
@@ -105,7 +105,7 @@ const SettingsSkeleton = () => {
 
         {/* Save button */}
         <div className="flex justify-end">
-          <Skeleton className="h-11 w-32" />
+          <Skeleton className="w-32 h-11" />
         </div>
       </div>
     </div>
