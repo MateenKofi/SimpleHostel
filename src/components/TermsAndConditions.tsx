@@ -7,7 +7,7 @@ import { FileText, Shield, Eye, Cookie} from "lucide-react"
 const TermsAndCondition = () => {
 
   return (
-    <div className="w-full max-w-4xl p-6 mx-auto space-y-6">
+    <div className="grid w-full max-w-3xl p-6 mx-auto space-y-6">
       {/* Header */}
       <div className="space-y-2 text-center">
         <h1 className="flex items-center justify-center gap-2 text-3xl font-bold">
@@ -18,7 +18,7 @@ const TermsAndCondition = () => {
       </div>
 
       {/* Main Content */}
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid gap-6 ">
         {/* Terms Content */}
         <div className="lg:col-span-2">
           <Tabs defaultValue="terms" className="w-full">

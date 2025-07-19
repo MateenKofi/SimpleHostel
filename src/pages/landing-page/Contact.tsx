@@ -409,7 +409,7 @@ function FAQSection() {
     {
       question: "How can I contact customer support?",
       answer:
-        "You can reach our customer support team through this contact form, by emailing fusesupport@gmail.com, or by calling +1 (555) 123-4567. We're available Monday through Friday from 9am to 6pm.",
+        "You can reach our customer support team through this contact form, by emailing fusesupport@gmail.com, or by calling (+233 543 983 427). We're available Monday through Friday from 9am to 6pm.",
     },
   ];
 

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion"
 import { useInView } from "react-intersection-observer"
 import { ContactSection } from "./component/contact-section"
-import { Users, Target, Clock, Award, ChevronRight } from "lucide-react"
+import { Users, Target, Clock, Award } from "lucide-react"
 import SEOHelmet from "@/components/SEOHelmet"
 
 export default function AboutPage() {
@@ -316,7 +316,7 @@ function TeamSection() {
               initial={{ opacity: 0, y: 30 }}
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{ y: -10 }}
+              whileHover={{ y: -2 }}
               className="overflow-hidden transition-all duration-300 bg-white rounded-lg shadow-md dark:bg-zinc-900 hover:shadow-lg"
             >
               <div className="h-64 overflow-hidden">
@@ -330,14 +330,6 @@ function TeamSection() {
                 <h3 className="mb-1 text-xl font-semibold">{member.name}</h3>
                 <p className="mb-3 font-medium text-red-500">{member.role}</p>
                 <p className="mb-4 text-zinc-600 dark:text-zinc-400">{member.bio}</p>
-                <motion.a
-                  href="#"
-                  className="inline-flex items-center text-red-500 hover:text-red-600"
-                  whileHover={{ x: 5 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  Read more <ChevronRight className="w-4 h-4 ml-1" />
-                </motion.a>
               </div>
             </motion.div>
           ))}
