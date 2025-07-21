@@ -19,13 +19,15 @@ import { useS } from "use-s-react";
 
 const ResidentTable = () => {
   const navigate = useNavigate();
-  const setResident = useAddedResidentStore((state) => state.setResident)
+  const setResident = useAddedResidentStore((state) => state.setResident);
   const hostelId = localStorage.getItem("hostelId");
 
-const [ setSelectedResident] = useS<Resident | Record<string, any>>({
-  value: {},
-  key: "selectedResident"
-});
+  const [selectedResident, setSelectedResident] = useS<
+    Resident | Record<string, any>
+  >({
+    value: {},
+    key: "selectedResident",
+  });
 
   const {
     data: resident,
@@ -56,37 +58,37 @@ const [ setSelectedResident] = useS<Resident | Record<string, any>>({
         refetchResident();
         return response.data;
       } catch (error) {
-        if(axios.isAxiosError(error)){
+        if (axios.isAxiosError(error)) {
           const errorMessage =
             error?.response?.data?.error || "An unexpected error occured";
           toast.error(errorMessage);
-        }
-        else{
-          toast.error('An unexpected error occured')
+        } else {
+          toast.error("An unexpected error occured");
         }
       }
     },
   });
 
   const handleAssignRoom = (resident: Resident) => {
-    setResident(resident)
-    setTimeout(()=>{
-      navigate('/dashboard/room-assignment')
-    },50)
+    setResident(resident);
+    setTimeout(() => {
+      navigate("/dashboard/room-assignment");
+    }, 50);
   };
 
   // Confirm and delete a room
   const handleDelete = async (id: string) => {
     handleSwalMutation({
-      mutation: ()=>  DeleteResidentMutation.mutateAsync(id),
-      title:'delete resident',
-    })
+      mutation: () => DeleteResidentMutation.mutateAsync(id),
+      title: "delete resident",
+    });
   };
 
-const handleEdit = (resident: Resident) => {
-  setSelectedResident(() => resident || {}); // Avoid null merge
-  navigate("/dashboard/edit-resident");
-};
+  const handleEdit = (resident: Resident) => {
+    setSelectedResident(() => resident || {});
+    console.log("selected resident", selectedResident);
+    navigate("/dashboard/edit-resident");
+  };
 
   const columns = [
     {
@@ -117,8 +119,8 @@ const handleEdit = (resident: Resident) => {
       ),
     },
     {
-        name:'Action',
-        width:'fit',
+      name: "Action",
+      width: "fit",
       cell: (row: Resident) => (
         <DropdownMenu>
           <DropdownMenuTrigger>
@@ -147,14 +149,16 @@ const handleEdit = (resident: Resident) => {
                 onClick={() => handleEdit(row)}
               >
                 <Edit className="w-4 h-4" />
-                Edit 
+                Edit
               </button>
             </DropdownMenuItem>
             <DropdownMenuItem>
               <button
                 title="Delete"
                 className="flex items-center w-full gap-1 p-1 text-white bg-red-600 rounded-md hover:bg-red-800"
-                onClick={() => row.id !== null && handleDelete(row.id as string)}
+                onClick={() =>
+                  row.id !== null && handleDelete(row.id as string)
+                }
               >
                 <Trash2 className="w-4 h-4" />
                 Delete
