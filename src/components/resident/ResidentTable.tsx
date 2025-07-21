@@ -15,11 +15,18 @@ import {
 import { handleSwalMutation } from "../swal/SwalMutationHelper";
 import { useNavigate } from "react-router-dom";
 import { useAddedResidentStore } from "@/controllers/AddedResident";
+import { useS } from "use-s-react";
 
 const ResidentTable = () => {
   const navigate = useNavigate();
   const setResident = useAddedResidentStore((state) => state.setResident)
   const hostelId = localStorage.getItem("hostelId");
+
+const [ setSelectedResident] = useS<Resident | Record<string, any>>({
+  value: {},
+  key: "selectedResident"
+});
+
   const {
     data: resident,
     isLoading,
@@ -76,6 +83,11 @@ const ResidentTable = () => {
     })
   };
 
+const handleEdit = (resident: Resident) => {
+  setSelectedResident(() => resident || {}); // Avoid null merge
+  navigate("/dashboard/edit-resident");
+};
+
   const columns = [
     {
       name: "Name",
@@ -131,8 +143,8 @@ const ResidentTable = () => {
             <DropdownMenuItem>
               <button
                 title="Edit"
-                className="flex items-center w-full gap-1 p-1 text-white bg-blue-600 rounded-md  hover:bg-blue-800"
-                onClick={() => console.log(`Edit resident ${row.id}`)}
+                className="flex items-center w-full gap-1 p-1 text-white bg-blue-600 rounded-md hover:bg-blue-800"
+                onClick={() => handleEdit(row)}
               >
                 <Edit className="w-4 h-4" />
                 Edit 
@@ -141,8 +153,8 @@ const ResidentTable = () => {
             <DropdownMenuItem>
               <button
                 title="Delete"
-                className="flex items-center w-full gap-1 p-1 text-white bg-red-600 rounded-md  hover:bg-red-800"
-                onClick={() => row.id !== null && handleDelete(row.id)}
+                className="flex items-center w-full gap-1 p-1 text-white bg-red-600 rounded-md hover:bg-red-800"
+                onClick={() => row.id !== null && handleDelete(row.id as string)}
               >
                 <Trash2 className="w-4 h-4" />
                 Delete

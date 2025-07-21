@@ -1,5 +1,5 @@
 export type Resident = {
-  id: string | null;
+  id?: string | null;
   name: string;
   studentId: string;
   course: string;
