@@ -410,18 +410,13 @@ const AddStaff: React.FC = () => {
                 )}
               </div>
               <div>
-                <label className="block mb-1 text-sm font-medium">Block(optional)</label>
+                <label className="block mb-1 text-sm font-medium">Block (optional)</label>
                 <input
-                  {...register("block", { required: "Block is required" })}
+                  {...register("block")}
                   type="text"
                   className="w-full p-2 border rounded-md"
                   placeholder="Enter Block"
                 />
-                {errors.block && (
-                  <span className="text-sm text-red-500">
-                    {errors.block.message?.toString()}
-                  </span>
-                )}
               </div>
               <div>
                 <label className="block mb-1 text-sm font-medium">
