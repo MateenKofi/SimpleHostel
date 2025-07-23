@@ -322,20 +322,21 @@ const AdminTransactions = () => {
         <div className="flex gap-2">
            <div className="flex w-40 gap-2">
             {/* date picker */}
+            {selectedDate && (
+              <button
+                onClick={() => setSelectedDate(null)}
+                className="grid w-10 h-8 my-auto text-white bg-red-300 rounded-md place-items-center hover:bg-red-300 focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                <X className="w-4 h-4 text-gray-500" />
+              </button>
+            )}
             <DatePicker
               selected={selectedDate}
               onChange={(date) => setSelectedDate(date)}
               placeholderText="Filter by date"
               className="w-full p-1 border rounded-md shadow-sm"
             />
-            {selectedDate && (
-              <button
-                onClick={() => setSelectedDate(null)}
-                className="grid w-8 bg-red-200 rounded-md place-items-center hover:bg-red-300"
-              >
-                <X className="w-4 h-4 text-gray-500" />
-              </button>
-            )}
+            
           
           </div>
           <div className="w-40">
