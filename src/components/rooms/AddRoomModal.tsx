@@ -3,7 +3,7 @@ import Modal from "@/components/Modal";
 import { useForm } from "react-hook-form";
 import type { Room } from "../../helper/types/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import ImageUpload from "@/components/ImageUpload";
 import { Loader } from "lucide-react";
 import { toast } from "react-hot-toast";
@@ -13,7 +13,7 @@ type RoomForm = Room & {
 };
 
 const ROOM_STATUS = ["Available", "Maintenance", "Occupied"] as const;
-const GENDER = ["Male","Female","Mix"] as const;
+const GENDER = ["Male", "Female", "Mix"] as const;
 
 const ROOM_TYPE_CAPACITY = {
   single: 1,
@@ -30,6 +30,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
     setValue,
     watch,
     reset,
+    setError,
   } = useForm<RoomForm>({
     defaultValues: {
       images: [],
@@ -42,17 +43,23 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
   const hostelId = localStorage.getItem("hostelId");
 
   // handle images change
-  const handleImagesChange = (newImages: File[]) => {
+ const handleImagesChange = (newImages: File[]) => {
+  if (newImages.length === 0) {
+    setError("images", { message: "Please upload at least one image" });
+    setImages([]);
+    console.error("No images uploaded");
+  } else {
     const imageArray = Array.from(newImages).map((image) => {
       const file = new File([image], image.name, { type: image.type });
       return file;
     });
     setImages(imageArray);
-  };
-
-  const {
-    data: Amenities,
-  } = useQuery<{ data: { id: string; name: string; price: number }[] }>({
+  }
+};
+  
+  const { data: Amenities } = useQuery<{
+    data: { id: string; name: string; price: number }[];
+  }>({
     queryKey: ["amenities"],
     queryFn: async () => {
       const response = await axios.get(`/api/amenities/hostel/${hostelId}`);
@@ -74,34 +81,31 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
       formData.append("price", data.basePrice.toString());
       formData.append("description", data.description || "");
       formData.append("status", data.status.toUpperCase());
-      formData.append('gender',data.gender.toUpperCase());
+      formData.append("gender", data.gender.toUpperCase());
 
       if (Array.isArray(data.amenities)) {
         data.amenities.forEach((amenityId) => {
           formData.append(`amenitiesIds[]`, amenityId);
         });
       }
-      
+
       images.forEach((image) => {
-        console.log('image from append image',image)
         formData.append("photos", image);
       });
 
-      const response = await axios.post(`/api/rooms/add`, formData);
-
-      return response.data;
-    },
-    onSuccess: () => {
-      toast.success("Room added successfully");
-      queryClient.invalidateQueries({ queryKey: ["rooms"] });
-      reset();
-      setImages([]);
-      onClose();
-    },
-    onError: (error: AxiosError<{ message?: string }>) => {
-      const errorMessage =
-        error.response?.data?.message || "Failed to Update User Details";
-      toast.error(errorMessage);
+      try {
+        const response = await axios.post(`/api/rooms/add`, formData);
+        toast.success("Room added successfully");
+        queryClient.invalidateQueries({ queryKey: ["rooms"] });
+        reset();
+        setImages([]);
+        onClose();
+        return response.data;
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          toast.error(error.response?.data?.message || "An error occurred");
+        }
+      }
     },
   });
 
@@ -113,10 +117,13 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
   const roomType = watch("roomType");
   useEffect(() => {
     if (roomType) {
-      setValue("maxOccupancy", ROOM_TYPE_CAPACITY[roomType as keyof typeof ROOM_TYPE_CAPACITY]);
+      setValue(
+        "maxOccupancy",
+        ROOM_TYPE_CAPACITY[roomType as keyof typeof ROOM_TYPE_CAPACITY]
+      );
     }
   }, [roomType, setValue]);
-  
+
   const handleClose = () => {
     onClose();
     reset();
@@ -139,15 +146,28 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
           <label htmlFor="images" className="text-sm font-medium text-gray-900">
             Images
           </label>
-          <ImageUpload key={imageUploadKey} onImagesChange={handleImagesChange} />
-          <p className="text-sm italic font-thin text-gray-500">you can only upload a max of 5 images</p>
+          <ImageUpload
+            key={imageUploadKey}
+            onImagesChange={handleImagesChange}
+          />
+          {errors.images && (
+  <span className="text-sm text-red-500">
+    {errors.images.message}
+  </span>
+)}
+          <p className="text-sm italic font-thin text-gray-500">
+            you can only upload a max of 3 images
+          </p>
         </div>
 
         {/* Rest of the form fields */}
         <div className="grid grid-cols-2 gap-4">
           {/* Room Number */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="number" className="text-sm font-medium text-gray-500 ">
+            <label
+              htmlFor="number"
+              className="text-sm font-medium text-gray-500 "
+            >
               Room Number*
             </label>
             <input
@@ -168,46 +188,43 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
 
           {/* Block */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="block" className="text-sm font-medium text-gray-500 ">
-              Block
+            <label
+              htmlFor="block"
+              className="text-sm font-medium text-gray-500 "
+            >
+              Block (optional)
             </label>
             <input
-              {...register("block", { required: "Block is required" })}
+              {...register("block")}
               type="text"
               id="block"
               placeholder="e.g., A"
               className="p-2 border rounded-md"
             />
-            {errors.block && (
-              <span className="text-sm text-red-500">
-                {errors.block.message}
-              </span>
-            )}
           </div>
 
           {/* Floor */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="floor" className="text-sm font-medium text-gray-500 ">
-              Floor
+            <label
+              htmlFor="floor"
+              className="text-sm font-medium text-gray-500 "
+            >
+              Floor (optional)
             </label>
             <input
-              {...register("floor", {
-                required: "Floor is required",
-              })}
+              {...register("floor")}
               type="number"
               id="floor"
               className="p-2 border rounded-md"
             />
-            {errors.floor && (
-              <span className="text-sm text-red-500">
-                {errors.floor.message}
-              </span>
-            )}
           </div>
 
           {/* Room Type */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="type" className="text-sm font-medium text-gray-500 ">
+            <label
+              htmlFor="type"
+              className="text-sm font-medium text-gray-500 "
+            >
               Room Type*
             </label>
             <select
@@ -230,7 +247,10 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
 
           {/* Max Occupancy (Read-only) */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="maxOccupancy" className="text-sm font-medium text-gray-500 ">
+            <label
+              htmlFor="maxOccupancy"
+              className="text-sm font-medium text-gray-500 "
+            >
               Maximum Occupancy
             </label>
             <input
@@ -244,7 +264,10 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
 
           {/* Base Price */}
           <div className="flex flex-col gap-1">
-            <label htmlFor="basePrice" className="text-sm font-medium text-gray-500 ">
+            <label
+              htmlFor="basePrice"
+              className="text-sm font-medium text-gray-500 "
+            >
               Base Price
             </label>
             <input
@@ -262,13 +285,16 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
           </div>
         </div>
 
-             {/* Gender */}
+        {/* Gender */}
         <div className="flex flex-col gap-1">
-          <label htmlFor="gender" className="text-sm font-medium text-gray-500 ">
+          <label
+            htmlFor="gender"
+            className="text-sm font-medium text-gray-500 "
+          >
             Gender*
           </label>
           <select
-            {...register("gender")}
+            {...register("gender", { required: "Gender is required" })}
             id="gender"
             className="p-2 border rounded-md"
           >
@@ -279,15 +305,23 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
               </option>
             ))}
           </select>
+           {errors.status && (
+            <span className="text-sm text-red-500">
+              {errors.status.message}
+            </span>
+          )}
         </div>
 
         {/* Status */}
         <div className="flex flex-col gap-1">
-          <label htmlFor="status" className="text-sm font-medium text-gray-500 ">
+          <label
+            htmlFor="status"
+            className="text-sm font-medium text-gray-500 "
+          >
             Status*
           </label>
           <select
-            {...register("status")}
+            {...register("status", { required: "Status is required" })}
             id="status"
             className="p-2 border rounded-md"
           >
@@ -298,11 +332,18 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
               </option>
             ))}
           </select>
+          {errors.status && (
+            <span className="text-sm text-red-500">
+              {errors.status.message}
+            </span>
+          )}
         </div>
 
         {/* Amenities */}
         <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-500 ">Amenities</label>
+          <label className="text-sm font-medium text-gray-500 ">
+            Amenities
+          </label>
           <div className="flex flex-wrap gap-2">
             {Amenities?.data?.map((amenity) => (
               <label
@@ -331,7 +372,10 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
 
         {/* Description */}
         <div className="flex flex-col gap-1">
-          <label htmlFor="description" className="text-sm font-medium text-gray-500 ">
+          <label
+            htmlFor="description"
+            className="text-sm font-medium text-gray-500 "
+          >
             Description
           </label>
           <textarea
