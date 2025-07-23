@@ -1,48 +1,84 @@
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Loader, Plus } from "lucide-react"
-import { UseFormRegister, UseFormHandleSubmit } from "react-hook-form"
+import { Loader } from "lucide-react"
+import { SubmitHandler, useForm } from "react-hook-form"
+import Modal from "./Modal"
+import { useMutation } from "@tanstack/react-query"
+import toast from "react-hot-toast"
+import axios from "axios"
 
 interface AddCalendarYearFormProps {
-  onSubmit: (data: { yearName: string }) => void
-  isPending: boolean
-  register: UseFormRegister<{ yearName: string }>
-  handleSubmit: UseFormHandleSubmit<{ yearName: string }>
+  onClose: () => void;
+  refectCurrentYear: () => void;
+  refectHistoricalYears: () => void;
 }
 
-const AddCalendarYearForm = ({ onSubmit, isPending, register, handleSubmit }: AddCalendarYearFormProps) => (
-  <form onSubmit={handleSubmit(onSubmit)} className="flex justify-between items-center mb-8">
-    <h1 className="text-3xl font-bold">Calendar Year Management</h1>
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Start New Year
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Start New Calendar Year</DialogTitle>
-          <DialogDescription>
+interface FormValues {
+  yearName: string;
+}
+
+const AddCalendarYearForm = ({ onClose, refectCurrentYear, refectHistoricalYears }: AddCalendarYearFormProps) => {
+  const { register, handleSubmit, reset } = useForm<FormValues>();
+  const hostelId = localStorage.getItem("hostelId");
+
+  // Mutation for adding calendar year
+  const AddCalendarYearMutation = useMutation({
+    mutationFn: async (data: FormValues) => {
+      const payload = {
+        name: data.yearName,
+        hostelId: hostelId || "",
+      };
+      await axios
+        .post(`/api/calendar/start`, payload)
+        .then((res) => {
+          refectCurrentYear();
+          refectHistoricalYears();
+          toast.success("Academic Year added successfully");
+          reset();
+          return res.data;
+        })
+        .catch((error) => {
+          let errorMessage = "Failed to add Academic Year";
+          if (axios.isAxiosError(error)) {
+            errorMessage = error.response?.data?.message || errorMessage;
+          } else {
+            errorMessage = (error as Error).message || errorMessage;
+          }
+          toast.error(errorMessage);
+        });
+    },
+  });
+
+  const onSubmit: SubmitHandler<FormValues> = (data) => {
+    AddCalendarYearMutation.mutate(data);
+  };
+
+  return (
+    <Modal modalId="add-calendar-year-modal" onClose={onClose} >
+      <form onSubmit={handleSubmit(onSubmit)}>
+         <div>
+          <h1>Start New Calendar Year</h1>
+          <p className="text-sm text-muted-foreground">
             Enter a name for the new calendar year. This will create a new active year.
-          </DialogDescription>
-        </DialogHeader>
-        <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 py-4">
+          </p>
+          </div>
+        <div className="grid gap-4 py-4">
           <div className="grid gap-2">
             <Label htmlFor="name">Year Name</Label>
             <Input id="name" {...register("yearName")} placeholder="e.g., Academic Year 2024-2025" />
           </div>
-          <DialogFooter>
-            <Button type="submit" disabled={isPending}>
-              {isPending ? <Loader className="animate-spin" /> : "Create Year"}
-            </Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
-  </form>
-)
+          <Button
+            type="submit"
+            disabled={AddCalendarYearMutation.isPending}
+            
+          >
+            {AddCalendarYearMutation.isPending ? <Loader className="animate-spin" /> : "Create Year"}
+          </Button>
+        </div>
+      </form>
+    </Modal>
+  )
+}
 
 export default AddCalendarYearForm
