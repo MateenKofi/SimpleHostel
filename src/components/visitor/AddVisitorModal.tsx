@@ -1,7 +1,7 @@
 import Modal from '@/components/Modal'
 import { useForm, Controller } from 'react-hook-form'
 import Select from 'react-select'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { Resident } from '@/helper/types/types'
@@ -30,6 +30,8 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
     },
   })
 
+  const queryClient = useQueryClient()
+
   const mutation = useMutation({
     mutationFn: async (data: VisitorFormData) => {
       const hostelId = localStorage.getItem('hostelId')
@@ -41,20 +43,23 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
       formData.append('status', 'ACTIVE')
       // formData.append('purpose', data.purpose)
 
-      const response = await axios.post(`/api/visitors/add`, formData, {
-        params:{
-          hostelId: hostelId,
-        },
-      })
-      return response.data
-    },
-    onSuccess: () => {
-      toast.success('Visitor added successfully!')
+      try {
+        const response = await axios.post(`/api/visitors/add`, formData, {
+          params:{
+            hostelId: hostelId,
+          },
+        })
+        toast.success('Visitor added successfully!')
       reset()
       onClose()
-    },
-    onError: (error: AxiosError<{ message: string }>) => {
-      toast.error(error.response?.data?.message || 'Failed to add visitor.')
+      queryClient.invalidateQueries({ queryKey: ['visitors'] })
+        return response.data
+      } catch (error) {
+       if(error instanceof AxiosError && error.response) {
+          const errorMessage = error.response.data?.message || 'Failed to add visitor'
+          toast.error(errorMessage)
+        }
+      }
     },
   })
 

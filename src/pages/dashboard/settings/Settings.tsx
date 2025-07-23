@@ -100,7 +100,7 @@ const Settings = () => {
     }
   }, [hostelData, form]);
 
-  // Remove a default image from the UI
+ 
   const handleRemoveDefaultImage = (index: number) => {
     setDefaultImages((prev) => prev.filter((_, i) => i !== index));
   };

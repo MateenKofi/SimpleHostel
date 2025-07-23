@@ -10,7 +10,6 @@ import { Visitor } from "@/helper/types/types";
 
 const ActiveVisitor = () => {
   const hostelId = localStorage.getItem("hostelId") || "";
-
   const {
     data: visitors,
     isLoading,
