@@ -131,7 +131,7 @@ const ProfileForm = () => {
       keywords="profile, settings, Fuse"
       />
       <div className="max-w-3xl mx-auto space-y-6">
-        <div className="p-3 border rounded-md shadow-md">
+        <div className="p-3 bg-white border rounded-md shadow-md">
           <h1 className="text-3xl font-bold">Account Settings</h1>
           <p className="mt-2 text-xs italic font-thin text-gray-400">
             Manage your account settings and update your personal information
