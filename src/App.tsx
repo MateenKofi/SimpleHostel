@@ -37,7 +37,7 @@ import TopUpPaymentForm from "./components/payment/TopUpPaymentForm";
 import ResidentForm from "./pages/landing-page/component/resident-forms/ResidentForm";
 import AddResident from "./components/resident/AddResident";
 import ApproveHostel from "./pages/dashboard/approvals/Approve-Hostel";
-import ProfileForm from "./pages/dashboard/profile/Profile-From";
+import ProfileForm from "./pages/dashboard/profile/Profile";
 import EditStaff from "./components/staff/EditStaff";
 import CalendarYear from "./pages/dashboard/calendarYear/CalendarYear";
 import Transactions from "./pages/dashboard/transactions/Transactions";

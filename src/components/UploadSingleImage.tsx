@@ -52,14 +52,14 @@ const UploadSingleImage: React.FC<UploadSingleImageProps> = ({
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
-      className="flex flex-col items-center justify-center gap-4 p-6 border-2 border-gray-400 border-dashed rounded-2xl"
+      className="flex flex-col items-center justify-center gap-2 p-2 border-2 border-gray-400 border-dashed rounded-2xl"
     >
       {previewUrl ? (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="flex flex-col items-center gap-4"
+          className="flex flex-col items-center gap-1"
         >
           <img
             src={previewUrl}
@@ -90,7 +90,7 @@ const UploadSingleImage: React.FC<UploadSingleImageProps> = ({
             className="hidden"
             aria-label="Upload logo"
           />
-          <div className="flex flex-col items-center gap-3">
+          <div className="flex flex-col items-center justify-center w-48 h-48 gap-3">
             <UploadCloud className="w-10 h-10 text-gray-500 animate-bounce" />
             <span className="text-sm text-gray-600">Click to upload</span>
           </div>
