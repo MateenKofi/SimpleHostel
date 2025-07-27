@@ -97,6 +97,12 @@ const ResidentTable = () => {
       sortable: true,
     },
     {
+      name: "Access Code",
+      selector: (row: Resident) => row.accessCode,
+      sortable: true,
+      wrap: true,
+    },
+    {
       name: "Student ID",
       selector: (row: Resident) => row.studentId,
       sortable: true,

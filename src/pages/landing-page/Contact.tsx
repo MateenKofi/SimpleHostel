@@ -116,7 +116,7 @@ function ContactFormSection() {
     {
       icon: <Mail className="w-6 h-6 text-red-500" />,
       title: "Email Address",
-      details: ["fuseinfo@gmail.com", "fusesupport@gmail.com"],
+      details: ["fusehostel01@gmail.com"],
     },
     {
       icon: <Clock className="w-6 h-6 text-red-500" />,
@@ -303,7 +303,7 @@ function ContactFormSection() {
               ))}
             </div>
 
-            <div className="mt-12">
+            <div className="mt-4">
               <h3 className="mb-4 text-lg font-semibold">Follow Us</h3>
               <div className="flex space-x-4">
                 {[

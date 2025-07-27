@@ -60,24 +60,23 @@ const UserTable = () => {
       name: "Name",
       cell: (row) => (
         <div className="flex flex-col items-start justify-center gap-2 py-3">
-        <div className="flex items-center gap-3">
-          <Avatar className="w-8 h-8 *:rounded-full">
-            <AvatarImage
-              src={row.imageUrl || "/placeholder.svg"}
-              alt={row.name}
-            />
-            <AvatarFallback>
-              {row.name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")}
-            </AvatarFallback>
-          </Avatar>
-          <div>
-            <div className="font-medium">{row.name}</div>
+          <div className="flex items-center gap-3">
+            <Avatar className="w-8 h-8 *:rounded-full">
+              <AvatarImage
+                src={row.imageUrl || "/placeholder.svg"}
+                alt={row.name}
+              />
+              <AvatarFallback>
+                {row.name
+                  ? row.name.trim().split(" ")[0][0].toUpperCase()
+                  : ""}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <div className="font-medium">{row.name}</div>
+            </div>
           </div>
-        </div>
-        <span className="text-xs">{row.phoneNumber}</span>
+          <span className="text-xs">{row.phoneNumber}</span>
         </div>
       ),
       sortable: true,
@@ -89,7 +88,7 @@ const UserTable = () => {
       sortable: true,
     },
     { name: "Email", wrap: true, selector: (row) => row.email, sortable: true },
-    
+
     {
       name: "Role",
       center: true,

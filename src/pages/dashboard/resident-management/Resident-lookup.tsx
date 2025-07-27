@@ -70,8 +70,8 @@ const formatCurrency = (amount: number) => {
 
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <div className="text-center space-y-2">
+    <div className="max-w-4xl p-6 mx-auto space-y-6">
+      <div className="space-y-2 text-center">
         <h1 className="text-3xl font-bold">Resident Lookup</h1>
         <p className="text-muted-foreground">Enter your secret access code to view your information</p>
       </div>
@@ -86,7 +86,7 @@ const formatCurrency = (amount: number) => {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Search className="h-5 w-5" />
+            <Search className="w-5 h-5" />
             Access Code Search
           </CardTitle>
           <CardDescription>Enter your unique access code to retrieve your resident information</CardDescription>
@@ -98,7 +98,7 @@ const formatCurrency = (amount: number) => {
               placeholder="Enter secret code (e.g., ND1K5YPRUA)"
               value={secretCode}
               onChange={(e) => setSecretCode(e.target.value)}
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyPress}
               className="flex-1"
             />
             <Button onClick={handleSearch} disabled={isSearching} className="px-6">
@@ -111,7 +111,7 @@ const formatCurrency = (amount: number) => {
 
           {error && (
             <Alert variant="destructive">
-              <AlertCircle className="h-4 w-4" />
+              <AlertCircle className="w-4 h-4" />
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
@@ -122,8 +122,8 @@ const formatCurrency = (amount: number) => {
       {isLoading ? (
       <Card className="border-dashed">
         <CardContent className="pt-6">
-          <div className="text-center flex items-center justify-center  text-muted-foreground">
-            <Loader2 className="mr-2 h-10 w-10 animate-spin" />
+          <div className="flex items-center justify-center text-center text-muted-foreground">
+            <Loader2 className="w-10 h-10 mr-2 animate-spin" />
             <span className="">Fetching Residents ...</span>
           </div>
         </CardContent>
@@ -136,7 +136,7 @@ const formatCurrency = (amount: number) => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5" />
+                <User className="w-5 h-5" />
                 Personal Information
               </CardTitle>
             </CardHeader>
@@ -152,7 +152,7 @@ const formatCurrency = (amount: number) => {
                     <label className="text-sm font-medium text-muted-foreground">Student ID</label>
                     <p className="font-medium">{foundResident.studentId}</p>
                   </div>
-                  <div>
+                  <div className="flex flex-col items-start gap-1">
                     <label className="text-sm font-medium text-muted-foreground">Gender</label>
                     <Badge variant="outline">{foundResident.gender}</Badge>
                   </div>
@@ -165,11 +165,11 @@ const formatCurrency = (amount: number) => {
 
                 <div className="grid grid-cols-1 gap-3">
                   <div className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <Phone className="w-4 h-4 text-muted-foreground" />
                     <span>{foundResident.phone}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
+                    <Mail className="w-4 h-4 text-muted-foreground" />
                     <span>{foundResident.email}</span>
                   </div>
                 </div>
@@ -181,7 +181,7 @@ const formatCurrency = (amount: number) => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Home className="h-5 w-5" />
+                <Home className="w-5 h-5" />
                 Room Information
               </CardTitle>
             </CardHeader>
@@ -195,20 +195,20 @@ const formatCurrency = (amount: number) => {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">Block</label>
-                    <p className="font-medium">{foundResident.room?.block}</p>
+                    <p className="font-medium">{foundResident.room?.block || 'N/A'}</p>
                   </div>
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">Floor</label>
-                    <p className="font-medium">{foundResident.room?.floor}</p>
+                    <p className="font-medium">{foundResident.room?.floor || 'N/A'}</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
+                  <div className="flex flex-col items-start gap-1">
                     <label className="text-sm font-medium text-muted-foreground">Room Type</label>
                     <Badge variant="secondary">{foundResident.room?.type}</Badge>
                   </div>
-                  <div>
+                  <div className="flex flex-col items-start gap-1">
                     <label className="text-sm font-medium text-muted-foreground">Status</label>
                     <Badge variant={foundResident.room?.status === "OCCUPIED" ? "destructive" : "default"}>
                       {foundResident.room?.status}
@@ -235,27 +235,27 @@ const formatCurrency = (amount: number) => {
           <Card className="md:col-span-2">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <CreditCard className="h-5 w-5" />
+                <CreditCard className="w-5 h-5" />
                 Payment Information
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 md:grid-cols-3">
-                <div className="text-center p-4 bg-green-50 dark:bg-green-950 rounded-lg">
+                <div className="p-4 text-center rounded-lg bg-green-50 dark:bg-green-950">
                   <p className="text-sm font-medium text-muted-foreground">Amount Paid</p>
                   <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                     {formatCurrency(foundResident?.amountPaid || 0)}
                   </p>
                 </div>
 
-                <div className="text-center p-4 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                <div className="p-4 text-center rounded-lg bg-blue-50 dark:bg-blue-950">
                   <p className="text-sm font-medium text-muted-foreground">Room Price</p>
                   <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                     {formatCurrency(foundResident.roomPrice)}
                   </p>
                 </div>
 
-                <div className="text-center p-4 bg-orange-50 dark:bg-orange-950 rounded-lg">
+                <div className="p-4 text-center rounded-lg bg-orange-50 dark:bg-orange-950">
                   <p className="text-sm font-medium text-muted-foreground">Balance Owed</p>
                   <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
                     {foundResident.balanceOwed ? formatCurrency(foundResident.balanceOwed) : "GHC 0.00"}

@@ -3,12 +3,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
-  Building,
   Loader,
   LucideCircleArrowOutUpRight,
-  Mail,
-  MapPin,
-  Phone,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -28,7 +24,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "react-hot-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -38,7 +33,7 @@ import ImageUpload from "@/components/ImageUpload";
 import UploadSingleImage from "@/components/UploadSingleImage";
 import SEOHelmet from "@/components/SEOHelmet";
 import SettingsSkeleton from "@/components/loaders/SettingsLoader";
-// import { images } from "@/helper/types/types"
+import { TextField } from "@/components/TextField";
 
 // Validation schema
 const formSchema = z.object({
@@ -95,7 +90,6 @@ const Settings = () => {
           return hostelImage.imageUrl;
         }
       );
-
       setDefaultImages(hostelImages || []);
     }
   }, [hostelData, form]);
@@ -130,7 +124,6 @@ const Settings = () => {
       if (logo) {
         formData.append("logo", logo);
       }
-
       try {
         const res = await axios.put(
           `/api/hostels/update/${hostelId}`,
@@ -193,24 +186,9 @@ const Settings = () => {
                 />
               </div>
               <div className="grid w-full grid-cols-1 gap-6">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Hostel Name</FormLabel>
-                      <FormControl>
-                        <div className="flex items-center space-x-2">
-                          <Building className="w-4 h-4 text-muted-foreground" />
-                          <Input {...field} />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <TextField label="Hostel Name" id="name" register={form.register('name')} error={form.formState.errors.name}/>
               </div>
-
+              
               <FormField
                 control={form.control}
                 name="description"
@@ -228,22 +206,7 @@ const Settings = () => {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="address"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Address</FormLabel>
-                    <FormControl>
-                      <div className="flex items-center space-x-2">
-                        <MapPin className="w-4 h-4 text-muted-foreground" />
-                        <Input {...field} />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+             <TextField id="address" label="Address" register={form.register('address')} error={form.formState.errors.address} placeholder="Enter address"/>
               <a
                 href="https://www.google.com/maps"
                 target="_blank"
@@ -266,38 +229,8 @@ const Settings = () => {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <div className="flex items-center space-x-2">
-                          <Mail className="w-4 h-4 text-muted-foreground" />
-                          <Input {...field} type="email" />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="phone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Phone</FormLabel>
-                      <FormControl>
-                        <div className="flex items-center space-x-2">
-                          <Phone className="w-4 h-4 text-muted-foreground" />
-                          <Input {...field} type="tel" />
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+               <TextField id="email" label="Email" register={form.register('email')} error={form.formState.errors.email} />
+               <TextField id="phone" label="Phone" register={form.register('phone')} error={form.formState.errors.phone} />
               </div>
             </CardContent>
           </Card>
