@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { FieldError, UseFormRegisterReturn } from "react-hook-form";
 
-type FormFieldProps = {
+type TextFieldPropsProps = {
   label: string;
   id: string;
   register: UseFormRegisterReturn;
@@ -11,14 +11,14 @@ type FormFieldProps = {
   placeholder?: string;
 };
 
-export const FormField = ({
+export const TextField = ({
   label,
   id,
   register,
   error,
   type = "text",
   placeholder = "",
-}: FormFieldProps) => {
+}: TextFieldPropsProps) => {
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>

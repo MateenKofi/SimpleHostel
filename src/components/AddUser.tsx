@@ -2,16 +2,17 @@ import React, { useState } from "react";
 import Modal from "./Modal";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Label } from "./ui/label";
-import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useMutation,useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { ImagePlus, RefreshCcw } from "lucide-react";
+import UploadSingleImage from "./UploadSingleImage";
+import {TextField} from "./TextField";
 
 type AddUserProps = {
   onClose: () => void;
 };
+
 type AddUserFormData = {
   name: string;
   email: string;
@@ -20,11 +21,12 @@ type AddUserFormData = {
   role: string;
   photo: File;
 };
+
 const AddUser = ({ onClose }: AddUserProps) => {
     const querclient = useQueryClient()
-  const [image, setImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const { register, handleSubmit,reset } = useForm<AddUserFormData>();
+  const [image, setImage] = useState<File | string | null>(null);
+  const { register, handleSubmit,reset,formState: {errors} } = useForm<AddUserFormData>();
+  
   const AddUserMutation = useMutation({
     mutationFn: async (data: AddUserFormData) => {
       const formData = new FormData();
@@ -52,20 +54,8 @@ const AddUser = ({ onClose }: AddUserProps) => {
     },
   });
 
-  const handleImage = (even: React.ChangeEvent<HTMLInputElement>) => {
-    const file = even.target.files?.[0];
-    if (file) {
-      setImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
   const handleClose = () => {
     setImage(null);
-    setImagePreview(null);
     onClose();
     reset();
     }
@@ -78,76 +68,20 @@ const AddUser = ({ onClose }: AddUserProps) => {
         Add User
       </h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="flex flex-col gap-2">
-            <div>
-                {imagePreview && (
-            <img
-              src={imagePreview}
-              alt="preview"
-              className="object-cover w-40 h-40 rounded-2xl"
-            />
-          )}
-            </div>
-          <Label htmlFor="photo" className="text-gray-500">
-            <span className="flex items-center gap-2 text-gray-500 cursor-pointer">
-                {imagePreview ? <RefreshCcw/> : <ImagePlus/>}
-            uploade Image</span>
-          </Label>
-          <Input
-            type="file"
-            id="photo"
-            accept="image/*"
-            {...register("photo")}
-            onChange={handleImage}
-            className="hidden text-gray-500"
-          />
-        
+        <div className="w-fit">
+            <UploadSingleImage image={image} setImage={setImage}/>
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="name" className="text-gray-500">
-            Name
-          </Label>
-          <Input
-            type="text"
-            id="name"
-            {...register("name", { required: "Name is required" })}
-            className="text-gray-500"
-          />
+         <TextField id="name" label="Name" register={register('name')} error={errors.name}/>
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="email" className="text-gray-500">
-            Email
-          </Label>
-          <Input
-            type="email"
-            id="email"
-            {...register("email", { required: "Email is required" })}
-            className="text-gray-500"
-          />
+         <TextField id="email" label="Email" register={register('email')} error={errors.email}/>
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="phoneNumber" className="text-gray-500">
-            Phone Number
-          </Label>
-          <Input
-            type="text"
-            id="phoneNumber"
-            {...register("phoneNumber", {
-              required: "Phone Number is required",
-            })}
-            className="text-gray-500"
-          />
+          <TextField id="phoneNumber" label="Phone Number" register={register('phoneNumber')} error={errors.phoneNumber}/>  
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="password" className="text-gray-500">
-            Password
-          </Label>
-          <Input
-            type="text"
-            id="password"
-            {...register("password", { required: "Password is required" })}
-            className="text-gray-500"
-          />
+         <TextField id="password" label="Password" type="password" register={register('password', { required: "Password is required" })} error={errors.password}/>
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="role" className="text-gray-500">

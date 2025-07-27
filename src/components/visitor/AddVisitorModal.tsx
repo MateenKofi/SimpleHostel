@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { Resident } from '@/helper/types/types'
+import { TextField } from '../TextField'
 
 interface VisitorFormData {
   name: string
@@ -77,43 +78,14 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
         <div className="flex-1 p-6 overflow-y-auto">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-500">
-                Visitor Name
-              </label>
-              <input
-                {...register('name', { required: 'Name is required' })}
-                className="w-full p-2 border rounded-md"
-              />
-              {errors.name && (
-                <p className="mt-1 text-sm text-red-500">{errors.name.message}</p>
-              )}
-            </div>
-
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-500">
-                Phone Number
-              </label>
-              <input
-                {...register('phone', { required: 'Phone number is required' })}
-                className="w-full p-2 border rounded-md"
-              />
-              {errors.phone && (
-                <p className="mt-1 text-sm text-red-500">{errors.phone.message}</p>
-              )}
+              <TextField id='name' label='Visitor Name' error={errors.name} register={register('name')} />
             </div>
             <div>
-              <label className="block mb-2 text-sm font-medium text-gray-500">
-                Email
-              </label>
-              <input
-                {...register('email', { required: 'Email is required' })}
-                className="w-full p-2 border rounded-md"
-              />
-              {errors.email && (
-                <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
-              )}
+             <TextField id='phone' label='Phone Number' error={errors.phone} register={register('phone', { required: 'Phone number is required' })} />
             </div>
-
+            <div>
+              <TextField id='email' label='Email Address' error={errors.email} register={register('email', { required: 'Email is required' })} />
+            </div>
             <div>
               <label className="block mb-2 text-sm font-medium text-gray-500">
                 Select Resident
@@ -135,6 +107,7 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
                     className="w-full text-gray-500"
                     placeholder="Search for a resident..."
                     isClearable
+                    name="color"
                   />
                 )}
               />

@@ -40,13 +40,13 @@ const VisitorManagement = () => {
         description="Manage visitors effectively with Fuse."
         keywords="visitor management, Fuse, hostel"
       />
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Users className="w-6 h-6" />
           <h1 className="text-2xl font-bold">Visitor Management</h1>
         </div>
         <button
-          className="px-4 py-2 bg-black text-white rounded-md flex items-center gap-2"
+          className="flex items-center gap-2 px-4 py-2 text-white bg-black rounded-md"
           onClick={openAddVisitorModal}
         >
           <UserPlus className="w-4 h-4" />
@@ -56,7 +56,7 @@ const VisitorManagement = () => {
 
       <div >
         {/* Tabs */}
-        <div className="flex gap-4 mb-6 bg-white rounded-lg shadow-sm p-4 border">
+        <div className="flex gap-4 p-4 mb-6 bg-white border rounded-lg shadow-sm">
            {tabData.map((tab) => (
             <button
               key={tab.id}
@@ -76,8 +76,6 @@ const VisitorManagement = () => {
         <div className="mt-4">
           {tabData.find((tab) => tab.id === activeTab)?.content}
         </div>
-
-
       </div>
 
       <AddVisitorModal onClose={closeAddVisitorModal} />

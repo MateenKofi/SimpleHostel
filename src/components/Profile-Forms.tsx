@@ -1,7 +1,7 @@
 import React from "react";
 import CustomeRefetch from "./CustomeRefetch";
 import LogoLoader from "./loaders/logoLoader";
-import { FormField } from "@/components/FormField";
+import { TextField } from "@/components/TextField";
 import { Loader } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
@@ -113,7 +113,7 @@ const ProfileForms = () => {
         </div>
         <div className="grid gap-6">
           <div className="grid gap-4 md:grid-cols-2">
-            <FormField
+            <TextField
               label="User Name"
               id="userName"
               register={register("name", {
@@ -121,7 +121,7 @@ const ProfileForms = () => {
               })}
               error={errors.name}
             />
-            <FormField
+            <TextField
               label="Phone Number"
               id="phoneNumber"
               register={register("phoneNumber", {
@@ -131,7 +131,7 @@ const ProfileForms = () => {
             />
           </div>
           <div className="space-y-2">
-            <FormField
+            <TextField
               label="Email Address"
               id="email"
               register={register("email", {
