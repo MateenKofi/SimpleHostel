@@ -159,7 +159,7 @@ const EditStaff: React.FC = () => {
   }
 
   return (
-    <div className="flex justify-center w-full h-screen">
+    <div className="flex justify-center w-full min-h-screen ">
       <div className="w-[90%]">
         <div className="flex items-center justify-between p-4 mt-6 mb-6 bg-white rounded-lg">
           <h1 className="text-2xl font-bold">Edit Staff</h1>
@@ -177,7 +177,7 @@ const EditStaff: React.FC = () => {
           className="w-full p-6 space-y-6 bg-white rounded-lg shadow-sm"
         >
           {/* Image Upload Section */}
-          <div className="overflow-hidden w-52 h-52">
+          <div className="overflow-hidden w-fit">
             <label className="block mb-2 text-sm font-medium text-gray-700">
               Upload Image
             </label>

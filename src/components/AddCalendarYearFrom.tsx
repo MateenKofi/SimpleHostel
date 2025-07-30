@@ -34,6 +34,7 @@ const AddCalendarYearForm = ({ onClose, refectCurrentYear, refectHistoricalYears
         .then((res) => {
           refectCurrentYear();
           refectHistoricalYears();
+          onClose();
           toast.success("Academic Year added successfully");
           reset();
           return res.data;

@@ -1,9 +1,7 @@
 import CustomDataTable from "../CustomDataTable";
 import { format } from "date-fns";
-import { useQuery,useMutation } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import toast from "react-hot-toast";
-import Swal from "sweetalert2";
 import { Visitor } from "@/helper/types/types";
 
 
@@ -28,39 +26,8 @@ const VisitorHistory = () => {
     return active.status === 'CHECKED_OUT';
   });
 
-  const CheckOutVisitor = useMutation({
-    mutationFn: async (id: string) => {
-      await axios.put(
-        `/api/visitors/checkout/${id}`,
-        {},
-      ).then((res) => {
-          refetchVisitors();
-          toast.success("Visitor checked out succesfully");
-          return res.data;
-        })
-        .catch((error) => {
-          const errorMessage =
-            error.response?.data?.message || "Failed to check out visitor";
-          toast.error(errorMessage);
-        });
-    },
-  });
+ 
 
-  const handleCheckOut = (id: string) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to check out this visitor?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, check out",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        CheckOutVisitor.mutate(id);
-      }
-    });
-  };
 
   const columns = [
     {
@@ -102,18 +69,7 @@ const VisitorHistory = () => {
         </span>
       ),
     },
-    {
-      name: "Action",
-      cell: (row: Visitor) =>
-        row.status === "ACTIVE" ? (
-          <button
-            onClick={() => handleCheckOut(row.id)}
-            className="px-3 py-1 text-sm text-white bg-blue-500 rounded-md"
-          >
-            Check Out
-          </button>
-        ) : null,
-    },
+    
   ];
 
   return (

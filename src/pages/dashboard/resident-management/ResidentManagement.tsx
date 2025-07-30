@@ -14,7 +14,7 @@ const ResidentManagement = () => {
         description="Manage your hostel residents efficiently with our user-friendly interface."
         keywords="resident management, hostel, Fuse"
         />
-      <div className="flex justify-between items-center mb-6 border p-2 rounded-md shadow-md">
+      <div className="flex justify-between items-center mb-6 border p-2 rounded-md shadow-md ">
         <div className="flex flex-col gap-2">
           <span className="flex gap-1">
             <Users className="w-6 h-6" />
