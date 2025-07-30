@@ -84,7 +84,7 @@ export const handleSwalMutation = async ({
       await mutation();
       Swal.fire({
         title: `${title}d!`,
-        text: `The item has been ${title.toLowerCase()}d successfully.`,
+        text: `The item has been ${title.toLowerCase()}ed successfully.`,
         icon: "success",
       });
     } catch (error ) {

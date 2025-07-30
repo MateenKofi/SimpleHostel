@@ -67,7 +67,7 @@ const ForgetPassword = () => {
                         className="object-cover h-20 w-22"
                       />
                     </div>
-                    <h1 className="text-2xl font-bold">Forget-Pssword</h1>
+                    <h1 className="text-2xl font-bold">Forget-Password</h1>
                     <p className="text-balance text-muted-foreground">
                       Enter your email to reset your password
                     </p>
