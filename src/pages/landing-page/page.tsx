@@ -15,7 +15,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen overflow-hidden">
       <SEOHelment
-        title="Landing Page - Fuse"
+        title="Home Page - Fuse"
         description="Discover the best hostels with Fuse"
         keywords="hostels, budget travel, Fuse"
       />
