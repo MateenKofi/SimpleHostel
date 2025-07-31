@@ -21,7 +21,8 @@ import {
   Layout,
   Hotel,
   Settings,
-  LucideProps
+  LucideProps,
+  Axis3D
 } from "lucide-react";
 import { useUserStore } from "@/controllers/UserStore";
 
@@ -50,6 +51,7 @@ export function NavMain() {
       { title: "Staff Management", icon: Users, path: "/dashboard/staff-management", description: "Manage staff members and their roles" },
       { title: "Transactions", icon: Wallet2, path: "/dashboard/transactions", description: "View and manage financial transactions" },
       { title: "Hostel Settings", icon: Settings, path: '/dashboard/settings', description: "Manage hostel settings and configurations" },
+      { title: "Report", icon: Axis3D, path:'/dashboard/report', description: "Generate and view reports on hostel activities" }, 
     ];
   } else if (userRole === "SUPER_ADMIN") {
     navItems = [
@@ -58,6 +60,7 @@ export function NavMain() {
       { title: "Transactions", icon: Wallet2, path: "/dashboard/transactions", description: "View and manage financial transactions" },
       { title: "Users", icon: UserCog, path: "/dashboard/users", description: "Manage users and their roles" },
       { title: "Hostel Management", icon: Hotel, path: '/dashboard/hostel-management', description: "Manage hostel facilities and services" },
+      { title: "Report", icon: Axis3D, path:'/dashboard/report', description: "Generate and view reports on hostel activities" },
     ];
   }
 

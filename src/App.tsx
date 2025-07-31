@@ -46,6 +46,7 @@ import ViewRoom from "./components/rooms/ViewRoom";
 import FindRoom from "./pages/landing-page/component/find-room/Find-Room";
 import HostelManagement from "./pages/dashboard/hostelManagement/HostelManagement";
 import EditResident from "./components/resident/EditResident";
+import Report from './pages/dashboard/report/Report';
 
 function App() {
   return (
@@ -101,6 +102,7 @@ function App() {
             <Route path="settings" element={<Settings />} />
             <Route path="resident-lookup" element={<ResidentLookup />} />
             <Route path="edit-resident" element={<EditResident/>}  />
+            <Route path="report" element={<Report />} />
           </Route>
         </Route>
 

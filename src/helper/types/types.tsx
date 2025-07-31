@@ -214,3 +214,44 @@ export type Transaction = {
   calendarYearId: string;
   historicalResidentId: string | null;
 }
+
+export type Method = {
+  id?: string;
+  method: string;
+  count: number;
+  totalAmount: number;
+}
+
+export type ReportData = {
+  calendarYearId: string
+  calendarYearName: string
+  startDate: string
+  endDate: string | null
+  isActive: boolean
+  totalRevenue: number
+  totalExpectedRevenue: number
+  totalPayments: number
+  averagePaymentAmount: number
+  collectionRate: number
+  totalResidents: number
+  averageRevenuePerResident: number
+  totalRooms: number
+  activeRooms: number
+  occupiedRooms: number
+  occupancyRate: number
+  averageRoomPrice: number
+  historicalResidents: number
+  historicalRevenue: number
+  paymentMethods: Array<{
+    method: string
+    count: number
+    totalAmount: number
+  }>
+  monthlyStats: Array<{
+    month: string
+    revenue: number
+    payments: number
+    newResidents: number
+  }>
+  revenueGrowth: number
+}
