@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   ArrowUpDown,
   BadgeCent,
-  Download,
   Search,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
