@@ -19,7 +19,7 @@ import {
   Phone,
   Users,
   Flag,
-  DollarSign,
+  BadgeCent,
   Receipt,
   BadgeCheck,
 } from "lucide-react"
@@ -188,7 +188,7 @@ const PaymentSummaryForm = () => {
                       <dd className="font-medium">{room?.type || ""}</dd>
                     </div>
                     <div className="flex items-center gap-2">
-                      <DollarSign className="w-4 h-4 text-gray-500" />
+                      <BadgeCent className="w-4 h-4 text-gray-500" />
                       <dt className="w-24 text-gray-500">Price:</dt>
                       <dd className="font-medium text-green-600">GH₵{room?.price?.toLocaleString() || ""}</dd>
                     </div>

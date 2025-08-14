@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/card";
 import { ReportData } from "@/helper/types/types";
 import { formatDate } from "@/utils/formatDate";
-import { CalendarDays, DollarSign, TrendingDown, TrendingUp } from "lucide-react";
+import { CalendarDays, BadgeCent, TrendingDown, TrendingUp } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Progress } from "../ui/progress";
 import { formatCurrency } from "@/utils/formatCurrency";
@@ -70,7 +70,7 @@ const StatusCards = ({reportData}: {reportData: ReportData}) => {
                   <CardTitle className="text-sm font-medium">
                     Collection Rate
                   </CardTitle>
-                  <DollarSign className="h-4 w-4 text-muted-foreground" />
+                  <BadgeCent className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">

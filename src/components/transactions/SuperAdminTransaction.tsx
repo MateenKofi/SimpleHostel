@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   ArrowUpDown,
-  DollarSign,
+  BadgeCent,
   Download,
   Search,
 } from "lucide-react";
@@ -144,7 +144,7 @@ const SuperAdminTransaction = () => {
           </div>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-2 px-4 py-2 text-green-700 rounded-lg bg-green-50 dark:bg-green-950 dark:text-green-300">
-              <DollarSign className="w-5 h-5" />
+              <BadgeCent className="w-5 h-5" />
               <div>
                 <p className="text-xs font-medium">Total Collected</p>
                 <p className="text-lg font-bold">
