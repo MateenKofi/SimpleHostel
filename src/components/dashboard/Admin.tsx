@@ -6,8 +6,6 @@ import PaymentStat from "./charts/PaymentStat";
 import OccupancyStatus from "./charts/OccupancyStatus";
 import AnalyticsCard from "./AnalyticsCard";
 
-
-
 const Admin = () => {
   const hostel_id = localStorage.getItem('hostelId')
    const { data: analyticsData, isLoading } = useQuery({
