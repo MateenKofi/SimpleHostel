@@ -64,20 +64,12 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
             )}
             {analyticsData?.totalStaff > -1 && (
               <Card className="border-gray-200">
-                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                <CardHeader className="flex flex-row items-end justify-between pb-2">
                   <CardTitle className="text-sm font-medium">Total Staff</CardTitle>
                   <Users className="h-4 w-4 text-gray-500" />
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{analyticsData && analyticsData.totalStaff || 0}</div>
-                  <p className="text-xs text-gray-500">{analyticsData && analyticsData.totalDebtors} with outstanding debt</p>
-                  <div className="mt-3">
-                    <Progress
-                      value={100 - (analyticsData && analyticsData.debtorsPercentage)}
-                      className="bg-gray-200"
-                    
-                    />
-                  </div>
+                  <div className="text-4xl font-bold">{analyticsData && analyticsData.totalStaff || 0}</div>
                 </CardContent>
               </Card>
             )}
@@ -88,14 +80,7 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
                 <Users className="h-4 w-4 text-gray-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{analyticsData && analyticsData.totalResidents}</div>
-                <p className="text-xs text-gray-500">{analyticsData && analyticsData.totalDebtors} with outstanding debt</p>
-                <div className="mt-3">
-                  <Progress
-                    value={100 - (analyticsData && analyticsData?.debtorsPercentage)}
-                    className="bg-gray-200 border"
-                  />
-                </div>
+                <div className="text-4xl font-bold">{analyticsData && analyticsData.totalResidents}</div>
               </CardContent>
             </Card>
           </div>

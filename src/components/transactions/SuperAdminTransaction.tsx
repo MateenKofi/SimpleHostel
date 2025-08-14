@@ -118,7 +118,7 @@ const SuperAdminTransaction = () => {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
-      currency: "USD",
+      currency: "GHS",
       minimumFractionDigits: 2,
     }).format(amount);
   };
@@ -152,10 +152,6 @@ const SuperAdminTransaction = () => {
                 </p>
               </div>
             </div>
-            <Button variant="outline" size="icon">
-              <Download className="w-4 h-4" />
-              <span className="sr-only">Download report</span>
-            </Button>
           </div>
         </div>
       </CardHeader>
