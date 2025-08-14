@@ -39,7 +39,7 @@ const MonthlyRevenue = ({ reportData }: { reportData: ReportData }) => {
                 color: "hsl(var(--chart-2))",
               },
             }}
-            className="h-[300px]"
+            className="h-[300px] w-full pl-0 ml-0"
           >
             <BarChart data={reportData?.monthlyStats}>
               <CartesianGrid vertical={false} />
