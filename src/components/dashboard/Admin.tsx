@@ -27,7 +27,7 @@ const Admin = () => {
   return (
       <div className="flex flex-col min-h-screen bg-white">
       <div className="flex flex-1">
-        <main className="flex-1 p-4 md:p-6">
+        <main className="flex-1 p-4 md:p-2">
           <AnalyticsCard analyticsData={analyticsData} />
 
           <div className="grid gap-4 mt-6 md:grid-cols-2 lg:grid-cols-7">

@@ -11,14 +11,14 @@ const OccupancyStatus = ({ analyticsData }: { analyticsData: analyticsData }) =>
   ]
 
   return (
-     <Card className="border-gray-200 lg:col-span-3">
+     <Card className="border-gray-200 lg:col-span-3 p-0">
               <CardHeader>
                 <CardTitle>Occupancy Status</CardTitle>
                 <CardDescription className="text-gray-500">Current room occupancy breakdown</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className='p-4 text-xs'>
                 <div className="h-[300px] flex items-center justify-center">
-                  <ResponsiveContainer width="100%" height="100%">
+                  <ResponsiveContainer width="100%" height="100%" >
                     <PieChart>
                       <Pie
                         data={occupancyData}

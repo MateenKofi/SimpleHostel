@@ -47,6 +47,7 @@ import FindRoom from "./pages/landing-page/component/find-room/Find-Room";
 import HostelManagement from "./pages/dashboard/hostelManagement/HostelManagement";
 import EditResident from "./components/resident/EditResident";
 import Report from './pages/dashboard/report/Report';
+import PaymentSuccess from '@components/payment-success';
 
 function App() {
   return (
@@ -64,6 +65,7 @@ function App() {
           <Route path='terms-and-conditions' element={<TermsAndCondition />} />
           <Route path="forget-password" element={<ForgetPassword />} />
           <Route path="change-password" element={<ChangePassword />} />
+          <Route path="payment-success" element={<PaymentSuccess />} />
           
         {/* Landing Routes */}
         <Route element={<LandingPageLayout />}>
