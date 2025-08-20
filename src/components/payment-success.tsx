@@ -2,6 +2,10 @@
 import { CheckCircle, Download, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 interface PaymentSuccessProps {
   amount?: string
@@ -16,6 +20,34 @@ const PaymentSuccess = ({
   onContinue,
   onDownloadReceipt,
 }: PaymentSuccessProps) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Extract query parameters from the URL
+    const queryParams = new URLSearchParams(location.search);
+    const reference = queryParams.get("reference");
+    console.log("Payment reference:", reference);
+    if (reference) {
+      // Call your backend endpoint to verify the payment using the reference
+      axios
+        .get(`/api/get/ref/${reference}`)
+        .then((res) => {
+          if (res.data.verified) {
+            toast.success("Payment verified successfully!");
+            // Optionally redirect to a success page or update your UI accordingly
+          } else {
+            toast.error("Payment verification failed.");
+          }
+        })
+        .catch((err) => {
+          console.error("Verification error:", err);
+          toast.error("An error occurred during payment verification.");
+        });
+    } else {
+      toast.error("No payment reference found.");
+    }
+  }, [location, navigate]);
   return (
     <Card className="w-full max-w-md mx-auto mt-10">
       <CardHeader className="text-center pb-4">
@@ -25,7 +57,6 @@ const PaymentSuccess = ({
         <h1 className="text-2xl font-semibold text-foreground">Payment Successful!</h1>
         <p className="text-muted-foreground">Your payment has been processed successfully</p>
       </CardHeader>
-
       <CardContent className="space-y-6">
         <div className="space-y-3">
           <div className="flex justify-between items-center py-2 border-b border-border">
