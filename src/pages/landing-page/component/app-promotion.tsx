@@ -18,7 +18,7 @@ export function AppPromotion() {
           transition={{ duration: 0.6 }}
         >
           <div>
-            <h2 className="mb-4 text-3xl font-bold md:text-4xl">Mobile App : Cooming Soon</h2>
+            <h2 className="mb-4 text-3xl font-bold md:text-4xl">Mobile App : Coming Soon</h2>
             <p className="text-lg text-muted-foreground">
               Take Fuse with you everywhere. Book hostels on the go, manage your reservations, and connect with
               fellow travelers - all from your pocket. Our mobile app makes your travel experience seamless and

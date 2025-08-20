@@ -31,7 +31,7 @@ const PaymentSuccess = ({
     if (reference) {
       // Call your backend endpoint to verify the payment using the reference
       axios
-        .get(`/api/payment/get/ref/${reference}`)
+        .get(`/api/payments/get/ref/${reference}`)
         .then((res) => {
           if (res.data.verified) {
             toast.success("Payment verified successfully!");
