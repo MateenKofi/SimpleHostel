@@ -2,7 +2,7 @@
 import { CheckCircle, Download, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { useEffect, useState } from "react";
+import { useEffect} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
