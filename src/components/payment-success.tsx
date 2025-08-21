@@ -8,6 +8,7 @@ import { CheckCircle, Download, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import jsPDF from "jspdf"
+import "jspdf-autotable"
 
 interface PaymentData {
   id: string
@@ -54,25 +55,52 @@ const PaymentSuccess = () => {
     }
   }, [location, navigate])
 
-  const handleDownloadReceipt = () => {
-    if (!payment) return
+const handleDownloadReceipt = () => {
+  if (!payment) return
 
-    const doc = new jsPDF()
-    doc.setFontSize(16)
-    doc.text("Payment Receipt", 20, 20)
-    doc.setFontSize(12)
-    doc.text(`Transaction ID: ${payment.id}`, 20, 40)
-    doc.text(`Reference: ${payment.reference}`, 20, 50)
-    doc.text(`Amount: GHS ${payment.amount}`, 20, 60)
-    doc.text(`Method: ${payment.method}`, 20, 70)
-    doc.text(`Status: ${payment.status}`, 20, 80)
-    doc.text(`Date: ${new Date(payment.date).toLocaleString()}`, 20, 90)
+  const doc = new jsPDF()
 
-    doc.save(`receipt-${payment.reference}.pdf`)
-  }
+  // Title
+  doc.setFontSize(18)
+  doc.text("Payment Receipt", 105, 20, { align: "center" })
+
+  // Receipt info
+  doc.setFontSize(12)
+  doc.text(`Reference: ${payment.reference}`, 20, 40)
+  doc.text(`Transaction ID: ${payment.id}`, 20, 50)
+  doc.text(`Date: ${new Date(payment.date).toLocaleString()}`, 20, 60)
+
+  // Table with payment details
+  ;(doc as any).autoTable({
+    startY: 75,
+    head: [["Field", "Value"]],
+    body: [
+      ["Amount Paid", `GHS ${payment.amount}`],
+      ["Method", payment.method.replace("_", " ")],
+      ["Status", payment.status],
+      ["Room ID", payment.roomId],
+      ["Resident ID", payment.residentId],
+    ],
+    theme: "grid",
+    headStyles: { fillColor: [22, 160, 133] }, // teal green header
+    bodyStyles: { textColor: 50 },
+  })
+
+  // Footer
+  const pageHeight = doc.internal.pageSize.height
+  doc.setFontSize(10)
+  doc.text("Thank you for your payment.", 20, pageHeight - 20)
+
+  doc.save(`receipt-${payment.reference}.pdf`)
+}
 
   const handleContinue = () => {
-    navigate("/dashboard") // or wherever you want to redirect
+    const token = localStorage.getItem("token")
+    if (token) {
+      navigate("/dashboard") // or wherever you want to redirect
+    } else {
+      navigate("/")
+    }
   }
 
   return (
