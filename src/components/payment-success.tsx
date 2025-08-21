@@ -8,7 +8,7 @@ import { CheckCircle, Download, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import jsPDF from "jspdf"
-import "jspdf-autotable"
+import autoTable from "jspdf-autotable"
 
 interface PaymentData {
   id: string
@@ -64,14 +64,14 @@ const handleDownloadReceipt = () => {
   doc.setFontSize(18)
   doc.text("Payment Receipt", 105, 20, { align: "center" })
 
-  // Receipt info
+  // Info
   doc.setFontSize(12)
   doc.text(`Reference: ${payment.reference}`, 20, 40)
   doc.text(`Transaction ID: ${payment.id}`, 20, 50)
   doc.text(`Date: ${new Date(payment.date).toLocaleString()}`, 20, 60)
 
-  // Table with payment details
-  ;(doc as any).autoTable({
+  // ✅ Use autoTable like this:
+  autoTable(doc, {
     startY: 75,
     head: [["Field", "Value"]],
     body: [
@@ -82,7 +82,7 @@ const handleDownloadReceipt = () => {
       ["Resident ID", payment.residentId],
     ],
     theme: "grid",
-    headStyles: { fillColor: [22, 160, 133] }, // teal green header
+    headStyles: { fillColor: [22, 160, 133] },
     bodyStyles: { textColor: 50 },
   })
 
