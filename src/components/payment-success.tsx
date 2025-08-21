@@ -1,53 +1,80 @@
+"use client"
 
+import { useEffect, useState } from "react"
+import { useLocation, useNavigate } from "react-router-dom"
+import axios from "axios"
+import toast from "react-hot-toast"
 import { CheckCircle, Download, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
-import { useEffect} from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
-import toast from "react-hot-toast";
+import jsPDF from "jspdf"
 
-interface PaymentSuccessProps {
-  amount?: string
-  transactionId?: string
-  onContinue?: () => void
-  onDownloadReceipt?: () => void
+interface PaymentData {
+  id: string
+  amount: number
+  date: string
+  residentId: string
+  status: string
+  roomId: string
+  reference: string
+  method: string
+  updatedAt: string
+  delFlag: boolean
+  calendarYearId: string
+  historicalResidentId: string | null
 }
 
-const PaymentSuccess = ({
-  amount = "$49.99",
-  transactionId = "TXN-2024-001234",
-  onContinue,
-  onDownloadReceipt,
-}: PaymentSuccessProps) => {
-  const location = useLocation();
-  const navigate = useNavigate();
+const PaymentSuccess = () => {
+  const location = useLocation()
+  const navigate = useNavigate()
+  const [payment, setPayment] = useState<PaymentData | null>(null)
 
   useEffect(() => {
-    // Extract query parameters from the URL
-    const queryParams = new URLSearchParams(location.search);
-    const reference = queryParams.get("reference");
-    console.log("Payment reference:", reference);
+    const queryParams = new URLSearchParams(location.search)
+    const reference = queryParams.get("reference")
+    console.log("Payment reference:", reference)
+
     if (reference) {
-      // Call your backend endpoint to verify the payment using the reference
       axios
         .get(`/api/payments/get/ref/${reference}`)
         .then((res) => {
-          if (res.data.verified) {
-            toast.success("Payment verified successfully!");
-            // Optionally redirect to a success page or update your UI accordingly
+          if (res.data?.data) {
+            setPayment(res.data.data)
+            toast.success("Payment verified successfully!")
           } else {
-            toast.error("Payment verification failed.");
+            toast.error("Payment verification failed.")
           }
         })
         .catch((err) => {
-          console.error("Verification error:", err);
-          toast.error("An error occurred during payment verification.");
-        });
+          console.error("Verification error:", err)
+          toast.error("An error occurred during payment verification.")
+        })
     } else {
-      toast.error("No payment reference found.");
+      toast.error("No payment reference found.")
     }
-  }, [location, navigate]);
+  }, [location, navigate])
+
+  const handleDownloadReceipt = () => {
+    if (!payment) return
+
+    const doc = new jsPDF()
+    doc.setFontSize(16)
+    doc.text("Payment Receipt", 20, 20)
+    doc.setFontSize(12)
+    doc.text(`Transaction ID: ${payment.id}`, 20, 40)
+    doc.text(`Reference: ${payment.reference}`, 20, 50)
+    doc.text(`Amount: GHS ${payment.amount}`, 20, 60)
+    doc.text(`Method: ${payment.method}`, 20, 70)
+    doc.text(`Status: ${payment.status}`, 20, 80)
+    doc.text(`Date: ${new Date(payment.date).toLocaleString()}`, 20, 90)
+
+    doc.save(`receipt-${payment.reference}.pdf`)
+  }
+
+  const handleContinue = () => {
+    navigate("/dashboard") // or wherever you want to redirect
+  }
+
   return (
     <Card className="w-full max-w-md mx-auto mt-10">
       <CardHeader className="text-center pb-4">
@@ -55,44 +82,62 @@ const PaymentSuccess = ({
           <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
         </div>
         <h1 className="text-2xl font-semibold text-foreground">Payment Successful!</h1>
-        <p className="text-muted-foreground">Your payment has been processed successfully</p>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="space-y-3">
-          <div className="flex justify-between items-center py-2 border-b border-border">
-            <span className="text-muted-foreground">Amount Paid</span>
-            <span className="font-semibold text-foreground">{amount}</span>
-          </div>
-          <div className="flex justify-between items-center py-2 border-b border-border">
-            <span className="text-muted-foreground">Transaction ID</span>
-            <span className="font-mono text-sm text-foreground">{transactionId}</span>
-          </div>
-          <div className="flex justify-between items-center py-2">
-            <span className="text-muted-foreground">Status</span>
-            <span className="inline-flex items-center gap-1 text-green-600 dark:text-green-400">
-              <CheckCircle className="h-4 w-4" />
-              Completed
-            </span>
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          <Button onClick={onDownloadReceipt} variant="outline" className="w-full bg-transparent">
-            <Download className="h-4 w-4 mr-2" />
-            Download Receipt
-          </Button>
-
-          <Button onClick={onContinue} className="w-full">
-            Continue
-            <ArrowRight className="h-4 w-4 ml-2" />
-          </Button>
-        </div>
-
-        <p className="text-xs text-muted-foreground text-center">
-          A confirmation email has been sent to your registered email address.
+        <p className="text-muted-foreground">
+          {payment ? "Your payment has been processed successfully" : "Loading payment details..."}
         </p>
-      </CardContent>
+      </CardHeader>
+
+      {payment && (
+        <CardContent className="space-y-6">
+          <div className="space-y-3">
+            <div className="flex justify-between items-center py-2 border-b border-border">
+              <span className="text-muted-foreground">Amount Paid</span>
+              <span className="font-semibold text-foreground">GHS {payment.amount}</span>
+            </div>
+            <div className="flex justify-between items-center py-2 border-b border-border">
+              <span className="text-muted-foreground">Transaction ID</span>
+              <span className="font-mono text-sm text-foreground">{payment.id}</span>
+            </div>
+            <div className="flex justify-between items-center py-2 border-b border-border">
+              <span className="text-muted-foreground">Reference</span>
+              <span className="font-mono text-sm text-foreground">{payment.reference}</span>
+            </div>
+            <div className="flex justify-between items-center py-2 border-b border-border">
+              <span className="text-muted-foreground">Method</span>
+              <span className="text-foreground capitalize">{payment.method.replace("_", " ")}</span>
+            </div>
+            <div className="flex justify-between items-center py-2 border-b border-border">
+              <span className="text-muted-foreground">Date</span>
+              <span className="text-foreground">{new Date(payment.date).toLocaleString()}</span>
+            </div>
+            <div className="flex justify-between items-center py-2">
+              <span className="text-muted-foreground">Status</span>
+              <span className="inline-flex items-center gap-1 text-green-600 dark:text-green-400">
+                <CheckCircle className="h-4 w-4" />
+                {payment.status}
+              </span>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <Button onClick={handleDownloadReceipt} variant="outline" className="w-full bg-transparent">
+              <Download className="h-4 w-4 mr-2" />
+              Download Receipt
+            </Button>
+
+            <Button onClick={handleContinue} className="w-full">
+              Continue
+              <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          </div>
+
+          <p className="text-xs text-muted-foreground text-center">
+            A confirmation email has been sent to your registered email address.
+          </p>
+        </CardContent>
+      )}
     </Card>
   )
 }
+
 export default PaymentSuccess
