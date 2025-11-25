@@ -91,6 +91,11 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                   </Button>
                 </div>
               </form>
+              
+              <p className="text-center text-xs pb-6">
+                Don't have an account? <a href="/register" className="underline">Register as a resident</a>
+              </p>
+              
             </CardContent>
           </Card>
           <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">

@@ -95,7 +95,7 @@ const UserTable = () => {
       cell: (row) => (
         <span
           className={` rounded-md text-center text-[10px] px-2 py-1 ${
-            row.role === "SUPER_ADMIN"
+            row.role === "super_admin"
               ? "bg-green-200/50 "
               : row.role === "ADMIN"
               ? "bg-blue-200/50 "

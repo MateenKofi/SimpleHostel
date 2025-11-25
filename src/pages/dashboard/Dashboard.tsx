@@ -5,6 +5,7 @@ import { useUserStore } from "@/controllers/UserStore";
 
 const Dashboard = () => {
   const { user } = useUserStore();
+  console.log(user)
 
   return (
     <main className="flex-1 p-4 overflow-y-auto bg-white">
@@ -18,8 +19,8 @@ const Dashboard = () => {
         This is your dashboard where you can manage your account and settings.
       </p>
       <div>
-      {user && user.role === 'SUPER_ADMIN' && <SuperAdmin />}
-      {user && user.role === 'ADMIN' && <Admin />}
+      {user && user.role === 'super_admin' && <SuperAdmin />}
+      {user && user.role === 'admin' && <Admin />}
       </div>
     </main>
   )

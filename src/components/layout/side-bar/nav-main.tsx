@@ -22,7 +22,12 @@ import {
   Hotel,
   Settings,
   LucideProps,
-  Axis3D
+  Axis3D,
+  House,
+  GitPullRequest,
+  HandCoins,
+  HandPlatter,
+  Megaphone
 } from "lucide-react";
 import { useUserStore } from "@/controllers/UserStore";
 
@@ -41,7 +46,7 @@ export function NavMain() {
 
   let navItems: navItems[] = [];
 
-  if (userRole === "ADMIN") {
+  if (userRole === "admin") {
     navItems = [
       { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard", description: "Overview of hostel management" },
       { title: "Calendar Year", icon: Calendar, path: "/dashboard/calendar-year-management", description: "Manage calendar years and academic sessions" },
@@ -53,7 +58,7 @@ export function NavMain() {
       { title: "Hostel Settings", icon: Settings, path: '/dashboard/settings', description: "Manage hostel settings and configurations" },
       { title: "Report", icon: Axis3D, path:'/dashboard/report', description: "Generate and view reports on hostel activities" }, 
     ];
-  } else if (userRole === "SUPER_ADMIN") {
+  } else if (userRole === "super_admin") {
     navItems = [
       { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard", description: "Overview of hostel management" },
       { title: "Approve Hostel", icon: CheckSquare, path: "/dashboard/approve-hostel", description: "Approve or reject hostel applications" },
@@ -61,6 +66,15 @@ export function NavMain() {
       { title: "Users", icon: UserCog, path: "/dashboard/users", description: "Manage users and their roles" },
       { title: "Hostel Management", icon: Hotel, path: '/dashboard/hostel-management', description: "Manage hostel facilities and services" },
       { title: "Report", icon: Axis3D, path:'/dashboard/report', description: "Generate and view reports on hostel activities" },
+    ];
+  }else if (userRole === 'resident'){
+    navItems = [
+      { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard", description: "Overview of hostel management" },
+      { title: "View Room Details", icon:House, path: "/dashboard/view-room-details", description: "View room details"},
+      { title: "Make Request", icon:GitPullRequest , path: "/dashboard/make-request", description: "Make a request"},
+      { title: "Payment & Billing", icon:HandCoins, path: "/dashboard/payment-billing", description: "Make a payment"},
+      { title: "Book Service/Facility", icon:HandPlatter, path: "/dashboard/book-service-facility", description: "Book a service or facility"},
+      { title: "View Announcements", icon:Megaphone, path: "/dashboard/view-announcements", description: "View announcements"},
     ];
   }
 

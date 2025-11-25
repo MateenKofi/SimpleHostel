@@ -11,6 +11,7 @@ import About from './pages/landing-page/About'
 import Contact from './pages/landing-page/Contact'
 import FindHostel from './pages/landing-page/component/findHostel/page'
 import LoginForm from "./pages/Authentication/login/login-form";
+import RegisterForm from "./pages/Authentication/register/register-form";
 import Settings  from "./pages/dashboard/settings/Settings"
 import ResidentLookup from "./pages/dashboard/resident-management/Resident-lookup";
 import ChangePassword from "./components/changepassword/ChangePassword";
@@ -60,6 +61,7 @@ function App() {
     >
       <Routes>
           <Route path="login" element={<LoginForm />} />
+        <Route path="register" element={<RegisterForm />} />
           <Route path="hostel-listing" element={<HostelListingForm />} />
           <Route path="payment" element={<PaymentSummaryForm/>} />
           <Route path='terms-and-conditions' element={<TermsAndCondition />} />
