@@ -17,8 +17,8 @@ const signupSchema = z
   .object({
     name: z
       .string()
-      .min(2, { message: "Full name must be at least 2 characters." })
-      .max(80, { message: "Full name must be less than 80 characters." }),
+      .min(2, { message: "First name must be at least 2 characters." })
+      .max(50, { message: "First name must be less than 50 characters." }),
     email: z.string().email({ message: "Enter a valid email address." }),
     phoneNumber: z
       .string()
@@ -38,7 +38,7 @@ const signupSchema = z
   });
 
 interface SignupFormData {
-  name: string;
+  name:string;
   email: string;
   phoneNumber: string;
   password: string;
@@ -62,7 +62,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   const registerResidentMutation = useMutation({
     mutationFn: async (formValues: SignupFormData) => {
       const payload = {
-        name: formValues.name,
+       name:formValues.name,
         email: formValues.email,
         password: formValues.password,
         phoneNumber: formValues.phoneNumber,
@@ -104,7 +104,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
               <form className="space-y-4" onSubmit={handleSubmit(handleRegistration)}>
                 <div className="grid gap-2">
                   <Label htmlFor="name">Full Name</Label>
-                  <Input id="name" placeholder="Jane Doe" {...register("name")} />
+                  <Input id="name" placeholder="Enter full name here" {...register("name")} />
                   {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
                 </div>
 

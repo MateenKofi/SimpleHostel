@@ -198,6 +198,40 @@ export type Analytics = {
   averageOccupancyRate: number;
   systemWideDebtPercentage: number;
   activeCalendarYears: number;
+  // Resident-specific fields (optional for admin/superadmin)
+  residentId?: string;
+  userId?: string;
+  hostelId?: string | null;
+  name?: string;
+  email?: string;
+  phone?: string;
+  room?: {
+    roomId: string | null;
+    roomNumber: string | null;
+    roomType: string | null;
+  };
+  stay?: {
+    checkInDate: string | null;
+    checkOutDate: string | null;
+  };
+  totals?: {
+    totalPaid: number;
+    outstandingBalance: number;
+  };
+  recentPayments?: Array<{
+    id: string;
+    amount: number;
+    date: string;
+    method: string;
+    status: string;
+  }>;
+  paymentTrend?: Array<{
+    label: string;
+    value: number;
+  }>;
+  hostel?: {
+    hostelName: string;
+  };
 };
 
 export type Transaction = {

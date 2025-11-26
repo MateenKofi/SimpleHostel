@@ -2,10 +2,10 @@ import Admin from "@/components/dashboard/Admin";
 import SuperAdmin from "@/components/dashboard/SuperAdmin";
 import SEOHelmet from "@/components/SEOHelmet";
 import { useUserStore } from "@/controllers/UserStore";
+import Resident from "@/components/dashboard/Resident";
 
 const Dashboard = () => {
   const { user } = useUserStore();
-  console.log(user)
 
   return (
     <main className="flex-1 p-4 overflow-y-auto bg-white">
@@ -21,6 +21,7 @@ const Dashboard = () => {
       <div>
       {user && user.role === 'super_admin' && <SuperAdmin />}
       {user && user.role === 'admin' && <Admin />}
+      {user && user.role === 'resident' && <Resident />}
       </div>
     </main>
   )
