@@ -1,8 +1,8 @@
-import React from "react";
-import { Plus, Users } from "lucide-react";
+import { Plus, Users, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ResidentTable from "@/components/resident/ResidentTable";
 import SEOHelmet from "@/components/SEOHelmet";
+import toast from "react-hot-toast";
 
 const ResidentManagement = () => {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ const ResidentManagement = () => {
         title="Resident Management - Fuse"
         description="Manage your hostel residents efficiently with our user-friendly interface."
         keywords="resident management, hostel, Fuse"
-        />
+      />
       <div className="flex justify-between items-center mb-6 border p-2 rounded-md shadow-md ">
         <div className="flex flex-col gap-2">
           <span className="flex gap-1">
@@ -27,6 +27,17 @@ const ResidentManagement = () => {
         </div>
         <div className="flex gap-2">
           <button
+            onClick={() => {
+              const hostelId = localStorage.getItem("hostelId")
+              if (hostelId) window.open(`/api/exports/residents/${hostelId}`, '_blank')
+              else toast.error("Hostel ID not found")
+            }}
+            className="px-4 py-2 border border-gray-300 text-gray-700 bg-white rounded-md hover:bg-gray-50 flex items-center gap-2"
+          >
+            <Download className="w-4 h-4" />
+            <span className="hidden sm:inline">Export CSV</span>
+          </button>
+          <button
             onClick={() => navigate("/dashboard/resident-lookup")}
             className="px-4 py-2 bg-primary text-white rounded-md"
           >
@@ -34,19 +45,19 @@ const ResidentManagement = () => {
           </button>
           <button
             className="px-4 py-2 bg-primary text-white rounded-md flex items-center gap-2"
-            onClick={()=> navigate("/dashboard/resident-management/add-resident")}
+            onClick={() => navigate("/dashboard/resident-management/add-resident")}
           >
             <Plus className="w-4 h-4" />
             <span>Resident</span>
           </button>
         </div>
       </div>
-     <div className="p-4 border rounded-md shadow-md">
-       <p className="text-gray-500 text-sm mb-2">
-        All residents are listed below. You can edit or delete them as needed.
-      </p>
-      <ResidentTable />
-     </div>
+      <div className="p-4 border rounded-md shadow-md">
+        <p className="text-gray-500 text-sm mb-2">
+          All residents are listed below. You can edit or delete them as needed.
+        </p>
+        <ResidentTable />
+      </div>
     </div>
   );
 };

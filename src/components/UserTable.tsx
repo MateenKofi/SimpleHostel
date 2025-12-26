@@ -94,12 +94,12 @@ const UserTable = () => {
       center: true,
       cell: (row) => (
         <span
-          className={` rounded-md text-center text-[10px] px-2 py-1 ${
+          className={` rounded-md text-center text-[10px] px-2 py-1 capitalize text-white ${
             row.role === "super_admin"
-              ? "bg-green-200/50 "
-              : row.role === "ADMIN"
-              ? "bg-blue-200/50 "
-              : "bg-yellow-400/50 text-white"
+              ? "bg-green-400 "
+              : row.role === "admin"
+              ? "bg-blue-400 "
+              : "bg-yellow-400"
           }`}
         >
           {row.role}
@@ -126,7 +126,7 @@ const UserTable = () => {
   return (
     <div className="p-6 border rounded-md shadow-sm">
       <CustomDataTable
-        title="User Management Table"
+        title="User Management"
         data={AllUsers}
         columns={columns}
         isLoading={isLoading}

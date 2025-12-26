@@ -52,7 +52,7 @@ const ProfileForms = () => {
     if (User) {
       setValue("name", User.name);
       setValue("email", User.email);
-      setValue("phoneNumber", User.phoneNumber);
+      setValue("phoneNumber", User.phone);
     }
   }, [User, setValue]);
 
@@ -116,6 +116,7 @@ const ProfileForms = () => {
             <TextField
               label="User Name"
               id="userName"
+              className='capitalize'
               register={register("name", {
                 required: "User Name is required",
               })}
@@ -124,6 +125,7 @@ const ProfileForms = () => {
             <TextField
               label="Phone Number"
               id="phoneNumber"
+              className='capitalize'
               register={register("phoneNumber", {
                 required: "Phone Number is required",
               })}

@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import {  Suspense } from "react";
+import { Suspense } from "react";
 import axios from "axios";
 import { Loader } from "lucide-react";
 
@@ -12,7 +12,7 @@ import Contact from './pages/landing-page/Contact'
 import FindHostel from './pages/landing-page/component/findHostel/page'
 import LoginForm from "./pages/Authentication/login/login-form";
 import RegisterForm from "./pages/Authentication/register/register-form";
-import Settings  from "./pages/dashboard/settings/Settings"
+import Settings from "./pages/dashboard/settings/Settings"
 import ResidentLookup from "./pages/dashboard/resident-management/Resident-lookup";
 import ChangePassword from "./components/changepassword/ChangePassword";
 import ForgetPassword from "./pages/Authentication/forget-password/ForgetPassword";
@@ -49,6 +49,15 @@ import HostelManagement from "./pages/dashboard/hostelManagement/HostelManagemen
 import EditResident from "./components/resident/EditResident";
 import Report from './pages/dashboard/report/Report';
 import PaymentSuccess from '@components/payment-success';
+import ResidentRoomDetails from "./pages/dashboard/resident-management/ResidentRoomDetails";
+import MakeRequest from "./pages/dashboard/resident-management/MakeRequest";
+import PaymentBilling from "./pages/dashboard/resident-management/PaymentBilling";
+import BookService from "./pages/dashboard/resident-management/BookService";
+import Announcements from "./pages/dashboard/resident-management/Announcements";
+import Documents from "./pages/dashboard/resident-management/Documents";
+import Feedback from "./pages/dashboard/resident-management/Feedback";
+import ServiceManagement from "./pages/dashboard/admin/ServiceManagement";
+import AnnouncementDashboard from "./pages/dashboard/admin/AnnouncementDashboard";
 
 function App() {
   return (
@@ -60,22 +69,22 @@ function App() {
       }
     >
       <Routes>
-          <Route path="login" element={<LoginForm />} />
+        <Route path="login" element={<LoginForm />} />
         <Route path="register" element={<RegisterForm />} />
-          <Route path="hostel-listing" element={<HostelListingForm />} />
-          <Route path="payment" element={<PaymentSummaryForm/>} />
-          <Route path='terms-and-conditions' element={<TermsAndCondition />} />
-          <Route path="forget-password" element={<ForgetPassword />} />
-          <Route path="change-password" element={<ChangePassword />} />
-          <Route path="payment-success" element={<PaymentSuccess />} />
-          
+        <Route path="hostel-listing" element={<HostelListingForm />} />
+        <Route path="payment" element={<PaymentSummaryForm />} />
+        <Route path='terms-and-conditions' element={<TermsAndCondition />} />
+        <Route path="forget-password" element={<ForgetPassword />} />
+        <Route path="change-password" element={<ChangePassword />} />
+        <Route path="payment-success" element={<PaymentSuccess />} />
+
         {/* Landing Routes */}
         <Route element={<LandingPageLayout />}>
           <Route index element={<Home />} />
-          <Route path="about" element={<About/>}/>
-          <Route path="contact" element={<Contact/>}/>
+          <Route path="about" element={<About />} />
+          <Route path="contact" element={<Contact />} />
           <Route path="find-hostel" element={<FindHostel />} />
-          
+
           <Route path="resident-form" element={<ResidentForm />} />
           <Route path="find/:id/room" element={<FindRoom />} />
 
@@ -91,8 +100,8 @@ function App() {
             <Route path="resident-management" element={<ResidentManagement />} />
             <Route path="resident-management/add-resident" element={<AddResident />} />
             <Route path="deptors-list" element={<DeptorsList />} />
-             <Route path="payment" element={<PaymentSummaryForm/>} />
-            <Route path="top-up" element={<TopUpPaymentForm/>} />
+            <Route path="payment" element={<PaymentSummaryForm />} />
+            <Route path="top-up" element={<TopUpPaymentForm />} />
             <Route path="visitor-management" element={<VisitorManagement />} />
             <Route path="staff-management" element={<StaffManagement />} />
             <Route path="staff-management/add" element={<AddStaff />} />
@@ -102,10 +111,19 @@ function App() {
             <Route path="transactions" element={<Transactions />} />
             <Route path="users" element={<Users />} />
             <Route path="view-room/:id" element={<ViewRoom />} />
+            <Route path="view-room-details" element={<ResidentRoomDetails />} />
+            <Route path="make-request" element={<MakeRequest />} />
+            <Route path="payment-billing" element={<PaymentBilling />} />
+            <Route path="book-service-facility" element={<BookService />} />
+            <Route path="view-announcements" element={<Announcements />} />
+            <Route path="documents" element={<Documents />} />
+            <Route path="feedback" element={<Feedback />} />
             <Route path="hostel-management" element={<HostelManagement />} />
+            <Route path="service-management" element={<ServiceManagement />} />
+            <Route path="announcement-dashboard" element={<AnnouncementDashboard />} />
             <Route path="settings" element={<Settings />} />
             <Route path="resident-lookup" element={<ResidentLookup />} />
-            <Route path="edit-resident" element={<EditResident/>}  />
+            <Route path="edit-resident" element={<EditResident />} />
             <Route path="report" element={<Report />} />
           </Route>
         </Route>

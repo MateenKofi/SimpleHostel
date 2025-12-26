@@ -4,48 +4,48 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 0 72.2% 50.6%;
-    --primary-foreground: 0 85.7% 97.3%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 0 72.2% 50.6%;
+    --background: 240 20% 95%; /* pale-slate-50 */
+    --foreground: 240 22% 7%; /* pale-slate-950 */
+    --card: 240 20% 95%; /* pale-slate-50 */
+    --card-foreground: 240 22% 7%; /* pale-slate-950 */
+    --popover: 240 20% 95%; /* pale-slate-50 */
+    --popover-foreground: 240 22% 7%; /* pale-slate-950 */
+    --primary: 236 25% 50%; /* dusty-grape-500 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 21.5% 80%; /* pale-slate-200 */
+    --secondary-foreground: 240 22% 7%;
+    --muted: 240 21.5% 80%; /* pale-slate-200 */
+    --muted-foreground: 240 15% 40%; /* pale-slate-600 approx */
+    --accent: 40 100% 50%; /* sunflower-gold-500 */
+    --accent-foreground: 40 100% 7%; /* sunflower-gold-950 */
+    --destructive: 0 100% 50%; /* grapefruit-pink-500 */
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 18% 70%; /* pale-slate-300 approx */
+    --input: 240 18% 70%;
+    --ring: 236 25% 50%; /* dusty-grape-500 */
     --radius: 0.5rem;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 72.2% 50.6%;
-    --primary-foreground: 0 85.7% 97.3%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 0 72.2% 50.6%;
+    --background: 240 22% 7%; /* pale-slate-950 */
+    --foreground: 240 20% 95%; /* pale-slate-50 */
+    --card: 240 22% 12%; /* pale-slate-900 */
+    --card-foreground: 240 20% 95%;
+    --popover: 240 22% 12%; /* pale-slate-900 */
+    --popover-foreground: 240 20% 95%;
+    --primary: 236 25% 50%; /* dusty-grape-500 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 22% 20%; /* pale-slate-800 */
+    --secondary-foreground: 240 20% 95%;
+    --muted: 240 22% 20%; /* pale-slate-800 */
+    --muted-foreground: 240 15% 65%; /* pale-slate-400 approx */
+    --accent: 40 100% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 100% 40%; /* grapefruit-pink-600 */
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 22% 20%; /* pale-slate-800 */
+    --input: 240 22% 20%;
+    --ring: 236 25% 50%;
   }
 }
 

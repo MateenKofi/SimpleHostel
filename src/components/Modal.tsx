@@ -22,7 +22,7 @@ const variants = {
   visible: { opacity: 1, scale: 1 },
   exit: { opacity: 0, scale: 0.95 },
   transition: { duration: 0.3, ease: 'easeInOut' }
-  
+
 }
 
 export default function Modal({ children, modalId, onClose, size = 'medium' }: ModalProps) {
@@ -33,7 +33,7 @@ export default function Modal({ children, modalId, onClose, size = 'medium' }: M
       animate="visible"
       exit="exit"
       variants={variants}
-      className={`relative z-50 w-full ${sizeClasses[size]} rounded-lg bg-white p-6 shadow-lg`}
+      className={`relative z-50 w-full ${sizeClasses[size]} rounded-lg bg-white p-6 shadow-lg backdrop:bg-black/90`}
     >
       <button
         onClick={onClose}

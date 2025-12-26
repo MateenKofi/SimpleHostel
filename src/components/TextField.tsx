@@ -9,6 +9,7 @@ type TextFieldPropsProps = {
   error?: FieldError;
   type?: string;
   placeholder?: string;
+  className?: string;
 };
 
 export const TextField = ({
@@ -18,6 +19,7 @@ export const TextField = ({
   error,
   type = "text",
   placeholder = "",
+  className,
 }: TextFieldPropsProps) => {
   return (
     <div className="space-y-2">
@@ -26,6 +28,7 @@ export const TextField = ({
         id={id}
         type={type}
         placeholder={placeholder}
+        className={className}
         {...register}
       />
       {error && (
