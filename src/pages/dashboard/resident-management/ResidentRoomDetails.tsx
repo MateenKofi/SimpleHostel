@@ -100,7 +100,7 @@ const ResidentRoomDetails = () => {
                                 <div className="relative overflow-hidden aspect-video">
                                     <img
                                         src={room.RoomImage[activeImageIndex]?.imageUrl || "/placeholder.svg?height=400&width=600"}
-                                        alt={`${room.number} - Image ${activeImageIndex + 1}`}
+                                        alt={`${room.roomNumber} - Image ${activeImageIndex + 1}`}
                                         className="object-cover w-full h-full"
                                     />
                                 </div>
@@ -116,7 +116,7 @@ const ResidentRoomDetails = () => {
                                             >
                                                 <img
                                                     src={image.imageUrl || "/placeholder.svg"}
-                                                    alt={`${room.number} thumbnail ${index + 1}`}
+                                                    alt={`${room.roomNumber} thumbnail ${index + 1}`}
                                                     className="object-cover w-full h-full"
                                                 />
                                             </div>
@@ -139,7 +139,7 @@ const ResidentRoomDetails = () => {
                         <CardHeader>
                             <div className="flex items-start justify-between">
                                 <div>
-                                    <CardTitle className="text-2xl">{room?.number}</CardTitle>
+                                    <CardTitle className="text-2xl">{room?.roomNumber}</CardTitle>
                                     <CardDescription className="flex items-center mt-1">
                                         <MapPin className="w-4 h-4 mr-1" />
                                         Block {room?.block}, Floor {room?.floor}

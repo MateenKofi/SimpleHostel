@@ -17,7 +17,7 @@ import { useSelectedRoomStore } from "@/controllers/SelectedRoomStore";
 import FilterPanel from "@/components/FilterPanel";
 import { RoomFilterConfig } from "@/helper/room_filter_config";
 import { parseRange } from "@/utils/parseRange";
-import FindHostelSkeleton from "@components/loaders/HostelCardSkeleton";
+import FindHostelSkeleton from "@/components/loaders/HostelCardSkeleton";
 import ImageSlider from "@/components/ImageSlider";
 import CustomeRefetch from "@/components/CustomeRefetch";
 import SEOHelmet from "@/components/SEOHelmet";
@@ -63,7 +63,7 @@ const FindRoom = () => {
 
   const availableRooms = useMemo(() => {
     const rooms = RoomData?.rooms || [];
-    return rooms.filter((room: Room) => room.status === "AVAILABLE");
+    return rooms.filter((room: Room) => room.status === "available");
   }, [RoomData?.rooms]);
 
   const filteredRooms = useMemo(() => {
@@ -149,7 +149,7 @@ const FindRoom = () => {
                   <div className="flex justify-between items-center">
                     <div>
                       <CardTitle className="text-xl font-bold text-black dark:text-white">
-                        Room {room.number}
+                        Room {room.roomNumber}
                       </CardTitle>
                       <p className="text-xs text-gray-500 dark:text-gray-400">
                         Block {room.block} · Floor {room.floor}
@@ -166,7 +166,7 @@ const FindRoom = () => {
                 </CardHeader>
                 <div>
                   <ImageSlider
-                    images={room?.RoomImage?.map((i) => i.imageUrl) ?? []}
+                    images={room?.roomImages?.map((i) => i.imageUrl) ?? []}
                   />
                 </div>
                 <CardContent className="p-2">
@@ -174,7 +174,7 @@ const FindRoom = () => {
                     <div className="bg-gray-50 dark:bg-zinc-800 p-2 rounded-md">
                       <p className="text-xs text-gray-600 dark:text-gray-400">Type</p>
                       <p className="font-semibold text-xs text-black dark:text-white">
-                        {room.type.charAt(0) + room.type.slice(1).toLowerCase()}
+                        {room.roomType.charAt(0) + room.roomType.slice(1).toLowerCase()}
                       </p>
                     </div>
                     <div className="bg-gray-50 dark:bg-zinc-800 p-2 rounded-md">
@@ -202,11 +202,11 @@ const FindRoom = () => {
                     <div className="flex flex-col">
                       <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Amenities</p>
                       <p className="w-full font-semibold text-xs text-black dark:text-white">
-                        {room?.Amenities?.length as number < 1 ? (
+                        {(room?.amenities?.length || 0) < 1 ? (
                           <span>No Amenities</span>
                         ) : (
                           <>
-                            {room?.Amenities?.map((amenity) => (
+                            {room?.amenities?.map((amenity) => (
                               <span
                                 key={amenity.id}
                                 className="mr-[2px] bg-green-300 dark:bg-green-700 px-1 rounded-md text-xs text-black dark:text-white"
