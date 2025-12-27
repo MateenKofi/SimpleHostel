@@ -7,6 +7,19 @@ import CustomDataTable from "./CustomDataTable";
 import { Trash2 } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { handleSwalMutation } from "./swal/SwalMutationHelper";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { FileText, Upload, Loader2 as Loader } from "lucide-react";
+import { useState } from "react";
 
 const HostelManagementTable = () => {
   const {
@@ -48,6 +61,56 @@ const HostelManagementTable = () => {
     });
   };
 
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [selectedHostelId, setSelectedHostelId] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  const UploadRulesMutation = useMutation({
+    mutationFn: async ({ id, file }: { id: string; file: File }) => {
+      const formData = new FormData();
+      formData.append("rules", file);
+      const response = await axios.put(`/api/hostels/rules/${id}`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      return response.data;
+    },
+    onSuccess: () => {
+      toast.success("Hostel rules updated successfully");
+      setIsUploadModalOpen(false);
+      setSelectedFile(null);
+      setSelectedHostelId(null);
+      refetchAllHostels();
+    },
+    onError: (error: any) => {
+      if (axios.isAxiosError(error)) {
+        const errorMessage =
+          error?.response?.data?.error || "Failed to upload rules";
+        toast.error(errorMessage);
+      } else {
+        toast.error("An unexpected error occured");
+      }
+    },
+  });
+
+  const handleUploadClick = (id: string) => {
+    setSelectedHostelId(id);
+    setIsUploadModalOpen(true);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handleUploadSubmit = () => {
+    if (selectedHostelId && selectedFile) {
+      UploadRulesMutation.mutate({ id: selectedHostelId, file: selectedFile });
+    }
+  };
+
   const columns: TableColumn<Hostel>[] = [
     { name: "Hostel", selector: (row) => row.name, sortable: true, wrap: true },
     {
@@ -61,12 +124,21 @@ const HostelManagementTable = () => {
       name: "Action",
       center: true,
       cell: (row) => (
-        <span>
-          <button
-            className="px-2 py-1 ml-2 text-white bg-red-500 rounded-md"
-            onClick={() => handleDeleteHostel(row.id)}
+        <span className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleUploadClick(row.id)}
+            title="Upload Rules"
           >
-            <Trash2 />
+            <Upload className="w-4 h-4" />
+          </Button>
+          <button
+            className="px-2 py-1 text-white bg-red-500 rounded-md"
+            onClick={() => handleDeleteHostel(row.id)}
+            title="Delete Hostel"
+          >
+            <Trash2 size={16} />
           </button>
         </span>
       ),
@@ -82,7 +154,51 @@ const HostelManagementTable = () => {
         isLoading={isLoading}
         isError={isError}
       />
-    </div>
+
+      <Dialog open={isUploadModalOpen} onOpenChange={setIsUploadModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Upload Hostel Rules & Regulations</DialogTitle>
+            <DialogDescription>
+              Upload a PDF or document containing the rules for this hostel.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid w-full max-w-sm items-center gap-1.5">
+              <Label htmlFor="rules">Rules Document</Label>
+              <Input
+                id="rules"
+                type="file"
+                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                onChange={handleFileChange}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsUploadModalOpen(false)}
+              disabled={UploadRulesMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleUploadSubmit}
+              disabled={!selectedFile || UploadRulesMutation.isPending}
+            >
+              {UploadRulesMutation.isPending ? (
+                <>
+                  <Loader className="mr-2 h-4 w-4 animate-spin" />
+                  Uploading...
+                </>
+              ) : (
+                "Upload"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div >
   );
 };
 

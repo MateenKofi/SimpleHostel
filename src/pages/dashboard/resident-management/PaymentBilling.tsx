@@ -4,11 +4,23 @@ import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import { Loader, Download, CreditCard, History, Wallet, AlertCircle } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter,
+} from "@/components/ui/dialog"
+import { Separator } from "@/components/ui/separator"
+import { useRef, useState } from "react"
+import { useReactToPrint } from "react-to-print"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 import { useNavigate } from "react-router-dom"
 import SEOHelmet from "@/components/SEOHelmet"
+import { PaymentReceipt } from "@/helper/types/types"
 
 interface PaymentTransaction {
     id: string
@@ -54,11 +66,25 @@ const PaymentBilling = () => {
         return <NoHostelAssigned />
     }
 
-    const handleDownloadReceipt = (transactionId: string) => {
-        // Implement generic PDF download logic or open in new tab
-        // For now, we'll just mock the action
-        console.log("Downloading receipt for:", transactionId)
-        window.open(`/api/exports/receipt/${transactionId}`, '_blank')
+    const [viewReceiptId, setViewReceiptId] = useState<string | null>(null);
+    const receiptRef = useRef<HTMLDivElement>(null)
+
+    const handlePrint = useReactToPrint({
+        content: () => receiptRef.current,
+        documentTitle: `Receipt-${viewReceiptId}`,
+    });
+
+    const { data: receiptData, isLoading: isReceiptLoading } = useQuery<PaymentReceipt>({
+        queryKey: ['receipt', viewReceiptId],
+        queryFn: async () => {
+            const response = await axios.get(`/api/residents/receipt/${viewReceiptId}`)
+            return response.data.data
+        },
+        enabled: !!viewReceiptId
+    })
+
+    const handleViewReceipt = (transactionId: string) => {
+        setViewReceiptId(transactionId)
     }
 
     if (isLoading) {
@@ -171,7 +197,7 @@ const PaymentBilling = () => {
                                                 {tx.status}
                                             </Badge>
                                         </div>
-                                        <Button variant="ghost" size="icon" onClick={() => handleDownloadReceipt(tx.id)} title="Download Receipt">
+                                        <Button variant="ghost" size="icon" onClick={() => handleViewReceipt(tx.id)} title="View Receipt">
                                             <Download className="w-4 h-4 text-muted-foreground" />
                                         </Button>
                                     </div>
@@ -182,10 +208,86 @@ const PaymentBilling = () => {
                         <div className="py-12 text-center text-muted-foreground">
                             No transactions found.
                         </div>
+                    )
+                    }
+                </CardContent >
+            </Card >
+
+            <Dialog open={!!viewReceiptId} onOpenChange={(open) => !open && setViewReceiptId(null)}>
+                <DialogContent className="max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Payment Receipt</DialogTitle>
+                        <DialogDescription>
+                            Review transaction details
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {isReceiptLoading ? (
+                        <div className="flex justify-center p-8">
+                            <Loader className="w-8 h-8 animate-spin text-primary" />
+                        </div>
+                    ) : receiptData ? (
+                        <div className="space-y-4">
+                            <div className="p-6 border rounded-sm bg-white text-black shadow-sm print:shadow-none" ref={receiptRef}>
+                                <div className="text-center mb-6">
+                                    <h3 className="font-bold text-lg uppercase tracking-wider">{receiptData.hostelName}</h3>
+                                    <p className="text-xs text-gray-500">Official Payment Receipt</p>
+                                </div>
+
+                                <Separator className="my-4" />
+
+                                <div className="flex justify-between text-sm mb-2">
+                                    <span className="text-gray-500">Receipt No:</span>
+                                    <span className="font-mono font-medium">{receiptData.receiptNumber}</span>
+                                </div>
+                                <div className="flex justify-between text-sm mb-4">
+                                    <span className="text-gray-500">Date:</span>
+                                    <span>{new Date(receiptData.date).toLocaleDateString()}</span>
+                                </div>
+
+                                <div className="space-y-1 mb-6">
+                                    <p className="text-xs text-gray-500">Received From</p>
+                                    <p className="font-medium">{receiptData.residentName}</p>
+                                    <p className="text-xs text-gray-500">Room: {receiptData.roomNumber}</p>
+                                </div>
+
+                                <div className="bg-gray-100 p-3 rounded-md flex justify-between items-center mb-6">
+                                    <span className="font-medium">Amount Paid</span>
+                                    <span className="font-bold text-lg">GHS {receiptData.amountPaid.toFixed(2)}</span>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4 text-xs text-gray-500">
+                                    <div>
+                                        <p>Payment Method</p>
+                                        <p className="text-black font-medium capitalize">{receiptData.method}</p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p>Balance Owed</p>
+                                        <p className="text-black font-medium">GHS {receiptData.balanceOwed.toFixed(2)}</p>
+                                    </div>
+                                </div>
+
+                                <div className="mt-8 text-center">
+                                    <Badge variant="outline" className="border-green-500 text-green-600 uppercase text-[10px] tracking-widest">
+                                        {receiptData.status}
+                                    </Badge>
+                                </div>
+                            </div>
+
+                            <DialogFooter>
+                                <Button className="w-full" onClick={handlePrint}>
+                                    <Download className="w-4 h-4 mr-2" /> Print / Download PDF
+                                </Button>
+                            </DialogFooter>
+                        </div>
+                    ) : (
+                        <div className="p-6 text-center text-red-500">
+                            Failed to load receipt.
+                        </div>
                     )}
-                </CardContent>
-            </Card>
-        </div>
+                </DialogContent>
+            </Dialog>
+        </div >
     )
 }
 

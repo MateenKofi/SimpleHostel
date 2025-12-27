@@ -48,7 +48,7 @@ export type Room = {
   roomNumber: string;
   floor?: number | string;
   block?: string;
-  roomType: "single" | "double" | "suite" | "quard";
+  type: "single" | "double" | "suite" | "quard";
   status: "available" | "maintenance" | "occupied";
   capacity: number;
   currentStudentsCount: number;
@@ -160,6 +160,8 @@ export type Hostel = {
   logoUrl: string | null;
   createdAt: string;
   updatedAt: string;
+  rulesUrl: string | null;
+  rulesKey: string | null;
   deletedAt: string | null;
   allowPartialPayment: boolean;
   rooms: Room[];
@@ -292,3 +294,28 @@ export type ReportData = {
   }>
   revenueGrowth: number
 }
+
+export type AllocationDetails = {
+  residentName: string;
+  studentId: string;
+  hostelName: string;
+  hostelAddress: string;
+  roomNumber: string;
+  roomType: string;
+  checkInDate: string;
+  checkOutDate: string;
+  rulesUrl: string;
+};
+
+export type PaymentReceipt = {
+  receiptNumber: string;
+  date: string;
+  residentName: string;
+  amount: number;
+  amountPaid: number;
+  balanceOwed: number;
+  method: string;
+  hostelName: string;
+  roomNumber: string;
+  status: string;
+};

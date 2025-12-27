@@ -58,6 +58,7 @@ import Documents from "./pages/dashboard/resident-management/Documents";
 import Feedback from "./pages/dashboard/resident-management/Feedback";
 import ServiceManagement from "./pages/dashboard/admin/ServiceManagement";
 import AnnouncementDashboard from "./pages/dashboard/admin/AnnouncementDashboard";
+import AllocationDetails from "./pages/dashboard/resident-management/AllocationDetails";
 
 function App() {
   return (
@@ -112,6 +113,7 @@ function App() {
             <Route path="users" element={<Users />} />
             <Route path="view-room/:id" element={<ViewRoom />} />
             <Route path="view-room-details" element={<ResidentRoomDetails />} />
+            <Route path="allocation-details" element={<AllocationDetails />} />
             <Route path="make-request" element={<MakeRequest />} />
             <Route path="payment-billing" element={<PaymentBilling />} />
             <Route path="book-service-facility" element={<BookService />} />

@@ -6,22 +6,23 @@ import { Button } from "@/components/ui/button"
 import SEOHelmet from "@/components/SEOHelmet"
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
+import { useNavigate } from "react-router-dom"
 
 import NoHostelAssigned from "@/components/resident/NoHostelAssigned"
 
 const Documents = () => {
     const userId = localStorage.getItem("userId")
     const hostelId = localStorage.getItem("hostelId")
+    const navigate = useNavigate();
 
-    // Fetch user profile to ensure we have data for documents
-    // We might not use it directly but it validates the user context
-    const { data: userProfile } = useQuery({
-        queryKey: ['userProfile', userId],
+    // Fetch allocation details which contains rulesUrl
+    const { data: allocation, isLoading: isAllocationLoading } = useQuery({
+        queryKey: ['allocationDetails'],
         queryFn: async () => {
-            const response = await axios.get(`/api/users/get/${userId}`)
-            return response.data
+            const response = await axios.get("/api/residents/allocation-details");
+            return response.data.data;
         },
-        enabled: !!userId
+        enabled: !!hostelId && hostelId !== 'undefined'
     })
 
     if (!hostelId || hostelId === 'undefined' || hostelId === 'null') {
@@ -30,18 +31,25 @@ const Documents = () => {
 
     const documents = [
         {
-            id: 'allocation-letter',
-            title: 'Allocation Letter',
-            description: 'Official proof of your room assignment.',
+            id: 'allocation-details',
+            title: 'Allocation Details',
+            description: 'View your official room assignment details.',
             icon: <FileCheck className="w-10 h-10 text-blue-500" />,
-            action: () => window.open(`/api/exports/residents/${userId}`, '_blank')
+            action: () => navigate('/dashboard/allocation-details')
         },
         {
             id: 'hostel-rules',
             title: 'Hostel Rules & Regulations',
             description: 'The code of conduct and policy guide.',
             icon: <ShieldCheck className="w-10 h-10 text-green-500" />,
-            action: () => alert("Downloading Hostel Rules PDF...") // Placeholder for static asset link
+            action: () => {
+                if (allocation?.rulesUrl) {
+                    window.open(allocation.rulesUrl, '_blank');
+                } else {
+                    alert("No rules document available yet.");
+                }
+            },
+            disabled: !allocation?.rulesUrl
         },
         // Receipts are handled in Payments page but can be linked here too if needed
     ]
@@ -75,8 +83,14 @@ const Documents = () => {
                             </CardDescription>
                         </CardContent>
                         <CardFooter>
-                            <Button className="w-full" variant="outline" onClick={doc.action}>
-                                <Download className="w-4 h-4 mr-2" /> Download details
+                            <Button
+                                className="w-full"
+                                variant="outline"
+                                onClick={doc.action}
+                                disabled={doc.disabled || isAllocationLoading}
+                            >
+                                <Download className="w-4 h-4 mr-2" />
+                                {doc.id === 'hostel-rules' ? 'Download PDF' : 'View Details'}
                             </Button>
                         </CardFooter>
                     </Card>

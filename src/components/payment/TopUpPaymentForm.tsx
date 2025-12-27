@@ -41,20 +41,31 @@ const TopUpPaymentForm = () => {
   const mutation = useMutation({
     mutationFn: async () => {
       try {
+        // Payload following v1 patterns
+        // Endpoint: /api/v1/payment/topup
         const payload = {
           residentId: resident.id,
           roomId: resident.roomId,
           initialPayment: resident.balanceOwed,
         };
         const res = await axios.post("/api/payments/topup", payload);
-        toast(res.data.message || "Redirecting to payment...");
-        window.location.href = res.data.paymentUrl
-        navigate("/dashboard/deptors-list");
+
+        if (res.data?.authorizationUrl) {
+          toast(res.data.message || "Redirecting to payment...");
+          window.location.href = res.data.authorizationUrl;
+        } else if (res.data?.paymentUrl) {
+          // Original had res.data.paymentUrl directly
+          toast(res.data.message || "Redirecting to payment...");
+          window.location.href = typeof res.data.paymentUrl === 'string'
+            ? res.data.paymentUrl
+            : res.data.paymentUrl?.authorizationUrl;
+        }
+
         return res.data;
       } catch (error) {
         if (axios.isAxiosError(error)) {
           toast.error(
-            error.response?.data.error || "An unexpected error occurred"
+            error.response?.data?.message || error.response?.data?.error || "An unexpected error occurred"
           );
         }
       }
