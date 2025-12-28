@@ -75,31 +75,31 @@ const RoomTable = () => {
   const columns = [
     {
       name: "Room ",
-      
+
       selector: (row: Room) => row.number || "N/A",
       sortable: true,
     },
     {
       name: "Block",
-      
+
       selector: (row: Room) => row.block || "N/A",
       sortable: true,
     },
     {
       name: "Floor",
-      
+
       selector: (row: Room) => row.floor || "N/A",
       sortable: true,
     },
     {
       name: "Type",
-      
+
       selector: (row: Room) => row.type || "",
       sortable: true,
     },
     {
       name: "Gender",
-      
+
       selector: (row: Room) => row.gender || "",
       sortable: true,
     },
@@ -117,13 +117,12 @@ const RoomTable = () => {
       grow: 2,
       cell: (row: Room) => (
         <span
-          className={`w-full px-1 py-1 rounded text-xs text-center text-nowrap ${
-            row.status === "AVAILABLE"
-              ? "bg-green-200 text-green-800"
-              : row.status === "OCCUPIED"
+          className={`w-full px-1 py-1 rounded text-xs text-center text-nowrap ${row.status === "available"
+            ? "bg-green-200 text-green-800"
+            : row.status === "occupied"
               ? "bg-red-200 text-red-800"
               : "bg-yellow-200 text-yellow-800"
-          }`}
+            }`}
         >
           {row.status}
         </span>

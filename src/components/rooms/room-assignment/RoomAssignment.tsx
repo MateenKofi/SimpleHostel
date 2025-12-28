@@ -16,37 +16,37 @@ import ImageSlider from "@/components/ImageSlider";
 
 const RoomAssignment = () => {
   const navigate = useNavigate();
-  const setRoom = useSelectedRoomStore((state)=> state.setRoom)
+  const setRoom = useSelectedRoomStore((state) => state.setRoom)
 
   const hostelId = localStorage.getItem("hostelId") || "";
   // Function to handle image navigation
 
 
   // Fetch rooms data
-  const { data:Rooms, isLoading, isError, refetch:refetchRooms } = useQuery({
+  const { data: Rooms, isLoading, isError, refetch: refetchRooms } = useQuery({
     queryKey: ["rooms"],
     queryFn: async () => {
       const response = await axios.get(`/api/rooms/get/hostel/${hostelId}`);
       return response.data.data;
     },
-    enabled:!!hostelId
+    enabled: !!hostelId
   });
 
-  const handleBookRoom = (room:Room) =>{
-      setRoom(room)
-      setTimeout(()=>{
-        navigate('/dashboard/payment')
-      },50)
+  const handleBookRoom = (room: Room) => {
+    setRoom(room)
+    setTimeout(() => {
+      navigate('/dashboard/payment')
+    }, 50)
   }
 
   // Transform the API data to match the Room interface and filter available rooms
   const availableRooms = useMemo(() => {
-      const rooms = Rooms?.rooms || [];
-      return rooms.filter((room: Room) => room.status === "AVAILABLE");
-    }, [Rooms?.rooms]);
+    const rooms = Rooms?.rooms || [];
+    return rooms.filter((room: Room) => room.status === "available");
+  }, [Rooms?.rooms]);
 
   if (isLoading) return <RoomAssignmentLoader />;
-  if (isError) return <CustomeRefetch refetch={refetchRooms}/>;
+  if (isError) return <CustomeRefetch refetch={refetchRooms} />;
 
   return (
     <div className="p-4 bg-white rounded-lg shadow-sm">
@@ -57,16 +57,16 @@ const RoomAssignment = () => {
         </p>
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {availableRooms?.map((room:Room) => (
+        {availableRooms?.map((room: Room) => (
           <div
             key={room.id}
             className="overflow-hidden transition-all border rounded-lg cursor-pointer"
           >
             {/* Image Carousel */}
             <div className="relative w-full h-48">
-             <ImageSlider
-                    images={room?.RoomImage?.map((i) => i.imageUrl) ?? []}
-                  />
+              <ImageSlider
+                images={room?.RoomImage?.map((i) => i.imageUrl) ?? []}
+              />
             </div>
 
             <div className="p-4">
@@ -106,14 +106,14 @@ const RoomAssignment = () => {
                       key={index}
                       className="px-2 py-1 text-xs text-gray-900 bg-gray-100 rounded-full"
                     >
-                      {amenity}
+                      {amenity.name}
                     </span>
                   ))}
                 </div>
 
                 <div className="flex items-center justify-between mt-3">
                   <button
-                  type="button"
+                    type="button"
                     className="flex items-center justify-center w-full px-4 py-2 text-base font-medium text-center text-white transition-all bg-black rounded-md hover:bg-gray-800"
                     onClick={
                       () => {
@@ -121,7 +121,7 @@ const RoomAssignment = () => {
                       }
                     }
                   >
-                      Book Room
+                    Book Room
                   </button>
                 </div>
               </div>

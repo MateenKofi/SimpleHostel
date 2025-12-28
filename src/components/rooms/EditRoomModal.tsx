@@ -9,8 +9,9 @@ import { Loader } from "lucide-react";
 import toast from "react-hot-toast";
 
 
-type RoomForm = Room & {
+type RoomForm = Omit<Room, "amenities"> & {
   images: File[];
+  amenities: string[];
 };
 
 type EditRoomModalProps = {
@@ -18,7 +19,7 @@ type EditRoomModalProps = {
   formdata: Room;
 };
 
-const ROOM_STATUS = ["Available", "Maintenance", "Occupied"] as const;
+const ROOM_STATUS = ["available", "Maintenance", "occupied"] as const;
 
 const ROOM_TYPE_CAPACITY: Record<string, number> = {
   single: 1,
@@ -97,7 +98,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
         formData.append("photos", image);
       });
 
-      const response = await axios.put(`/api/rooms/updateall/${formdata.id}`, formData,{
+      const response = await axios.put(`/api/rooms/updateall/${formdata.id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -111,7 +112,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
       setImages([]);
       onClose();
     },
-    onError: (error: AxiosError<{message:string}>) => {
+    onError: (error: AxiosError<{ message: string }>) => {
       const errorMessage = error.response?.data?.message || "Failed to update room";
       toast.error(errorMessage);
     },
@@ -135,11 +136,11 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
       setValue("roomNumber", formdata?.number);
       setValue("block", formdata?.block);
       setValue("floor", parseInt(formdata?.floor?.toString() || "0"));
-      setValue("type", formdata?.type?.toLowerCase() as "single" | "double" | "suite" | "quad");
+      setValue("type", (formdata?.type?.toLowerCase() || "single") as "single" | "double" | "suite" | "quad");
       setValue("maxOccupancy", formdata?.maxCap);
       setValue("basePrice", formdata?.price);
       setValue("description", formdata?.description);
-      setValue("status", formdata?.status?.toLowerCase() as 'AVAILABLE' | 'MANTENANCE' | 'OCCUPIED');
+      setValue("status", (formdata?.status?.toLowerCase() || "available") as 'available' | 'maintenance' | 'occupied');
 
       // Set default images from room images array
       const imageUrls = (formdata?.RoomImage ?? []).map((img: { imageUrl: string }) => img.imageUrl);
@@ -238,10 +239,10 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
               className="p-2 border rounded-md"
             >
               <option value="">Select Room Type</option>
-             <option value="single">Single</option>
-<option value="double">Double</option>
-<option value="suite">Suite</option>
-<option value="quad">Quard</option>
+              <option value="single">Single</option>
+              <option value="double">Double</option>
+              <option value="suite">Suite</option>
+              <option value="quad">Quad</option>
             </select>
             {errors.type && (
               <span className="text-sm text-red-500">{errors.type.message}</span>
@@ -308,20 +309,19 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
           {!isAmenitiesLoading && !isAmenitiesError && amenitiesData?.data?.length === 0 && (
             <span className="text-sm text-gray-500">No amenities available</span>
           )}
-          
+
           {/* Amenities Checkboxes */}
           <div className="flex flex-wrap gap-2">
             {amenitiesData?.data?.map((amenity) => {
-              const currentAmenities: string[] = watch("amenities") || [];
+              const currentAmenities = watch("amenities") || [];
               const isSelected = currentAmenities.includes(amenity.id);
               return (
                 <label
                   key={amenity.id}
-                  className={`w-fit cursor-pointer px-4 py-2 rounded-full border transition-colors shadow ${
-                    isSelected
-                      ? "bg-black text-white border-black"
-                      : "bg-gray-100 text-gray-900 border-gray-200 hover:bg-gray-50"
-                  }`}
+                  className={`w-fit cursor-pointer px-4 py-2 rounded-full border transition-colors shadow ${isSelected
+                    ? "bg-black text-white border-black"
+                    : "bg-gray-100 text-gray-900 border-gray-200 hover:bg-gray-50"
+                    }`}
                 >
                   <input
                     type="checkbox"

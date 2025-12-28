@@ -37,13 +37,13 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
           <CardContent>
             <div>
               <div className="text-2xl font-bold flex items-center">
-                <Shapes/>
+                <Shapes />
                 <span className="ml-2">
                   {analyticsData?.room?.roomType || "Not assigned"}
                 </span>
               </div>
               <div className="text-2xl font-bold flex items-center">
-                <DoorOpen/>
+                <DoorOpen />
                 <span className="ml-2">
                   {analyticsData?.room?.roomNumber || "Not assigned"}
                 </span>
@@ -60,7 +60,7 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
           <CardContent>
             <div className="text-sm">
               <div className="text-2xl font-bold flex items-center">
-                <Shapes/>
+                <Shapes />
                 <span className="ml-2">
                   {analyticsData?.hostel?.hostelName || "Not assigned"}
                 </span>

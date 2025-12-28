@@ -183,7 +183,7 @@ const FindRoom = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "AVAILABLE":
+      case "available":
         return "bg-green-500";
       default:
         return "bg-gray-500";

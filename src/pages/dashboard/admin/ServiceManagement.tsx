@@ -215,7 +215,7 @@ const ServiceManagement = () => {
                         </div>
                         <div className="flex items-center gap-2">
                             <Switch id="avail" checked={newService.availability} onCheckedChange={(c) => setNewService({ ...newService, availability: c })} />
-                            <Label htmlFor="avail">Available for booking immediately</Label>
+                            <Label htmlFor="avail">available for booking immediately</Label>
                         </div>
                     </div>
                     <DialogFooter>

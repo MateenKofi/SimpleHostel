@@ -40,9 +40,9 @@ const ViewRoom = () => {
   // Get status color based on room status
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "AVAILABLE":
+      case "available":
         return "bg-green-100 text-green-800 hover:bg-green-100"
-      case "OCCUPIED":
+      case "occupied":
         return "bg-orange-100 text-orange-800 hover:bg-orange-100"
       case "MAINTENANCE":
         return "bg-red-100 text-red-800 hover:bg-red-100"

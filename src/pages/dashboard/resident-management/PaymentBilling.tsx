@@ -70,7 +70,7 @@ const PaymentBilling = () => {
     const receiptRef = useRef<HTMLDivElement>(null)
 
     const handlePrint = useReactToPrint({
-        content: () => receiptRef.current,
+        contentRef: receiptRef,
         documentTitle: `Receipt-${viewReceiptId}`,
     });
 

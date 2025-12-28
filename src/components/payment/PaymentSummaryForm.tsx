@@ -111,7 +111,7 @@ const PaymentSummaryForm = () => {
               Back
             </Button>
             <Badge variant="outline" className="px-3 py-1 text-white border-white/30">
-              {room?.status || "PENDING"}
+              {room?.status || "Pending"}
             </Badge>
           </div>
           <div className="flex items-center gap-4 mt-6">

@@ -8,7 +8,7 @@ interface RoomCardProps {
   hostel: Hostel;
 }
 
- const RoomCard: React.FC<RoomCardProps> = ({ room, hostel }) => {
+const RoomCard: React.FC<RoomCardProps> = ({ room, hostel }) => {
   return (
     <div className="bg-white shadow-md rounded-xl overflow-hidden border border-gray-200 hover:shadow-lg transition">
       <div className="p-4 space-y-2">
@@ -24,11 +24,10 @@ interface RoomCardProps {
         <p className="text-sm text-gray-600">
           Status:{" "}
           <span
-            className={`font-medium ${
-              room.status === "AVAILABLE"
+            className={`font-medium ${room.status === "available"
                 ? "text-green-600"
                 : "text-red-500"
-            }`}
+              }`}
           >
             {room.status}
           </span>

@@ -46,9 +46,10 @@ export type Room = {
   gender: string;
   name: string;
   roomNumber: string;
+  number: string;
   floor?: number | string;
   block?: string;
-  type: "single" | "double" | "suite" | "quard";
+  type: "single" | "double" | "suite" | "quad";
   status: "available" | "maintenance" | "occupied";
   capacity: number;
   currentStudentsCount: number;

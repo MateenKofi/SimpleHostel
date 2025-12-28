@@ -69,7 +69,7 @@ const BookService = () => {
     const hostelId = localHostelId || userProfile?.hostelId
     const isInvalidHostelId = !hostelId || hostelId === 'undefined' || hostelId === 'null'
 
-    // 2. Fetch Available Services
+    // 2. Fetch available Services
     const { data: services, isLoading: isLoadingServices } = useQuery<Service[]>({
         queryKey: ['hostel-services', hostelId],
         queryFn: async () => {
@@ -152,9 +152,9 @@ const BookService = () => {
 
             <div className="grid gap-8 md:grid-cols-3">
 
-                {/* Available Services Column */}
+                {/* available Services Column */}
                 <div className="md:col-span-2 space-y-6">
-                    <h2 className="text-xl font-semibold">Available Services</h2>
+                    <h2 className="text-xl font-semibold">available Services</h2>
 
                     {isLoadingServices ? (
                         <div className="flex justify-center p-8"><Loader className="animate-spin" /></div>

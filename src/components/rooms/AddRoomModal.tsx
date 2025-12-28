@@ -8,11 +8,13 @@ import ImageUpload from "@/components/ImageUpload";
 import { Loader } from "lucide-react";
 import { toast } from "react-hot-toast";
 
-type RoomForm = Room & {
+type RoomForm = Omit<Room, "amenities"> & {
   images: File[];
+  amenities: string[];
+  type: Room["type"];
 };
 
-const ROOM_STATUS = ["Available", "Maintenance", "Occupied"] as const;
+const ROOM_STATUS = ["available", "Maintenance", "occupied"] as const;
 const GENDER = ["Male", "Female", "Mix"] as const;
 
 const ROOM_TYPE_CAPACITY = {
@@ -43,20 +45,20 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
   const hostelId = localStorage.getItem("hostelId");
 
   // handle images change
- const handleImagesChange = (newImages: File[]) => {
-  if (newImages.length === 0) {
-    setError("images", { message: "Please upload at least one image" });
-    setImages([]);
-    console.error("No images uploaded");
-  } else {
-    const imageArray = Array.from(newImages).map((image) => {
-      const file = new File([image], image.name, { type: image.type });
-      return file;
-    });
-    setImages(imageArray);
-  }
-};
-  
+  const handleImagesChange = (newImages: File[]) => {
+    if (newImages.length === 0) {
+      setError("images", { message: "Please upload at least one image" });
+      setImages([]);
+      console.error("No images uploaded");
+    } else {
+      const imageArray = Array.from(newImages).map((image) => {
+        const file = new File([image], image.name, { type: image.type });
+        return file;
+      });
+      setImages(imageArray);
+    }
+  };
+
   const { data: Amenities } = useQuery<{
     data: { id: string; name: string; price: number }[];
   }>({
@@ -76,7 +78,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
       formData.append("number", data.roomNumber);
       formData.append("block", data.block || "");
       formData.append("floor", data.floor?.toString() || "");
-      formData.append("type", data.roomType.toUpperCase());
+      formData.append("type", data.type.toUpperCase());
       formData.append("maxCap", data.maxOccupancy.toString());
       formData.append("price", data.basePrice.toString());
       formData.append("description", data.description || "");
@@ -85,7 +87,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
 
       if (Array.isArray(data.amenities)) {
         data.amenities.forEach((amenityId) => {
-          formData.append(`amenitiesIds[]`, amenityId);
+          formData.append(`amenitiesIds[]`, String(amenityId));
         });
       }
 
@@ -113,8 +115,8 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
     mutation.mutate(data);
   };
 
-  // Watch the roomType field and update maxOccupancy accordingly
-  const roomType = watch("roomType");
+  // Watch the type field and update maxOccupancy accordingly
+  const roomType = watch("type");
   useEffect(() => {
     if (roomType) {
       setValue(
@@ -151,10 +153,10 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
             onImagesChange={handleImagesChange}
           />
           {errors.images && (
-  <span className="text-sm text-red-500">
-    {errors.images.message}
-  </span>
-)}
+            <span className="text-sm text-red-500">
+              {errors.images.message}
+            </span>
+          )}
           <p className="text-sm italic font-thin text-gray-500">
             you can only upload a max of 3 images
           </p>
@@ -228,7 +230,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
               Room Type*
             </label>
             <select
-              {...register("roomType", { required: "Room type is required" })}
+              {...register("type", { required: "Room type is required" })}
               id="type"
               className="p-2 border rounded-md "
             >
@@ -238,9 +240,9 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
               <option value="suite">Suite</option>
               <option value="quad">Quad</option>
             </select>
-            {errors.roomType && (
+            {errors.type && (
               <span className="text-sm text-red-500">
-                {errors.roomType.message}
+                {errors.type.message}
               </span>
             )}
           </div>
@@ -305,7 +307,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
               </option>
             ))}
           </select>
-           {errors.status && (
+          {errors.status && (
             <span className="text-sm text-red-500">
               {errors.status.message}
             </span>
@@ -350,11 +352,10 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
                 key={amenity.id}
                 className={`
                   w-fit cursor-pointer px-4 py-2 rounded-full border transition-colors shadow
-                  ${
-                    Array.isArray(watch("amenities")) &&
-                    watch("amenities").includes(amenity.id)
-                      ? "bg-black text-white border-black"
-                      : "bg-gray-100 text-gray-900 border-gray-200 hover:bg-gray-50"
+                  ${Array.isArray(watch("amenities")) &&
+                    (watch("amenities") as unknown as string[]).includes(amenity.id)
+                    ? "bg-black text-white border-black"
+                    : "bg-gray-100 text-gray-900 border-gray-200 hover:bg-gray-50"
                   }
                 `}
               >
