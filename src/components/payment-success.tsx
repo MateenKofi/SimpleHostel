@@ -55,44 +55,44 @@ const PaymentSuccess = () => {
     }
   }, [location, navigate])
 
-const handleDownloadReceipt = () => {
-  if (!payment) return
+  const handleDownloadReceipt = () => {
+    if (!payment) return
 
-  const doc = new jsPDF()
+    const doc = new jsPDF()
 
-  // Title
-  doc.setFontSize(18)
-  doc.text("Payment Receipt", 105, 20, { align: "center" })
+    // Title
+    doc.setFontSize(18)
+    doc.text("Payment Receipt", 105, 20, { align: "center" })
 
-  // Info
-  doc.setFontSize(12)
-  doc.text(`Reference: ${payment.reference}`, 20, 40)
-  doc.text(`Transaction ID: ${payment.id}`, 20, 50)
-  doc.text(`Date: ${new Date(payment.date).toLocaleString()}`, 20, 60)
+    // Info
+    doc.setFontSize(12)
+    doc.text(`Reference: ${payment.reference}`, 20, 40)
+    doc.text(`Transaction ID: ${payment.id}`, 20, 50)
+    doc.text(`Date: ${new Date(payment.date).toLocaleString()}`, 20, 60)
 
-  // ✅ Use autoTable like this:
-  autoTable(doc, {
-    startY: 75,
-    head: [["Field", "Value"]],
-    body: [
-      ["Amount Paid", `GHS ${payment.amount}`],
-      ["Method", payment.method.replace("_", " ")],
-      ["Status", payment.status],
-      ["Room ID", payment.roomId],
-      ["Resident ID", payment.residentId],
-    ],
-    theme: "grid",
-    headStyles: { fillColor: [22, 160, 133] },
-    bodyStyles: { textColor: 50 },
-  })
+    // ✅ Use autoTable like this:
+    autoTable(doc, {
+      startY: 75,
+      head: [["Field", "Value"]],
+      body: [
+        ["Amount Paid", `GHS ${payment.amount}`],
+        ["Method", (payment.method || "").replace("_", " ")],
+        ["Status", payment.status],
+        ["Room ID", payment.roomId],
+        ["Resident ID", payment.residentId],
+      ],
+      theme: "grid",
+      headStyles: { fillColor: [22, 160, 133] },
+      bodyStyles: { textColor: 50 },
+    })
 
-  // Footer
-  const pageHeight = doc.internal.pageSize.height
-  doc.setFontSize(10)
-  doc.text("Thank you for your payment.", 20, pageHeight - 20)
+    // Footer
+    const pageHeight = doc.internal.pageSize.height
+    doc.setFontSize(10)
+    doc.text("Thank you for your payment.", 20, pageHeight - 20)
 
-  doc.save(`receipt-${payment.reference}.pdf`)
-}
+    doc.save(`receipt-${payment.reference}.pdf`)
+  }
 
   const handleContinue = () => {
     const token = localStorage.getItem("token")
@@ -132,7 +132,7 @@ const handleDownloadReceipt = () => {
             </div>
             <div className="flex justify-between items-center py-2 border-b border-border">
               <span className="text-muted-foreground">Method</span>
-              <span className="text-foreground capitalize">{payment.method.replace("_", " ")}</span>
+              <span className="text-foreground capitalize">{(payment.method || "").replace("_", " ")}</span>
             </div>
             <div className="flex justify-between items-center py-2 border-b border-border">
               <span className="text-muted-foreground">Date</span>

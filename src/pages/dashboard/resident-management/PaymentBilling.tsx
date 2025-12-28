@@ -182,7 +182,7 @@ const PaymentBilling = () => {
                                             <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                                 <span>{format(new Date(tx.date), 'PPP')}</span>
                                                 <span>•</span>
-                                                <span className="capitalize">{tx.method.replace('_', ' ')}</span>
+                                                <span className="capitalize">{(tx.method || "").replace('_', ' ')}</span>
                                             </div>
                                         </div>
                                     </div>

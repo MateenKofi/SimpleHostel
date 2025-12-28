@@ -36,7 +36,7 @@ const PaymentMethodBreakDown = ({ reportData }: { reportData: ReportData }) => {
                   />
                   <div>
                     <p className="font-medium capitalize">
-                      {method.method.replace("_", " ")}
+                      {(method.method || "").replace("_", " ")}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {method.count} transactions
