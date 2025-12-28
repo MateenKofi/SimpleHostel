@@ -15,8 +15,8 @@ import { useModal } from "@/components/Modal";
 
 const CalendarYear = () => {
   const AddCalendarYearAction = useModal('add-calendar-year-modal');
-   
-  
+
+
   const {
     data: currentYear,
     isLoading: isCurrentYearLoading,
@@ -46,7 +46,7 @@ const CalendarYear = () => {
     },
   });
 
- const historicalYears = historicalYearsResponse?.data || [];
+  const historicalYears = historicalYearsResponse?.data || [];
 
   return (
     <div className="container px-4 py-8 mx-auto">
@@ -56,18 +56,18 @@ const CalendarYear = () => {
         keywords="calendar year management, academic year, Fuse"
       />
       <div className="flex items-center justify-between mb-8">
-         <h1 className="text-3xl font-bold">Calendar Year Management</h1>
+        <h1 className="text-3xl font-bold">Calendar Year Management</h1>
         <Button
-        onClick={() => AddCalendarYearAction.open() }
+          onClick={() => AddCalendarYearAction.open()}
         >
           <Plus className="w-4 h-4 mr-2" />
           Start New Year
         </Button>
       </div>
       <AddCalendarYearForm
-        onClose={ AddCalendarYearAction.close }
-        refectCurrentYear={ refectCurrentYear }
-        refectHistoricalYears={ refectHistoricalYears }
+        onClose={AddCalendarYearAction.close}
+        refectCurrentYear={refectCurrentYear}
+        refectHistoricalYears={refectHistoricalYears}
       />
 
       {isCurrentYearLoading ? (

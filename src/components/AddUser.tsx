@@ -94,7 +94,7 @@ const AddUser = ({ onClose }: AddUserProps) => {
           >
             <option value=""> -- select option --</option>
             <option value="ADMIN">Admin</option>
-            <option value="SUPER_ADMIN">Super Admin</option>
+            <option value="super_admin">Super Admin</option>
           </select>
         </div>
         <div className="flex items-center justify-end gap-2">

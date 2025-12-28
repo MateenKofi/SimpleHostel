@@ -12,7 +12,7 @@ const Transactions = () => {
         description="Transactions page of Fuse"
         keywords="Fuse, transactions, dashboard"
      />
-     {user && user.role === 'SUPER_ADMIN' && <SuperAdminTransaction/>}
+     {user && user.role === 'super_admin' && <SuperAdminTransaction/>}
      {user && user.role === 'ADMIN' && <AdminTransactions/>}
     </div>
   );

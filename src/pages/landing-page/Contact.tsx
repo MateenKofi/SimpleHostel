@@ -5,7 +5,7 @@ import { useInView } from "react-intersection-observer";
 import { Button } from "@components/ui/button";
 import { Input } from "@components/ui/input";
 import { Textarea } from "@components/ui/textarea";
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle,Facebook,Twitter,Linkedin,Instagram } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Send, CheckCircle, Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
 import SEOHelmet from "@/components/SEOHelmet";
 
 export default function ContactPage() {

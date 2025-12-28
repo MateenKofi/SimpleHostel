@@ -13,7 +13,7 @@ const Report = () => {
         keywords="Report, hostel, Fuse"
       />
       <div>
-            {user && user.role === 'SUPER_ADMIN' && <SuperAdminReport />}
+            {user && user.role === 'super_admin' && <SuperAdminReport />}
             {user && user.role === 'ADMIN' && <AdminReport/>}
             </div>
     </div>

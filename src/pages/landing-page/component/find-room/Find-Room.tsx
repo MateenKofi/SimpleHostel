@@ -17,14 +17,31 @@ import { useSelectedRoomStore } from "@/controllers/SelectedRoomStore";
 import FilterPanel from "@/components/FilterPanel";
 import { RoomFilterConfig } from "@/helper/room_filter_config";
 import { parseRange } from "@/utils/parseRange";
-import FindHostelSkeleton from "@components/loaders/HostelCardSkeleton";
+import FindHostelSkeleton from "@/components/loaders/HostelCardSkeleton";
 import ImageSlider from "@/components/ImageSlider";
 import CustomeRefetch from "@/components/CustomeRefetch";
 import SEOHelmet from "@/components/SEOHelmet";
+import { useUserStore } from "@/controllers/UserStore";
+import { useAddedResidentStore } from "@/controllers/AddedResident";
+import { useMutation } from "@tanstack/react-query";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Loader2 } from "lucide-react";
+import toast from "react-hot-toast";
+import { useSelectedCalendarYearStore } from "@/controllers/SelectedCalendarYear";
 
 interface ActiveFilters {
   [key: string]: string[];
 }
+
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const FindRoom = () => {
   const navigate = useNavigate();
@@ -35,6 +52,83 @@ const FindRoom = () => {
     roomType: [],
   });
   const { setRoom } = useSelectedRoomStore();
+  const { user, token } = useUserStore();
+  const setResident = useAddedResidentStore((state) => state.setResident);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [selectedBookingRoom, setSelectedBookingRoom] = useState<Room | null>(null);
+  const [password, setPassword] = useState("");
+  const calendarYear = useSelectedCalendarYearStore((state) => state.calendarYear);
+
+  const BookingMutation = useMutation({
+    mutationFn: async () => {
+      if (!user || !selectedBookingRoom) return;
+
+      // OPTION B: Try to find existing resident profile first to skip registration
+      try {
+        const analyticsRes = await axios.get(`/api/analytics/get/resident-dashboard/${user.id}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+
+        const existingResidentId = analyticsRes.data?.data?.residentId;
+
+        if (existingResidentId) {
+          // If resident profile exists, we don't need to register.
+          // We can proceed to payment directly by setting the resident in store.
+          // The init-payment endpoint will handle the room assignment.
+          return {
+            success: true,
+            isExisting: true,
+            data: {
+              id: existingResidentId,
+              name: user.name,
+              email: user.email,
+              phone: user.phoneNumber
+            }
+          };
+        }
+      } catch (err) {
+        console.log("No existing resident profile found or error fetching analytics.");
+      }
+
+      // If no existing profile, we must register.
+      // We use the older /api/residents/register with FormData which doesn't strictly require password
+      // when the user is already authenticated and we identify them by email/userId.
+      const formData = new FormData();
+      const nameParts = user.name.trim().split(/\s+/);
+      const firstName = nameParts[0];
+      const lastName = nameParts.slice(1).join(" ") || firstName;
+
+      formData.append("name", user.name);
+      formData.append("email", user.email);
+      formData.append("phone", user.phoneNumber || "0240000000");
+      formData.append("gender", selectedBookingRoom.gender.toUpperCase());
+      formData.append("studentId", "PENDING");
+      formData.append("course", "PENDING");
+      formData.append("emergencyContactName", "PENDING");
+      formData.append("emergencyContactPhone", "0240000000");
+      formData.append("relationship", "Self");
+      formData.append("hostelId", selectedBookingRoom.hostelId || "");
+      formData.append("calendarYearId", calendarYear?.id || "");
+      formData.append("roomId", selectedBookingRoom.id || "");
+
+      const response = await axios.post(`/api/residents/register`, formData);
+      return response.data;
+    },
+    onSuccess: (res) => {
+      const residentData = res?.isExisting ? res.data : res?.data;
+      setResident(residentData);
+
+      toast.success(res?.isExisting ? "Ready for payment!" : "Booking initiated successfully!");
+      setIsBookingModalOpen(false);
+      setTimeout(() => {
+        navigate("/payment");
+      }, 500);
+    },
+    onError: (error: any) => {
+      const msg = error.response?.data?.message || error.response?.data?.error || "Failed to process booking";
+      toast.error(msg);
+    }
+  });
 
   const {
     data: RoomData,
@@ -63,7 +157,7 @@ const FindRoom = () => {
 
   const availableRooms = useMemo(() => {
     const rooms = RoomData?.rooms || [];
-    return rooms.filter((room: Room) => room.status === "AVAILABLE");
+    return rooms.filter((room: Room) => room.status === "available");
   }, [RoomData?.rooms]);
 
   const filteredRooms = useMemo(() => {
@@ -81,7 +175,7 @@ const FindRoom = () => {
 
       const matchesRoomType =
         activeFilters.roomType.length === 0 ||
-        activeFilters.roomType.includes(room.roomType);
+        activeFilters.roomType.includes(room.type);
 
       return matchesGender && matchesPriceRange && matchesRoomType;
     });
@@ -89,7 +183,7 @@ const FindRoom = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "AVAILABLE":
+      case "available":
         return "bg-green-500";
       default:
         return "bg-gray-500";
@@ -97,8 +191,18 @@ const FindRoom = () => {
   };
 
   const handleRoomClick = (room: Room) => {
+    if (!token || !user) {
+      toast.error("Please log in to book a room");
+      navigate("/login");
+      return;
+    }
     setRoom(room);
-    setTimeout(() => navigate("/resident-form"), 50);
+    setSelectedBookingRoom(room);
+    setIsBookingModalOpen(true);
+  };
+
+  const confirmBooking = () => {
+    BookingMutation.mutate();
   };
 
   if (isLoading) {
@@ -149,7 +253,7 @@ const FindRoom = () => {
                   <div className="flex justify-between items-center">
                     <div>
                       <CardTitle className="text-xl font-bold text-black dark:text-white">
-                        Room {room.number}
+                        Room {room.roomNumber}
                       </CardTitle>
                       <p className="text-xs text-gray-500 dark:text-gray-400">
                         Block {room.block} · Floor {room.floor}
@@ -166,7 +270,7 @@ const FindRoom = () => {
                 </CardHeader>
                 <div>
                   <ImageSlider
-                    images={room?.RoomImage?.map((i) => i.imageUrl) ?? []}
+                    images={room?.roomImages?.map((i) => i.imageUrl) ?? []}
                   />
                 </div>
                 <CardContent className="p-2">
@@ -174,7 +278,7 @@ const FindRoom = () => {
                     <div className="bg-gray-50 dark:bg-zinc-800 p-2 rounded-md">
                       <p className="text-xs text-gray-600 dark:text-gray-400">Type</p>
                       <p className="font-semibold text-xs text-black dark:text-white">
-                        {room.type.charAt(0) + room.type.slice(1).toLowerCase()}
+                        {room?.type?.charAt(0) + room?.type?.slice(1).toLowerCase()}
                       </p>
                     </div>
                     <div className="bg-gray-50 dark:bg-zinc-800 p-2 rounded-md">
@@ -202,11 +306,11 @@ const FindRoom = () => {
                     <div className="flex flex-col">
                       <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Amenities</p>
                       <p className="w-full font-semibold text-xs text-black dark:text-white">
-                        {room?.Amenities?.length as number < 1 ? (
+                        {(room?.amenities?.length || 0) < 1 ? (
                           <span>No Amenities</span>
                         ) : (
                           <>
-                            {room?.Amenities?.map((amenity) => (
+                            {room?.amenities?.map((amenity) => (
                               <span
                                 key={amenity.id}
                                 className="mr-[2px] bg-green-300 dark:bg-green-700 px-1 rounded-md text-xs text-black dark:text-white"
@@ -236,6 +340,39 @@ const FindRoom = () => {
           )}
         </div>
       </div>
+
+      <Dialog open={isBookingModalOpen} onOpenChange={setIsBookingModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Booking</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to book Room {selectedBookingRoom?.roomNumber}?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="bg-slate-50 p-4 rounded-md text-sm space-y-2 dark:bg-zinc-800">
+              <p><span className="font-semibold">Room:</span> {selectedBookingRoom?.roomNumber}</p>
+              <p><span className="font-semibold">Price:</span> GHS {selectedBookingRoom?.price}</p>
+              <p><span className="font-semibold">Type:</span> {selectedBookingRoom?.type}</p>
+            </div>
+
+            <p className="text-xs text-muted-foreground mt-4">
+              By confirming, you will be redirected to the payment page.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsBookingModalOpen(false)}>Cancel</Button>
+            <Button onClick={confirmBooking} disabled={BookingMutation.isPending}>
+              {BookingMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Processing...
+                </>
+              ) : "Confirm & Pay"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

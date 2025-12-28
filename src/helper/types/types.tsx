@@ -42,14 +42,15 @@ export type Visitor = {
 export type Room = {
   id: string;
   hallId: string;
-  hostelId:string;
+  hostelId: string;
   gender: string;
   name: string;
   roomNumber: string;
+  number: string;
   floor?: number | string;
   block?: string;
-  roomType: "single" | "double" | "suite" | "quard";
-  status: "AVAILABLE" | "MANTENANCE" | "OCCUPIED";
+  type: "single" | "double" | "suite" | "quad";
+  status: "available" | "maintenance" | "occupied";
   capacity: number;
   currentStudentsCount: number;
   maxOccupancy: number;
@@ -57,17 +58,20 @@ export type Room = {
   currentResidentCount: number;
   price: number;
   basePrice: number;
-  amenities: string[];
-  isAvailable: boolean;
-  resident?: Resident;
-  description?: string;
-  number: string;
-  type: string;
-  updatedAt?: string;
-  createdAt?: string;
-  RoomImages?: images[] | undefined | null;
+  rooms?: Room[]; // This might be used in some contexts? Unlikely for a Room object to have rooms, but let's leave existing structure or just fix Room properties.
+  // Aligning with JSON:
+  amenities: Amenity[]; // JSON shows amenities as array (likely of objects based on other parts, or strings? user json shows empty array. Amenity type exists).
+  // But wait, line 60 was amenities: string[]. Line 71 was Amenities?: Amenity[].
+  // I will unify to amenities: Amenity[] if that fits the pattern, or keep both if unsure, but strict mapping is better.
+  // The backend seems to use camelCase "amenities".
+  // Let's add roomImages.
+  roomImages: images[];
+  RoomImages?: images[] | undefined | null; // Keeping for backward compat if needed, but prefereably remove. I will keep for now to avoid breaking other files blindly.
   RoomImage?: images[] | undefined | null;
   images?: images[] | undefined | null;
+  createdAt?: string;
+  updatedAt?: string;
+  description?: string | null;
   Amenities?: Amenity[];
 };
 
@@ -143,29 +147,31 @@ export type Users = {
 
 export type Hostel = {
   id: string;
-  name:string;
+  name: string;
   description: string | null;
   address: string;
-  location:string;
-  manager:string;
+  location: string;
+  manager: string;
   email: string;
-  gender:string;
   phone: string;
-  imageKey:string;
-  imageUrl:string;
-  logoUrl:string;
-  logoKey:string;
-  ghCard:string;
+  ghCard: string;
+  state: "published" | "unpublished";
+  isVerified: boolean;
+  logoKey: string | null;
+  logoUrl: string | null;
   createdAt: string;
   updatedAt: string;
-  isVerifeid: boolean;
-  delFlag: boolean;
-  HostelImages: images [];
-  state: "PUBLISHED" | "UNPULISHED";
-  Rooms: Room [];
-  Staffs?: Staff [];
-  User?:Users [];
-  CalendarYear?: CalendarYearT[];
+  rulesUrl: string | null;
+  rulesKey: string | null;
+  deletedAt: string | null;
+  allowPartialPayment: boolean;
+  rooms: Room[];
+  staffProfiles: Staff[];
+  adminProfiles: Users[]; // Using Users type for admins based on response
+  residentProfiles: Resident[];
+  amenities: Amenity[];
+  hostelImages: images[];
+  calendarYears: CalendarYearT[];
 };
 
 export type Analytics = {
@@ -198,6 +204,40 @@ export type Analytics = {
   averageOccupancyRate: number;
   systemWideDebtPercentage: number;
   activeCalendarYears: number;
+  // Resident-specific fields (optional for admin/superadmin)
+  residentId?: string;
+  userId?: string;
+  hostelId?: string | null;
+  name?: string;
+  email?: string;
+  phone?: string;
+  room?: {
+    roomId: string | null;
+    roomNumber: string | null;
+    roomType: string | null;
+  };
+  stay?: {
+    checkInDate: string | null;
+    checkOutDate: string | null;
+  };
+  totals?: {
+    totalPaid: number;
+    outstandingBalance: number;
+  };
+  recentPayments?: Array<{
+    id: string;
+    amount: number;
+    date: string;
+    method: string;
+    status: string;
+  }>;
+  paymentTrend?: Array<{
+    label: string;
+    value: number;
+  }>;
+  hostel?: {
+    hostelName: string;
+  };
 };
 
 export type Transaction = {
@@ -255,3 +295,28 @@ export type ReportData = {
   }>
   revenueGrowth: number
 }
+
+export type AllocationDetails = {
+  residentName: string;
+  studentId: string;
+  hostelName: string;
+  hostelAddress: string;
+  roomNumber: string;
+  roomType: string;
+  checkInDate: string;
+  checkOutDate: string;
+  rulesUrl: string;
+};
+
+export type PaymentReceipt = {
+  receiptNumber: string;
+  date: string;
+  residentName: string;
+  amount: number;
+  amountPaid: number;
+  balanceOwed: number;
+  method: string;
+  hostelName: string;
+  roomNumber: string;
+  status: string;
+};

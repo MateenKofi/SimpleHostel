@@ -58,28 +58,28 @@ const UploadMultipleImages: React.FC<UploadMultipleImagesProps> = ({
       {images.length > 0 && (
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap gap-2">
-          {images.map((image, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
-              className="relative"
-            >
-              <img
-                src={URL.createObjectURL  (image)}
-                alt={`Uploaded Preview ${index}`}
-                className="w-32 h-32 object-cover rounded-md"
-              />
-              <button
-                type="button"
-                onClick={() => handleRemoveImage(index)}
-                className="absolute top-2 right-2 bg-white rounded-full p-1"
+            {images.map((image, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="relative"
               >
-                <XCircle className="w-4 h-4 text-red-500" />
-              </button>
-            </motion.div>
-          ))}
+                <img
+                  src={URL.createObjectURL(image)}
+                  alt={`Uploaded Preview ${index}`}
+                  className="w-32 h-32 object-cover rounded-md"
+                />
+                <button
+                  type="button"
+                  onClick={() => handleRemoveImage(index)}
+                  className="absolute top-2 right-2 bg-white rounded-full p-1"
+                >
+                  <XCircle className="w-4 h-4 text-red-500" />
+                </button>
+              </motion.div>
+            ))}
           </div>
           <button className="px-4 py-2 bg-red-500 text-white rounded-md" onClick={handleClearAll}>Remove all
           </button>

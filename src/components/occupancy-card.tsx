@@ -54,7 +54,7 @@ const OccupancyCard: React.FC<OccupancyCardProps> = ({
                     <div className="w-fit flex flex-col gap-2">
                         <div className="flex items-center gap-2">
                             <div className="h-3 w-3 rounded-full" style={{ backgroundColor: colors.occupied }} />
-                            <span className="text-sm text-muted-foreground">Occupied</span>
+                            <span className="text-sm text-muted-foreground">occupied</span>
                         </div>
                         <span className="text-center text-6xl font-medium">{occupied.toString().padStart(2, "0")}</span>
                     </div>

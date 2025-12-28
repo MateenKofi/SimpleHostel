@@ -19,8 +19,8 @@ const PopularDestinations = () => {
   // Get 4 random hostels
   const randomHostels = React.useMemo(() => {
     if (!hostels || hostels.length < 1) return [];
-    // Only include hostels with state === "PUBLISHED and room not empty"
-    const published = hostels.filter((h: Hostel) => h?.state === "PUBLISHED" && h?.Rooms?.length > 1);
+    // Only include hostels with state === "published"
+    const published = hostels.filter((h: Hostel) => h?.state === "published" && h?.rooms?.length > 1);
     return [...published].sort(() => Math.random() - 0.5).slice(0, 4);
   }, [hostels]);
 

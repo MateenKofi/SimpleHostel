@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {  Home, Info, MapPin, Users } from "lucide-react"
+import { Home, Info, MapPin, Users } from "lucide-react"
 import { useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
@@ -40,9 +40,9 @@ const ViewRoom = () => {
   // Get status color based on room status
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "AVAILABLE":
+      case "available":
         return "bg-green-100 text-green-800 hover:bg-green-100"
-      case "OCCUPIED":
+      case "occupied":
         return "bg-orange-100 text-orange-800 hover:bg-orange-100"
       case "MAINTENANCE":
         return "bg-red-100 text-red-800 hover:bg-red-100"
@@ -85,7 +85,7 @@ const ViewRoom = () => {
                 <div className="relative overflow-hidden aspect-video">
                   <img
                     src={room.RoomImage[activeImageIndex]?.imageUrl || "/placeholder.svg?height=400&width=600"}
-                    alt={`${room.number} - Image ${activeImageIndex + 1}`}
+                    alt={`${room.roomNumber} - Image ${activeImageIndex + 1}`}
                     className="object-cover w-full h-full"
                   />
                 </div>
@@ -101,7 +101,7 @@ const ViewRoom = () => {
                       >
                         <img
                           src={image.imageUrl || "/placeholder.svg"}
-                          alt={`${room.number} thumbnail ${index + 1}`}
+                          alt={`${room.roomNumber} thumbnail ${index + 1}`}
                           className="object-cover w-full h-full"
                         />
                       </div>
@@ -124,7 +124,7 @@ const ViewRoom = () => {
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div>
-                  <CardTitle className="text-2xl">{room?.number}</CardTitle>
+                  <CardTitle className="text-2xl">{room?.roomNumber}</CardTitle>
                   <CardDescription className="flex items-center mt-1">
                     <MapPin className="w-4 h-4 mr-1" />
                     Block {room?.block}, Floor {room?.floor}

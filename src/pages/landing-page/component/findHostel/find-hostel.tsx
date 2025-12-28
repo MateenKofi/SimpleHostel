@@ -65,8 +65,8 @@ export function FindHostel() {
 
   const handleFindRoom = (hostel: Hostel) => {
     setTimeout(() => {
-      if (hostel.CalendarYear) {
-        setCalendarYear(hostel.CalendarYear[0] || null);
+      if (hostel.calendarYears) {
+        setCalendarYear(hostel.calendarYears[0] || null);
       } else {
         setCalendarYear(null);
       }
@@ -78,7 +78,7 @@ export function FindHostel() {
   if (isError) return <CustomeRefetch refetch={refetch} />;
 
   const PublishedHostels = rooms?.filter(
-    (room: Hostel) => room?.state === "PUBLISHED" && room.Rooms.length > 1
+    (room: Hostel) => room?.state === "published"
   );
 
   const filteredHostels = PublishedHostels?.filter((hostel: Hostel) => {
@@ -142,7 +142,7 @@ export function FindHostel() {
                   className="overflow-hidden transition-colors bg-white border rounded-md dark:border-zinc-700 dark:bg-zinc-800"
                 >
                   <ImageSlider
-                    images={hostel?.HostelImages?.map((i) => i.imageUrl)}
+                    images={hostel?.hostelImages?.map((i) => i.imageUrl)}
                   />
                   <div className="p-4 space-y-2">
                     <p className="font-bold text-black dark:text-white">

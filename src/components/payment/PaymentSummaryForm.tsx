@@ -24,7 +24,7 @@ import {
   BadgeCheck,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Form} from "@/components/ui/form"
+import { Form } from "@/components/ui/form"
 import { useAddedResidentStore } from "@/controllers/AddedResident"
 import { useSelectedRoomStore } from "@/controllers/SelectedRoomStore"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -58,19 +58,31 @@ const PaymentSummaryForm = () => {
   const mutation = useMutation({
     mutationFn: async (data: PaymentInputs) => {
       try {
+        // Payload strictly following "Resident Booking and Payment Guide"
+        // Endpoint: /api/v1/payment/init
         const payload = {
-          residentId: resident.id,
           roomId: room.id,
+          residentId: resident.id,
           initialPayment: data.paymentAmount,
         }
         const res = await axios.post("/api/payments/init", payload)
-        toast(res.data.message || "Redirecting to payment...");
-        window.location.href = res.data.paymentUrl.authorizationUrl;
-        navigate('/')
+
+        // Guide says: Returns a authorizationUrl (Paystack checkout page) and a reference.
+        if (res.data?.authorizationUrl) {
+          toast(res.data.message || "Redirecting to payment...");
+          window.location.href = res.data.authorizationUrl;
+        } else if (res.data?.paymentUrl?.authorizationUrl) {
+          // Fallback for previous structure if backend hasn't fully switched but we are pushing for v1
+          toast(res.data.message || "Redirecting to payment...");
+          window.location.href = res.data.paymentUrl.authorizationUrl;
+        } else {
+          toast.error("Payment initiation failed: No authorization URL received");
+        }
+
         return res.data
       } catch (error) {
         if (axios.isAxiosError(error)) {
-          toast.error(error.response?.data.message || "An unexpected error occurred")
+          toast.error(error.response?.data?.message || error.response?.data?.error || "An unexpected error occurred")
         }
       }
     },
@@ -99,7 +111,7 @@ const PaymentSummaryForm = () => {
               Back
             </Button>
             <Badge variant="outline" className="px-3 py-1 text-white border-white/30">
-              {room?.status || "PENDING"}
+              {room?.status || "Pending"}
             </Badge>
           </div>
           <div className="flex items-center gap-4 mt-6">
