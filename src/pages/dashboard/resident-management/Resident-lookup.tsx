@@ -150,23 +150,23 @@ const ResidentLookup = () => {
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <label className="text-sm font-medium text-muted-foreground">Student ID</label>
-                        <p className="font-medium">{foundResident.studentId}</p>
+                        <p className="font-medium">{foundResident.studentId || "N/A"}</p>
                       </div>
                       <div className="flex flex-col items-start gap-1">
                         <label className="text-sm font-medium text-muted-foreground">Gender</label>
-                        <Badge variant="outline">{foundResident.gender}</Badge>
+                        <Badge variant="outline">{foundResident.gender || "N/A"}</Badge>
                       </div>
                     </div>
 
                     <div>
                       <label className="text-sm font-medium text-muted-foreground">Course</label>
-                      <p className="font-medium">{foundResident.course}</p>
+                      <p className="font-medium">{foundResident.course || "N/A"}</p>
                     </div>
 
                     <div className="grid grid-cols-1 gap-3">
                       <div className="flex items-center gap-2">
                         <Phone className="w-4 h-4 text-muted-foreground" />
-                        <span>{foundResident.phone}</span>
+                        <span>{foundResident.phone || "N/A"}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Mail className="w-4 h-4 text-muted-foreground" />

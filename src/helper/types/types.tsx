@@ -1,16 +1,16 @@
 export type Resident = {
   id?: string | null;
   name: string;
-  studentId: string;
-  course: string;
-  phone: string;
+  studentId: string | null;
+  course: string | null;
+  phone: string | null;
   email: string;
-  accessCode: string;
-  emergencyContactName: string;
-  emergencyContactPhone: string;
-  relationship: string;
-  roomId: string;
-  gender: string;
+  accessCode?: string | null;
+  emergencyContactName?: string | null;
+  emergencyContactPhone?: string | null;
+  relationship?: string | null;
+  roomId: string | null;
+  gender: string | null;
   roomAssigned: boolean;
   createdAt: string;
   updatedAt: string;

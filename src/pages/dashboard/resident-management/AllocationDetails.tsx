@@ -23,13 +23,26 @@ const AllocationDetailsPage = () => {
         );
     }
 
-    if (isError || !allocation) {
+    if (isError || !allocation || (!allocation.roomNumber && !allocation.hostelName)) {
         return (
-            <div className="p-6 text-center">
-                <h2 className="text-xl font-semibold text-red-500">Failed to load allocation details</h2>
-                <p className="text-gray-500">Please try again later.</p>
+            <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4 p-6 text-center">
+                <div className="p-6 bg-yellow-50 rounded-full dark:bg-yellow-900/20">
+                    <FileText className="w-12 h-12 text-yellow-500" />
+                </div>
+                <h2 className="text-2xl font-bold">No Allocation Yet</h2>
+                <p className="text-muted-foreground max-w-md">
+                    You haven't been allocated to a room yet or your details are still being processed.
+                    Please check back later or contact the management.
+                </p>
+                <Button onClick={() => window.location.reload()}>Refresh</Button>
             </div>
         );
+    }
+
+    const safeFormatDate = (date: string | null) => {
+        if (!date) return "N/A";
+        const d = new Date(date);
+        return isNaN(d.getTime()) ? "N/A" : d.toLocaleDateString();
     }
 
     return (
@@ -39,8 +52,8 @@ const AllocationDetailsPage = () => {
                 description="View your room allocation details and hostel rules."
             />
 
-            <div className="mb-6">
-                <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Allocation Details</h1>
+            <div className="mb-6 border-b pb-4">
+                <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100 italic">Allocation Details</h1>
                 <p className="text-gray-500 dark:text-gray-400">Review your residency information and download important documents.</p>
             </div>
 
@@ -48,38 +61,38 @@ const AllocationDetailsPage = () => {
                 {/* Personal & Room Info */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>Resident Information</CardTitle>
+                        <CardTitle className="text-lg">Resident Information</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div>
                             <p className="text-sm text-muted-foreground">Name</p>
-                            <p className="font-medium">{allocation.residentName}</p>
+                            <p className="font-medium">{allocation.residentName || 'N/A'}</p>
                         </div>
                         <div>
                             <p className="text-sm text-muted-foreground">Student ID</p>
-                            <p className="font-medium">{allocation.studentId}</p>
+                            <p className="font-medium">{allocation.studentId || 'N/A'}</p>
                         </div>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Room Information</CardTitle>
+                        <CardTitle className="text-lg">Room Information</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div>
                             <p className="text-sm text-muted-foreground">Hostel</p>
-                            <p className="font-medium">{allocation.hostelName}</p>
-                            <p className="text-xs text-gray-500">{allocation.hostelAddress}</p>
+                            <p className="font-medium">{allocation.hostelName || 'N/A'}</p>
+                            <p className="text-xs text-gray-500">{allocation.hostelAddress || ''}</p>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <p className="text-sm text-muted-foreground">Room Number</p>
-                                <p className="font-medium">{allocation.roomNumber}</p>
+                                <p className="font-medium">{allocation.roomNumber || 'N/A'}</p>
                             </div>
                             <div>
                                 <p className="text-sm text-muted-foreground">Room Type</p>
-                                <p className="font-medium capitalize">{allocation.roomType}</p>
+                                <p className="font-medium capitalize">{allocation.roomType || 'N/A'}</p>
                             </div>
                         </div>
                     </CardContent>
@@ -88,17 +101,17 @@ const AllocationDetailsPage = () => {
                 {/* Stay Duration */}
                 <Card>
                     <CardHeader>
-                        <CardTitle>Stay Duration</CardTitle>
+                        <CardTitle className="text-lg">Stay Duration</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <p className="text-sm text-muted-foreground">Check-In</p>
-                                <p className="font-medium">{new Date(allocation.checkInDate).toLocaleDateString()}</p>
+                                <p className="font-medium">{safeFormatDate(allocation.checkInDate)}</p>
                             </div>
                             <div>
                                 <p className="text-sm text-muted-foreground">Check-Out</p>
-                                <p className="font-medium">{new Date(allocation.checkOutDate).toLocaleDateString()}</p>
+                                <p className="font-medium">{safeFormatDate(allocation.checkOutDate)}</p>
                             </div>
                         </div>
                     </CardContent>
