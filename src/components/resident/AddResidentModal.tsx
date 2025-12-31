@@ -37,7 +37,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
         emergencyContactName: data.emergencyContactName,
         emergencyContactPhone: data.emergencyContactPhone || "",
         relationship: data.relationship,
-        gender: data.gender.toUpperCase(),
+        gender: (data.gender || "").toUpperCase(),
         hostelId: hostelId,
         calendarYearId: calendarYearId,
       };

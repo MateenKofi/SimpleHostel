@@ -93,28 +93,28 @@ const ResidentTable = () => {
   const columns = [
     {
       name: "Name",
-      selector: (row: Resident) => row.name,
+      selector: (row: Resident) => row.name || "",
       sortable: true,
     },
     {
       name: "Access Code",
-      selector: (row: Resident) => row.accessCode,
+      selector: (row: Resident) => row.accessCode || "",
       sortable: true,
       wrap: true,
     },
     {
       name: "Student ID",
-      selector: (row: Resident) => row.studentId,
+      selector: (row: Resident) => row.studentId || "",
       sortable: true,
     },
     {
       name: "Phone",
-      selector: (row: Resident) => row.phone,
+      selector: (row: Resident) => row.phone || "",
       sortable: true,
     },
     {
       name: "Email",
-      selector: (row: Resident) => row.email,
+      selector: (row: Resident) => row.email || "",
       sortable: true,
       wrap: true,
     },

@@ -33,64 +33,64 @@ const DebtorListTable: React.FC = () => {
   const handlePayment = (row: Deptors) => {
     setResidetn(row)
     setSelectedDebtor(row)
-    setTimeout(()=>{
-     navigate('/dashboard/top-up') 
-    },50)
+    setTimeout(() => {
+      navigate('/dashboard/top-up')
+    }, 50)
   };
 
- const columns = [
-  {
-    name: 'Full Name',
-    wrap:true,
-    selector: (row: Deptors) => row.name,
-    sortable: true,
-  },
-  {
-    name: 'Student ID',
-    selector: (row: Deptors) => row.studentId,
-    sortable: true,
-    wrap:true,
-  },
-  {
-    name: 'Phone',
-    selector: (row: Deptors) => row.phone,
-    sortable: true,
-    wrap:true,
-  },
-  {
-    name: 'Email',
-    selector: (row: Deptors) => row.email,
-    sortable: true,
-    wrap:true,
-  },
-  {
-    name: 'Room Price',
-    selector: (row: Deptors) => row.roomPrice ?? 0,
-    sortable: true,
-  },
-  {
-    name: 'Amount Paid',
-    selector: (row: Deptors) => row.amountPaid ?? 0,
-    sortable: true,
-  },
-  {
-    name:'Balance Owed',
-    selector: (row:Deptors) => row.balanceOwed ?? 0,
-    sortable:true,
-  },
-  {
-    name: 'Action',
-    cell: (row: Deptors) => (
-      <div className="flex gap-2">
-        <button className="px-4 py-2 text-white rounded-md bg-primary"
-        onClick={() => handlePayment(row)}
-        >
-          Pay
-        </button>
-      </div>
-    ),
-  },
-];
+  const columns = [
+    {
+      name: 'Full Name',
+      wrap: true,
+      selector: (row: Deptors) => row.name || "",
+      sortable: true,
+    },
+    {
+      name: 'Student ID',
+      selector: (row: Deptors) => row.studentId || "",
+      sortable: true,
+      wrap: true,
+    },
+    {
+      name: 'Phone',
+      selector: (row: Deptors) => row.phone || "",
+      sortable: true,
+      wrap: true,
+    },
+    {
+      name: 'Email',
+      selector: (row: Deptors) => row.email || "",
+      sortable: true,
+      wrap: true,
+    },
+    {
+      name: 'Room Price',
+      selector: (row: Deptors) => row.roomPrice ?? 0,
+      sortable: true,
+    },
+    {
+      name: 'Amount Paid',
+      selector: (row: Deptors) => row.amountPaid ?? 0,
+      sortable: true,
+    },
+    {
+      name: 'Balance Owed',
+      selector: (row: Deptors) => row.balanceOwed ?? 0,
+      sortable: true,
+    },
+    {
+      name: 'Action',
+      cell: (row: Deptors) => (
+        <div className="flex gap-2">
+          <button className="px-4 py-2 text-white rounded-md bg-primary"
+            onClick={() => handlePayment(row)}
+          >
+            Pay
+          </button>
+        </div>
+      ),
+    },
+  ];
 
 
   return (
