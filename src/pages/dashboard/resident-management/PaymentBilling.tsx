@@ -50,7 +50,7 @@ const PaymentBilling = () => {
     const { data: billingData, isLoading } = useQuery<BillingSummary>({
         queryKey: ['resident-billing', userId],
         queryFn: async () => {
-            const response = await axios.get(`/api/residents/billing`)
+            const response = await axios.get(`/api/v1/resident/billing`)
             return response.data?.data || {
                 totalPaid: 0,
                 balanceOwed: 0,
