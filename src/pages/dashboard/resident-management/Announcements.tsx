@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import { Loader, Bell, Calendar, Info, AlertTriangle } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 import SEOHelmet from "@/components/SEOHelmet"
@@ -27,7 +27,7 @@ const Announcements = () => {
     const { data: announcements, isLoading } = useQuery<Announcement[]>({
         queryKey: ['announcements'],
         queryFn: async () => {
-            const response = await axios.get('/api/residents/announcements')
+            const response = await axios.get('/api/v1/resident/announcements')
             return response.data?.data || []
         },
         enabled: !isInvalidHostelId
