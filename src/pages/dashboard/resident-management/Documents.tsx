@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Button } from "@/components/ui/button"
 import SEOHelmet from "@/components/SEOHelmet"
 import { useQuery } from "@tanstack/react-query"
-import axios from "axios"
+import { getResidentAllocationDetails } from "@/api/residents"
 import { useNavigate } from "react-router-dom"
 
 import NoHostelAssigned from "@/components/resident/NoHostelAssigned"
@@ -19,8 +19,8 @@ const Documents = () => {
     const { data: allocation, isLoading: isAllocationLoading } = useQuery({
         queryKey: ['allocationDetails'],
         queryFn: async () => {
-            const response = await axios.get("/api/residents/allocation-details");
-            return response.data.data;
+            const responseData = await getResidentAllocationDetails();
+            return responseData?.data;
         },
         enabled: !!hostelId && hostelId !== 'undefined'
     })

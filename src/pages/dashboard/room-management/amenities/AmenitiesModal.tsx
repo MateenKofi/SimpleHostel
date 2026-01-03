@@ -4,7 +4,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import Modal from '@/components/Modal';
 import { Amenity } from '@/helper/types/types';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios, { AxiosError } from 'axios';
+import { addAmenity } from "@/api/amenities";
 
 interface AmenitiesModalProps {
   onClose: () => void;
@@ -19,15 +19,14 @@ const AmenitiesModal = ({ onClose }: AmenitiesModalProps) => {
 
   const AddAmenitiesMutation = useMutation({
     mutationFn: async (data: AmenityFormData) => {
-      const response = await axios.post(`/api/amenities/add`, data);
-      return response?.data;
+      return await addAmenity(data);
     },
     onSuccess: () => {
       toast.success("Amenities Added Successfully");
       queryClient.invalidateQueries({ queryKey: ["amenities"] });
       reset();
     },
-    onError: (error: AxiosError<{message:string}>) => {
+    onError: (error: any) => {
       const errorMessage =
         error.response?.data?.message || "Failed to add Amenities";
       toast.error(errorMessage);
@@ -69,14 +68,14 @@ const AmenitiesModal = ({ onClose }: AmenitiesModalProps) => {
             className="flex items-center gap-2 px-4 py-2 text-white bg-black rounded-md"
           >
             {AddAmenitiesMutation.isPending ? <Loader className="w-4 h-4 animate-spin" /> :
-            (
-              <div className='flex items-center gap-2'>
-                <Plus className="w-4 h-4" />
-                <span className="text-nowrap">
-                Add Amenity
-                </span>
-              </div>
-            )
+              (
+                <div className='flex items-center gap-2'>
+                  <Plus className="w-4 h-4" />
+                  <span className="text-nowrap">
+                    Add Amenity
+                  </span>
+                </div>
+              )
             }
           </button>
         </div>

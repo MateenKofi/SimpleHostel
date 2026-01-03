@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { verifyPayment } from "@/api/payments";
 import toast from "react-hot-toast";
 
 const PaymentCallback = () => {
@@ -15,10 +15,9 @@ const PaymentCallback = () => {
 
     if (reference) {
       // Call your backend endpoint to verify the payment using the reference
-      axios
-        .get(`/api/payments/verify?reference=${reference}`)
+      verifyPayment(reference)
         .then((res) => {
-          if (res.data.verified) {
+          if (res.verified) {
             toast.success("Payment verified successfully!");
             // Optionally redirect to a success page or update your UI accordingly
             navigate("/payment-success");

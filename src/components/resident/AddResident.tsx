@@ -24,10 +24,10 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { addResident } from "@/api/residents";
 import { ResidentFormSchema } from "@/schemas/ResidentForm.schema";
 import { z } from "zod";
-import { useAddedResidentStore } from "@/controllers/AddedResident";
+import { useAddedResidentStore } from "@/stores/useAddedResidentStore";
 
 type AddResidentInputs = z.infer<typeof ResidentFormSchema>;
 
@@ -70,23 +70,17 @@ const AddResident = () => {
       formData.append("calendarYearId", calendarYearId);
 
       try {
-        const response = await axios.post(`/api/residents/add`, formData);
+        const responseData = await addResident(formData);
         reset();
-        setResident(response.data?.data);
+        setResident(responseData?.data);
         setTimeout(() => {
           navigate("/dashboard/room-assignment");
         }, 50);
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.log(error.response);
-          console.log("error message", error?.response?.data);
-          const errorMessage =
-            error.response?.data?.message || "Failed to Add Resident";
-          toast.error(errorMessage);
-        } else {
-          toast.error("An unexpected error occurred");
-        }
+        return responseData;
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || "Failed to Add Resident";
+        toast.error(errorMessage);
+        throw error;
       }
     },
   });

@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { useQuery } from "@tanstack/react-query"
-import axios from "axios"
+import { getHostelResidents } from "@/api/residents"
 import toast from "react-hot-toast"
 import { Resident } from "@/helper/types/types"
 import CustomeRefetch from "@/components/CustomeRefetch"
@@ -26,12 +26,9 @@ const ResidentLookup = () => {
   const { data: residentsData, isLoading, isError, refetch } = useQuery({
     queryKey: ["residents_lookup"],
     queryFn: async () => {
-      const response = await axios.get(`/api/residents/hostel/${hostelId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-        },
-      });
-      return response?.data?.data;
+      if (!hostelId) return []
+      const responseData = await getHostelResidents(hostelId)
+      return responseData?.data
     },
   })
 

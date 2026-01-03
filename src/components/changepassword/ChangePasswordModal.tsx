@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
+import { updateUser } from "@/api/users";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -28,30 +28,15 @@ const ChangePasswordModal: React.FC<ChangePasswordProps> = ({ onClose }) => {
 
   const resetPasswordMutation = useMutation({
     mutationFn: async (data: { password: string }) => {
-      await axios.put(
-        `/api/users/update/${userId}`,
-        { password: data.password },{
-          headers:{
-             'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        }
-      ).then((response)=>{
-        onClose()
-        return response.data
-      }).catch((error)=>{
-        if (axios.isAxiosError(error)) {
-          const errorMessage = error.response?.data?.error || "Failed to Update Password";
-          toast.error(errorMessage);
-        }
-      })
-    
+      await updateUser(userId!, { password: data.password });
+      onClose();
     },
     onSuccess: () => {
       toast.success("Password Updated Successfully");
     },
-    onError: (error: AxiosError<{ message?: string }>) => {
+    onError: (error: any) => {
       const errorMessage =
-        error.response?.data?.message || "Failed to Update Password";
+        error.response?.data?.message || error.response?.data?.error || "Failed to Update Password";
       toast.error(errorMessage);
     },
   });

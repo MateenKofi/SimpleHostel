@@ -1,7 +1,7 @@
 import AnalyticsCard from "./AnalyticsCard";
 import RevenueOverView from "./charts/RevenueOverView";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { getSystemAnalytics } from "@/api/analytics";
 import HostelStatus from "./charts/HostelStatus";
 import PaymentStat from "./charts/PaymentStat";
 import SystemOverviewTable from "./SystemOverviewTable";
@@ -14,18 +14,14 @@ const SuperAdmin = () => {
   const { data: analyticsData, isLoading } = useQuery({
     queryKey: ["analytics_super_admin"],
     queryFn: async () => {
-      const response = await axios.get("/api/analytics/get/system",{
-          headers:{
-             'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-      return response.data?.data;
+      const responseData = await getSystemAnalytics();
+      return responseData?.data;
     },
   });
 
-if(isLoading){
-  return <DashboardLoading/>
-}
+  if (isLoading) {
+    return <DashboardLoading />
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-white">
@@ -35,14 +31,14 @@ if(isLoading){
 
           <div className="grid gap-4 mt-6 md:grid-cols-2 lg:grid-cols-7">
             <RevenueOverView analyticsData={analyticsData} />
-            <OccupancyStatus analyticsData={analyticsData}/>
+            <OccupancyStatus analyticsData={analyticsData} />
           </div>
 
           <div className="grid gap-4 mt-6 md:grid-cols-2"></div>
-            <HostelStatus analyticsData={analyticsData}/>
-            <PaymentStat analyticsData={analyticsData}/>
+          <HostelStatus analyticsData={analyticsData} />
+          <PaymentStat analyticsData={analyticsData} />
           <div className="mt-6">
-           <SystemOverviewTable analyticsData={analyticsData} />
+            <SystemOverviewTable analyticsData={analyticsData} />
           </div>
         </main>
       </div>

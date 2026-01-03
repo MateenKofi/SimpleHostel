@@ -24,31 +24,25 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import {useNavigate} from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { LogoutIcon } from "@/components/animateIcons/Logout"
 // import { BellIcon } from "@/components/animateIcons/bell"
 import { UserIcon } from "@/components/animateIcons/User"
 import { useQuery } from "@tanstack/react-query"
-import axios from "axios"
-import {useUserStore} from '@/controllers/UserStore'
-// import { useEffect } from "react"
-// import toast from "react-hot-toast"
+import { useAuthStore } from '@/stores/useAuthStore'
+import { getUserById } from "@/api/users"
 
 export function NavUser() {
 
   const { isMobile } = useSidebar()
   const navigate = useNavigate()
- const logout = useUserStore((state) => state.logout)
-  const { data:User } = useQuery({
+  const logout = useAuthStore((state: any) => state.logout)
+  const { data: User } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
       const userId = localStorage.getItem('userId')
-      const response = await axios.get(`/api/users/get/${userId}`,{
-          headers:{
-             'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        });
-      return response?.data;
+      if (!userId) return null
+      return await getUserById(userId)
     },
   });
 
@@ -66,12 +60,12 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="w-8 h-8 rounded-lg">
-                <AvatarImage src={User?.imageUrl} alt={User?.name} />
+                <AvatarImage src={User?.imageUrl || undefined} alt={User?.name || undefined} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-sm leading-tight text-left">
                 <span className="font-semibold truncate">{User?.name || 'User Name'}</span>
-                <span className="text-xs truncate">{User?.email|| 'User Email'}</span>
+                <span className="text-xs truncate">{User?.email || 'User Email'}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -85,7 +79,7 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="w-8 h-8 rounded-lg">
-                  <AvatarImage src={User?.imageUrl} alt={User?.name} />
+                  <AvatarImage src={User?.imageUrl || undefined} alt={User?.name || undefined} />
                   <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-sm leading-tight text-left">
@@ -96,9 +90,9 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuGroup>
               <DropdownMenuItem
-              onClick={()=>navigate('/dashboard/profile')}
+                onClick={() => navigate('/dashboard/profile')}
               >
-                <UserIcon label="Account"/>
+                <UserIcon label="Account" />
               </DropdownMenuItem>
               {/* <DropdownMenuItem>
                 <BellIcon label="Notification"/>
@@ -106,9 +100,9 @@ export function NavUser() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-            onClick={handlelogout}
+              onClick={handlelogout}
             >
-              <LogoutIcon label="Logout"/>
+              <LogoutIcon label="Logout" />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

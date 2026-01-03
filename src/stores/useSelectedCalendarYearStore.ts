@@ -1,6 +1,6 @@
-import {create} from 'zustand';
-import {persist} from 'zustand/middleware';
-import {CalendarYearT} from "@/helper/types/types";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import { CalendarYearT } from "@/helper/types/types";
 
 interface SelectedCalendarYearStore {
     calendarYear: CalendarYearT | null;

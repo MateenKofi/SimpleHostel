@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { getHostels } from "@/api/hostels";
 import { Hostel } from "@/helper/types/types";
 import CustomeRefetch from "@/components/CustomeRefetch";
 import ImageSlider from "@/components/ImageSlider";
@@ -12,7 +12,7 @@ import { useDebounce } from "@/helper/useDebounce";
 import FilterPanel from "@components/FilterPanel";
 import FindHostelSkeleton from "@components/loaders/HostelCardSkeleton";
 import { HostetFilterConfig } from "@/helper/hostel_filter_config";
-import { useSelectedCalendarYearStore } from "@/controllers/SelectedCalendarYear";
+import { useSelectedCalendarYearStore } from "@/stores/useSelectedCalendarYearStore";
 import { useNavigate } from "react-router-dom";
 
 interface ActiveFilters {
@@ -39,8 +39,8 @@ export function FindHostel() {
   } = useQuery({
     queryKey: ["find_hostel"],
     queryFn: async () => {
-      const response = await axios.get(`/api/hostels/get`);
-      return response.data?.data;
+      const responseData = await getHostels();
+      return responseData?.data;
     },
   });
 

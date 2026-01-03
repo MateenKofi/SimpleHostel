@@ -1,7 +1,7 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
-import axios from "axios"
+import { getResidentBilling, getPaymentReceipt } from "@/api/residents"
 import { Loader, Download, CreditCard, History, Wallet, AlertCircle } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import {
@@ -50,8 +50,8 @@ const PaymentBilling = () => {
     const { data: billingData, isLoading } = useQuery<BillingSummary>({
         queryKey: ['resident-billing', userId],
         queryFn: async () => {
-            const response = await axios.get(`/api/v1/resident/billing`)
-            return response.data?.data || {
+            const responseData = await getResidentBilling()
+            return responseData?.data || {
                 totalPaid: 0,
                 balanceOwed: 0,
                 nextDueDate: null,
@@ -77,8 +77,8 @@ const PaymentBilling = () => {
     const { data: receiptData, isLoading: isReceiptLoading } = useQuery<PaymentReceipt>({
         queryKey: ['receipt', viewReceiptId],
         queryFn: async () => {
-            const response = await axios.get(`/api/residents/receipt/${viewReceiptId}`)
-            return response.data.data
+            const responseData = await getPaymentReceipt(viewReceiptId!)
+            return responseData?.data
         },
         enabled: !!viewReceiptId
     })

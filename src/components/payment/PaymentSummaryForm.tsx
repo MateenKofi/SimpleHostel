@@ -2,9 +2,14 @@ import { z } from "zod"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useMutation } from "@tanstack/react-query"
-import axios from "axios"
+import { initPayment } from "@/api/payments"
+import { getHostelById } from "@/api/hostels"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { toast } from "react-hot-toast"
+import { useState } from "react"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Label } from "@/components/ui/label"
+import { cn } from "@/lib/utils"
 import {
   Loader2,
   ChevronLeft,
@@ -25,8 +30,8 @@ import {
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
-import { useAddedResidentStore } from "@/controllers/AddedResident"
-import { useSelectedRoomStore } from "@/controllers/SelectedRoomStore"
+import { useAddedResidentStore } from "@/stores/useAddedResidentStore"
+import { useSelectedRoomStore } from "@/stores/useSelectedRoomStore"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useNavigate } from "react-router-dom"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
@@ -40,9 +45,21 @@ type PaymentInputs = z.infer<typeof paymentFormSchema>
 
 const PaymentSummaryForm = () => {
   const navigate = useNavigate()
-  const room = useSelectedRoomStore((s) => s.room)!
-  const resident = useAddedResidentStore((s) => s.resident)!
+  const room = useSelectedRoomStore((s: any) => s.room)!
+  const resident = useAddedResidentStore((s: any) => s.resident)!
   const totalAmount = room.price
+
+  const [paymentType, setPaymentType] = useState<"full" | "partial">("full")
+
+  const { data: hostel } = useQuery({
+    queryKey: ["hostel", room?.hostelId],
+    queryFn: async () => {
+      if (!room?.hostelId) return null
+      const res = await getHostelById(room.hostelId)
+      return res.data
+    },
+    enabled: !!room?.hostelId,
+  })
 
   const form = useForm<PaymentInputs>({
     resolver: zodResolver(paymentFormSchema),
@@ -51,9 +68,17 @@ const PaymentSummaryForm = () => {
     },
   })
 
+  const partialAmount = hostel?.allowPartialPayment
+    ? (totalAmount * (hostel.partialPaymentPercentage || 50)) / 100
+    : totalAmount
+
   useEffect(() => {
-    form.setValue("paymentAmount", totalAmount, { shouldValidate: true })
-  }, [totalAmount, form])
+    if (paymentType === "full") {
+      form.setValue("paymentAmount", totalAmount, { shouldValidate: true })
+    } else {
+      form.setValue("paymentAmount", partialAmount, { shouldValidate: true })
+    }
+  }, [paymentType, totalAmount, partialAmount, form])
 
   const mutation = useMutation({
     mutationFn: async (data: PaymentInputs) => {
@@ -65,25 +90,25 @@ const PaymentSummaryForm = () => {
           residentId: resident.id,
           initialPayment: data.paymentAmount,
         }
-        const res = await axios.post("/api/payments/init", payload)
+        const resData = await initPayment(payload)
 
         // Guide says: Returns a authorizationUrl (Paystack checkout page) and a reference.
-        if (res.data?.authorizationUrl) {
-          toast(res.data.message || "Redirecting to payment...");
-          window.location.href = res.data.authorizationUrl;
-        } else if (res.data?.paymentUrl?.authorizationUrl) {
+        if (resData?.authorizationUrl) {
+          toast(resData.message || "Redirecting to payment...");
+          window.location.href = resData.authorizationUrl;
+        } else if (resData?.paymentUrl?.authorizationUrl) {
           // Fallback for previous structure if backend hasn't fully switched but we are pushing for v1
-          toast(res.data.message || "Redirecting to payment...");
-          window.location.href = res.data.paymentUrl.authorizationUrl;
+          toast(resData.message || "Redirecting to payment...");
+          window.location.href = resData.paymentUrl.authorizationUrl;
         } else {
           toast.error("Payment initiation failed: No authorization URL received");
         }
 
-        return res.data
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          toast.error(error.response?.data?.message || error.response?.data?.error || "An unexpected error occurred")
-        }
+        return resData
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || error.response?.data?.error || "An unexpected error occurred"
+        toast.error(errorMessage)
+        throw error
       }
     },
   })
@@ -228,16 +253,85 @@ const PaymentSummaryForm = () => {
                 </CardHeader>
                 <CardContent className="pt-2">
                   <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="p-3 bg-white rounded-lg shadow-sm">
+                    <div className="p-3 bg-white rounded-lg shadow-sm font-sans">
                       <div className="text-sm text-gray-500">Total Amount</div>
                       <div className="text-xl font-bold text-gray-900">GH₵{totalAmount?.toLocaleString()}</div>
                     </div>
-                    <div className="p-3 bg-white rounded-lg shadow-sm">
-                      <div className="text-sm text-gray-500">Balance Owed</div>
-                      <div className="text-xl font-bold text-red-600">
-                        GH₵{(totalAmount - (resident?.amountPaid || 0))?.toLocaleString()}
+                    <div className="p-3 bg-white rounded-lg shadow-sm font-sans">
+                      <div className="text-sm text-gray-500">Amount to Pay</div>
+                      <div className="text-xl font-bold text-indigo-600">
+                        GH₵{form.watch("paymentAmount")?.toLocaleString()}
                       </div>
                     </div>
+                  </div>
+
+                  {hostel?.allowPartialPayment && (
+                    <div className="mb-6 space-y-3">
+                      <Label className="text-sm font-semibold text-gray-700">Choose Payment Option</Label>
+                      <RadioGroup
+                        value={paymentType}
+                        onValueChange={(v: "full" | "partial") => setPaymentType(v)}
+                        className="grid grid-cols-1 gap-3 sm:grid-cols-2"
+                      >
+                        <div>
+                          <RadioGroupItem
+                            value="full"
+                            id="full"
+                            className="sr-only"
+                          />
+                          <Label
+                            htmlFor="full"
+                            className={cn(
+                              "flex flex-col items-start p-4 border-2 rounded-xl cursor-pointer transition-all",
+                              paymentType === "full"
+                                ? "border-indigo-600 bg-indigo-50 shadow-sm"
+                                : "border-gray-200 hover:border-indigo-200 bg-white"
+                            )}
+                          >
+                            <div className="flex items-center justify-between w-full mb-1">
+                              <span className="font-bold">Full Payment</span>
+                              {paymentType === "full" && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
+                            </div>
+                            <span className="text-xs text-gray-500 italic">Pay the entire amount now</span>
+                            <span className="mt-2 text-lg font-bold text-indigo-700">GH₵{totalAmount.toLocaleString()}</span>
+                          </Label>
+                        </div>
+
+                        <div>
+                          <RadioGroupItem
+                            value="partial"
+                            id="partial"
+                            className="sr-only"
+                          />
+                          <Label
+                            htmlFor="partial"
+                            className={cn(
+                              "flex flex-col items-start p-4 border-2 rounded-xl cursor-pointer transition-all",
+                              paymentType === "partial"
+                                ? "border-indigo-600 bg-indigo-50 shadow-sm"
+                                : "border-gray-200 hover:border-indigo-200 bg-white"
+                            )}
+                          >
+                            <div className="flex items-center justify-between w-full mb-1">
+                              <span className="font-bold">Partial Deposit</span>
+                              {paymentType === "partial" && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
+                            </div>
+                            <span className="text-xs text-gray-500 italic">Pay {hostel.partialPaymentPercentage}% deposit now</span>
+                            <span className="mt-2 text-lg font-bold text-indigo-700">GH₵{partialAmount.toLocaleString()}</span>
+                          </Label>
+                        </div>
+                      </RadioGroup>
+                    </div>
+                  )}
+
+                  <div className="p-3 mb-6 border border-yellow-200 rounded-lg bg-yellow-50 flex items-start gap-2">
+                    <AlertCircle className="w-4 h-4 text-yellow-600 mt-0.5 shrink-0" />
+                    <p className="text-xs text-yellow-800 leading-relaxed font-sans">
+                      {paymentType === "full"
+                        ? "You are paying the full amount for your booking. No further balance will be owed for this room."
+                        : `You are paying a ${hostel?.partialPaymentPercentage}% deposit. The remaining GH₵${(totalAmount - partialAmount).toLocaleString()} must be paid upon arrival or via your dashboard.`
+                      }
+                    </p>
                   </div>
                   {/* Hidden field so RHF knows about it */}
                   <input type="hidden" {...form.register("paymentAmount", { valueAsNumber: true })} />

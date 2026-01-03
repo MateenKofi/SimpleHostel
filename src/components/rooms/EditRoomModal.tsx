@@ -3,7 +3,9 @@ import Modal from "@/components/Modal";
 import { useForm } from "react-hook-form";
 import type { Amenity, Room } from "@/helper/types/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
+import { updateRoom } from "@/api/rooms";
+import { getHostelAmenities } from "@/api/amenities";
+import { AxiosError } from "axios";
 import ImageUpload from "@/components/ImageUpload";
 import { Loader } from "lucide-react";
 import toast from "react-hot-toast";
@@ -66,8 +68,8 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
   } = useQuery<{ data: { id: string; name: string; price: number }[] }>({
     queryKey: ["amenities"],
     queryFn: async () => {
-      const response = await axios.get(`/api/amenities/hostel/${hostelId}`);
-      return response.data;
+      if (!hostelId) return { data: [] };
+      return await getHostelAmenities(hostelId);
     },
   });
 
@@ -98,12 +100,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
         formData.append("photos", image);
       });
 
-      const response = await axios.put(`/api/rooms/updateall/${formdata.id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      return response.data;
+      return await updateRoom(formdata.id, formData);
     },
     onSuccess: () => {
       toast.success("Room updated successfully");

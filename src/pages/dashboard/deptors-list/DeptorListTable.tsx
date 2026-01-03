@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import CustomDataTable from '@/components/CustomDataTable';
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { getHostelResidents } from '@/api/residents';
 import { Deptors } from '@/helper/types/types';
-import { useAddedResidentStore } from '@/controllers/AddedResident';
+import { useAddedResidentStore } from '@/stores/useAddedResidentStore';
 import { useNavigate } from 'react-router-dom';
 
 const DebtorListTable: React.FC = () => {
@@ -21,8 +21,9 @@ const DebtorListTable: React.FC = () => {
   } = useQuery({
     queryKey: ["resident"],
     queryFn: async () => {
-      const response = await axios.get(`/api/residents/hostel/${hostelId}`);
-      return response?.data?.data;
+      if (!hostelId) return []
+      const responseData = await getHostelResidents(hostelId)
+      return responseData?.data
     },
     enabled: !!hostelId,
   });

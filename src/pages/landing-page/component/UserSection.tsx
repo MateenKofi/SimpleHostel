@@ -1,6 +1,6 @@
 "use client"
 import { motion } from "framer-motion"
-import { User,  LogOut, KeyRound, LayoutDashboard } from "lucide-react"
+import { User, LogOut, KeyRound, LayoutDashboard } from "lucide-react"
 import { Link } from "react-router-dom"
 import {
   DropdownMenu,
@@ -11,10 +11,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useUserStore } from "@/controllers/UserStore"
+import { useAuthStore } from "@/stores/useAuthStore"
 
 const UserSection = () => {
-  const {user, logout} = useUserStore((state) => state);
+  const { user, logout } = useAuthStore((state) => state);
 
   return (
     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>

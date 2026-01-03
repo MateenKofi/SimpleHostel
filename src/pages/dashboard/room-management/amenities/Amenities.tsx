@@ -5,7 +5,7 @@ import AmenitiesModal from "./AmenitiesModal";
 import EditAmenitiesModal from "./EditAmenitiesModal";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Swal from "sweetalert2";
-import axios, { AxiosError } from "axios";
+import { getHostelAmenities, deleteAmenity } from "@/api/amenities";
 import toast from "react-hot-toast";
 import { useState } from "react";
 import CustomDataTable from "@/components/CustomDataTable";
@@ -32,24 +32,23 @@ const Amenities = () => {
   } = useQuery({
     queryKey: ["amenities"],
     queryFn: async () => {
-      const response = await axios.get(`/api/amenities/hostel/${hostelId}`);
-      return response?.data;
+      if (!hostelId) return null;
+      return await getHostelAmenities(hostelId);
     },
   });
 
   const DeleteAmenitiesMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await axios.delete(`/api/amenities/delete/${id}`);
-      return response?.data;
+      return await deleteAmenity(id);
     },
     onSuccess: () => {
       toast.success("Amenity deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["amenities"] });
       setDeletingAmenityId(null);
     },
-    onError: (error: AxiosError<{ message?: string }>) => {
+    onError: (error: any) => {
       const errorMessage =
-        error.response?.data?.message || "Failed to Update User Details";
+        error.response?.data?.message || "Failed to delete amenity";
       toast.error(errorMessage);
     },
   });
@@ -85,7 +84,7 @@ const Amenities = () => {
     },
     {
       name: "Price",
-      cell:(row: { price: number }) => `GHC ${row.price}`,
+      cell: (row: { price: number }) => `GHC ${row.price}`,
       sortable: true,
     },
     {
@@ -120,9 +119,9 @@ const Amenities = () => {
   return (
     <div className="p-6">
       <SEOHelmet
-      title="Amenities Management - Fuse"
-      description="Manage your hostel amenities efficiently with our user-friendly interface."
-      keywords="amenities management, hostel, Fuse"
+        title="Amenities Management - Fuse"
+        description="Manage your hostel amenities efficiently with our user-friendly interface."
+        keywords="amenities management, hostel, Fuse"
       />
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">

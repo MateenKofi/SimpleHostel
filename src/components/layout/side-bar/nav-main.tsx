@@ -29,7 +29,7 @@ import {
   HandPlatter,
   Megaphone
 } from "lucide-react";
-import { useUserStore } from "@/controllers/UserStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 type navItems = {
   title: string;
@@ -42,7 +42,7 @@ export function NavMain() {
   const userRole = localStorage.getItem("role");
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const logout = useUserStore((state) => state.logout);
+  const logout = useAuthStore((state) => state.logout);
 
   let navItems: navItems[] = [];
 

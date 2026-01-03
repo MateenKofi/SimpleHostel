@@ -42,7 +42,8 @@ import {
 import { cn } from "@/lib/utils";
 import { Resident, Transaction } from "@/helper/types/types";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { getHostelTransactions } from "@/api/payments";
+import { getHostelResidents } from "@/api/residents";
 import TransactionsSkeleton from "../loaders/TransactionLoader";
 import CustomeRefetch from "../CustomeRefetch";
 import DatePicker from "react-datepicker";
@@ -71,24 +72,23 @@ const AdminTransactions = () => {
   } = useQuery({
     queryKey: ["transaction_admin"],
     queryFn: async () => {
-      const response = await axios.get(
-        `/api/payments/get/hostel/${hostel_id}`
-      );
-      return response.data?.data;
+      const responseData = await getHostelTransactions(hostel_id);
+      return responseData?.data;
     },
     enabled: !!hostel_id,
   });
 
 
   const hostelId = localStorage.getItem('hostelId')
-   const { data: Residents} = useQuery({
+  const { data: Residents } = useQuery({
     queryKey: ['residents'],
     queryFn: async () => {
-      const response = await axios.get(`/api/residents/hostel/${hostelId}`)
-      return response?.data?.data
+      if (!hostelId) return [];
+      const responseData = await getHostelResidents(hostelId)
+      return responseData?.data
     },
   })
-  
+
   // Calculate total amount
   const totalAmount = useMemo(() => {
     return transactionsData
@@ -147,7 +147,7 @@ const AdminTransactions = () => {
         const dateMatch =
           !selectedDate ||
           format(new Date(transaction.date), "yyyy-MM-dd") ===
-            format(selectedDate, "yyyy-MM-dd");
+          format(selectedDate, "yyyy-MM-dd");
 
         return searchMatch && statusMatch && methodMatch && dateMatch;
       })
@@ -320,7 +320,7 @@ const AdminTransactions = () => {
         </div>
 
         <div className="flex gap-2">
-           <div className="flex w-40 gap-2">
+          <div className="flex w-40 gap-2">
             {/* date picker */}
             {selectedDate && (
               <button
@@ -336,8 +336,8 @@ const AdminTransactions = () => {
               placeholderText="Filter by date"
               className="w-full p-1 border rounded-md shadow-sm"
             />
-            
-          
+
+
           </div>
           <div className="w-40">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -367,7 +367,7 @@ const AdminTransactions = () => {
               </SelectContent>
             </Select>
           </div>
-         
+
         </div>
       </div>
 

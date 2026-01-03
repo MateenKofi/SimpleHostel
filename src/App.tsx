@@ -1,6 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Suspense } from "react";
-import axios from "axios";
 import { Loader } from "lucide-react";
 
 import Layout from "@components/layout/Layout";
@@ -17,10 +16,6 @@ import ResidentLookup from "./pages/dashboard/resident-management/Resident-looku
 import ChangePassword from "./components/changepassword/ChangePassword";
 import ForgetPassword from "./pages/Authentication/forget-password/ForgetPassword";
 import TermsAndCondition from "./components/TermsAndConditions";
-// Axios base config
-axios.defaults.headers.common["Accept"] = "application/json";
-axios.defaults.headers.common["Content-Type"] = "application/json";
-axios.defaults.baseURL = `${import.meta.env.VITE_API_BASE_URL}`;
 
 
 

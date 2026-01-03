@@ -1,5 +1,5 @@
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import { getCurrentCalendarYear, getHistoricalCalendarYears } from "@/api/calendar";
 import AddCalendarYearForm from "@/components/AddCalendarYearFrom";
 import CurrentYearCard from "@/components/CalenderYearCard";
 import HistoricalYearsList from "@/components/HistoricalYearsList";
@@ -25,8 +25,9 @@ const CalendarYear = () => {
     queryKey: ["currentYear"],
     queryFn: async () => {
       const hostelId = localStorage.getItem("hostelId");
-      const response = await axios.get(`/api/calendar/current/${hostelId}`);
-      return response?.data?.data;
+      if (!hostelId) return null;
+      const responseData = await getCurrentCalendarYear(hostelId);
+      return responseData?.data;
     },
   });
 
@@ -41,8 +42,7 @@ const CalendarYear = () => {
       if (!hostelId) {
         throw new Error("Hostel ID is not available in local storage.");
       }
-      const response = await axios.get(`/api/calendar/historical/${hostelId}`);
-      return response.data;
+      return await getHistoricalCalendarYears(hostelId);
     },
   });
 

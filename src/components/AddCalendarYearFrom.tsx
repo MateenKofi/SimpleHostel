@@ -6,7 +6,7 @@ import { SubmitHandler, useForm } from "react-hook-form"
 import Modal from "./Modal"
 import { useMutation } from "@tanstack/react-query"
 import toast from "react-hot-toast"
-import axios from "axios"
+import { startCalendarYear } from "@/api/calendar"
 
 interface AddCalendarYearFormProps {
   onClose: () => void;
@@ -25,29 +25,22 @@ const AddCalendarYearForm = ({ onClose, refectCurrentYear, refectHistoricalYears
   // Mutation for adding calendar year
   const AddCalendarYearMutation = useMutation({
     mutationFn: async (data: FormValues) => {
-      const payload = {
-        name: data.yearName,
-        hostelId: hostelId || "",
-      };
-      await axios
-        .post(`/api/calendar/start`, payload)
-        .then((res) => {
-          refectCurrentYear();
-          refectHistoricalYears();
-          onClose();
-          toast.success("Academic Year added successfully");
-          reset();
-          return res.data;
-        })
-        .catch((error) => {
-          let errorMessage = "Failed to add Academic Year";
-          if (axios.isAxiosError(error)) {
-            errorMessage = error.response?.data?.message || errorMessage;
-          } else {
-            errorMessage = (error as Error).message || errorMessage;
-          }
-          toast.error(errorMessage);
-        });
+      try {
+        const payload = {
+          name: data.yearName,
+          hostelId: hostelId || "",
+        };
+        await startCalendarYear(payload);
+        refectCurrentYear();
+        refectHistoricalYears();
+        onClose();
+        toast.success("Academic Year added successfully");
+        reset();
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || "Failed to add Academic Year";
+        toast.error(errorMessage);
+        throw error;
+      }
     },
   });
 
@@ -58,12 +51,12 @@ const AddCalendarYearForm = ({ onClose, refectCurrentYear, refectHistoricalYears
   return (
     <Modal modalId="add-calendar-year-modal" onClose={onClose} >
       <form onSubmit={handleSubmit(onSubmit)}>
-         <div>
+        <div>
           <h1>Start New Calendar Year</h1>
           <p className="text-sm text-muted-foreground">
             Enter a name for the new calendar year. This will create a new active year.
           </p>
-          </div>
+        </div>
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
             <Label htmlFor="name">Year Name</Label>
@@ -72,7 +65,7 @@ const AddCalendarYearForm = ({ onClose, refectCurrentYear, refectHistoricalYears
           <Button
             type="submit"
             disabled={AddCalendarYearMutation.isPending}
-            
+
           >
             {AddCalendarYearMutation.isPending ? <Loader className="animate-spin" /> : "Create Year"}
           </Button>

@@ -3,7 +3,8 @@ import {
   Loader2,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { getCurrentCalendarYear, getHistoricalCalendarYears } from "@/api/calendar";
+import { getCalendarYearReport } from "@/api/analytics";
 import { DashboardLoading } from "../loaders/DashboardLoader";
 import CustomeRefetch from "../CustomeRefetch";
 import MonthlyRevenue from "./charts/MonthlyRevenue";
@@ -28,10 +29,8 @@ const AdminReport = () => {
     queryKey: ["currentYear", hostelId],
     queryFn: async () => {
       if (!hostelId) return null;
-      const response = await axios.get(
-        `/api/calendar/current/${hostelId}`
-      );
-      return response.data.data;
+      const responseData = await getCurrentCalendarYear(hostelId);
+      return responseData.data;
     },
     enabled: !!hostelId,
   });
@@ -45,10 +44,8 @@ const AdminReport = () => {
     queryKey: ["historicalYears", hostelId],
     queryFn: async () => {
       if (!hostelId) return null;
-      const response = await axios.get(
-        `/api/calendar/historical/${hostelId}`
-      );
-      return response.data.data;
+      const responseData = await getHistoricalCalendarYears(hostelId);
+      return responseData.data;
     },
     enabled: !!hostelId,
   });
@@ -63,10 +60,8 @@ const AdminReport = () => {
 
     queryFn: async () => {
       if (!selectedYear && !hostelId) return null;
-      const response = await axios.get(
-        `/api/analytics/calendar-year/${hostelId}/${selectedYear}`
-      );
-      return response.data.data;
+      const responseData = await getCalendarYearReport(hostelId!, selectedYear!);
+      return responseData.data;
     },
     enabled: !!selectedYear && !!hostelId,
   });
@@ -79,7 +74,7 @@ const AdminReport = () => {
   );
 
   if (
-     isCurrentYearError ||isHistoricalYearsError || isReportDataError
+    isCurrentYearError || isHistoricalYearsError || isReportDataError
   ) {
     return (
       <CustomeRefetch
@@ -107,37 +102,37 @@ const AdminReport = () => {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
-                <div className="flex flex-col">
-                  <label
-                    htmlFor="year"
-                    className="block text-sm font-medium text-gray-700"
+              <div className="flex flex-col">
+                <label
+                  htmlFor="year"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Select Academic Year
+                </label>
+                {isHistoricalYearsLoading || isCurrentYearLoading ? (
+                  <span className="text-gray-500 w-[200px] flex flex-row items-center gap-2">
+                    {" "}
+                    <Loader2 className="animate-spin text-blue-600" />{" "}
+                    <span className="">Loading years...</span>
+                  </span>
+                ) : (
+                  <select
+                    disabled={AcademicYears.length === 0}
+                    id="year"
+                    value={selectedYear || ""}
+                    onChange={(e) => setSelectedYear(e.target.value)}
+                    className="mt-1 block w-[200px] pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
                   >
-                    Select Academic Year
-                  </label>
-                  {isHistoricalYearsLoading || isCurrentYearLoading ? (
-                    <span className="text-gray-500 w-[200px] flex flex-row items-center gap-2">
-                      {" "}
-                      <Loader2 className="animate-spin text-blue-600" />{" "}
-                      <span className="">Loading years...</span>
-                    </span>
-                  ) : (
-                    <select
-                      disabled={AcademicYears.length === 0}
-                      id="year"
-                      value={selectedYear || ""}
-                      onChange={(e) => setSelectedYear(e.target.value)}
-                      className="mt-1 block w-[200px] pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                    >
-                      <option value="">-- Select Academic Year --</option>
-                      {AcademicYears.map((year) => (
-                        <option key={year?.id} value={year?.id}>
-                          {year?.name}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                </div>
-              
+                    <option value="">-- Select Academic Year --</option>
+                    {AcademicYears.map((year) => (
+                      <option key={year?.id} value={year?.id}>
+                        {year?.name}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </div>
+
             </div>
           </div>
         </div>
@@ -147,7 +142,7 @@ const AdminReport = () => {
         ) : (
           <>
             {/* Status and Period Info */}
-           <StatusCards reportData={reportData} />
+            <StatusCards reportData={reportData} />
             {/* Key Metrics */}
             <KeyMetrics reportData={reportData} />
             {/* Charts Section */}
@@ -158,7 +153,7 @@ const AdminReport = () => {
               <PaymentMethod reportData={reportData} />
             </div>
             {/* Payment Methods Details */}
-            <PaymentMethodBreakDown reportData={reportData}/>
+            <PaymentMethodBreakDown reportData={reportData} />
             {/* Historical Comparison */}
             <HistoricalComparison reportData={reportData} />
           </>

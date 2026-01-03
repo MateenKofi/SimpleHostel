@@ -11,9 +11,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { Room } from "@/helper/types/types";
-import { useSelectedRoomStore } from "@/controllers/SelectedRoomStore";
+import { useSelectedRoomStore } from "@/stores/useSelectedRoomStore";
 import FilterPanel from "@/components/FilterPanel";
 import { RoomFilterConfig } from "@/helper/room_filter_config";
 import { parseRange } from "@/utils/parseRange";
@@ -21,9 +20,13 @@ import FindHostelSkeleton from "@/components/loaders/HostelCardSkeleton";
 import ImageSlider from "@/components/ImageSlider";
 import CustomeRefetch from "@/components/CustomeRefetch";
 import SEOHelmet from "@/components/SEOHelmet";
-import { useUserStore } from "@/controllers/UserStore";
-import { useAddedResidentStore } from "@/controllers/AddedResident";
+import { useAuthStore } from "@/stores/useAuthStore";
+import { useSelectedCalendarYearStore } from "@/stores/useSelectedCalendarYearStore";
+import { useAddedResidentStore } from "@/stores/useAddedResidentStore";
 import { useMutation } from "@tanstack/react-query";
+import { getHostelRooms } from "@/api/rooms";
+import { getResidentAnalytics } from "@/api/analytics";
+import { registerResident } from "@/api/residents";
 import {
   Dialog,
   DialogContent,
@@ -34,7 +37,6 @@ import {
 } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
-import { useSelectedCalendarYearStore } from "@/controllers/SelectedCalendarYear";
 
 interface ActiveFilters {
   [key: string]: string[];
@@ -52,7 +54,7 @@ const FindRoom = () => {
     roomType: [],
   });
   const { setRoom } = useSelectedRoomStore();
-  const { user, token } = useUserStore();
+  const { user, token } = useAuthStore();
   const setResident = useAddedResidentStore((state) => state.setResident);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [selectedBookingRoom, setSelectedBookingRoom] = useState<Room | null>(null);
@@ -65,16 +67,10 @@ const FindRoom = () => {
 
       // OPTION B: Try to find existing resident profile first to skip registration
       try {
-        const analyticsRes = await axios.get(`/api/analytics/get/resident-dashboard/${user.id}`, {
-          headers: { Authorization: `Bearer ${token}` }
-        });
-
-        const existingResidentId = analyticsRes.data?.data?.residentId;
+        const analyticsData = await getResidentAnalytics(user.id);
+        const existingResidentId = analyticsData?.data?.residentId;
 
         if (existingResidentId) {
-          // If resident profile exists, we don't need to register.
-          // We can proceed to payment directly by setting the resident in store.
-          // The init-payment endpoint will handle the room assignment.
           return {
             success: true,
             isExisting: true,
@@ -91,13 +87,7 @@ const FindRoom = () => {
       }
 
       // If no existing profile, we must register.
-      // We use the older /api/residents/register with FormData which doesn't strictly require password
-      // when the user is already authenticated and we identify them by email/userId.
       const formData = new FormData();
-      const nameParts = user.name.trim().split(/\s+/);
-      const firstName = nameParts[0];
-      const lastName = nameParts.slice(1).join(" ") || firstName;
-
       formData.append("name", user.name);
       formData.append("email", user.email);
       formData.append("phone", user.phoneNumber || "0240000000");
@@ -111,8 +101,7 @@ const FindRoom = () => {
       formData.append("calendarYearId", calendarYear?.id || "");
       formData.append("roomId", selectedBookingRoom.id || "");
 
-      const response = await axios.post(`/api/residents/register`, formData);
-      return response.data;
+      return await registerResident(formData);
     },
     onSuccess: (res) => {
       const residentData = res?.isExisting ? res.data : res?.data;
@@ -138,8 +127,8 @@ const FindRoom = () => {
   } = useQuery({
     queryKey: ["rooms", hostelId],
     queryFn: async () => {
-      const response = await axios.get(`/api/rooms/get/hostel/${hostelId}`);
-      return response.data?.data;
+      if (!hostelId) return null;
+      return await getHostelRooms(hostelId);
     },
   });
 

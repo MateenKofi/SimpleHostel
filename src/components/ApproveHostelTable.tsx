@@ -1,7 +1,7 @@
 import React from "react";
 import { TableColumn } from "react-data-table-component";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import { getUnverifiedHostels, verifyHostel, deleteHostel } from "@/api/hostels";
 import toast from "react-hot-toast";
 import Swal from "sweetalert2";
 import { Loader } from "lucide-react";
@@ -19,26 +19,22 @@ const ApproveHostelTable = () => {
   } = useQuery<Hostel[]>({
     queryKey: ["unverifiedHostels"],
     queryFn: async () => {
-      const response = await axios.get("/api/hostels/unverified");
-      return response?.data?.data;
+      const responseData = await getUnverifiedHostels();
+      return responseData?.data;
     },
   });
 
   const AcceptMutation = useMutation({
     mutationFn: async (hostelId: string) => {
       try {
-        const response = await axios.post(
-          `/api/hostels/verify/${hostelId}`,
-          {}
-        );
+        await verifyHostel(hostelId);
         toast.success("Hostel Approved Successfully");
         queryClient.invalidateQueries({ queryKey: ["hostels"] });
         refetchUnverifiedHostels();
-        return response?.data;
-      } catch (error) {
-        const err = error as Error;
-        const errorMessage = err?.message || "Failed to Approve Hostel";
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || "Failed to Approve Hostel";
         toast.error(errorMessage);
+        throw error;
       }
     },
   });
@@ -46,19 +42,14 @@ const ApproveHostelTable = () => {
   const DeclineMutation = useMutation({
     mutationFn: async (hostelId: string) => {
       try {
-        const response = await axios.delete(`/api/hostels/delete/${hostelId}`);
+        await deleteHostel(hostelId);
         toast.success("Hostel Declined Successfully");
         queryClient.invalidateQueries({ queryKey: ["hostels"] });
         refetchUnverifiedHostels();
-        return response?.data;
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const errorMessage =
-            error?.response?.data?.message || "Failed to Decline Hostel";
-          toast.error(errorMessage);
-        } else {
-          toast.error("An unexpected erorr occured");
-        }
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || "Failed to Decline Hostel";
+        toast.error(errorMessage);
+        throw error;
       }
     },
   });

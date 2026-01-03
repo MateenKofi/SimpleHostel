@@ -8,12 +8,11 @@ import {
 } from "@/components/ui/sidebar";
 import ErrorBoundary from "../ErrorBoundary";
 import { useEffect } from "react";
-import { useUserStore } from "@/controllers/UserStore";
-import axios from "axios";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const Layout = () => {
   const navigate = useNavigate();
-  const logout = useUserStore((state) => state.logout);
+  const logout = useAuthStore((state) => state.logout);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -21,7 +20,7 @@ const Layout = () => {
       setTimeout(() => {
         logout();
       }, 10);
-     window.location.href = "/";
+      window.location.href = "/";
     }
   }, [token, logout]);
 
@@ -29,11 +28,6 @@ const Layout = () => {
     localStorage.getItem("changedPassword") || "{}"
   );
 
-  useEffect(() => {
-    if (token) {
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-    }
-  }, [token]);
 
   useEffect(() => {
     if (changedPassword === false) {

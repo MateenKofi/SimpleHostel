@@ -4,7 +4,7 @@ import { ChevronLeft, Loader } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Staff } from "../../helper/types/types";
-import axios from "axios";
+import { addStaff } from "@/api/staff";
 import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
 import UploadSingleImage from "../UploadSingleImage";
@@ -60,24 +60,16 @@ const AddStaff: React.FC = () => {
           formData.append("photo", image);
         }
 
-        const response = await axios.post(`/api/staffs/add`, formData,{
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        const responseData = await addStaff(formData);
         queryClient.invalidateQueries({ queryKey: ["staffs"] });
         toast.success("Staff added successfully");
         reset();
         navigate(-1);
-        return response.data;
-      } catch (error) {
-        let errorMessage = "Failed to add staff";
-        if (axios.isAxiosError(error)) {
-          errorMessage = error.response?.data?.message || "Failed to add staff";
-        } else {
-          errorMessage = (error as Error).message || "Failed to add staff";
-        }
+        return responseData;
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || "Failed to add staff";
         toast.error(errorMessage);
+        throw error;
       }
     },
   });
@@ -371,22 +363,22 @@ const AddStaff: React.FC = () => {
                 <label className="block mb-1 text-sm font-medium">
                   Staff Type
                 </label>
-               <select
-                {...register("staffType", {
-                  required: "Staff type is required",
-                })}
-                className="w-full p-2 border rounded-md"
-              >
-                <option value="">-- Select Staff Type -- </option>
-                <option value="ADMIN">Admin</option>
-                <option value="OTHERS">Others</option>
+                <select
+                  {...register("staffType", {
+                    required: "Staff type is required",
+                  })}
+                  className="w-full p-2 border rounded-md"
+                >
+                  <option value="">-- Select Staff Type -- </option>
+                  <option value="ADMIN">Admin</option>
+                  <option value="OTHERS">Others</option>
                 </select>
                 {errors.staffType && (
                   <span className="text-sm text-red-500">
                     {errors.staffType.message?.toString()}
                   </span>
                 )}
-                
+
               </div>
               <div>
                 <label htmlFor="role">Role</label>

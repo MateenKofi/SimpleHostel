@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { getHostelResidents, deleteResident } from "@/api/residents";
 import CustomDataTable from "../CustomDataTable";
 import { Resident } from "@/helper/types/types";
 import { HousePlus, Edit, Trash2, Ellipsis } from "lucide-react";
@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { handleSwalMutation } from "../swal/SwalMutationHelper";
 import { useNavigate } from "react-router-dom";
-import { useAddedResidentStore } from "@/controllers/AddedResident";
+import { useAddedResidentStore } from "@/stores/useAddedResidentStore";
 import { useS } from "use-s-react";
 
 const ResidentTable = () => {
@@ -37,8 +37,8 @@ const ResidentTable = () => {
   } = useQuery({
     queryKey: ["resident"],
     queryFn: async () => {
-      const response = await axios.get(`/api/residents/hostel/${hostelId}`);
-      return response?.data?.data;
+      const responseData = await getHostelResidents(hostelId!);
+      return responseData?.data;
     },
     enabled: !!hostelId,
   });
@@ -46,25 +46,13 @@ const ResidentTable = () => {
   const DeleteResidentMutation = useMutation({
     mutationFn: async (id: string) => {
       try {
-        const response = await axios.delete(`/api/residents/delete/${id}`, {
-          params: {
-            hostelId: hostelId,
-          },
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        await deleteResident(id, hostelId!);
         toast.success("Resident deleted successfully");
         refetchResident();
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const errorMessage =
-            error?.response?.data?.error || "An unexpected error occured";
-          toast.error(errorMessage);
-        } else {
-          toast.error("An unexpected error occured");
-        }
+      } catch (error: any) {
+        const errorMessage = error?.response?.data?.error || "An unexpected error occured";
+        toast.error(errorMessage);
+        throw error;
       }
     },
   });

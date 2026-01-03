@@ -4,7 +4,7 @@ import LogoLoader from "./loaders/logoLoader";
 import { TextField } from "@/components/TextField";
 import { Loader } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import { getUserById, updateUser } from "@/api/users";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
@@ -43,8 +43,7 @@ const ProfileForms = () => {
   } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
-      const response = await axios.get(`/api/users/get/${userId}`);
-      return response?.data;
+      return await getUserById(userId!);
     },
   });
 
@@ -58,32 +57,23 @@ const ProfileForms = () => {
 
   const updatePersonalInfoMutation = useMutation({
     mutationFn: async (data: PersonalInfoFormValues) => {
-      const formData = new FormData();
-      formData.append("name", data.name.toUpperCase());
-      formData.append("email", data.email);
-      formData.append("phoneNumber", data.phoneNumber);
-      if (image) {
-        formData.append("photo", image);
+      try {
+        const formData = new FormData();
+        formData.append("name", data.name.toUpperCase());
+        formData.append("email", data.email);
+        formData.append("phoneNumber", data.phoneNumber);
+        if (image) {
+          formData.append("photo", image);
+        }
+        await updateUser(userId!, formData);
+        refectUser();
+        toast.success("User Details Updated Successfully");
+        queryClient.invalidateQueries({ queryKey: ["userProfile"] });
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.error || "Failed to update user details";
+        toast.error(errorMessage);
+        throw error;
       }
-      await axios
-        .put(`/api/users/update/${userId}`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then((res) => {
-          refectUser();
-          toast.success("User Details Updated Successfully");
-          queryClient.invalidateQueries({ queryKey: ["userProfile"] });
-          return res.data;
-        })
-        .catch((error) => {
-          if (axios.isAxiosError(error)) {
-            const errorMessage =
-              error.response?.data?.error || "Failed to update user details";
-            toast.error(errorMessage);
-          }
-        });
     },
   });
 

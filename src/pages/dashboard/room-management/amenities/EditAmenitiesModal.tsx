@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Modal from '@/components/Modal';
 import { Loader, Plus } from 'lucide-react';
-import axios, { AxiosError } from 'axios';
+import { updateAmenity } from "@/api/amenities";
 import toast from 'react-hot-toast';
 
 interface Amenity {
@@ -25,21 +25,18 @@ const EditAmenitiesModal: React.FC<EditAmenitiesModalProps> = ({ onClose, formda
 
     const AddAmenitiesMutation = useMutation({
         mutationFn: async (data: AmenityFormData) => {
-         const formData = new FormData();
-            formData.append('name', data.name);
-            formData.append('price', data.price.toString());
-            const response = await axios.put(`/api/amenities/update/${formdata.id}`);
-            return response?.data;
+            return await updateAmenity(formdata.id, data);
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['amenities'] });
+            toast.success("Amenity Updated Successfully");
             onClose();
         },
-        onError: (error: AxiosError<{ message?: string }>) => {
-              const errorMessage =
-                error.response?.data?.message || "Failed to Update User Details";
-              toast.error(errorMessage);
-            },
+        onError: (error: any) => {
+            const errorMessage =
+                error.response?.data?.message || "Failed to Update Amenity";
+            toast.error(errorMessage);
+        },
     });
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm<AmenityFormData>({

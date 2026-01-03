@@ -3,7 +3,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { signupUser } from "@/api/auth";
 import { toast } from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -38,7 +38,7 @@ const signupSchema = z
   });
 
 interface SignupFormData {
-  name:string;
+  name: string;
   email: string;
   phoneNumber: string;
   password: string;
@@ -62,15 +62,13 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   const registerResidentMutation = useMutation({
     mutationFn: async (formValues: SignupFormData) => {
       const payload = {
-       name:formValues.name,
+        name: formValues.name,
         email: formValues.email,
         password: formValues.password,
         phoneNumber: formValues.phoneNumber,
         role: "resident",
       };
-
-      const response = await axios.post("/api/users/signup", payload);
-      return response.data;
+      return await signupUser(payload);
     },
   });
 
@@ -80,13 +78,9 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
       toast.success("Account created successfully. Please log in.");
       reset();
       navigate("/login");
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const errorMessage = error.response?.data?.message || "Failed to create account.";
-        toast.error(errorMessage);
-        return;
-      }
-      toast.error("Something went wrong. Please try again.");
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || "Failed to create account.";
+      toast.error(errorMessage);
     }
   };
 

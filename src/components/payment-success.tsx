@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
-import axios from "axios"
+import { confirmPayment } from "@/api/payments"
 import toast from "react-hot-toast"
 import { CheckCircle, Download, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -36,17 +36,11 @@ const PaymentSuccess = () => {
     console.log("Payment reference:", reference)
 
     if (reference) {
-      axios
-        .get(`/api/payments/confirm?reference=${reference}`)
-        .then((res) => {
-          if (res.status === 200 || res.status === 201) {
-            // The API might return different structures, but success usually means 2xx
-            // If data is returned we can use it, otherwise we infer success
-            setPayment(res.data?.data || { reference, status: 'success', amount: 0, date: new Date().toISOString() } as PaymentData)
-            toast.success("Payment verified successfully!")
-          } else {
-            toast.error("Payment verification failed.")
-          }
+      confirmPayment(reference)
+        .then((responseData) => {
+          // Success usually means 2xx
+          setPayment(responseData?.data || { reference, status: 'success', amount: 0, date: new Date().toISOString() } as PaymentData)
+          toast.success("Payment verified successfully!")
         })
         .catch((err) => {
           console.error("Verification error:", err)

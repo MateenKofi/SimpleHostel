@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import {  Loader2, LucideCircleArrowOutUpRight } from "lucide-react";
+import { Loader2, LucideCircleArrowOutUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { addHostel } from "@/api/hostels";
 import { RegionDropdown } from "react-country-region-selector";
 import SuccessfulListing from "@/components/SuccessfulListing";
 import UploadMultipleImages from "@/components/UploadMultipleImages";
@@ -93,25 +93,15 @@ const HostelListingForm = () => {
       }
 
       try {
-        const res = await axios.post("/api/hostels/add", formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+        const responseData = await addHostel(formData);
         toast.success("Hostel Listed successfully");
         setSubmitted(true);
-        return res.data;
-      } catch (error) {
+        return responseData;
+      } catch (error: any) {
         setSubmitted(false);
-        if (axios.isAxiosError(error) && error.response) {
-          const errorMessage =
-            error.response.data.error || "Failed to List Hostel";
-          toast.error(errorMessage);
-        } else {
-          toast.error("Failed to List Hostel");
-        }
+        const errorMessage = error.response?.data?.error || error.response?.data?.message || "Failed to List Hostel";
+        toast.error(errorMessage);
+        throw error;
       }
     },
   });
@@ -245,8 +235,8 @@ const HostelListingForm = () => {
                     )}
                   />
                   <a href="https://www.google.com/maps" target="_blank" className="mt-4 italic tracking-tighter text-blue-400 underline">
-                   <p className="flex items-center gap-1"> Get Google Map Location Here <LucideCircleArrowOutUpRight size={12}/></p>
-                    </a>
+                    <p className="flex items-center gap-1"> Get Google Map Location Here <LucideCircleArrowOutUpRight size={12} /></p>
+                  </a>
                 </div>
                 <div className="flex flex-col w-full gap-2">
                   <div>

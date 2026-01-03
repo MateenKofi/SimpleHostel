@@ -165,6 +165,7 @@ export type Hostel = {
   rulesKey: string | null;
   deletedAt: string | null;
   allowPartialPayment: boolean;
+  partialPaymentPercentage: number;
   rooms: Room[];
   staffProfiles: Staff[];
   adminProfiles: Users[]; // Using Users type for admins based on response

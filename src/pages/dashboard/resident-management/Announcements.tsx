@@ -1,7 +1,7 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
-import axios from "axios"
+import { getAnnouncements } from "@/api/announcements"
 import { Loader, Bell, Calendar, Info, AlertTriangle } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -27,8 +27,8 @@ const Announcements = () => {
     const { data: announcements, isLoading } = useQuery<Announcement[]>({
         queryKey: ['announcements'],
         queryFn: async () => {
-            const response = await axios.get('/api/v1/resident/announcements')
-            return response.data?.data || []
+            const responseData = await getAnnouncements()
+            return responseData?.data || []
         },
         enabled: !isInvalidHostelId
     })

@@ -1,6 +1,6 @@
 import { Room } from "@/helper/types/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { getHostelRooms, deleteRoom } from "@/api/rooms";
 import { Eye, Edit, Trash2, Ellipsis } from "lucide-react";
 import React, { useState } from "react";
 import CustomDataTable from "../CustomDataTable";
@@ -35,26 +35,23 @@ const RoomTable = () => {
   } = useQuery({
     queryKey: ["rooms"],
     queryFn: async () => {
-      const response = await axios.get(`/api/rooms/get/hostel/${hostelId}`);
-      return response?.data?.data;
+      if (!hostelId) return [];
+      return await getHostelRooms(hostelId);
     },
     enabled: !!hostelId,
   });
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      await axios
-        .delete(`/api/rooms/delete/${id}`)
-        .then((res) => {
-          refetchRooms();
-          toast.success("Room deleted successfully");
-          return res.data;
-        })
-        .catch((error) => {
-          const errorMessage =
-            error.response?.data?.message || "Failed to delete room";
-          toast.error(errorMessage);
-        });
+      try {
+        await deleteRoom(id);
+        refetchRooms();
+        toast.success("Room deleted successfully");
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || "Failed to delete room";
+        toast.error(errorMessage);
+        throw error;
+      }
     },
   });
 

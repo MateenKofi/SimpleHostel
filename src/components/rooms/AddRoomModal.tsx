@@ -3,7 +3,8 @@ import Modal from "@/components/Modal";
 import { useForm } from "react-hook-form";
 import type { Room } from "../../helper/types/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import { addRoom } from "@/api/rooms";
+import { getHostelAmenities } from "@/api/amenities";
 import ImageUpload from "@/components/ImageUpload";
 import { Loader } from "lucide-react";
 import { toast } from "react-hot-toast";
@@ -64,8 +65,8 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
   }>({
     queryKey: ["amenities"],
     queryFn: async () => {
-      const response = await axios.get(`/api/amenities/hostel/${hostelId}`);
-      return response?.data;
+      if (!hostelId) return { data: [] };
+      return await getHostelAmenities(hostelId);
     },
   });
 
@@ -96,17 +97,16 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
       });
 
       try {
-        const response = await axios.post(`/api/rooms/add`, formData);
+        const responseData = await addRoom(formData);
         toast.success("Room added successfully");
         queryClient.invalidateQueries({ queryKey: ["rooms"] });
         reset();
         setImages([]);
         onClose();
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          toast.error(error.response?.data?.message || "An error occurred");
-        }
+        return responseData;
+      } catch (error: any) {
+        toast.error(error.response?.data?.message || "An error occurred");
+        throw error;
       }
     },
   });

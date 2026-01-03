@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { topupPayment } from "@/api/payments";
 import { toast } from "react-hot-toast";
 
 import {
@@ -21,7 +21,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 
-import { useAddedResidentStore } from "@/controllers/AddedResident";
+import { useAddedResidentStore } from "@/stores/useAddedResidentStore";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import {
@@ -41,33 +41,28 @@ const TopUpPaymentForm = () => {
   const mutation = useMutation({
     mutationFn: async () => {
       try {
-        // Payload following v1 patterns
-        // Endpoint: /api/v1/payment/topup
         const payload = {
           residentId: resident.id,
           roomId: resident.roomId,
           initialPayment: resident.balanceOwed,
         };
-        const res = await axios.post("/api/payments/topup", payload);
+        const resData = await topupPayment(payload);
 
-        if (res.data?.authorizationUrl) {
-          toast(res.data.message || "Redirecting to payment...");
-          window.location.href = res.data.authorizationUrl;
-        } else if (res.data?.paymentUrl) {
-          // Original had res.data.paymentUrl directly
-          toast(res.data.message || "Redirecting to payment...");
-          window.location.href = typeof res.data.paymentUrl === 'string'
-            ? res.data.paymentUrl
-            : res.data.paymentUrl?.authorizationUrl;
+        if (resData?.authorizationUrl) {
+          toast(resData.message || "Redirecting to payment...");
+          window.location.href = resData.authorizationUrl;
+        } else if (resData?.paymentUrl) {
+          toast(resData.message || "Redirecting to payment...");
+          window.location.href = typeof resData.paymentUrl === 'string'
+            ? resData.paymentUrl
+            : resData.paymentUrl?.authorizationUrl;
         }
 
-        return res.data;
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          toast.error(
-            error.response?.data?.message || error.response?.data?.error || "An unexpected error occurred"
-          );
-        }
+        return resData;
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || error.response?.data?.error || "An unexpected error occurred";
+        toast.error(errorMessage);
+        throw error;
       }
     },
   });

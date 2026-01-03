@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Globe, EyeOff, Eye, ShieldOff } from 'lucide-react';
-import axios, { AxiosError } from 'axios';
+import { publishHostel, unpublishHostel } from '@/api/hostels';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
@@ -24,12 +24,12 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
     mutationFn: async () => {
       const hostelId = localStorage.getItem('hostelId');
       try {
-        const response = await axios.put(`/api/hostels/publish/${hostelId}`,{}); 
-          toast.success('Hostel published successfully');
-          queryClient.invalidateQueries({ queryKey: ['hostel'] });
-        return response?.data;
-      } catch (error) {
-        const errorMessage = (error as AxiosError<{message:string}>).response?.data?.message || 'Failed to publish hostel';
+        const responseData = await publishHostel(hostelId!);
+        toast.success('Hostel published successfully');
+        queryClient.invalidateQueries({ queryKey: ['hostel'] });
+        return responseData;
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || 'Failed to publish hostel';
         toast.error(errorMessage);
         throw error;
       }
@@ -40,12 +40,12 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
     mutationFn: async () => {
       const hostelId = localStorage.getItem('hostelId');
       try {
-        const response = await axios.put(`/api/hostels/unpublish/${hostelId}`, {});
+        const responseData = await unpublishHostel(hostelId!);
         toast.success('Hostel unpublished successfully');
-      queryClient.invalidateQueries({ queryKey: ['hostel'] });
-        return response?.data;
-      } catch (error) {
-        const errorMessage = (error as AxiosError<{message:string}>).response?.data?.message || 'Failed to unpublish hostel';
+        queryClient.invalidateQueries({ queryKey: ['hostel'] });
+        return responseData;
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || 'Failed to unpublish hostel';
         toast.error(errorMessage);
         throw error;
       }
@@ -90,7 +90,7 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
     } else {
       await handlePublish();
     }
-    
+
   };
 
   const getAlertConfig = (): { type: AlertType; title: string; description: string; icon: JSX.Element; action: JSX.Element } | null => {

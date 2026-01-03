@@ -2,7 +2,9 @@ import Modal from '@/components/Modal'
 import { useForm, Controller } from 'react-hook-form'
 import Select from 'react-select'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import axios, { AxiosError } from 'axios'
+import { getHostelResidents } from '@/api/residents'
+import { addVisitor } from '@/api/visitors'
+import { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 import { Resident } from '@/helper/types/types'
 import { TextField } from '../TextField'
@@ -26,8 +28,9 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
     queryKey: ['residents'],
     queryFn: async () => {
       const hostelId = localStorage.getItem('hostelId')
-      const response = await axios.get(`/api/residents/hostel/${hostelId}`)
-      return response?.data?.data
+      if (!hostelId) return []
+      const responseData = await getHostelResidents(hostelId)
+      return responseData?.data
     },
   })
 
@@ -45,21 +48,16 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
       // formData.append('purpose', data.purpose)
 
       try {
-        const response = await axios.post(`/api/visitors/add`, formData, {
-          params:{
-            hostelId: hostelId,
-          },
-        })
+        const responseData = await addVisitor(formData)
         toast.success('Visitor added successfully!')
-      reset()
-      onClose()
-      queryClient.invalidateQueries({ queryKey: ['visitors'] })
-        return response.data
-      } catch (error) {
-       if(error instanceof AxiosError && error.response) {
-          const errorMessage = error.response.data?.message || 'Failed to add visitor'
-          toast.error(errorMessage)
-        }
+        reset()
+        onClose()
+        queryClient.invalidateQueries({ queryKey: ['visitors'] })
+        return responseData
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || 'Failed to add visitor'
+        toast.error(errorMessage)
+        throw error
       }
     },
   })
@@ -81,7 +79,7 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
               <TextField id='name' label='Visitor Name' error={errors.name} register={register('name')} />
             </div>
             <div>
-             <TextField id='phone' label='Phone Number' error={errors.phone} register={register('phone', { required: 'Phone number is required' })} />
+              <TextField id='phone' label='Phone Number' error={errors.phone} register={register('phone', { required: 'Phone number is required' })} />
             </div>
             <div>
               <TextField id='email' label='Email Address' error={errors.email} register={register('email', { required: 'Email is required' })} />

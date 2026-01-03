@@ -1,20 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { getHostels } from '@/api/hostels';
 import React from 'react';
 import { DestinationCard } from './destination-card';
 import { Hostel } from '@/helper/types/types';
 
 const PopularDestinations = () => {
   const {
-    data: hostels,
+    data: response,
     isLoading,
   } = useQuery({
     queryKey: ["find_hostel"],
     queryFn: async () => {
-      const response = await axios.get(`/api/hostels/get`);
-      return response.data?.data;
+      return await getHostels();
     },
   });
+
+  const hostels = response?.data;
 
   // Get 4 random hostels
   const randomHostels = React.useMemo(() => {

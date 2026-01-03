@@ -3,11 +3,11 @@ import Modal from "./Modal";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
-import { useMutation,useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { signupUser } from "@/api/auth";
 import toast from "react-hot-toast";
 import UploadSingleImage from "./UploadSingleImage";
-import {TextField} from "./TextField";
+import { TextField } from "./TextField";
 
 type AddUserProps = {
   onClose: () => void;
@@ -23,10 +23,10 @@ type AddUserFormData = {
 };
 
 const AddUser = ({ onClose }: AddUserProps) => {
-    const querclient = useQueryClient()
+  const querclient = useQueryClient()
   const [image, setImage] = useState<File | string | null>(null);
-  const { register, handleSubmit,reset,formState: {errors} } = useForm<AddUserFormData>();
-  
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<AddUserFormData>();
+
   const AddUserMutation = useMutation({
     mutationFn: async (data: AddUserFormData) => {
       const formData = new FormData();
@@ -38,19 +38,16 @@ const AddUser = ({ onClose }: AddUserProps) => {
       if (image) {
         formData.append("photo", image);
       }
-      await axios
-        .post("/api/users/signup", formData)
-        .then((res) => {
-          toast.success("User Added successfully");
-         handleClose()
-            querclient.invalidateQueries({queryKey:['AllUsers']})
-          return res.data;
-        })
-        .catch((error) => {
-          const errorMessage =
-            error.response?.data?.message || "Failed to add user";
-          toast.error(errorMessage);
-        });
+      try {
+        await signupUser(formData);
+        toast.success("User Added successfully");
+        handleClose();
+        querclient.invalidateQueries({ queryKey: ['AllUsers'] });
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || "Failed to add user";
+        toast.error(errorMessage);
+        throw error;
+      }
     },
   });
 
@@ -58,30 +55,30 @@ const AddUser = ({ onClose }: AddUserProps) => {
     setImage(null);
     onClose();
     reset();
-    }
+  }
   const onSubmit: SubmitHandler<AddUserFormData> = (data) => {
     AddUserMutation.mutate(data);
   };
   return (
-    <Modal modalId="add_user" onClose={()=> handleClose()}>
+    <Modal modalId="add_user" onClose={() => handleClose()}>
       <h2 className="mb-3 font-sans text-2xl font-bold text-gray-400">
         Add User
       </h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="w-fit">
-            <UploadSingleImage image={image} setImage={setImage}/>
+          <UploadSingleImage image={image} setImage={setImage} />
         </div>
         <div className="flex flex-col gap-2">
-         <TextField id="name" label="Name" register={register('name')} error={errors.name}/>
+          <TextField id="name" label="Name" register={register('name')} error={errors.name} />
         </div>
         <div className="flex flex-col gap-2">
-         <TextField id="email" label="Email" register={register('email')} error={errors.email}/>
+          <TextField id="email" label="Email" register={register('email')} error={errors.email} />
         </div>
         <div className="flex flex-col gap-2">
-          <TextField id="phoneNumber" label="Phone Number" register={register('phoneNumber')} error={errors.phoneNumber}/>  
+          <TextField id="phoneNumber" label="Phone Number" register={register('phoneNumber')} error={errors.phoneNumber} />
         </div>
         <div className="flex flex-col gap-2">
-         <TextField id="password" label="Password" type="password" register={register('password', { required: "Password is required" })} error={errors.password}/>
+          <TextField id="password" label="Password" type="password" register={register('password', { required: "Password is required" })} error={errors.password} />
         </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="role" className="text-gray-500">
@@ -99,7 +96,7 @@ const AddUser = ({ onClose }: AddUserProps) => {
         </div>
         <div className="flex items-center justify-end gap-2">
           <Button
-            onClick={()=> handleClose()}
+            onClick={() => handleClose()}
             type="button"
             className="text-white bg-red-500 rounded-md"
           >

@@ -9,7 +9,7 @@ import { Home, Info, MapPin, Users, Loader } from "lucide-react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
-import axios from "axios"
+import { getResidentRoomDetails } from "@/api/residents"
 import ViewRoomSkeleton from "@components/loaders/ViewRoomSkeleton"
 import { Room } from "@/helper/types/types"
 
@@ -20,8 +20,8 @@ const ResidentRoomDetails = () => {
     const { data: roomData, isLoading: isRoomLoading } = useQuery({
         queryKey: ['resident-room'],
         queryFn: async () => {
-            const response = await axios.get(`/api/residents/room`)
-            return response.data?.data || null
+            const responseData = await getResidentRoomDetails();
+            return responseData?.data || null
         }
     })
 

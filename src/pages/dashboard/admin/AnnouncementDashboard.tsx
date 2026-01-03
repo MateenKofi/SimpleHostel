@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import axios from "axios"
+import { getAnnouncementHistory, createAnnouncement } from "@/api/announcements"
 import { Loader, Plus, Megaphone, AlertTriangle, Calendar, Info, Send } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -38,17 +38,14 @@ const AnnouncementDashboard = () => {
     const { data: announcements, isLoading } = useQuery<Announcement[]>({
         queryKey: ['admin-announcements'],
         queryFn: async () => {
-            // Using the same endpoint as residents or an admin specific one if exists.
-            // Assuming residents endpoint returns all for now, or admin one is consistent
-            const response = await axios.get('/api/residents/announcements')
-            return response.data?.data || []
+            const responseData = await getAnnouncementHistory()
+            return responseData?.data || []
         }
     })
 
     const createMutation = useMutation({
         mutationFn: async (data: any) => {
-            const response = await axios.post('/api/admin/announcement/add', data)
-            return response.data
+            return await createAnnouncement(data)
         },
         onSuccess: () => {
             toast.success("Announcement posted successfully")

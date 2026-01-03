@@ -17,10 +17,10 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { updateResident } from "@/api/residents";
 import { ResidentFormSchema } from "@/schemas/ResidentForm.schema";
 import { z } from "zod";
-import { useAddedResidentStore } from "@/controllers/AddedResident";
+import { useAddedResidentStore } from "@/stores/useAddedResidentStore";
 import { useS } from "use-s-react";
 import { Resident } from "@/helper/types/types";
 import { useEffect } from "react";
@@ -88,27 +88,18 @@ const EditResident = () => {
       formData.append("hostelId", hostelId);
 
       try {
-        const response = await axios.put(
-          `/api/residents/update/${selectedResident.id}`,
-          formData
-        );
+        const responseData = await updateResident(selectedResident.id!, formData);
         toast.success("Resident updated successfully");
         reset();
-        setResident(response.data?.data);
+        setResident(responseData?.data);
         setTimeout(() => {
           navigate("/dashboard/resident-management");
         }, 50);
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.log(error.response);
-          console.log("error message", error?.response?.data);
-          const errorMessage =
-            error.response?.data?.message || "Failed to update Resident";
-          toast.error(errorMessage);
-        } else {
-          toast.error("An unexpected error occurred");
-        }
+        return responseData;
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || "Failed to update Resident";
+        toast.error(errorMessage);
+        throw error;
       }
     },
   });

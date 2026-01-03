@@ -5,7 +5,10 @@ import { z } from "zod";
 import {
   Loader,
   LucideCircleArrowOutUpRight,
+  Settings2,
 } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Input } from "@/components/ui/input";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -27,7 +30,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "react-hot-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { getHostelById, updateHostel, updatePaymentSettings } from "@/api/hostels";
 import CustomeRefetch from "@/components/CustomeRefetch";
 import ImageUpload from "@/components/ImageUpload";
 import UploadSingleImage from "@/components/UploadSingleImage";
@@ -45,6 +48,8 @@ const formSchema = z.object({
   email: z.string().email(),
   phone: z.string().min(10),
   ghCard: z.string().min(5),
+  allowPartialPayment: z.boolean().default(false),
+  partialPaymentPercentage: z.coerce.number().min(0).max(100).default(50),
 });
 
 const Settings = () => {
@@ -62,8 +67,9 @@ const Settings = () => {
   } = useQuery({
     queryKey: ["hostel"],
     queryFn: async () => {
-      const resp = await axios.get(`/api/hostels/get/${hostelId}`);
-      return resp.data.data;
+      if (!hostelId) return null;
+      const response = await getHostelById(hostelId);
+      return response.data;
     },
   });
 
@@ -78,6 +84,8 @@ const Settings = () => {
       email: "",
       phone: "",
       ghCard: "",
+      allowPartialPayment: false,
+      partialPaymentPercentage: 50,
     },
   });
 
@@ -94,7 +102,7 @@ const Settings = () => {
     }
   }, [hostelData, form]);
 
- 
+
   const handleRemoveDefaultImage = (index: number) => {
     setDefaultImages((prev) => prev.filter((_, i) => i !== index));
   };
@@ -115,7 +123,7 @@ const Settings = () => {
       formData.append("address", data.address.toUpperCase());
       formData.append("email", data.email);
       formData.append("phone", data.phone);
-      // formData.append("hostelId", hostelId || "");
+
       images.forEach((image) => {
         if (image instanceof File) {
           formData.append("photos", image);
@@ -124,26 +132,16 @@ const Settings = () => {
       if (logo) {
         formData.append("logo", logo);
       }
+
       try {
-        const res = await axios.put(
-          `/api/hostels/update/${hostelId}`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-        toast.success("Hostel Listed successfully");
-        return res.data;
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response) {
-          const errorMessage =
-            error.response.data.error || "Failed to Update Hostel";
-          toast.error(errorMessage);
-        } else {
-          toast.error("Failed to Update Hostel");
-        }
+        if (!hostelId) throw new Error("Hostel ID not found");
+        const responseData = await updateHostel(hostelId, formData);
+        toast.success("Hostel updated successfully");
+        return responseData;
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.error || error.response?.data?.message || "Failed to Update Hostel";
+        toast.error(errorMessage);
+        throw error;
       }
     },
   });
@@ -152,7 +150,27 @@ const Settings = () => {
     updateMutation.mutate(values);
   };
 
-  if (isLoading) return <SettingsSkeleton/>;
+  const paymentSettingsMutation = useMutation({
+    mutationFn: async (data: { allowPartialPayment: boolean; partialPaymentPercentage: number }) => {
+      try {
+        if (!hostelId) throw new Error("Hostel ID not found");
+        await updatePaymentSettings(hostelId, data);
+        toast.success("Payment settings updated successfully");
+        refetchHostel();
+      } catch (error: any) {
+        toast.error(error.response?.data?.message || "Failed to update payment settings");
+      }
+    }
+  });
+
+  const onPaymentSettingsSubmit = (values: z.infer<typeof formSchema>) => {
+    paymentSettingsMutation.mutate({
+      allowPartialPayment: values.allowPartialPayment,
+      partialPaymentPercentage: values.partialPaymentPercentage,
+    });
+  };
+
+  if (isLoading) return <SettingsSkeleton />;
   if (isError) return <CustomeRefetch refetch={refetchHostel} />;
 
   return (
@@ -186,9 +204,9 @@ const Settings = () => {
                 />
               </div>
               <div className="grid w-full grid-cols-1 gap-6">
-                <TextField label="Hostel Name" id="name" register={form.register('name')} error={form.formState.errors.name}/>
+                <TextField label="Hostel Name" id="name" register={form.register('name')} error={form.formState.errors.name} />
               </div>
-              
+
               <FormField
                 control={form.control}
                 name="description"
@@ -206,7 +224,7 @@ const Settings = () => {
                 )}
               />
 
-             <TextField id="address" label="Address" register={form.register('address')} error={form.formState.errors.address} placeholder="Enter address"/>
+              <TextField id="address" label="Address" register={form.register('address')} error={form.formState.errors.address} placeholder="Enter address" />
               <a
                 href="https://www.google.com/maps"
                 target="_blank"
@@ -229,8 +247,8 @@ const Settings = () => {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-               <TextField id="email" label="Email" register={form.register('email')} error={form.formState.errors.email} />
-               <TextField id="phone" label="Phone" register={form.register('phone')} error={form.formState.errors.phone} />
+                <TextField id="email" label="Email" register={form.register('email')} error={form.formState.errors.email} />
+                <TextField id="phone" label="Phone" register={form.register('phone')} error={form.formState.errors.phone} />
               </div>
             </CardContent>
           </Card>
@@ -261,6 +279,86 @@ const Settings = () => {
                   />
                 </>
               )}
+            </CardContent>
+          </Card>
+
+          {/* Payment Settings */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Settings2 className="w-5 h-5 text-blue-600" />
+                <div>
+                  <CardTitle>Payment Settings</CardTitle>
+                  <CardDescription>Configure booking payment options</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <FormField
+                control={form.control}
+                name="allowPartialPayment"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between p-4 border rounded-lg">
+                    <div className="space-y-0.5">
+                      <FormLabel className="text-base">Allow Partial Payment</FormLabel>
+                      <FormDescription>
+                        Enable residents to pay a deposit instead of full amount during booking.
+                      </FormDescription>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              {form.watch("allowPartialPayment") && (
+                <div className="p-4 border border-blue-100 rounded-lg bg-blue-50/50">
+                  <FormField
+                    control={form.control}
+                    name="partialPaymentPercentage"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Partial Payment Percentage (%)</FormLabel>
+                        <FormControl>
+                          <div className="flex items-center gap-4">
+                            <Input
+                              type="number"
+                              className="w-32 bg-white"
+                              {...field}
+                              onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                              min={0}
+                              max={100}
+                            />
+                            <span className="text-sm text-muted-foreground">
+                              The resident will pay {field.value}% of the total price as deposit.
+                            </span>
+                          </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              )}
+
+              <div className="flex justify-end">
+                <Button
+                  type="button"
+                  onClick={() => onPaymentSettingsSubmit(form.getValues())}
+                  disabled={paymentSettingsMutation.isPending}
+                  variant="outline"
+                >
+                  {paymentSettingsMutation.isPending ? (
+                    <Loader className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    "Update Payment Settings"
+                  )}
+                </Button>
+              </div>
             </CardContent>
           </Card>
 

@@ -3,7 +3,9 @@ import {
   Loader2,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { getHostels } from "@/api/hostels";
+import { getCurrentCalendarYear, getHistoricalCalendarYears } from "@/api/calendar";
+import { getCalendarYearReport } from "@/api/analytics";
 import { Hostel } from "@/helper/types/types";
 import { DashboardLoading } from "../loaders/DashboardLoader";
 import CustomeRefetch from "../CustomeRefetch";
@@ -26,8 +28,8 @@ const SuperAdminReport = () => {
   } = useQuery({
     queryKey: ["hostels"],
     queryFn: async () => {
-      const response = await axios.get("/api/hostels/get");
-      return response.data.data;
+      const responseData = await getHostels();
+      return responseData.data;
     },
   });
 
@@ -40,10 +42,8 @@ const SuperAdminReport = () => {
     queryKey: ["currentYear", selectedHostel],
     queryFn: async () => {
       if (!selectedHostel) return null;
-      const response = await axios.get(
-        `/api/calendar/current/${selectedHostel}`
-      );
-      return response.data.data;
+      const responseData = await getCurrentCalendarYear(selectedHostel);
+      return responseData.data;
     },
     enabled: !!selectedHostel,
   });
@@ -57,10 +57,8 @@ const SuperAdminReport = () => {
     queryKey: ["historicalYears", selectedHostel],
     queryFn: async () => {
       if (!selectedHostel) return null;
-      const response = await axios.get(
-        `/api/calendar/historical/${selectedHostel}`
-      );
-      return response.data.data;
+      const responseData = await getHistoricalCalendarYears(selectedHostel);
+      return responseData.data;
     },
     enabled: !!selectedHostel,
   });
@@ -75,10 +73,8 @@ const SuperAdminReport = () => {
 
     queryFn: async () => {
       if (!selectedYear && !selectedHostel) return null;
-      const response = await axios.get(
-        `/api/analytics/calendar-year/${selectedHostel}/${selectedYear}`
-      );
-      return response.data.data;
+      const responseData = await getCalendarYearReport(selectedHostel!, selectedYear!);
+      return responseData.data;
     },
     enabled: !!selectedYear && !!selectedHostel,
   });
@@ -91,7 +87,7 @@ const SuperAdminReport = () => {
   );
 
   if (
-    isHostelsError || isCurrentYearError ||isHistoricalYearsError || isReportDataError
+    isHostelsError || isCurrentYearError || isHistoricalYearsError || isReportDataError
   ) {
     return (
       <CustomeRefetch
@@ -190,7 +186,7 @@ const SuperAdminReport = () => {
         ) : (
           <>
             {/* Status and Period Info */}
-           <StatusCards reportData={reportData} />
+            <StatusCards reportData={reportData} />
             {/* Key Metrics */}
             <KeyMetrics reportData={reportData} />
             {/* Charts Section */}
@@ -201,7 +197,7 @@ const SuperAdminReport = () => {
               <PaymentMethod reportData={reportData} />
             </div>
             {/* Payment Methods Details */}
-            <PaymentMethodBreakDown reportData={reportData}/>
+            <PaymentMethodBreakDown reportData={reportData} />
             {/* Historical Comparison */}
             <HistoricalComparison reportData={reportData} />
           </>

@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { getAllUsers, deleteUser } from "@/api/users";
 import { Users } from "@/helper/types/types";
 import { TableColumn } from "react-data-table-component";
 import CustomDataTable from "./CustomDataTable";
@@ -19,31 +19,20 @@ const UserTable = () => {
   } = useQuery({
     queryKey: ["AllUsers"],
     queryFn: async () => {
-      const response = await axios.get(`/api/users/get`);
-      return response.data;
+      return await getAllUsers();
     },
   });
 
   const DeleteUserMutation = useMutation({
     mutationFn: async (id: string) => {
       try {
-        const response = await axios.delete(`/api/users/delete/${id}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "multipart/form-data",
-          },
-        });
+        await deleteUser(id);
         toast.success("User deleted successfully");
         refetchAllUsers();
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const errorMessage =
-            error?.response?.data?.message || "Failed to delete user";
-          toast.error(errorMessage);
-        } else {
-          toast.error("An unexpected error occured");
-        }
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || "Failed to delete user";
+        toast.error(errorMessage);
+        throw error;
       }
     },
   });
@@ -94,13 +83,12 @@ const UserTable = () => {
       center: true,
       cell: (row) => (
         <span
-          className={` rounded-md text-center text-[10px] px-2 py-1 capitalize text-white ${
-            row.role === "super_admin"
+          className={` rounded-md text-center text-[10px] px-2 py-1 capitalize text-white ${row.role === "super_admin"
               ? "bg-green-400 "
               : row.role === "admin"
-              ? "bg-blue-400 "
-              : "bg-yellow-400"
-          }`}
+                ? "bg-blue-400 "
+                : "bg-yellow-400"
+            }`}
         >
           {row.role}
         </span>

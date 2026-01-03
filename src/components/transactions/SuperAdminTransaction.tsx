@@ -24,7 +24,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import TransactionsSkeleton from "../loaders/TransactionLoader";
-import axios from "axios";
+import { getDisbursementSummary } from "@/api/analytics";
 import { useQuery } from "@tanstack/react-query";
 import CustomeRefetch from "../CustomeRefetch";
 import { Avatar, AvatarFallback } from "../ui/avatar";
@@ -57,15 +57,8 @@ const SuperAdminTransaction = () => {
   } = useQuery<DisbursementData>({
     queryKey: ["disbursements"],
     queryFn: async () => {
-      const response = await axios.get(
-        "/api/analytics/get/disbursement-summary",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-          },
-        }
-      );
-      return response.data?.data;
+      const responseData = await getDisbursementSummary();
+      return responseData?.data;
     },
   });
 

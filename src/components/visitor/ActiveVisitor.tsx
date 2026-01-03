@@ -1,7 +1,7 @@
 import CustomDataTable from "../CustomDataTable";
 import { format } from "date-fns";
-import { useQuery,useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { getHostelVisitors, checkoutVisitor } from "@/api/visitors";
 import toast from "react-hot-toast";
 import Swal from "sweetalert2";
 import { Visitor } from "@/helper/types/types";
@@ -18,8 +18,8 @@ const ActiveVisitor = () => {
   } = useQuery({
     queryKey: ["visitors"],
     queryFn: async () => {
-      const response = await axios.get(`/api/visitors/hostel/${hostelId}`);
-      return response?.data?.data;
+      if (!hostelId) return [];
+      return await getHostelVisitors(hostelId);
     },
     enabled: !!hostelId,
   });
@@ -30,24 +30,15 @@ const ActiveVisitor = () => {
 
   const CheckOutVisitor = useMutation({
     mutationFn: async (id: string) => {
-      await axios.put(
-        `/api/visitors/checkout/${id}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      ).then((res) => {
-          refetchVisitors();
-          toast.success("Visitor checked out succesfully");
-          return res.data;
-        })
-        .catch((error) => {
-          const errorMessage =
-            error.response?.data?.message || "Failed to check out visitor";
-          toast.error(errorMessage);
-        });
+      try {
+        await checkoutVisitor(id);
+        refetchVisitors();
+        toast.success("Visitor checked out successfully");
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || "Failed to check out visitor";
+        toast.error(errorMessage);
+        throw error;
+      }
     },
   });
 
@@ -78,12 +69,12 @@ const ActiveVisitor = () => {
       selector: (row: Visitor) => row.phone,
     },
     {
-      name:'Resident',
-      selector: (row:Visitor) => row?.resident?.name ?? ""
+      name: 'Resident',
+      selector: (row: Visitor) => row?.resident?.name ?? ""
     },
     {
-      name:'R Phone',
-      selector: (row:Visitor) => row?.resident?.phone ?? ""
+      name: 'R Phone',
+      selector: (row: Visitor) => row?.resident?.phone ?? ""
     },
     {
       name: "Check-in Time",
@@ -97,11 +88,10 @@ const ActiveVisitor = () => {
       name: "Status",
       cell: (row: Visitor) => (
         <span
-          className={`px-2 py-1 rounded-full text-xs ${
-            row.status === "ACTIVE"
+          className={`px-2 py-1 rounded-full text-xs ${row.status === "ACTIVE"
               ? "bg-green-100 text-green-800"
               : "bg-gray-100 text-gray-800"
-          }`}
+            }`}
         >
           {row.status === "ACTIVE" ? "Checked In" : "Checked Out"}
         </span>

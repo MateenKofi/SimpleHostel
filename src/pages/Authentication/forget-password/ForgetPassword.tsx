@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { resetPassword } from "@/api/auth";
 import toast from "react-hot-toast";
 
 type ForgetpasswordformData = {
@@ -25,26 +25,15 @@ const ForgetPassword = () => {
 
   const ForgetPasswordMutation = useMutation({
     mutationFn: async (data: { email: string }) => {
-      await axios
-        .post(`/api/users/reset-password`, { email: data.email },{
-          headers:{
-             'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
-        })
-        .then((response) => {
-          setTimeout(() => {
-            toast.success("A default password will be sent to this email");
-          }, 100);
-          navigate("/login");
-          return response.data;
-        })
-        .catch((error) => {
-          if (axios.isAxiosError(error)) {
-            const errorMessage =
-              error.response?.data?.message || "Failed to Update Password";
-            toast.error(errorMessage);
-          }
-        });
+      try {
+        await resetPassword({ email: data.email });
+        toast.success("A default password will be sent to this email");
+        navigate("/login");
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || "Failed to reset password";
+        toast.error(errorMessage);
+        throw error;
+      }
     },
   });
   const onSubmit = async (data: ForgetpasswordformData) => {

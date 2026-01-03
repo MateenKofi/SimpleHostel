@@ -4,9 +4,9 @@ import { toast } from "react-hot-toast";
 import { Resident } from "../../helper/types/types";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios, { AxiosError } from "axios";
+import { addResident } from "@/api/residents";
 import { Loader } from "lucide-react";
-import { useAddedResidentStore } from "@/controllers/AddedResident";
+import { useAddedResidentStore } from "@/stores/useAddedResidentStore";
 
 type AddResidentModalProps = {
   onClose: () => void;
@@ -42,21 +42,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
         calendarYearId: calendarYearId,
       };
 
-      try {
-        const response = await axios.post(`/api/residents/add`, payload);
-
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const errorMessage =
-            error.response?.data?.message || "Failed to add resident";
-          console.error("Error adding resident:", errorMessage);
-          throw new Error(errorMessage); // Re-throw the error to be handled in `onError`
-        } else {
-          console.error("Unexpected error:", error);
-          throw new Error("An unexpected error occurred");
-        }
-      }
+      return await addResident(payload);
     },
     onSuccess: (response) => {
       const resident = response?.data?.data;
@@ -73,9 +59,9 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
         navigate("/dashboard/room-assignment");
       }, 50);
     },
-    onError: (error: AxiosError<{ message?: string }>) => {
+    onError: (error: any) => {
       const errorMessage =
-        error.response?.data?.message || "Failed to add resident";
+        error?.response?.data?.message || error?.message || "Failed to add resident";
       toast.error(errorMessage);
     },
   });

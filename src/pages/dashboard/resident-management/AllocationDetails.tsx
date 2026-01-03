@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import { getResidentRoomDetails } from "@/api/residents";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, FileText, Download, Users, User } from "lucide-react";
@@ -61,8 +61,8 @@ const AllocationDetailsPage = () => {
     const { data, isLoading, isError } = useQuery<RoomDetailsResponse>({
         queryKey: ["resident-room-details"],
         queryFn: async () => {
-            const response = await axios.get("/api/v1/resident/room");
-            return response.data.data;
+            const responseData = await getResidentRoomDetails();
+            return responseData?.data;
         },
     });
 

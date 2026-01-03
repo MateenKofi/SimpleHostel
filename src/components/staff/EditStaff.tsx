@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, Loader } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import axios from "axios";
+import { getStaffById, updateStaff } from "@/api/staff";
 import { toast } from "react-hot-toast";
 import dayjs from "dayjs";
 import CustomeRefetch from "../CustomeRefetch";
@@ -11,7 +11,7 @@ import UploadSingleImage from "../UploadSingleImage";
 import { Staff } from "@/helper/types/types";
 
 const EditStaff: React.FC = () => {
-  const { id:staffId } = useParams();
+  const { id: staffId } = useParams();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [image, setImage] = useState<string | File | null>(null);
@@ -33,8 +33,8 @@ const EditStaff: React.FC = () => {
   } = useQuery({
     queryKey: ["staff_details", staffId],
     queryFn: async () => {
-      const response = await axios.get(`/api/staffs/get/${staffId}`);
-      return response.data.data;
+      const responseData = await getStaffById(staffId!);
+      return responseData.data;
     },
   });
 
@@ -95,21 +95,15 @@ const EditStaff: React.FC = () => {
           formData.append("photo", image);
         }
 
-        const response = await axios.put(`/api/staffs/update/${staffId}`, formData);
+        await updateStaff(staffId!, formData);
         queryClient.invalidateQueries({ queryKey: ["staff_details"] });
         toast.success("Staff updated successfully");
         reset();
         navigate(-1);
-        return response.data;
-      } catch (error) {
-        let errorMessage = "Failed to update staff";
-        if (axios.isAxiosError(error)) {
-          errorMessage =
-            error.response?.data?.message || "Failed to update staff";
-        } else {
-          errorMessage = (error as Error).message || "Failed to update staff";
-        }
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || error.message || "Failed to update staff";
         toast.error(errorMessage);
+        throw error;
       }
     },
   });

@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { getHostelRooms } from '@/api/rooms';
 import { BedDouble, Hammer, Home, Plus, Users } from 'lucide-react';
 import { StatCard } from '../stat-card';
 import AmenitiesModal from '@/pages/dashboard/room-management/amenities/AmenitiesModal';
@@ -19,8 +19,7 @@ const Rooms = () => {
   const { data: rooms, } = useQuery({
     queryKey: ["rooms"],
     queryFn: async () => {
-      const response = await axios.get(`/api/rooms/get/hostel/${hostelId}`);
-      return response?.data.data;
+      return await getHostelRooms(hostelId);
     },
     enabled: !!hostelId
   });

@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import axios from "axios"
+import { getUserById } from "@/api/users"
+import { getHostelServices, getServiceBookings, bookService } from "@/api/services"
 import { Loader, Calendar, Clock, DollarSign, Dumbbell, WashingMachine, BookOpen, Bed, Car, Check } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -60,8 +61,7 @@ const BookService = () => {
     const { data: userProfile } = useQuery({
         queryKey: ['userProfile', userId],
         queryFn: async () => {
-            const response = await axios.get(`/api/users/get/${userId}`)
-            return response.data
+            return await getUserById(userId!)
         },
         enabled: !!userId
     })
@@ -74,8 +74,8 @@ const BookService = () => {
         queryKey: ['hostel-services', hostelId],
         queryFn: async () => {
             if (isInvalidHostelId) return []
-            const response = await axios.get(`/api/services/list/${hostelId}`)
-            return response.data?.data || []
+            const responseData = await getHostelServices(hostelId)
+            return responseData?.data || []
         },
         enabled: !isInvalidHostelId
     })
@@ -101,16 +101,15 @@ const BookService = () => {
     const { data: myBookings, isLoading: isLoadingBookings } = useQuery<Booking[]>({
         queryKey: ['my-bookings'],
         queryFn: async () => {
-            const response = await axios.get(`/api/services/bookings`)
-            return response.data?.data || []
+            const responseData = await getServiceBookings()
+            return responseData?.data || []
         }
     })
 
     // 4. Booking Mutation
     const bookMutation = useMutation({
         mutationFn: async (data: { serviceId: string, bookingDate: string }) => {
-            const response = await axios.post('/api/services/book', data)
-            return response.data
+            return await bookService(data)
         },
         onSuccess: () => {
             toast.success("Service booked successfully!")

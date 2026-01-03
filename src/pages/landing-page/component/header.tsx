@@ -4,11 +4,11 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { useUserStore } from "@/controllers/UserStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 import UserSection from "./UserSection";
 
 export function Header() {
-  const user = useUserStore((state) => state.user);
+  const user = useAuthStore((state) => state.user);
 
   const [activeLink, setActiveLink] = useState("home");
 

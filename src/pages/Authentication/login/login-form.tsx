@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useUserStore } from "../../../controllers/UserStore";
+import { useAuthStore } from "@/stores/useAuthStore";
 import { Loader, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
 interface SignInFormData {
@@ -15,17 +15,17 @@ interface SignInFormData {
 
 const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   const { register, handleSubmit, formState: { errors } } = useForm<SignInFormData>();
-  const login = useUserStore((state) => state.login);
-  const data = useUserStore((state) => state);
+  const login = useAuthStore((state) => state.login);
+  const data = useAuthStore((state) => state);
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
   const onSubmit = async (data: SignInFormData) => {
-        const response = await login(data);
-        if (response) {
-            navigate('/dashboard');
-           
-        }
+    const response = await login(data);
+    if (response) {
+      navigate('/dashboard');
+
+    }
   };
 
   return (
@@ -91,11 +91,11 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                   </Button>
                 </div>
               </form>
-              
+
               <p className="text-center text-xs pb-6">
                 Don't have an account? <a href="/register" className="underline">Register as a resident</a>
               </p>
-              
+
             </CardContent>
           </Card>
           <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">

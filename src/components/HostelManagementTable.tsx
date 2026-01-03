@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { getHostels, deleteHostel, updateHostelRules } from "@/api/hostels";
 import { Hostel } from "@/helper/types/types";
 import { TableColumn } from "react-data-table-component";
 import CustomDataTable from "./CustomDataTable";
@@ -30,26 +30,21 @@ const HostelManagementTable = () => {
   } = useQuery({
     queryKey: ["AllHostels"],
     queryFn: async () => {
-      const response = await axios.get(`/api/hostels/get`);
-      return response.data?.data;
+      const responseData = await getHostels();
+      return responseData.data;
     },
   });
 
   const DeleteHostelMutation = useMutation({
     mutationFn: async (id: string) => {
       try {
-        const response = await axios.delete(`/api/hostels/delete/${id}`);
+        await deleteHostel(id);
         toast.success("Hostel deleted successfully");
         refetchAllHostels();
-        return response.data;
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const errorMessage =
-            error?.response?.data?.error || "Failed to delete hostel";
-          toast.error(errorMessage);
-        } else {
-          toast.error("An unexpected error occured");
-        }
+      } catch (error: any) {
+        const errorMessage = error?.response?.data?.error || "Failed to delete hostel";
+        toast.error(errorMessage);
+        throw error;
       }
     },
   });
@@ -69,12 +64,7 @@ const HostelManagementTable = () => {
     mutationFn: async ({ id, file }: { id: string; file: File }) => {
       const formData = new FormData();
       formData.append("rules", file);
-      const response = await axios.put(`/api/hostels/rules/${id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      return response.data;
+      return await updateHostelRules(id, formData);
     },
     onSuccess: () => {
       toast.success("Hostel rules updated successfully");
@@ -84,13 +74,8 @@ const HostelManagementTable = () => {
       refetchAllHostels();
     },
     onError: (error: any) => {
-      if (axios.isAxiosError(error)) {
-        const errorMessage =
-          error?.response?.data?.error || "Failed to upload rules";
-        toast.error(errorMessage);
-      } else {
-        toast.error("An unexpected error occured");
-      }
+      const errorMessage = error?.response?.data?.error || error.message || "Failed to upload rules";
+      toast.error(errorMessage);
     },
   });
 

@@ -1,6 +1,6 @@
 import { Staff } from "@/helper/types/types";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import axios from "axios";
+import { getHostelStaff, deleteStaff } from "@/api/staff";
 import { Edit, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import CustomDataTable from "../CustomDataTable";
@@ -19,24 +19,20 @@ const StaffTable = () => {
   } = useQuery({
     queryKey: ["staffs"],
     queryFn: async () => {
-      const response = await axios.get(`/api/Staffs/get/hostel/${hostelId}`);
-      return response?.data.data;
+      const responseData = await getHostelStaff(hostelId);
+      return responseData.data;
     },
   });
-  
+
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
       try {
-        await axios.delete(`/api/Staffs/delete/${id}`);
+        await deleteStaff(id);
         refetchStaff();
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          const errorMessage =
-            error.response?.data?.message || "Failed to delete user";
-          toast.error(errorMessage);
-        } else {
-          toast.error("An unexpected error occurred");
-        }
+      } catch (error: any) {
+        const errorMessage = error.response?.data?.message || "Failed to delete user";
+        toast.error(errorMessage);
+        throw error;
       }
     },
   });

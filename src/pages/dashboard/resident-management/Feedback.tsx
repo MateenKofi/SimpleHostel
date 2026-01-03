@@ -2,7 +2,7 @@
 
 import { useForm, SubmitHandler } from "react-hook-form"
 import { useMutation } from "@tanstack/react-query"
-import axios from "axios"
+import { submitFeedback } from "@/api/residents"
 import { Loader, Star, Send, MessageSquare } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -41,8 +41,7 @@ const Feedback = () => {
 
     const feedbackMutation = useMutation({
         mutationFn: async (data: CreateFeedbackDto) => {
-            const response = await axios.post('/api/residents/feedback', data)
-            return response.data
+            return await submitFeedback(data)
         },
         onSuccess: () => {
             toast.success("Thank you for your feedback!")

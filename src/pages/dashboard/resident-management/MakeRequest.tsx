@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useForm, SubmitHandler } from "react-hook-form"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import axios from "axios"
+import { getResidentRequests, createResidentRequest } from "@/api/residents"
 import { Loader, Plus, Wrench, AlertCircle, CheckCircle, Clock } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
@@ -68,12 +68,8 @@ const MakeRequest = () => {
     const { data: requestHistory, isLoading: isLoadingHistory } = useQuery<MaintenanceRequest[]>({
         queryKey: ['maintenance-requests'],
         queryFn: async () => {
-            // Placeholder: Assume GET /residents/requests returns an array of requests
-            // In a real scenario, this endpoint might need pagination or filter params
-            const response = await axios.get('/api/residents/requests')
-            // Using mock data for now if API might not return data structure exactly as expected immediately
-            // But aiming for the real endpoint
-            return response.data?.data || []
+            const responseData = await getResidentRequests()
+            return responseData?.data || []
         },
         // Fallback or error handling can be better, but for now standard query
     })
@@ -81,8 +77,7 @@ const MakeRequest = () => {
     // Mutation for creating request
     const createRequestMutation = useMutation({
         mutationFn: async (data: CreateMaintenanceRequestDto) => {
-            const response = await axios.post('/api/residents/requests', data)
-            return response.data
+            return await createResidentRequest(data)
         },
         onSuccess: () => {
             toast.success("Request submitted successfully!")

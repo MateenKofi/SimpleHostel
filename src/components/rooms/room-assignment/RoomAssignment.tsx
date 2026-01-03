@@ -6,12 +6,12 @@ import {
   User,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { getHostelRooms } from "@/api/rooms";
 import RoomAssignmentLoader from "../../loaders/RoomAssignmentLoader";
 import { Room } from "../../../helper/types/types";
 import CustomeRefetch from "@/components/CustomeRefetch";
 import { useQuery } from "@tanstack/react-query";
-import { useSelectedRoomStore } from "@/controllers/SelectedRoomStore";
+import { useSelectedRoomStore } from "@/stores/useSelectedRoomStore";
 import ImageSlider from "@/components/ImageSlider";
 
 const RoomAssignment = () => {
@@ -26,8 +26,7 @@ const RoomAssignment = () => {
   const { data: Rooms, isLoading, isError, refetch: refetchRooms } = useQuery({
     queryKey: ["rooms"],
     queryFn: async () => {
-      const response = await axios.get(`/api/rooms/get/hostel/${hostelId}`);
-      return response.data.data;
+      return await getHostelRooms(hostelId);
     },
     enabled: !!hostelId
   });

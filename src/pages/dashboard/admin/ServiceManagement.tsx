@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import axios from "axios"
+import { getUserById } from "@/api/users"
+import { getHostelServices, createService } from "@/api/services"
 import { Loader, Plus, Trash2, Edit, Dumbbell, WashingMachine, BookOpen, Bed, Car, Clock } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -56,8 +57,7 @@ const ServiceManagement = () => {
     const { data: userProfile } = useQuery({
         queryKey: ['adminProfile', userId],
         queryFn: async () => {
-            const response = await axios.get(`/api/users/get/${userId}`)
-            return response.data
+            return await getUserById(userId!)
         }
     })
     const hostelId = userProfile?.hostelId
@@ -65,11 +65,9 @@ const ServiceManagement = () => {
     const { data: services, isLoading } = useQuery<Service[]>({
         queryKey: ['admin-services', hostelId],
         queryFn: async () => {
-            // If hostelId is missing, might need a generic 'my hostel' services endpoint
-            // Fallback to empty if not ready
             if (!hostelId) return []
-            const response = await axios.get(`/api/services/list/${hostelId}`)
-            return response.data?.data || []
+            const responseData = await getHostelServices(hostelId)
+            return responseData?.data || []
         },
         enabled: !!hostelId
     })
@@ -77,8 +75,7 @@ const ServiceManagement = () => {
     const createMutation = useMutation({
         mutationFn: async (data: any) => {
             const payload = { ...data, hostelId }
-            const response = await axios.post('/api/services/create', payload)
-            return response.data
+            return await createService(payload)
         },
         onSuccess: () => {
             toast.success("Service created successfully")
