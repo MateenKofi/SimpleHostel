@@ -45,8 +45,8 @@ export function Header() {
         <nav className="hidden md:flex items-center space-x-6 ml-32">
           {[
             { name: "Home", path: "/", id: "home" },
-            { name: "About Us", path: "/about", id: "about" },
-            { name: "Contact", path: "/contact", id: "contact" },
+            { name: "About Us", path: "/#about", id: "about" },
+            { name: "Contact", path: "/#contact", id: "contact" },
             { name: "Find Hostels", path: "/find-hostel", id: "find-hostel" },
           ].map((item) => (
             <motion.div
@@ -117,8 +117,8 @@ export function Header() {
                 {[
                   { name: "Home", path: "/" },
                   { name: "Dashboard", path: "/dashboard" },
-                  { name: "About Us", path: "/about" },
-                  { name: "Contact", path: "/contact" },
+                  { name: "About Us", path: "/#about" },
+                  { name: "Contact", path: "/#contact" },
                   { name: "Find Hostel", path: "/find-hostel" },
                 ].map((item, index) => (
                   <motion.div

@@ -22,7 +22,7 @@ export default function LandingPage() {
       <main>
         <HeroCarousel />
         <div className="grid w-full place-items-center">
-          <section className="container py-16 md:py-24">
+          <section id="about" className="container py-16 md:py-24">
             <h2 className="mb-12 text-3xl font-bold text-center md:text-4xl">
               Why Choose <span className="text-red-500">Fuse</span>?
             </h2>
@@ -60,12 +60,12 @@ export default function LandingPage() {
           {/* Statistics Section */}
           <StatisticsSection />
 
-         <PopularDestinations/>
+          <PopularDestinations />
 
           {/* Testimonials Section */}
           <TestimonialsSection />
 
-        <FeaturedHostels/>
+          <FeaturedHostels />
 
           {/* Blog Section */}
           <BlogSection />
@@ -78,7 +78,7 @@ export default function LandingPage() {
           {/* Partners Section */}
           <PartnersSection />
 
-          <section className="container pt-16">
+          <section id="contact" className="container pt-16">
             <ContactSection />
           </section>
         </div>
