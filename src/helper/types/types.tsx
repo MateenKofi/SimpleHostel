@@ -300,13 +300,24 @@ export type ReportData = {
 export type AllocationDetails = {
   residentName: string;
   studentId: string;
+  course: string;
+  gender: string;
   hostelName: string;
   hostelAddress: string;
+  hostelEmail: string;
+  hostelPhone: string;
+  hostelLogo?: string;
   roomNumber: string;
   roomType: string;
+  roomFloor?: string;
+  roomBlock?: string;
+  roomPrice: number;
+  amountPaid: number;
+  balanceOwed: number;
   checkInDate: string;
   checkOutDate: string;
   rulesUrl: string;
+  issueDate: string;
 };
 
 export type PaymentReceipt = {
@@ -320,4 +331,5 @@ export type PaymentReceipt = {
   hostelName: string;
   roomNumber: string;
   status: string;
+  reference?: string;
 };

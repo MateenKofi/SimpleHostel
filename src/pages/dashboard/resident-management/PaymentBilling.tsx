@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query"
 import { getResidentBilling, getPaymentReceipt } from "@/api/residents"
-import { Loader, Download, CreditCard, History, Wallet, AlertCircle } from "lucide-react"
+import { Loader, Download, CreditCard, History, Wallet, AlertCircle, FileText, Printer } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import {
     Dialog,
@@ -197,8 +197,11 @@ const PaymentBilling = () => {
                                                 {tx.status}
                                             </Badge>
                                         </div>
-                                        <Button variant="ghost" size="icon" onClick={() => handleViewReceipt(tx.id)} title="View Receipt">
-                                            <Download className="w-4 h-4 text-muted-foreground" />
+                                        <Button variant="ghost" size="icon"
+                                            onClick={() => tx.reference ? navigate(`/dashboard/receipt/${tx.reference}`) : handleViewReceipt(tx.id)}
+                                            title="View Receipt"
+                                        >
+                                            <FileText className="w-4 h-4 text-muted-foreground" />
                                         </Button>
                                     </div>
                                 </div>
@@ -274,10 +277,15 @@ const PaymentBilling = () => {
                                 </div>
                             </div>
 
-                            <DialogFooter>
-                                <Button className="w-full" onClick={handlePrint}>
-                                    <Download className="w-4 h-4 mr-2" /> Print / Download PDF
+                            <DialogFooter className="flex-col gap-2 sm:flex-row">
+                                <Button variant="outline" className="w-full sm:flex-1" onClick={handlePrint}>
+                                    <Printer className="w-4 h-4 mr-2" /> Print PDF
                                 </Button>
+                                {receiptData.reference && (
+                                    <Button className="w-full sm:flex-1" onClick={() => navigate(`/dashboard/receipt/${receiptData.reference}`)}>
+                                        <FileText className="w-4 h-4 mr-2" /> Full Receipt
+                                    </Button>
+                                )}
                             </DialogFooter>
                         </div>
                     ) : (

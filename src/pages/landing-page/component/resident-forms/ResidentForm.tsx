@@ -2,7 +2,7 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { ArrowLeft, Loader2, UserPlus } from "lucide-react";
+import { ArrowLeft, Loader2, UserPlus, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "react-hot-toast";
@@ -239,6 +239,27 @@ const ResidentForm = () => {
                       {errors.relationship.message}
                     </p>
                   )}
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4 pt-4">
+              <div className="flex items-start space-x-3 p-4 border rounded-lg bg-slate-50 dark:bg-zinc-800">
+                <div className="flex items-center h-5">
+                  <input
+                    id="terms"
+                    type="checkbox"
+                    required
+                    className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                  />
+                </div>
+                <div className="text-sm">
+                  <label htmlFor="terms" className="font-medium text-gray-700 dark:text-gray-300">
+                    I agree to the Hostel's Rules & Regulations
+                  </label>
+                  <p className="text-gray-500 dark:text-gray-400">
+                    By checking this, you acknowledge that you have read and will abide by the code of conduct.
+                  </p>
                 </div>
               </div>
             </div>

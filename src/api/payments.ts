@@ -29,3 +29,8 @@ export const verifyPayment = async (reference: string) => {
     const response = await axiosInstance.get(`/payments/verify?reference=${reference}`);
     return response.data;
 };
+
+export const getPaymentByRef = async (reference: string) => {
+    const response = await axiosInstance.get(`/payments/get/ref/${reference}`);
+    return response.data;
+};

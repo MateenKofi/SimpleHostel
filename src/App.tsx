@@ -54,6 +54,7 @@ import Feedback from "./pages/dashboard/resident-management/Feedback";
 import ServiceManagement from "./pages/dashboard/admin/ServiceManagement";
 import AnnouncementDashboard from "./pages/dashboard/admin/AnnouncementDashboard";
 import AllocationDetails from "./pages/dashboard/resident-management/AllocationDetails";
+import ReceiptPage from "./pages/dashboard/resident-management/ReceiptPage";
 
 function App() {
   return (
@@ -114,6 +115,7 @@ function App() {
             <Route path="book-service-facility" element={<BookService />} />
             <Route path="view-announcements" element={<Announcements />} />
             <Route path="documents" element={<Documents />} />
+            <Route path="receipt/:reference" element={<ReceiptPage />} />
             <Route path="feedback" element={<Feedback />} />
             <Route path="hostel-management" element={<HostelManagement />} />
             <Route path="service-management" element={<ServiceManagement />} />

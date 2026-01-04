@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { getUserById } from "@/api/users"
 import { getHostelServices, createService } from "@/api/services"
 import { Loader, Plus, Trash2, Edit, Dumbbell, WashingMachine, BookOpen, Bed, Car, Clock } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
@@ -49,18 +48,7 @@ const ServiceManagement = () => {
         availability: true
     })
 
-    // Fetch Services - assuming generic list endpoint works for admin too or specific admin endpoint
-    // Using the one resident uses but unrestricted or verified by token role
-    // NOTE: The API guide mentions POST /api/services/create, assuming GET /api/services/list/:hostelId exists
-    // We need hostelId. Using generic generic or fetching from admin profile.
-    const userId = localStorage.getItem("userId")
-    const { data: userProfile } = useQuery({
-        queryKey: ['adminProfile', userId],
-        queryFn: async () => {
-            return await getUserById(userId!)
-        }
-    })
-    const hostelId = userProfile?.hostelId
+    const hostelId = localStorage.getItem("hostelId")
 
     const { data: services, isLoading } = useQuery<Service[]>({
         queryKey: ['admin-services', hostelId],
@@ -95,7 +83,14 @@ const ServiceManagement = () => {
     // DELETE /api/services/:id
 
     const handleCreate = () => {
-        if (!newService.name || !hostelId) return
+        if (!newService.name) {
+            toast.error("Service name is required")
+            return
+        }
+        if (!hostelId) {
+            toast.error("Hostel ID not found. Please log in again.")
+            return
+        }
         createMutation.mutate(newService)
     }
 
@@ -142,10 +137,10 @@ const ServiceManagement = () => {
                                 {services && services.length > 0 ? (
                                     services.map((service) => (
                                         <TableRow key={service.id}>
-                                            <TableCell>{getServiceIcon(service.type)}</TableCell>
+                                            <TableCell>{getServiceIcon(service.type || 'other')}</TableCell>
                                             <TableCell className="font-medium">{service.name}</TableCell>
-                                            <TableCell className="capitalize">{service.type.replace('_', ' ')}</TableCell>
-                                            <TableCell>GH₵ {service.price}</TableCell>
+                                            <TableCell className="capitalize">{(service.type || 'other').replace('_', ' ')}</TableCell>
+                                            <TableCell>GH₵ {service.price || 0}</TableCell>
                                             <TableCell>
                                                 <div className={`flex items-center gap-2 ${service.availability ? 'text-green-600' : 'text-gray-400'}`}>
                                                     <div className={`w-2 h-2 rounded-full ${service.availability ? 'bg-green-600' : 'bg-gray-400'}`} />
@@ -204,7 +199,12 @@ const ServiceManagement = () => {
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="price">Price (GH₵)</Label>
-                            <Input id="price" type="number" value={newService.price} onChange={(e) => setNewService({ ...newService, price: parseFloat(e.target.value) })} />
+                            <Input
+                                id="price"
+                                type="number"
+                                value={newService.price}
+                                onChange={(e) => setNewService({ ...newService, price: parseFloat(e.target.value) || 0 })}
+                            />
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="desc">Description</Label>

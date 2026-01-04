@@ -31,11 +31,12 @@ const Documents = () => {
 
     const documents = [
         {
-            id: 'allocation-details',
-            title: 'Allocation Details',
-            description: 'View your official room assignment details.',
-            icon: <FileCheck className="w-10 h-10 text-blue-500" />,
-            action: () => navigate('/dashboard/allocation-details')
+            id: 'allocation-letter',
+            title: 'Allocation Letter',
+            description: 'Official proof of residency and room assignment.',
+            icon: <FileText className="w-10 h-10 text-primary" />,
+            action: () => navigate('/dashboard/allocation-details'),
+            buttonText: 'View & Download'
         },
         {
             id: 'hostel-rules',
@@ -49,9 +50,9 @@ const Documents = () => {
                     alert("No rules document available yet.");
                 }
             },
-            disabled: !allocation?.rulesUrl
+            disabled: !allocation?.rulesUrl,
+            buttonText: 'Download PDF'
         },
-        // Receipts are handled in Payments page but can be linked here too if needed
     ]
 
     return (
@@ -90,7 +91,7 @@ const Documents = () => {
                                 disabled={doc.disabled || isAllocationLoading}
                             >
                                 <Download className="w-4 h-4 mr-2" />
-                                {doc.id === 'hostel-rules' ? 'Download PDF' : 'View Details'}
+                                {doc.buttonText}
                             </Button>
                         </CardFooter>
                     </Card>

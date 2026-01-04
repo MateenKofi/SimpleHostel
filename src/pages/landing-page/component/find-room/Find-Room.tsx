@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { Building, Users, ArrowLeft } from "lucide-react";
+import { Building, Users, ArrowLeft, FileText } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -345,8 +345,9 @@ const FindRoom = () => {
               <p><span className="font-semibold">Type:</span> {selectedBookingRoom?.type}</p>
             </div>
 
-            <p className="text-xs text-muted-foreground mt-4">
-              By confirming, you will be redirected to the payment page.
+            <p className="text-xs text-muted-foreground mt-4 flex items-center gap-2">
+              <FileText className="w-3 h-3" />
+              By confirming, you agree to the Hostel Rules & Regulations and will be redirected to the payment page.
             </p>
           </div>
           <DialogFooter>

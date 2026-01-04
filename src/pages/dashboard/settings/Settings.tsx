@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -6,8 +7,11 @@ import {
   Loader,
   LucideCircleArrowOutUpRight,
   Settings2,
+  FileText,
+  Upload,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
 import { Button } from "@/components/ui/button";
@@ -30,7 +34,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "react-hot-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { getHostelById, updateHostel, updatePaymentSettings } from "@/api/hostels";
+import { getHostelById, updateHostel, updatePaymentSettings, updateHostelRules } from "@/api/hostels";
 import CustomeRefetch from "@/components/CustomeRefetch";
 import ImageUpload from "@/components/ImageUpload";
 import UploadSingleImage from "@/components/UploadSingleImage";
@@ -57,6 +61,7 @@ const Settings = () => {
   const [defaultImages, setDefaultImages] = useState<string[]>([]);
   const [logo, setLogo] = useState<string | File | null>(null);
   const [previewLogo, setPreviewLogo] = useState<string>("");
+  const [rulesFile, setRulesFile] = useState<File | null>(null);
   const hostelId = localStorage.getItem("hostelId");
 
   const {
@@ -149,6 +154,23 @@ const Settings = () => {
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     updateMutation.mutate(values);
   };
+
+  const rulesMutation = useMutation({
+    mutationFn: async (file: File) => {
+      if (!hostelId) throw new Error("Hostel ID not found");
+      const formData = new FormData();
+      formData.append('rules', file);
+      return await updateHostelRules(hostelId, formData);
+    },
+    onSuccess: () => {
+      toast.success("Rules & Regulations updated successfully");
+      refetchHostel();
+      setRulesFile(null);
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Failed to update rules");
+    }
+  });
 
   const paymentSettingsMutation = useMutation({
     mutationFn: async (data: { allowPartialPayment: boolean; partialPaymentPercentage: number }) => {
@@ -358,6 +380,90 @@ const Settings = () => {
                     "Update Payment Settings"
                   )}
                 </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Rules & Regulations Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <FileText className="w-5 h-5 text-red-500" />
+                Rules & Regulations
+              </CardTitle>
+              <CardDescription>
+                Upload the hostel's rules and regulations for residents to view.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {hostelData?.rulesUrl && (
+                <div className="flex items-center justify-between p-3 border rounded-lg bg-red-50/50 dark:bg-red-900/10 border-red-100 dark:border-red-900/30">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-red-100 rounded-lg dark:bg-red-900/40">
+                      <FileText className="w-6 h-6 text-red-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold">Current Rules Document</p>
+                      <button
+                        type="button"
+                        onClick={() => window.open(hostelData.rulesUrl, '_blank')}
+                        className="text-xs text-red-600 font-medium hover:underline flex items-center gap-1"
+                      >
+                        View current version <LucideCircleArrowOutUpRight size={10} />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="grid gap-2">
+                <Label htmlFor="rules-upload" className="cursor-pointer">
+                  <div className="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl border-zinc-200 dark:border-zinc-800 hover:border-red-500/50 hover:bg-red-50/30 dark:hover:bg-red-900/5 transition-all">
+                    <div className="p-3 bg-zinc-100 dark:bg-zinc-800 rounded-full mb-3 group-hover:bg-red-100">
+                      <Upload className="w-6 h-6 text-zinc-500 group-hover:text-red-500" />
+                    </div>
+                    <p className="text-sm font-semibold">Click or drag to upload rules</p>
+                    <p className="text-xs text-zinc-500 mt-1">Accepts PDF files (max 5MB)</p>
+                    <input
+                      id="rules-upload"
+                      type="file"
+                      className="hidden"
+                      accept=".pdf"
+                      onChange={(e) => setRulesFile(e.target.files?.[0] || null)}
+                    />
+                  </div>
+                </Label>
+                {rulesFile && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex items-center justify-between p-3 mt-2 border border-red-100 bg-red-50/50 rounded-lg"
+                  >
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-red-500" />
+                      <span className="text-sm font-medium truncate max-w-[250px]">{rulesFile.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setRulesFile(null)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        className="bg-red-500 hover:bg-red-600 text-white"
+                        onClick={() => rulesMutation.mutate(rulesFile)}
+                        disabled={rulesMutation.isPending}
+                      >
+                        {rulesMutation.isPending ? <Loader className="w-4 h-4 animate-spin mr-2" /> : "Upload PDF"}
+                      </Button>
+                    </div>
+                  </motion.div>
+                )}
               </div>
             </CardContent>
           </Card>

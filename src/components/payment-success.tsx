@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { confirmPayment } from "@/api/payments"
 import toast from "react-hot-toast"
-import { CheckCircle, Download, ArrowRight } from "lucide-react"
+import { CheckCircle, FileText, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import jsPDF from "jspdf"
@@ -144,13 +144,17 @@ const PaymentSuccess = () => {
           </div>
 
           <div className="space-y-3">
-            <Button onClick={handleDownloadReceipt} variant="outline" className="w-full bg-transparent">
-              <Download className="h-4 w-4 mr-2" />
-              Download Receipt
+            <Button
+              onClick={() => navigate(`/dashboard/receipt/${payment.reference}`)}
+              variant="outline"
+              className="w-full bg-transparent border-primary text-primary hover:bg-primary/10"
+            >
+              <FileText className="h-4 w-4 mr-2" />
+              View Official Receipt
             </Button>
 
             <Button onClick={handleContinue} className="w-full">
-              Continue
+              Continue to Dashboard
               <ArrowRight className="h-4 w-4 ml-2" />
             </Button>
           </div>
