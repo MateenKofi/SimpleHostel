@@ -158,7 +158,7 @@ const AllocationDetailsPage = () => {
 
                     {/* B. Formal Header */}
                     <div className="text-center mb-10">
-                        <h3 className="text-2xl font-bold uppercase tracking-widest border-b-2 border-black inline-block pb-1 px-4">Official Room Allocation Letter</h3>
+                        <h3 className="text-2xl font-bold uppercase tracking-widest border-b-2 border-black inline-block pb-1 px-4">OFFICIAL ROOM ALLOCATION LETTER</h3>
                     </div>
 
                     <div className="flex justify-between items-end mb-10 text-sm">
@@ -168,7 +168,7 @@ const AllocationDetailsPage = () => {
                         </div>
                         <div className="text-right space-y-1">
                             <p className="font-bold uppercase tracking-wider text-gray-400">Reference Number</p>
-                            <p className="text-base font-mono font-bold">ALLOC-{details.hostelName.replace(/\s+/g, '').slice(0, 3).toUpperCase()}-{details.studentId?.slice(-6) || 'RES'}</p>
+                            <p className="text-base font-mono font-bold">ALLOC-{details.hostelName.replace(/\s+/g, '').toUpperCase()}-{details.studentId}</p>
                         </div>
                     </div>
 
@@ -183,7 +183,7 @@ const AllocationDetailsPage = () => {
                         </div>
 
                         <p className="leading-relaxed text-gray-700">
-                            This is to certify that you have been officially allocated accommodation at <span className="font-bold text-black">{details.hostelName}</span> for the upcoming residential period. Your placement has been confirmed based on your application and subsequent payment.
+                            This is to certify that you have been officially allocated accommodation at <span className="font-bold text-black">{details.hostelName}</span> for the <span className="font-bold text-black">{details.academicPeriod}</span>.
                         </p>
 
                         <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100">
@@ -191,19 +191,17 @@ const AllocationDetailsPage = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-12">
                                 <div className="flex justify-between border-b pb-2">
                                     <span className="text-gray-500">Room Number</span>
-                                    <span className="font-bold text-lg">#{details.roomNumber}</span>
+                                    <span className="font-bold text-lg">{details.roomNumber} ({details.roomBlock || 'N/A'}, Floor {details.roomFloor || 'N/A'})</span>
                                 </div>
                                 <div className="flex justify-between border-b pb-2">
                                     <span className="text-gray-500">Accommodation Type</span>
                                     <span className="font-bold capitalize">{details.roomType}</span>
                                 </div>
                                 <div className="flex justify-between border-b pb-2">
-                                    <span className="text-gray-500">Block / Floor</span>
-                                    <span className="font-bold">{details.roomBlock || 'Main'} / Floor {details.roomFloor || 'G'}</span>
-                                </div>
-                                <div className="flex justify-between border-b pb-2">
-                                    <span className="text-gray-500">Academic Period</span>
-                                    <span className="font-bold text-sm">{format(new Date(details.checkInDate), "MMM yyyy")} - {format(new Date(details.checkOutDate), "MMM yyyy")}</span>
+                                    <span className="text-gray-500">Allocation Period</span>
+                                    <span className="font-bold text-sm">
+                                        {details.checkInDate ? format(new Date(details.checkInDate), "PPP") : "N/A"} to {details.checkOutDate ? format(new Date(details.checkOutDate), "PPP") : "N/A"}
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -211,7 +209,7 @@ const AllocationDetailsPage = () => {
 
                     {/* D. Financial Statement */}
                     <div className="mb-10">
-                        <h4 className="text-sm font-bold uppercase tracking-widest text-primary mb-4">Financial Statement</h4>
+                        <h4 className="text-sm font-bold uppercase tracking-widest text-primary mb-4">Financial Status</h4>
                         <div className="w-full border rounded-2xl overflow-hidden">
                             <table className="w-full text-left">
                                 <thead className="bg-gray-50 border-b">
@@ -246,11 +244,11 @@ const AllocationDetailsPage = () => {
                         <ul className="space-y-3 list-none">
                             <li className="flex gap-3 text-sm text-gray-700">
                                 <span className="h-5 w-5 bg-primary/10 text-primary rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold">1</span>
-                                <span><span className="font-bold text-black">Hostel Rules:</span> By accepting this allocation, you agree to adhere to the rules and regulations. A copy can be found at <a href={details.rulesUrl} className="text-primary hover:underline font-medium break-all">{details.rulesUrl}</a></span>
+                                <span><span className="font-bold text-black">Hostel Rules:</span> Residents are required to adhere to the rules found at <a href={details.rulesUrl} className="text-primary hover:underline font-medium break-all">{details.rulesUrl}</a></span>
                             </li>
                             <li className="flex gap-3 text-sm text-gray-700">
                                 <span className="h-5 w-5 bg-primary/10 text-primary rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold">2</span>
-                                <span><span className="font-bold text-black">Check-in:</span> Please present this letter and a valid student ID at the front desk upon arrival on {format(new Date(details.checkInDate), "PPP")}.</span>
+                                <span><span className="font-bold text-black">Check-in:</span> Please present this letter at the front desk upon arrival.</span>
                             </li>
                         </ul>
                     </div>

@@ -21,6 +21,7 @@ import {
 import { Label } from "@/components/ui/label"
 import toast from "react-hot-toast"
 import { format } from "date-fns"
+import UploadMultipleImages from "@/components/UploadMultipleImages"
 
 // Types based on the API guide
 type RequestType = "maintenance" | "room_change" | "item_replacement" | "misconduct" | "emergency" | "other"
@@ -51,6 +52,7 @@ const MakeRequest = () => {
             type: "maintenance"
         }
     })
+    const [images, setImages] = useState<File[]>([])
     const queryClient = useQueryClient()
 
     // Check for hostel assignment
@@ -82,6 +84,7 @@ const MakeRequest = () => {
         onSuccess: () => {
             toast.success("Request submitted successfully!")
             reset()
+            setImages([])
             setActiveTab("history")
             queryClient.invalidateQueries({ queryKey: ['maintenance-requests'] })
         },
@@ -92,21 +95,26 @@ const MakeRequest = () => {
     })
 
     const onSubmit: SubmitHandler<CreateMaintenanceRequestDto> = (data) => {
-        // Map frontend types to backend expected types
-        let payload = { ...data }
+        const formData = new FormData()
+        formData.append("type", data.type)
+        formData.append("priority", data.priority)
+        formData.append("subject", data.subject)
+        formData.append("description", data.description)
 
         if (data.type === 'misconduct') {
-            // @ts-ignore - casting to fit backend expected string if strictly typed
-            payload.type = 'other'
-            payload.subject = `Misconduct Report: ${data.subject}`
+            formData.set("type", 'other')
+            formData.set("subject", `Misconduct Report: ${data.subject}`)
         } else if (data.type === 'emergency') {
-            // @ts-ignore
-            payload.type = 'other'
-            payload.priority = 'critical'
-            payload.subject = `EMERGENCY: ${data.subject}`
+            formData.set("type", 'other')
+            formData.set("priority", 'critical')
+            formData.set("subject", `EMERGENCY: ${data.subject}`)
         }
 
-        createRequestMutation.mutate(payload)
+        images.forEach((image) => {
+            formData.append("images", image)
+        })
+
+        createRequestMutation.mutate(formData as any)
     }
 
     // Helper for status colors
@@ -227,12 +235,14 @@ const MakeRequest = () => {
                                     {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
                                 </div>
 
-                                {/* Image upload placeholder - can be enhanced later with actual upload component */}
-                                <div className="p-4 border border-dashed rounded-md bg-muted/50">
-                                    <p className="text-sm text-center text-muted-foreground">
-                                        (Optional) Image upload functionality would go here.
-                                        <br />For now, please describe the issue clearly.
-                                    </p>
+                                <div className="space-y-2">
+                                    <Label>Attachments (Optional)</Label>
+                                    <div className="border border-dashed rounded-lg bg-muted/30">
+                                        <UploadMultipleImages images={images} setImages={setImages} />
+                                        <p className="px-6 pb-4 text-[10px] text-muted-foreground text-center">
+                                            You can upload up to 3 images to help describe the issue.
+                                        </p>
+                                    </div>
                                 </div>
 
                             </CardContent>

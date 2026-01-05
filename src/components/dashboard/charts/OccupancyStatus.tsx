@@ -6,8 +6,8 @@ import { Analytics } from '@/helper/types/types'
 type analyticsData = Analytics
 const OccupancyStatus = ({ analyticsData }: { analyticsData: analyticsData }) => {
   const occupancyData = [
-    { name: "occupied", value: analyticsData?.occupiedRooms || 0 },
-    { name: "Vacant", value: analyticsData?.activeRooms - analyticsData?.occupiedRooms || 0 },
+    { name: "Occupied", value: analyticsData?.occupiedRooms || 0 },
+    { name: "Vacant", value: Math.max(0, (analyticsData?.activeRooms || 0) - (analyticsData?.occupiedRooms || 0)) },
   ]
 
   return (
@@ -41,11 +41,11 @@ const OccupancyStatus = ({ analyticsData }: { analyticsData: analyticsData }) =>
         <div className="grid grid-cols-2 gap-4 mt-4 text-center">
           <div>
             <div className="text-sm font-medium text-gray-500">Total Rooms</div>
-            <div className="text-lg font-bold">{analyticsData && analyticsData.totalRooms}</div>
+            <div className="text-lg font-bold">{analyticsData?.totalRooms ?? 0}</div>
           </div>
           <div>
             <div className="text-sm font-medium text-gray-500">Active Rooms</div>
-            <div className="text-lg font-bold">{analyticsData && analyticsData.activeRooms}</div>
+            <div className="text-lg font-bold">{analyticsData?.activeRooms ?? 0}</div>
           </div>
         </div>
       </CardContent>

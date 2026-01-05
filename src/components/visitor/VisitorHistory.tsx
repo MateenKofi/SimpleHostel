@@ -17,14 +17,15 @@ const VisitorHistory = () => {
     queryKey: ["visitors"],
     queryFn: async () => {
       if (!hostelId) return [];
-      return await getHostelVisitors(hostelId);
+      const res = await getHostelVisitors(hostelId);
+      return res?.data || [];
     },
     enabled: !!hostelId,
   });
 
-  const InactiveVisitors = visitors?.filter((active: Visitor) => {
+  const InactiveVisitors = Array.isArray(visitors) ? visitors.filter((active: Visitor) => {
     return active.status === 'CHECKED_OUT';
-  });
+  }) : [];
 
 
 
@@ -60,8 +61,8 @@ const VisitorHistory = () => {
       cell: (row: Visitor) => (
         <span
           className={`px-2 py-1 rounded-full text-xs ${row.status === "ACTIVE"
-              ? "bg-green-100 text-green-800"
-              : "bg-gray-100 text-gray-800"
+            ? "bg-green-100 text-green-800"
+            : "bg-gray-100 text-gray-800"
             }`}
         >
           {row.status === "ACTIVE" ? "Checked In" : "Checked Out"}

@@ -21,45 +21,64 @@ import { format } from "date-fns"
 import { useNavigate } from "react-router-dom"
 import SEOHelmet from "@/components/SEOHelmet"
 import { PaymentReceipt } from "@/helper/types/types"
+import jsPDF from "jspdf"
+import html2canvas from "html2canvas"
+import toast from "react-hot-toast"
+import ReceiptTemplate from "@/components/payment/ReceiptTemplate"
 
 interface PaymentTransaction {
     id: string
     amount: number
-    date: string
-    method: "momo" | "card" | "bank_transfer" | "cash"
+    amountPaid: number
+    balanceOwed: number
+    createdAt: string
+    method: string
     reference: string
-    status: "success" | "pending" | "failed"
-    description: string
+    status: string
+    room: {
+        number: string
+    }
+    calendarYear: {
+        name: string
+    }
 }
 
 interface BillingSummary {
-    totalPaid: number
-    balanceOwed: number
-    nextDueDate: string | null
-    currency: string
-    transactions: PaymentTransaction[]
+    payments: PaymentTransaction[]
+    summary: {
+        roomNumber: string
+        roomPrice: number
+        totalAmountPaid: number
+        balanceOwed: number
+        allowPartialPayment: boolean
+        hostelName: string
+    }
 }
 
+import { useAuthStore } from "@/stores/useAuthStore"
 import NoHostelAssigned from "@/components/resident/NoHostelAssigned"
 
 const PaymentBilling = () => {
     const navigate = useNavigate()
-    const userId = localStorage.getItem("userId")
-    const hostelId = localStorage.getItem("hostelId")
+    const { user, hostelId: storeHostelId } = useAuthStore()
+    const userId = user?.id
+    const hostelId = storeHostelId || localStorage.getItem("hostelId")
 
-    const { data: billingData, isLoading } = useQuery<BillingSummary>({
+    const { data: billingData, isLoading, isError, refetch } = useQuery<BillingSummary>({
         queryKey: ['resident-billing', userId],
         queryFn: async () => {
-            const responseData = await getResidentBilling()
-            return responseData?.data || {
-                totalPaid: 0,
-                balanceOwed: 0,
-                nextDueDate: null,
-                currency: "GHS",
-                transactions: []
+            const res = await getResidentBilling()
+            // Handle multiple potential wrappers (.json or .data)
+            const data = res?.json || res?.data || res
+
+            if (!data || (!data.payments && !data.summary)) {
+                throw new Error("Invalid data format")
             }
+
+            return data
         },
-        enabled: !!userId && !!hostelId && hostelId !== 'undefined' && hostelId !== 'null' // Only fetch if assigned
+        enabled: !!userId && !!hostelId && hostelId !== 'undefined' && hostelId !== 'null',
+        retry: 1
     })
 
     if (!hostelId || hostelId === 'undefined' || hostelId === 'null') {
@@ -74,11 +93,55 @@ const PaymentBilling = () => {
         documentTitle: `Receipt-${viewReceiptId}`,
     });
 
+    const handleDownloadPDF = async () => {
+        if (!receiptRef.current) return
+
+        const loadingToast = toast.loading("Generating PDF...")
+        try {
+            const canvas = await html2canvas(receiptRef.current, {
+                scale: 2,
+                useCORS: true,
+                logging: false,
+            })
+            const imgData = canvas.toDataURL("image/png")
+            const pdf = new jsPDF({
+                orientation: "portrait",
+                unit: "mm",
+                format: "a4",
+            })
+
+            const imgWidth = 210
+            const imgHeight = (canvas.height * imgWidth) / canvas.width
+
+            pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight)
+            pdf.save(`Receipt-${viewReceiptId}.pdf`)
+            toast.success("Receipt downloaded successfully", { id: loadingToast })
+        } catch (error) {
+            console.error("PDF generation failed:", error)
+            toast.error("Failed to generate PDF", { id: loadingToast })
+        }
+    }
+
     const { data: receiptData, isLoading: isReceiptLoading } = useQuery<PaymentReceipt>({
         queryKey: ['receipt', viewReceiptId],
         queryFn: async () => {
-            const responseData = await getPaymentReceipt(viewReceiptId!)
-            return responseData?.data
+            const res = await getPaymentReceipt(viewReceiptId!)
+            const data = res?.data || res?.json || res
+
+            // Map the transaction object to PaymentReceipt interface
+            return {
+                receiptNumber: data.receiptNumber || data.reference,
+                date: data.date || data.createdAt,
+                residentName: data.residentName || "Resident",
+                amount: data.amount,
+                amountPaid: data.amountPaid,
+                balanceOwed: data.balanceOwed,
+                method: data.method,
+                hostelName: data.hostelName || "SimpleHostel",
+                roomNumber: data.roomNumber || data.room?.number,
+                status: data.status,
+                reference: data.receiptNumber || data.reference
+            }
         },
         enabled: !!viewReceiptId
     })
@@ -91,6 +154,16 @@ const PaymentBilling = () => {
         return (
             <div className="flex items-center justify-center h-[50vh]">
                 <Loader className="w-8 h-8 animate-spin text-primary" />
+            </div>
+        )
+    }
+
+    if (isError) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[50vh] space-y-4">
+                <AlertCircle className="w-12 h-12 text-destructive" />
+                <p className="text-muted-foreground">Failed to load billing history.</p>
+                <Button onClick={() => refetch()}>Try Again</Button>
             </div>
         )
     }
@@ -115,17 +188,11 @@ const PaymentBilling = () => {
                     </CardHeader>
                     <CardContent>
                         <div className="text-3xl font-bold text-primary">
-                            {billingData?.currency} {billingData?.balanceOwed?.toLocaleString() ?? '0.00'}
+                            GHS {billingData?.summary?.balanceOwed?.toLocaleString() ?? '0.00'}
                         </div>
-                        {billingData?.nextDueDate && (
-                            <p className="text-xs text-muted-foreground mt-2 flex items-center">
-                                <AlertCircle className="w-3 h-3 mr-1 text-orange-500" />
-                                Due on {format(new Date(billingData.nextDueDate), 'PPP')}
-                            </p>
-                        )}
                     </CardContent>
                     <CardFooter>
-                        <Button className="w-full" onClick={() => navigate('/dashboard/make-payment')}>
+                        <Button className="w-full" onClick={() => navigate('/dashboard/payment')}>
                             <CreditCard className="w-4 h-4 mr-2" /> Pay Now
                         </Button>
                     </CardFooter>
@@ -133,24 +200,24 @@ const PaymentBilling = () => {
 
                 <Card>
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">Total Paid (YTD)</CardTitle>
+                        <CardTitle className="text-sm font-medium text-muted-foreground">Total Paid</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="text-3xl font-bold text-green-600 dark:text-green-500">
-                            {billingData?.currency} {billingData?.totalPaid?.toLocaleString() ?? '0.00'}
+                            GHS {billingData?.summary?.totalAmountPaid?.toLocaleString() ?? '0.00'}
                         </div>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium text-muted-foreground">Recent Activity</CardTitle>
+                        <CardTitle className="text-sm font-medium text-muted-foreground">Room Info</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-3xl font-bold">
-                            {billingData?.transactions?.length || 0}
+                        <div className="text-2xl font-bold">
+                            #{billingData?.summary?.roomNumber || "N/A"}
                         </div>
-                        <p className="text-xs text-muted-foreground mt-1">Transactions recorded</p>
+                        <p className="text-xs text-muted-foreground mt-1">Price: GHS {billingData?.summary?.roomPrice?.toLocaleString() || "0.00"}</p>
                     </CardContent>
                 </Card>
             </div>
@@ -169,46 +236,57 @@ const PaymentBilling = () => {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    {billingData?.transactions && billingData.transactions.length > 0 ? (
-                        <div className="space-y-4">
-                            {billingData.transactions.map((tx) => (
-                                <div key={tx.id} className="flex items-center justify-between p-4 border rounded-lg bg-card hover:bg-slate-50 dark:hover:bg-zinc-900 transition-colors">
-                                    <div className="flex items-center gap-4">
-                                        <div className="p-2 border rounded-full bg-background">
-                                            <Wallet className="w-5 h-5 text-gray-500" />
-                                        </div>
-                                        <div>
-                                            <p className="font-medium text-sm">{tx.description || "Payment"}</p>
-                                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                                <span>{format(new Date(tx.date), 'PPP')}</span>
-                                                <span>•</span>
-                                                <span className="capitalize">{(tx.method || "").replace('_', ' ')}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-4">
-                                        <div className="text-right">
-                                            <p className="font-bold text-sm">
-                                                {billingData.currency} {tx.amount.toLocaleString()}
-                                            </p>
-                                            <Badge variant={tx.status === 'success' ? 'default' : tx.status === 'pending' ? 'secondary' : 'destructive'}
-                                                className={`text-[10px] px-1.5 h-5 ${tx.status === 'success' ? 'bg-green-100 text-green-800 hover:bg-green-100' : ''}`}
-                                            >
-                                                {tx.status}
-                                            </Badge>
-                                        </div>
-                                        <Button variant="ghost" size="icon"
-                                            onClick={() => tx.reference ? navigate(`/dashboard/receipt/${tx.reference}`) : handleViewReceipt(tx.id)}
-                                            title="View Receipt"
-                                        >
-                                            <FileText className="w-4 h-4 text-muted-foreground" />
-                                        </Button>
-                                    </div>
-                                </div>
-                            ))}
+                    {billingData?.payments && billingData.payments.length > 0 ? (
+                        <div className="rounded-md border">
+                            <table className="w-full text-sm">
+                                <thead className="bg-muted/50 border-b">
+                                    <tr>
+                                        <th className="px-4 py-3 text-left font-medium">Date</th>
+                                        <th className="px-4 py-3 text-left font-medium">Reference</th>
+                                        <th className="px-4 py-3 text-left font-medium">Method</th>
+                                        <th className="px-4 py-3 text-left font-medium">Amount</th>
+                                        <th className="px-4 py-3 text-left font-medium">Status</th>
+                                        <th className="px-4 py-3 text-right font-medium">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {billingData.payments.map((tx) => (
+                                        <tr key={tx.id} className="border-b transition-colors hover:bg-muted/50">
+                                            <td className="px-4 py-3 font-medium">
+                                                {format(new Date(tx.createdAt), 'MMM dd, yyyy')}
+                                            </td>
+                                            <td className="px-4 py-3 text-muted-foreground font-mono">
+                                                {tx.reference}
+                                            </td>
+                                            <td className="px-4 py-3 capitalize">
+                                                {(tx.method || "").replace('_', ' ')}
+                                            </td>
+                                            <td className="px-4 py-3 font-bold">
+                                                GHS {tx.amount.toLocaleString()}
+                                            </td>
+                                            <td className="px-4 py-3">
+                                                <Badge variant={tx.status === 'confirmed' || tx.status === 'success' ? 'default' : tx.status === 'pending' ? 'secondary' : 'destructive'}
+                                                    className={`text-[10px] px-2 py-0 h-5 ${(tx.status === 'confirmed' || tx.status === 'success') ? 'bg-green-100 text-green-800 hover:bg-green-100' : ''}`}
+                                                >
+                                                    {tx.status}
+                                                </Badge>
+                                            </td>
+                                            <td className="px-4 py-3 text-right">
+                                                <Button variant="ghost" size="sm"
+                                                    onClick={() => handleViewReceipt(tx.id)}
+                                                    className="h-8 gap-1"
+                                                >
+                                                    <Download className="w-3.5 h-3.5" />
+                                                    <span className="sr-only sm:not-sr-only">Receipt</span>
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         </div>
                     ) : (
-                        <div className="py-12 text-center text-muted-foreground">
+                        <div className="py-12 text-center text-muted-foreground border rounded-md border-dashed">
                             No transactions found.
                         </div>
                     )
@@ -217,82 +295,50 @@ const PaymentBilling = () => {
             </Card >
 
             <Dialog open={!!viewReceiptId} onOpenChange={(open) => !open && setViewReceiptId(null)}>
-                <DialogContent className="max-w-md">
-                    <DialogHeader>
+                <DialogContent className="max-w-2xl max-h-[90vh] flex flex-col p-0 overflow-hidden">
+                    <DialogHeader className="p-6 pb-2">
                         <DialogTitle>Payment Receipt</DialogTitle>
                         <DialogDescription>
-                            Review transaction details
+                            Review transaction details and download or print your official record.
                         </DialogDescription>
                     </DialogHeader>
 
-                    {isReceiptLoading ? (
-                        <div className="flex justify-center p-8">
-                            <Loader className="w-8 h-8 animate-spin text-primary" />
-                        </div>
-                    ) : receiptData ? (
-                        <div className="space-y-4">
-                            <div className="p-6 border rounded-sm bg-white text-black shadow-sm print:shadow-none" ref={receiptRef}>
-                                <div className="text-center mb-6">
-                                    <h3 className="font-bold text-lg uppercase tracking-wider">{receiptData.hostelName}</h3>
-                                    <p className="text-xs text-gray-500">Official Payment Receipt</p>
-                                </div>
-
-                                <Separator className="my-4" />
-
-                                <div className="flex justify-between text-sm mb-2">
-                                    <span className="text-gray-500">Receipt No:</span>
-                                    <span className="font-mono font-medium">{receiptData.receiptNumber}</span>
-                                </div>
-                                <div className="flex justify-between text-sm mb-4">
-                                    <span className="text-gray-500">Date:</span>
-                                    <span>{new Date(receiptData.date).toLocaleDateString()}</span>
-                                </div>
-
-                                <div className="space-y-1 mb-6">
-                                    <p className="text-xs text-gray-500">Received From</p>
-                                    <p className="font-medium">{receiptData.residentName}</p>
-                                    <p className="text-xs text-gray-500">Room: {receiptData.roomNumber}</p>
-                                </div>
-
-                                <div className="bg-gray-100 p-3 rounded-md flex justify-between items-center mb-6">
-                                    <span className="font-medium">Amount Paid</span>
-                                    <span className="font-bold text-lg">GHS {receiptData.amountPaid.toFixed(2)}</span>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4 text-xs text-gray-500">
-                                    <div>
-                                        <p>Payment Method</p>
-                                        <p className="text-black font-medium capitalize">{receiptData.method}</p>
-                                    </div>
-                                    <div className="text-right">
-                                        <p>Balance Owed</p>
-                                        <p className="text-black font-medium">GHS {receiptData.balanceOwed.toFixed(2)}</p>
+                    <div className="flex-1 overflow-y-auto p-6 pt-0">
+                        {isReceiptLoading ? (
+                            <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                                <Loader className="w-10 h-10 animate-spin text-primary" />
+                                <p className="text-sm text-muted-foreground animate-pulse">Fetching receipt details...</p>
+                            </div>
+                        ) : receiptData ? (
+                            <div className="space-y-6">
+                                <div className="border rounded-xl bg-white shadow-2xl overflow-hidden ring-1 ring-black/5">
+                                    <div className="scale-[0.9] sm:scale-100 origin-top transform-gpu">
+                                        <ReceiptTemplate data={receiptData} ref={receiptRef} />
                                     </div>
                                 </div>
 
-                                <div className="mt-8 text-center">
-                                    <Badge variant="outline" className="border-green-500 text-green-600 uppercase text-[10px] tracking-widest">
-                                        {receiptData.status}
-                                    </Badge>
+                                <div className="flex flex-col gap-3 sm:flex-row sm:justify-end pb-2">
+                                    <Button variant="outline" className="flex-1 sm:flex-none h-11" onClick={handlePrint}>
+                                        <Printer className="w-4 h-4 mr-2" /> Print Receipt
+                                    </Button>
+                                    <Button variant="outline" className="flex-1 sm:flex-none h-11" onClick={handleDownloadPDF}>
+                                        <Download className="w-4 h-4 mr-2" /> Download PDF
+                                    </Button>
+                                    {receiptData.reference && (
+                                        <Button className="flex-1 sm:flex-none h-11" onClick={() => navigate(`/dashboard/receipt/${receiptData.reference}`)}>
+                                            <FileText className="w-4 h-4 mr-2" /> Full Page View
+                                        </Button>
+                                    )}
                                 </div>
                             </div>
-
-                            <DialogFooter className="flex-col gap-2 sm:flex-row">
-                                <Button variant="outline" className="w-full sm:flex-1" onClick={handlePrint}>
-                                    <Printer className="w-4 h-4 mr-2" /> Print PDF
-                                </Button>
-                                {receiptData.reference && (
-                                    <Button className="w-full sm:flex-1" onClick={() => navigate(`/dashboard/receipt/${receiptData.reference}`)}>
-                                        <FileText className="w-4 h-4 mr-2" /> Full Receipt
-                                    </Button>
-                                )}
-                            </DialogFooter>
-                        </div>
-                    ) : (
-                        <div className="p-6 text-center text-red-500">
-                            Failed to load receipt.
-                        </div>
-                    )}
+                        ) : (
+                            <div className="py-20 text-center space-y-3">
+                                <AlertCircle className="w-12 h-12 text-destructive mx-auto opacity-20" />
+                                <p className="text-destructive font-medium">Failed to load receipt information.</p>
+                                <Button variant="link" onClick={() => setViewReceiptId(null)}>Close modal</Button>
+                            </div>
+                        )}
+                    </div>
                 </DialogContent>
             </Dialog>
         </div >

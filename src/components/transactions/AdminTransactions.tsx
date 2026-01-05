@@ -11,8 +11,18 @@ import {
   Search,
   Smartphone,
   X,
+  Download,
+  Printer,
+  FileText,
+  MoreHorizontal,
 } from "lucide-react";
 import { format } from "date-fns";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
+import toast from "react-hot-toast";
+import { useReactToPrint } from "react-to-print";
+import ReceiptTemplate from "@/components/payment/ReceiptTemplate";
+import { PaymentReceipt } from "@/helper/types/types";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -48,6 +58,23 @@ import TransactionsSkeleton from "../loaders/TransactionLoader";
 import CustomeRefetch from "../CustomeRefetch";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useRef } from "react";
 
 
 const AdminTransactions = () => {
@@ -62,6 +89,49 @@ const AdminTransactions = () => {
     key: "date",
     direction: "desc",
   });
+
+  const [viewReceiptId, setViewReceiptId] = useState<string | null>(null);
+  const [isReceiptOpen, setIsReceiptOpen] = useState(false);
+  const receiptRef = useRef<HTMLDivElement>(null);
+
+  const handlePrint = useReactToPrint({
+    contentRef: receiptRef,
+    documentTitle: `Receipt-${viewReceiptId}`,
+  });
+
+  const handleDownloadPDF = async () => {
+    if (!receiptRef.current) return;
+
+    const loadingToast = toast.loading("Generating PDF...");
+    try {
+      const canvas = await html2canvas(receiptRef.current, {
+        scale: 2,
+        useCORS: true,
+        logging: false,
+      });
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const imgWidth = 210;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+      pdf.save(`Receipt-${viewReceiptId}.pdf`);
+      toast.success("Receipt downloaded successfully", { id: loadingToast });
+    } catch (error) {
+      console.error("PDF generation failed:", error);
+      toast.error("Failed to generate PDF", { id: loadingToast });
+    }
+  };
+
+  const handleViewReceipt = (id: string) => {
+    setViewReceiptId(id);
+    setIsReceiptOpen(true);
+  };
 
   const hostel_id = localStorage.getItem("hostelId") || "";
   const {
@@ -88,6 +158,31 @@ const AdminTransactions = () => {
       return responseData?.data
     },
   })
+
+  // Fetch specific receipt data for the modal
+  const { data: receiptData, isLoading: isReceiptLoading } = useQuery<PaymentReceipt>({
+    queryKey: ['receipt', viewReceiptId],
+    queryFn: async () => {
+      // Find the transaction in the current list or fetch if needed
+      const tx = transactionsData?.find((t: Transaction) => t.id === viewReceiptId);
+      const resident = Residents?.find((r: Resident) => r.id === tx?.residentId);
+
+      return {
+        receiptNumber: tx?.reference || "N/A",
+        date: tx?.date || new Date().toISOString(),
+        residentName: resident?.name || "Resident",
+        amount: tx?.amount || 0,
+        amountPaid: tx?.amount || 0,
+        balanceOwed: resident?.balanceOwed || 0,
+        method: tx?.method || "N/A",
+        hostelName: localStorage.getItem("hostelName") || "SimpleHostel",
+        roomNumber: resident?.room?.number || "N/A",
+        status: tx?.status || "Success",
+        reference: tx?.reference
+      };
+    },
+    enabled: !!viewReceiptId && !!transactionsData
+  });
 
   // Calculate total amount
   const totalAmount = useMemo(() => {
@@ -420,6 +515,7 @@ const AdminTransactions = () => {
                   <TableHead className="hidden md:table-cell">
                     Resident
                   </TableHead>
+                  <TableHead className="text-right">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -484,6 +580,31 @@ const AdminTransactions = () => {
                           );
                         })()}
                       </TableCell>
+                      <TableCell className="text-right">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" className="w-8 h-8 p-0">
+                              <span className="sr-only">Open menu</span>
+                              <MoreHorizontal className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => handleViewReceipt(transaction.id)}>
+                              <FileText className="w-4 h-4 mr-2" /> View Receipt
+                            </DropdownMenuItem>
+                            {(transaction.status.toUpperCase() === 'SUCCESS' || transaction.status.toUpperCase() === 'CONFIRMED') && (
+                              <DropdownMenuItem onClick={() => {
+                                setViewReceiptId(transaction.id);
+                                setTimeout(handleDownloadPDF, 100);
+                              }}>
+                                <Download className="w-4 h-4 mr-2" /> Download PDF
+                              </DropdownMenuItem>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </TableCell>
                     </TableRow>
                   ))
                 )}
@@ -492,6 +613,50 @@ const AdminTransactions = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Receipt Modal */}
+      <Dialog open={isReceiptOpen} onOpenChange={setIsReceiptOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Payment Receipt</DialogTitle>
+            <DialogDescription>
+              Official payment details and transaction record.
+            </DialogDescription>
+          </DialogHeader>
+
+          {isReceiptLoading ? (
+            <div className="flex flex-col items-center justify-center py-10 space-y-4">
+              <div className="w-10 h-10 border-4 rounded-full border-primary border-t-transparent animate-spin"></div>
+              <p className="text-sm text-muted-foreground">Loading receipt details...</p>
+            </div>
+          ) : receiptData ? (
+            <div className="space-y-4">
+              <div className="border rounded-lg overflow-hidden bg-white shadow-inner max-h-[400px] overflow-y-auto">
+                <ReceiptTemplate data={receiptData} ref={receiptRef} />
+              </div>
+
+              <DialogFooter className="flex-col gap-2 sm:flex-row mt-4">
+                <Button variant="outline" className="w-full sm:flex-1" onClick={handlePrint}>
+                  <Printer className="w-4 h-4 mr-2" /> Print
+                </Button>
+                <Button variant="outline" className="w-full sm:flex-1" onClick={handleDownloadPDF}>
+                  <Download className="w-4 h-4 mr-2" /> Download
+                </Button>
+                {receiptData.reference && (
+                  <Button className="w-full sm:flex-1" onClick={() => window.open(`/dashboard/receipt/${receiptData.reference}`, '_blank')}>
+                    <FileText className="w-4 h-4 mr-2" /> Full View
+                  </Button>
+                )}
+              </DialogFooter>
+            </div>
+          ) : (
+            <div className="py-10 text-center text-muted-foreground">
+              Failed to load receipt information.
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 };

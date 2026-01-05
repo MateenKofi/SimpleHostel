@@ -302,6 +302,7 @@ export type AllocationDetails = {
   studentId: string;
   course: string;
   gender: string;
+  academicPeriod: string;
   hostelName: string;
   hostelAddress: string;
   hostelEmail: string;

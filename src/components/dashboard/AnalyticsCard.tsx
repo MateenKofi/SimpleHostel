@@ -81,11 +81,11 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
           <Banknote className="h-4 w-4 text-gray-500" />
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">GH₵{analyticsData && analyticsData?.totalRevenue?.toFixed(2)}</div>
-          <p className="text-xs text-gray-500">of GH₵{analyticsData && analyticsData.expectedIncome?.toFixed(2)} expected</p>
+          <div className="text-2xl font-bold">GH₵{(analyticsData?.totalRevenue || 0).toFixed(2)}</div>
+          <p className="text-xs text-gray-500">of GH₵{(analyticsData?.expectedIncome || 0).toFixed(2)} expected</p>
           <div className="mt-3">
             <Progress
-              value={(analyticsData?.totalRevenue / analyticsData?.expectedIncome) * 100}
+              value={analyticsData?.expectedIncome > 0 ? (analyticsData?.totalRevenue / analyticsData?.expectedIncome) * 100 : 0}
               className="bg-gray-200"
             />
           </div>
@@ -118,11 +118,11 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
             <Banknote className="h-4 w-4 text-gray-500" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">GH₵{analyticsData && analyticsData?.totalDebt?.toFixed(2)}</div>
-            <p className="text-xs text-gray-500">of GH₵{analyticsData && analyticsData?.currentYearStats?.expectedRevenue?.toFixed(2)} expected</p>
+            <div className="text-2xl font-bold">GH₵{(analyticsData?.totalDebt || 0).toFixed(2)}</div>
+            <p className="text-xs text-gray-500">of GH₵{(analyticsData?.currentYearStats?.expectedRevenue || 0).toFixed(2)} expected</p>
             <div className="mt-3">
               <Progress
-                value={(analyticsData?.totalDebt / analyticsData?.currentYearStats?.expectedRevenue) * 100}
+                value={analyticsData?.currentYearStats?.expectedRevenue > 0 ? (analyticsData?.totalDebt / analyticsData?.currentYearStats?.expectedRevenue) * 100 : 0}
                 className="bg-gray-200"
               />
             </div>

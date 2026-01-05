@@ -20,12 +20,12 @@ export const getResidentRoomDetails = async () => {
 };
 
 export const getResidentBilling = async () => {
-    const response = await axiosInstance.get("/v1/resident/billing");
+    const response = await axiosInstance.get("/resident/billing");
     return response.data;
 };
 
-export const getPaymentReceipt = async (receiptId: string) => {
-    const response = await axiosInstance.get(`/residents/receipt/${receiptId}`);
+export const getPaymentReceipt = async (paymentId: string) => {
+    const response = await axiosInstance.get(`/resident/receipt/${paymentId}`);
     return response.data;
 };
 
@@ -35,7 +35,10 @@ export const getResidentRequests = async () => {
 };
 
 export const createResidentRequest = async (data: any) => {
-    const response = await axiosInstance.post("/residents/requests", data);
+    const isFormData = data instanceof FormData;
+    const response = await axiosInstance.post("/residents/requests", data, {
+        headers: isFormData ? { "Content-Type": "multipart/form-data" } : {}
+    });
     return response.data;
 };
 
