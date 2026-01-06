@@ -49,6 +49,7 @@ const FeaturedHostels = () => {
               title={hostel.name}
               location={hostel.location}
               index={index}
+              rating={hostel.averageRating}
             />
           </div>
         ))}

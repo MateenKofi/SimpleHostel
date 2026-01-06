@@ -62,3 +62,12 @@ export const updatePaymentSettings = async (hostelId: string, data: { allowParti
     const response = await axiosInstance.put(`/hostels/payment-settings/${hostelId}`, data);
     return response.data;
 };
+
+export const updateHostelDocuments = async (hostelId: string, formData: FormData) => {
+    const response = await axiosInstance.put(`/hostels/documents/${hostelId}`, formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+    return response.data;
+};

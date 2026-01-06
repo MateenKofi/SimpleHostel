@@ -34,7 +34,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "react-hot-toast";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { getHostelById, updateHostel, updatePaymentSettings, updateHostelRules } from "@/api/hostels";
+import { getHostelById, updateHostel, updatePaymentSettings, updateHostelRules, updateHostelDocuments } from "@/api/hostels";
 import CustomeRefetch from "@/components/CustomeRefetch";
 import ImageUpload from "@/components/ImageUpload";
 import UploadSingleImage from "@/components/UploadSingleImage";
@@ -61,6 +61,8 @@ const Settings = () => {
   const [defaultImages, setDefaultImages] = useState<string[]>([]);
   const [logo, setLogo] = useState<string | File | null>(null);
   const [previewLogo, setPreviewLogo] = useState<string>("");
+  const [signatureFile, setSignatureFile] = useState<File | null>(null);
+  const [stampFile, setStampFile] = useState<File | null>(null);
   const [rulesFile, setRulesFile] = useState<File | null>(null);
   const hostelId = localStorage.getItem("hostelId");
 
@@ -182,6 +184,28 @@ const Settings = () => {
       } catch (error: any) {
         toast.error(error.response?.data?.message || "Failed to update payment settings");
       }
+    }
+  });
+
+  const documentsMutation = useMutation({
+    mutationFn: async () => {
+      if (!hostelId) throw new Error("Hostel ID not found");
+      const formData = new FormData();
+      if (signatureFile) formData.append('signature', signatureFile);
+      if (stampFile) formData.append('stamp', stampFile);
+
+      if (!signatureFile && !stampFile) throw new Error("Please select at least one document to upload");
+
+      return await updateHostelDocuments(hostelId, formData);
+    },
+    onSuccess: () => {
+      toast.success("Documents updated successfully");
+      refetchHostel();
+      setSignatureFile(null);
+      setStampFile(null);
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || "Failed to update documents");
     }
   });
 
@@ -464,6 +488,102 @@ const Settings = () => {
                     </div>
                   </motion.div>
                 )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Documents Upload Section */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <FileText className="w-5 h-5 text-indigo-500" />
+                Official Documents
+              </CardTitle>
+              <CardDescription>
+                Upload signatures and stamps for official documents (Allocation Letters, Receipts, etc).
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                {/* Signature Upload */}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold">Manager Signature</h3>
+                  {hostelData?.logoKey && ( // Assuming hostel data might contain signatureUrl/stampUrl in future but using image upload pattern
+                    // Actually Backend guide says "These images are now returned in GET /api/v1/resident/allocation-details as hostelSignature and hostelStamp"
+                    // But for Admin Dashboard display, we might not have them in getHostelById response unless updated.
+                    // Let's assume we just allow upload for now.
+                    // Or if getHostelById returns them? The guide doesn't explicitly say getHostelById returns them, but likely it does or will.
+                    // Safest to just provide upload UI.
+                    null
+                  )}
+
+                  <div className="grid gap-2">
+                    <Label htmlFor="signature-upload" className="cursor-pointer">
+                      <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/50 hover:bg-indigo-50/30 dark:hover:bg-indigo-900/5 transition-all">
+                        <div className="p-3 bg-zinc-100 dark:bg-zinc-800 rounded-full mb-3 group-hover:bg-indigo-100">
+                          <Upload className="w-6 h-6 text-zinc-500 group-hover:text-indigo-500" />
+                        </div>
+                        <p className="text-sm font-semibold">Upload Signature</p>
+                        <p className="text-xs text-zinc-500 mt-1">PNG/JPG (transparent bg recommended)</p>
+                        <input
+                          id="signature-upload"
+                          type="file"
+                          className="hidden"
+                          accept="image/*"
+                          onChange={(e) => setSignatureFile(e.target.files?.[0] || null)}
+                        />
+                      </div>
+                    </Label>
+                    {signatureFile && (
+                      <div className="flex items-center justify-between p-2 text-sm border rounded-md bg-indigo-50 text-indigo-700 border-indigo-100">
+                        <span className="truncate max-w-[200px]">{signatureFile.name}</span>
+                        <button type="button" onClick={() => setSignatureFile(null)} className="text-indigo-900 font-bold px-2">X</button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Stamp Upload */}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-semibold">Hostel Stamp</h3>
+                  <div className="grid gap-2">
+                    <Label htmlFor="stamp-upload" className="cursor-pointer">
+                      <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/50 hover:bg-indigo-50/30 dark:hover:bg-indigo-900/5 transition-all">
+                        <div className="p-3 bg-zinc-100 dark:bg-zinc-800 rounded-full mb-3 group-hover:bg-indigo-100">
+                          <Upload className="w-6 h-6 text-zinc-500 group-hover:text-indigo-500" />
+                        </div>
+                        <p className="text-sm font-semibold">Upload Stamp</p>
+                        <p className="text-xs text-zinc-500 mt-1">PNG/JPG (transparent bg recommended)</p>
+                        <input
+                          id="stamp-upload"
+                          type="file"
+                          className="hidden"
+                          accept="image/*"
+                          onChange={(e) => setStampFile(e.target.files?.[0] || null)}
+                        />
+                      </div>
+                    </Label>
+                    {stampFile && (
+                      <div className="flex items-center justify-between p-2 text-sm border rounded-md bg-indigo-50 text-indigo-700 border-indigo-100">
+                        <span className="truncate max-w-[200px]">{stampFile.name}</span>
+                        <button type="button" onClick={() => setStampFile(null)} className="text-indigo-900 font-bold px-2">X</button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+              </div>
+
+              <div className="flex justify-end pt-4">
+                <Button
+                  type="button"
+                  onClick={() => documentsMutation.mutate()}
+                  disabled={documentsMutation.isPending || (!signatureFile && !stampFile)}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white"
+                >
+                  {documentsMutation.isPending ? <Loader className="w-4 h-4 animate-spin mr-2" /> : "Upload Documents"}
+                </Button>
               </div>
             </CardContent>
           </Card>

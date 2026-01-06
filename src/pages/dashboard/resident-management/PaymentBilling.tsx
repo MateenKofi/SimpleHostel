@@ -192,7 +192,7 @@ const PaymentBilling = () => {
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <Button className="w-full" onClick={() => navigate('/dashboard/payment')}>
+                        <Button className="w-full" onClick={() => navigate('/dashboard/top-up')}>
                             <CreditCard className="w-4 h-4 mr-2" /> Pay Now
                         </Button>
                     </CardFooter>

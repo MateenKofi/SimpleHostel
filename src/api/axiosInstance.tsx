@@ -40,6 +40,9 @@ axiosInstance.interceptors.response.use(
             } else if (response.status === 403) {
                 // Forbidden - permission issues
                 toast.error("You don't have permission to perform this action.");
+            } else if (response.status === 429) {
+                // Rate Limiting
+                toast.error("Too many requests. Please try again later.");
             }
         }
 

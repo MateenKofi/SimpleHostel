@@ -112,6 +112,10 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
   });
 
   const onSubmit = (data: RoomForm) => {
+    if (images.length === 0) {
+      setError("images", { message: "Room images are required" });
+      return;
+    }
     mutation.mutate(data);
   };
 

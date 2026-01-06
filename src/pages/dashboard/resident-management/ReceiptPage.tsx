@@ -98,7 +98,17 @@ const ReceiptPage = () => {
         hostelName: payment.room?.hostel?.name || "SimpleHostel",
         roomNumber: payment.room?.number || "N/A",
         status: payment.status,
-        reference: payment.reference
+        reference: payment.reference,
+        // Extended fields
+        studentId: payment.residentProfile?.studentId || undefined,
+        academicYear: payment.calendarYear?.name || undefined,
+        hostelAddress: payment.room?.hostel?.address || undefined,
+        hostelEmail: payment.room?.hostel?.email || undefined,
+        hostelPhone: payment.room?.hostel?.phone || undefined,
+        hostelLogo: payment.room?.hostel?.logoUrl || undefined,
+        hostelStamp: payment.room?.hostel?.stampUrl || undefined,
+        hostelSignature: payment.room?.hostel?.signatureUrl || undefined,
+        managerName: payment.room?.hostel?.manager || undefined,
     }
 
     return (

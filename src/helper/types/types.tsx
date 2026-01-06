@@ -173,6 +173,7 @@ export type Hostel = {
   amenities: Amenity[];
   hostelImages: images[];
   calendarYears: CalendarYearT[];
+  averageRating?: number;
 };
 
 export type Analytics = {
@@ -333,4 +334,14 @@ export type PaymentReceipt = {
   roomNumber: string;
   status: string;
   reference?: string;
+  // Extended fields from rich API response
+  studentId?: string;
+  academicYear?: string;
+  hostelAddress?: string;
+  hostelEmail?: string;
+  hostelPhone?: string;
+  hostelLogo?: string;
+  hostelStamp?: string;
+  hostelSignature?: string;
+  managerName?: string;
 };

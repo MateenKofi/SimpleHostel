@@ -182,7 +182,8 @@ const FindRoom = () => {
   const handleRoomClick = (room: Room) => {
     if (!token || !user) {
       toast.error("Please log in to book a room");
-      navigate("/login");
+      const currentPath = window.location.pathname + window.location.search;
+      navigate(`/login?redirect=${encodeURIComponent(currentPath)}`);
       return;
     }
     setRoom(room);

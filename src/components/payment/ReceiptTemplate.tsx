@@ -23,18 +23,37 @@ const ReceiptTemplate = forwardRef<HTMLDivElement, ReceiptTemplateProps>(({ data
             {/* Header Section */}
             <div className="flex flex-col md:flex-row justify-between gap-8 mb-10">
                 <div className="space-y-4">
-                    <div className="flex items-center gap-2 text-primary">
-                        <Building2 className="h-8 w-8" />
-                        <span className="text-2xl font-black uppercase tracking-tighter">SimpleHostel</span>
+                    <div className="flex items-center gap-3">
+                        {data.hostelLogo ? (
+                            <img src={data.hostelLogo} alt={data.hostelName} className="h-12 w-12 object-contain rounded" />
+                        ) : (
+                            <Building2 className="h-8 w-8 text-primary" />
+                        )}
+                        <span className="text-2xl font-black uppercase tracking-tighter text-primary">SimpleHostel</span>
                     </div>
-                    <div className="space-y-1">
+                    <div className="space-y-2">
                         <h2 className="text-xl font-bold">{data.hostelName}</h2>
-                        {/* Note: Address, phone and email might not be in the flat PaymentReceipt, 
-                            but we can add them to the type or fallback */}
-                        <div className="flex items-start gap-2 text-sm text-gray-600">
-                            <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
-                            <span>Official Management Office</span>
-                        </div>
+                        {data.managerName && (
+                            <p className="text-sm text-gray-600">Manager: {data.managerName}</p>
+                        )}
+                        {data.hostelAddress && (
+                            <div className="flex items-start gap-2 text-sm text-gray-600">
+                                <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
+                                <span>{data.hostelAddress}</span>
+                            </div>
+                        )}
+                        {data.hostelPhone && (
+                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                                <Phone className="h-4 w-4 shrink-0" />
+                                <span>{data.hostelPhone}</span>
+                            </div>
+                        )}
+                        {data.hostelEmail && (
+                            <div className="flex items-center gap-2 text-sm text-gray-600">
+                                <Mail className="h-4 w-4 shrink-0" />
+                                <span>{data.hostelEmail}</span>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="text-left md:text-right space-y-2">
@@ -66,10 +85,22 @@ const ReceiptTemplate = forwardRef<HTMLDivElement, ReceiptTemplateProps>(({ data
                                 <p className="font-bold text-lg">{data.residentName}</p>
                             </div>
                         </div>
+                        {data.studentId && (
+                            <div>
+                                <p className="text-xs text-gray-500 uppercase">Student ID</p>
+                                <p className="font-medium">{data.studentId}</p>
+                            </div>
+                        )}
                         <div>
                             <p className="text-xs text-gray-500 uppercase">Room Allocation</p>
                             <p className="font-medium">Room Number: <span className="font-bold">#{data.roomNumber}</span></p>
                         </div>
+                        {data.academicYear && (
+                            <div>
+                                <p className="text-xs text-gray-500 uppercase">Academic Year</p>
+                                <p className="font-medium">{data.academicYear}</p>
+                            </div>
+                        )}
                     </div>
                 </div>
                 <div className="space-y-4">
@@ -123,6 +154,34 @@ const ReceiptTemplate = forwardRef<HTMLDivElement, ReceiptTemplateProps>(({ data
                     </table>
                 </div>
             </div>
+
+            {/* Authorization Section */}
+            {(data.hostelSignature || data.hostelStamp) && (
+                <div className="mt-10 pt-8 border-t">
+                    <div className="grid grid-cols-2 gap-8">
+                        {data.hostelSignature && (
+                            <div className="space-y-2">
+                                <p className="text-xs text-gray-500 uppercase tracking-widest">Authorized Signature</p>
+                                <div className="h-20 flex items-center justify-center border-b-2 border-gray-300">
+                                    <img src={data.hostelSignature} alt="Signature" className="h-16 object-contain" />
+                                </div>
+                                {data.managerName && (
+                                    <p className="text-sm font-medium text-center">{data.managerName}</p>
+                                )}
+                                <p className="text-xs text-gray-500 text-center">Hostel Manager</p>
+                            </div>
+                        )}
+                        {data.hostelStamp && (
+                            <div className="space-y-2">
+                                <p className="text-xs text-gray-500 uppercase tracking-widest">Official Stamp</p>
+                                <div className="h-20 flex items-center justify-center">
+                                    <img src={data.hostelStamp} alt="Stamp" className="h-20 object-contain" />
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* Footer */}
             <div className="mt-auto pt-10 border-t border-dashed flex flex-col items-center text-center gap-6">

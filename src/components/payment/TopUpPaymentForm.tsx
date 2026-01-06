@@ -1,5 +1,6 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { topupPayment } from "@/api/payments";
+import { getResidentBilling } from "@/api/residents";
 import { toast } from "react-hot-toast";
 
 import {
@@ -17,11 +18,11 @@ import {
   BadgeCent,
   Receipt,
   BadgeCheck,
+  AlertCircle,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-import { useAddedResidentStore } from "@/stores/useAddedResidentStore";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import {
@@ -32,21 +33,65 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const TopUpPaymentForm = () => {
   const navigate = useNavigate();
-  const resident = useAddedResidentStore((s) => s.resident)!;
+  const { user } = useAuthStore();
+
+  // Fetch resident billing data from API
+  const { data: billingData, isLoading, isError } = useQuery({
+    queryKey: ['resident-billing-topup', user?.id],
+    queryFn: async () => {
+      const res = await getResidentBilling();
+      const data = res?.json || res?.data || res;
+
+      if (!data || !data.summary) {
+        throw new Error("Invalid billing data");
+      }
+
+      return data;
+    },
+    enabled: !!user?.id,
+    retry: 1
+  });
+
+  const summary = billingData?.summary;
+  const payments = billingData?.payments || [];
 
   const mutation = useMutation({
     mutationFn: async () => {
+      console.log('Payment mutation triggered');
+      console.log('Summary data:', summary);
+      console.log('Payments:', payments);
+
+      if (!summary || !user) {
+        const errorMsg = "Resident data not available";
+        console.error(errorMsg);
+        toast.error(errorMsg);
+        throw new Error(errorMsg);
+      }
+
+      if (!summary.balanceOwed || summary.balanceOwed <= 0) {
+        const errorMsg = "No outstanding balance to pay";
+        console.error(errorMsg);
+        toast.error(errorMsg);
+        throw new Error(errorMsg);
+      }
+
       try {
+        // Get the most recent payment to extract residentId and roomId
+        const recentPayment = payments[0];
+
         const payload = {
-          residentId: resident.id,
-          roomId: resident.roomId,
-          initialPayment: resident.balanceOwed,
+          residentId: recentPayment?.residentProfileId || user.id,
+          roomId: recentPayment?.roomId,
+          initialPayment: summary.balanceOwed,
         };
+
+        console.log('Payment payload:', payload);
         const resData = await topupPayment(payload);
+        console.log('Payment response:', resData);
 
         if (resData?.authorizationUrl) {
           toast(resData.message || "Redirecting to payment...");
@@ -56,11 +101,14 @@ const TopUpPaymentForm = () => {
           window.location.href = typeof resData.paymentUrl === 'string'
             ? resData.paymentUrl
             : resData.paymentUrl?.authorizationUrl;
+        } else {
+          toast.error("No payment URL received from server");
         }
 
         return resData;
       } catch (error: any) {
-        const errorMessage = error.response?.data?.message || error.response?.data?.error || "An unexpected error occurred";
+        console.error('Payment error:', error);
+        const errorMessage = error.response?.data?.message || error.response?.data?.error || error.message || "An unexpected error occurred";
         toast.error(errorMessage);
         throw error;
       }
@@ -68,6 +116,7 @@ const TopUpPaymentForm = () => {
   });
 
   const handlPayment = () => {
+    console.log('Pay Now button clicked');
     mutation.mutate();
   };
 
@@ -80,214 +129,182 @@ const TopUpPaymentForm = () => {
       .slice(0, 2);
   };
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-2xl mx-auto shadow-lg border-0 overflow-hidden">
-        <div className="bg-gradient-to-r from-black via-indigo-600 to-gray-600 p-6">
-          <div className="flex justify-between items-center">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate(-1)}
-              className="text-white hover:bg-white/20"
-            >
-              <ChevronLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-            <Badge
-              variant="outline"
-              className="text-white border-white/30 px-3 py-1"
-            >
-              {resident?.room?.status || "PENDING"}
-            </Badge>
-          </div>
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
-          <div className="mt-6 flex items-center gap-4">
-            <Avatar className="h-16 w-16 border-2 border-white">
-              <AvatarFallback className="bg-indigo-800 text-white text-xl">
-                {getInitials(resident?.name || "")}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <h1 className="text-2xl font-bold text-white">
-                {resident?.name || ""}
-              </h1>
-              <div className="flex items-center gap-2 text-indigo-100">
-                <GraduationCap className="h-4 w-4" />
-                <span>{resident?.studentId || ""}</span>
+  if (isError || !summary) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
+        <AlertCircle className="w-12 h-12 text-destructive" />
+        <p className="text-muted-foreground">Failed to load payment information.</p>
+        <Button onClick={() => navigate("/dashboard/payment-billing")}>
+          <ChevronLeft className="w-4 h-4 mr-2" />
+          Back to Billing
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen px-4 py-8 bg-gray-50/50 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate(-1)}
+          className="mb-6 hover:bg-transparent hover:text-primary -ml-3"
+        >
+          <ChevronLeft className="w-4 h-4 mr-1" />
+          Back to Billing
+        </Button>
+
+        <Card className="overflow-hidden border shadow-sm">
+          {/* Header Section */}
+          <div className="p-6 border-b bg-white">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <Avatar className="w-16 h-16 border border-gray-100">
+                  <AvatarFallback className="text-xl bg-primary/10 text-primary font-bold">
+                    {getInitials(user?.name || summary?.residentName || "")}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    {user?.name || summary?.residentName || ""}
+                  </h1>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <GraduationCap className="w-4 h-4" />
+                    <span className="text-sm">Student</span>
+                  </div>
+                </div>
               </div>
+              <Badge variant="secondary" className="w-fit px-3 py-1.5 text-sm capitalize">
+                Active
+              </Badge>
             </div>
           </div>
-        </div>
 
-        <CardContent className="p-6 space-y-8">
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Resident Information */}
-            <Card className="border shadow-sm">
-              <CardHeader className="pb-2">
-                <div className="flex items-center gap-2">
-                  <div className="p-2 rounded-full bg-purple-100">
-                    <User className="h-5 w-5 text-purple-600" />
-                  </div>
-                  <CardTitle className="text-lg font-medium">
-                    Resident Details
-                  </CardTitle>
+          <CardContent className="p-6 md:p-8 space-y-8">
+            <div className="grid gap-8 md:grid-cols-2">
+              {/* Resident Information */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 pb-2 border-b">
+                  <User className="w-4 h-4 text-primary" />
+                  <h3 className="font-semibold text-gray-900">Resident Details</h3>
                 </div>
-              </CardHeader>
-              <CardContent className="pt-2 pb-4">
-                <dl className="space-y-2 text-sm">
-                  <div className="flex items-center gap-2">
-                    <GraduationCap className="h-4 w-4 text-gray-500" />
-                    <dt className="w-24 text-gray-500">Course:</dt>
-                    <dd className="font-medium">{resident?.course || ""}</dd>
+                <dl className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <dt className="text-muted-foreground flex items-center gap-2">
+                      <Mail className="w-3.5 h-3.5" /> Email
+                    </dt>
+                    <dd className="font-medium text-right">{user?.email || "-"}</dd>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-gray-500" />
-                    <dt className="w-24 text-gray-500">Email:</dt>
-                    <dd className="font-medium">{resident?.email || ""}</dd>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 text-gray-500" />
-                    <dt className="w-24 text-gray-500">Phone:</dt>
-                    <dd className="font-medium">{resident?.phone || ""}</dd>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Users className="h-4 w-4 text-gray-500" />
-                    <dt className="w-24 text-gray-500">Gender:</dt>
-                    <dd className="font-medium">{resident?.gender || ""}</dd>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Flag className="h-4 w-4 text-gray-500" />
-                    <dt className="w-24 text-gray-500">Nationality:</dt>
-                    <dd className="font-medium">Ghanaian</dd>
+                  <div className="flex justify-between">
+                    <dt className="text-muted-foreground flex items-center gap-2">
+                      <Phone className="w-3.5 h-3.5" /> Phone
+                    </dt>
+                    <dd className="font-medium text-right">{user?.phoneNumber || "-"}</dd>
                   </div>
                 </dl>
-              </CardContent>
-            </Card>
+              </div>
 
-            {/* Room Information */}
-            {resident?.room && (
-              <Card className="border shadow-sm">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2">
-                    <div className="p-2 rounded-full bg-indigo-100">
-                      <Home className="h-5 w-5 text-indigo-600" />
-                    </div>
-                    <CardTitle className="text-lg font-medium">
-                      Room Details
-                    </CardTitle>
+              {/* Room Information */}
+              {summary && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 pb-2 border-b">
+                    <Home className="w-4 h-4 text-primary" />
+                    <h3 className="font-semibold text-gray-900">Room Details</h3>
                   </div>
-                </CardHeader>
-                <CardContent className="pt-2 pb-4">
-                  <dl className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2">
-                      <BadgeCheck className="h-4 w-4 text-gray-500" />
-                      <dt className="w-24 text-gray-500">Room No:</dt>
-                      <dd className="font-medium">
-                        {resident?.room?.number || ""}
-                      </dd>
+                  <dl className="space-y-3 text-sm">
+                    <div className="flex justify-between">
+                      <dt className="text-muted-foreground flex items-center gap-2">
+                        <BadgeCheck className="w-3.5 h-3.5" /> Room No
+                      </dt>
+                      <dd className="font-bold text-lg">{summary?.roomNumber || "-"}</dd>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Home className="h-4 w-4 text-gray-500" />
-                      <dt className="w-24 text-gray-500">Block:</dt>
-                      <dd className="font-medium">
-                        {resident?.room?.block || ""}
-                      </dd>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-gray-500" />
-                      <dt className="w-24 text-gray-500">Type:</dt>
-                      <dd className="font-medium">
-                        {resident?.room?.type || ""}
-                      </dd>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <BadgeCent className="h-4 w-4 text-gray-500" />
-                      <dt className="w-24 text-gray-500">Price:</dt>
-                      <dd className="font-medium text-green-600">
-                        GH₵{resident?.room?.price?.toLocaleString() || ""}
-                      </dd>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-gray-500" />
-                      <dt className="w-24 text-gray-500">Floor:</dt>
-                      <dd className="font-medium">
-                        {resident?.room?.floor || ""}
-                      </dd>
+                    <div className="flex justify-between">
+                      <dt className="text-muted-foreground flex items-center gap-2">
+                        <BadgeCent className="w-3.5 h-3.5" /> Price
+                      </dt>
+                      <dd className="font-medium text-primary">GH₵{summary?.roomPrice?.toLocaleString() || "0"}</dd>
                     </div>
                   </dl>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-
-          {/* Payment Summary */}
-
-          <Card className="border shadow-sm bg-gradient-to-r from-green-50 to-emerald-50">
-            <CardHeader className="pb-2">
-              <div className="flex items-center gap-2">
-                <div className="p-2 rounded-full bg-green-100">
-                  <Receipt className="h-5 w-5 text-green-600" />
                 </div>
-                <CardTitle className="text-lg font-medium">
-                  Payment Summary
-                </CardTitle>
+              )}
+            </div>
+
+            {/* Payment Summary */}
+            <div className="mt-8 pt-8 border-t">
+              <div className="space-y-6 max-w-xl mx-auto">
+                <div className="text-center space-y-2">
+                  <h2 className="text-xl font-bold">Payment Summary</h2>
+                  <p className="text-muted-foreground text-sm">Clear your outstanding balance</p>
+                </div>
+
+                <div className="bg-slate-50 p-6 rounded-xl border space-y-4">
+                  <div className="grid grid-cols-3 gap-4 pb-4 border-b">
+                    <div className="text-center">
+                      <p className="text-xs text-muted-foreground mb-1">Total</p>
+                      <p className="font-bold">GH₵{summary?.roomPrice?.toLocaleString() || "0"}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs text-muted-foreground mb-1">Paid</p>
+                      <p className="font-bold text-green-600">GH₵{summary?.totalAmountPaid?.toLocaleString() || "0"}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs text-muted-foreground mb-1">Balance</p>
+                      <p className="font-bold text-red-600">GH₵{summary?.balanceOwed?.toLocaleString() || "0"}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center pt-2">
+                    <span className="font-bold text-gray-900">Amount Due Now</span>
+                    <span className="text-3xl font-bold text-primary">
+                      GH₵{summary?.balanceOwed?.toLocaleString() || "0"}
+                    </span>
+                  </div>
+                </div>
+
+                <Button
+                  type="button"
+                  onClick={() => handlPayment()}
+                  disabled={mutation.isPending}
+                  size="lg"
+                  className="w-full text-lg font-semibold h-12"
+                >
+                  {mutation.isPending ? (
+                    <>
+                      <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    <>
+                      <CreditCard className="w-5 h-5 mr-2" />
+                      Pay Now
+                    </>
+                  )}
+                </Button>
               </div>
-            </CardHeader>
-            <CardContent className="pt-2">
-              <div className="grid grid-cols-3 gap-4 mb-4">
-                <div className="bg-white rounded-lg p-3 shadow-sm">
-                  <div className="text-sm text-gray-500">Total Amount</div>
-                  <div className="text-xl font-bold text-gray-900">
-                    GH₵{resident?.roomPrice?.toLocaleString()}
-                  </div>
-                </div>
-                <div className="bg-white rounded-lg p-3 shadow-sm">
-                  <div className="text-sm text-gray-500"> Amount Paid</div>
-                  <div className="text-xl font-bold text-gray-900">
-                    GH₵{resident?.amountPaid?.toLocaleString()}
-                  </div>
-                </div>
-                <div className="bg-white rounded-lg p-3 shadow-sm">
-                  <div className="text-sm text-gray-500">Balance Owed</div>
-                  <div className="text-xl font-bold text-red-600">
-                    GH₵{resident?.balanceOwed?.toLocaleString()}
-                  </div>
-                </div>
-              </div>
-              <Button
-                type="button"
-                onClick={() => handlPayment()}
-                disabled={mutation.isPending}
-                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white py-6 text-lg"
-              >
-                {mutation.isPending ? (
-                  <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <CreditCard className="mr-2 h-5 w-5" />
-                    Pay GH₵{resident?.balanceOwed?.toLocaleString()}
-                  </>
-                )}
-              </Button>
-            </CardContent>
-          </Card>
-        </CardContent>
+            </div>
+          </CardContent>
 
-        <CardFooter className="bg-gray-50 px-6 py-4 flex items-center justify-between text-sm text-gray-500">
-          <div className="flex items-center gap-1">
-            <Calendar className="h-4 w-4" />
-            <span>Payment due: {new Date().toLocaleDateString()}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Flag className="h-4 w-4" />
-            <span>Ghana</span>
-          </div>
-        </CardFooter>
-      </Card>
+          <CardFooter className="bg-gray-50 border-t p-4 px-8 flex justify-between text-xs text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-3.5 h-3.5" />
+              <span>{new Date().toLocaleDateString()}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Flag className="w-3.5 h-3.5" />
+              <span>Secured Transaction</span>
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   );
 };

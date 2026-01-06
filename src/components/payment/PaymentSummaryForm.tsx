@@ -7,9 +7,9 @@ import { getHostelById } from "@/api/hostels"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { toast } from "react-hot-toast"
 import { useState } from "react"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Loader2,
   ChevronLeft,
@@ -45,8 +45,16 @@ type PaymentInputs = z.infer<typeof paymentFormSchema>
 
 const PaymentSummaryForm = () => {
   const navigate = useNavigate()
-  const room = useSelectedRoomStore((s: any) => s.room)!
-  const resident = useAddedResidentStore((s: any) => s.resident)!
+  const room = useSelectedRoomStore((s: any) => s.room)
+  const resident = useAddedResidentStore((s: any) => s.resident)
+
+  // Redirect if required data is missing
+  if (!room || !resident) {
+    toast.error("Booking information not found. Please start the booking process again.")
+    navigate("/find-hostel")
+    return null
+  }
+
   const totalAmount = room.price
 
   const [paymentType, setPaymentType] = useState<"full" | "partial">("full")
@@ -127,265 +135,218 @@ const PaymentSummaryForm = () => {
   }
 
   return (
-    <div className="min-h-screen px-4 py-12 bg-gradient-to-b from-gray-50 to-gray-100 sm:px-6 lg:px-8">
-      <Card className="w-full max-w-2xl mx-auto overflow-hidden border-0 shadow-lg">
-        <div className="p-6 bg-gradient-to-r from-black via-indigo-600 to-gray-600">
-          <div className="flex items-center justify-between">
-            <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="text-white hover:bg-white/20">
-              <ChevronLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-            <Badge variant="outline" className="px-3 py-1 text-white border-white/30">
-              {room?.status || "Pending"}
-            </Badge>
-          </div>
-          <div className="flex items-center gap-4 mt-6">
-            <Avatar className="w-16 h-16 border-2 border-white">
-              <AvatarFallback className="text-xl text-white bg-indigo-800">
-                {getInitials(resident?.name || "")}
-              </AvatarFallback>
-            </Avatar>
-            <div>
-              <h1 className="text-2xl font-bold text-white">{resident?.name || ""}</h1>
-              <div className="flex items-center gap-2 text-indigo-100">
-                <GraduationCap className="w-4 h-4" />
-                <span>{resident?.studentId || ""}</span>
+    <div className="min-h-screen px-4 py-8 bg-gray-50/50 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate(-1)}
+          className="mb-6 hover:bg-transparent hover:text-primary -ml-3"
+        >
+          <ChevronLeft className="w-4 h-4 mr-1" />
+          Back to Booking
+        </Button>
+
+        <Card className="overflow-hidden border shadow-sm">
+          {/* Header Section */}
+          <div className="p-6 border-b bg-white">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <Avatar className="w-16 h-16 border border-gray-100">
+                  <AvatarFallback className="text-xl bg-primary/10 text-primary font-bold">
+                    {getInitials(resident?.name || "")}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">{resident?.name || ""}</h1>
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <GraduationCap className="w-4 h-4" />
+                    <span className="text-sm">{resident?.studentId || "Student ID"}</span>
+                  </div>
+                </div>
               </div>
+              <Badge variant="secondary" className="w-fit px-3 py-1.5 text-sm capitalize">
+                {room?.status || "Pending"}
+              </Badge>
             </div>
           </div>
-        </div>
-        <CardContent className="p-6 space-y-8">
-          <div className="grid gap-6 md:grid-cols-2">
-            {/* Resident Information */}
-            <Card className="border shadow-sm">
-              <CardHeader className="pb-2">
-                <div className="flex items-center gap-2">
-                  <div className="p-2 bg-purple-100 rounded-full">
-                    <User className="w-5 h-5 text-purple-600" />
-                  </div>
-                  <CardTitle className="text-lg font-medium">Resident Details</CardTitle>
+
+          <CardContent className="p-6 md:p-8 space-y-8">
+            <div className="grid gap-8 md:grid-cols-2">
+              {/* Resident Information */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 pb-2 border-b">
+                  <User className="w-4 h-4 text-primary" />
+                  <h3 className="font-semibold text-gray-900">Resident Details</h3>
                 </div>
-              </CardHeader>
-              <CardContent className="pt-2 pb-4">
-                <dl className="space-y-2 text-sm">
-                  <div className="flex items-center gap-2">
-                    <GraduationCap className="w-4 h-4 text-gray-500" />
-                    <dt className="w-24 text-gray-500">Course:</dt>
-                    <dd className="font-medium">{resident?.course || ""}</dd>
+                <dl className="space-y-3 text-sm">
+                  <div className="flex justify-between">
+                    <dt className="text-muted-foreground flex items-center gap-2">
+                      <GraduationCap className="w-3.5 h-3.5" /> Course
+                    </dt>
+                    <dd className="font-medium text-right">{resident?.course || "-"}</dd>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-gray-500" />
-                    <dt className="w-24 text-gray-500">Email:</dt>
-                    <dd className="font-medium">{resident?.email || ""}</dd>
+                  <div className="flex justify-between">
+                    <dt className="text-muted-foreground flex items-center gap-2">
+                      <Mail className="w-3.5 h-3.5" /> Email
+                    </dt>
+                    <dd className="font-medium text-right">{resident?.email || "-"}</dd>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-gray-500" />
-                    <dt className="w-24 text-gray-500">Phone:</dt>
-                    <dd className="font-medium">{resident?.phone || ""}</dd>
+                  <div className="flex justify-between">
+                    <dt className="text-muted-foreground flex items-center gap-2">
+                      <Phone className="w-3.5 h-3.5" /> Phone
+                    </dt>
+                    <dd className="font-medium text-right">{resident?.phone || "-"}</dd>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-gray-500" />
-                    <dt className="w-24 text-gray-500">Gender:</dt>
-                    <dd className="font-medium">{resident?.gender || ""}</dd>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Flag className="w-4 h-4 text-gray-500" />
-                    <dt className="w-24 text-gray-500">Nationality:</dt>
-                    <dd className="font-medium">Ghanaian</dd>
+                  <div className="flex justify-between">
+                    <dt className="text-muted-foreground flex items-center gap-2">
+                      <Users className="w-3.5 h-3.5" /> Gender
+                    </dt>
+                    <dd className="font-medium text-right">{resident?.gender || "-"}</dd>
                   </div>
                 </dl>
-              </CardContent>
-            </Card>
-            {/* Room Information */}
-            {room && (
-              <Card className="border shadow-sm">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2">
-                    <div className="p-2 bg-indigo-100 rounded-full">
-                      <Home className="w-5 h-5 text-indigo-600" />
-                    </div>
-                    <CardTitle className="text-lg font-medium">Room Details</CardTitle>
+              </div>
+
+              {/* Room Information */}
+              {room && (
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 pb-2 border-b">
+                    <Home className="w-4 h-4 text-primary" />
+                    <h3 className="font-semibold text-gray-900">Room Details</h3>
                   </div>
-                </CardHeader>
-                <CardContent className="pt-2 pb-4">
-                  <dl className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2">
-                      <BadgeCheck className="w-4 h-4 text-gray-500" />
-                      <dt className="w-24 text-gray-500">Room No:</dt>
-                      <dd className="font-medium">{room?.number || ""}</dd>
+                  <dl className="space-y-3 text-sm">
+                    <div className="flex justify-between">
+                      <dt className="text-muted-foreground flex items-center gap-2">
+                        <BadgeCheck className="w-3.5 h-3.5" /> Room No
+                      </dt>
+                      <dd className="font-bold text-lg">{room.number}</dd>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Home className="w-4 h-4 text-gray-500" />
-                      <dt className="w-24 text-gray-500">Block:</dt>
-                      <dd className="font-medium">{room?.block || ""}</dd>
+                    <div className="flex justify-between">
+                      <dt className="text-muted-foreground flex items-center gap-2">
+                        <Home className="w-3.5 h-3.5" /> Block
+                      </dt>
+                      <dd className="font-medium">{room.block}</dd>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4 text-gray-500" />
-                      <dt className="w-24 text-gray-500">Type:</dt>
-                      <dd className="font-medium">{room?.type || ""}</dd>
+                    <div className="flex justify-between">
+                      <dt className="text-muted-foreground flex items-center gap-2">
+                        <Users className="w-3.5 h-3.5" /> Type
+                      </dt>
+                      <dd className="font-medium capitalize">{room.type}</dd>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <BadgeCent className="w-4 h-4 text-gray-500" />
-                      <dt className="w-24 text-gray-500">Price:</dt>
-                      <dd className="font-medium text-green-600">GH₵{room?.price?.toLocaleString() || ""}</dd>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4 text-gray-500" />
-                      <dt className="w-24 text-gray-500">Floor:</dt>
-                      <dd className="font-medium">{room?.floor || ""}</dd>
+                    <div className="flex justify-between">
+                      <dt className="text-muted-foreground flex items-center gap-2">
+                        <BadgeCent className="w-3.5 h-3.5" /> Price
+                      </dt>
+                      <dd className="font-medium text-primary">GH₵{room.price.toLocaleString()}</dd>
                     </div>
                   </dl>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-          {/* Payment Summary */}
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)}>
-              <Card className="border shadow-sm bg-gradient-to-r from-green-50 to-emerald-50">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center gap-2">
-                    <div className="p-2 bg-green-100 rounded-full">
-                      <Receipt className="w-5 h-5 text-green-600" />
-                    </div>
-                    <CardTitle className="text-lg font-medium">Payment Summary</CardTitle>
+                </div>
+              )}
+            </div>
+
+            {/* Payment Summary */}
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="mt-8 pt-8 border-t">
+                <div className="space-y-6 max-w-xl mx-auto">
+                  <div className="text-center space-y-2">
+                    <h2 className="text-xl font-bold">Payment Summary</h2>
+                    <p className="text-muted-foreground text-sm">Choose your preferred payment method</p>
                   </div>
-                </CardHeader>
-                <CardContent className="pt-2">
-                  <div className="grid grid-cols-2 gap-4 mb-4">
-                    <div className="p-3 bg-white rounded-lg shadow-sm font-sans">
-                      <div className="text-sm text-gray-500">Total Amount</div>
-                      <div className="text-xl font-bold text-gray-900">GH₵{totalAmount?.toLocaleString()}</div>
+
+                  <div className="bg-slate-50 p-6 rounded-xl border space-y-4">
+                    <div className="flex justify-between items-end pb-4 border-b">
+                      <span className="text-sm font-medium text-muted-foreground">Total Room Fees</span>
+                      <span className="text-2xl font-bold">GH₵{totalAmount?.toLocaleString()}</span>
                     </div>
-                    <div className="p-3 bg-white rounded-lg shadow-sm font-sans">
-                      <div className="text-sm text-gray-500">Amount to Pay</div>
-                      <div className="text-xl font-bold text-indigo-600">
-                        GH₵{form.watch("paymentAmount")?.toLocaleString()}
+
+                    {hostel?.allowPartialPayment && (
+                      <div className="py-4">
+                        <div className="flex items-start space-x-3 p-4 border rounded-lg bg-gray-50/50 hover:bg-gray-50 transition-colors">
+                          <Checkbox
+                            id="partial-payment"
+                            checked={paymentType === "partial"}
+                            onCheckedChange={(checked) => {
+                              setPaymentType(checked ? "partial" : "full")
+                            }}
+                            className="mt-1"
+                          />
+                          <div className="grid gap-1.5 leading-none">
+                            <label
+                              htmlFor="partial-payment"
+                              className="text-sm font-semibold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-gray-900"
+                            >
+                              Make a Partial Deposit
+                            </label>
+                            <p className="text-sm text-muted-foreground">
+                              Pay a {hostel.partialPaymentPercentage}% deposit (GH₵{partialAmount.toLocaleString()}) now and the rest later.
+                            </p>
+                          </div>
+                        </div>
                       </div>
+                    )}
+
+                    <div className="flex justify-between items-center pt-2">
+                      <span className="font-bold text-gray-900">Amount Due Now</span>
+                      <span className="text-3xl font-bold text-primary">
+                        GH₵{form.watch("paymentAmount")?.toLocaleString()}
+                      </span>
                     </div>
                   </div>
 
-                  {hostel?.allowPartialPayment && (
-                    <div className="mb-6 space-y-3">
-                      <Label className="text-sm font-semibold text-gray-700">Choose Payment Option</Label>
-                      <RadioGroup
-                        value={paymentType}
-                        onValueChange={(v: "full" | "partial") => setPaymentType(v)}
-                        className="grid grid-cols-1 gap-3 sm:grid-cols-2"
-                      >
-                        <div>
-                          <RadioGroupItem
-                            value="full"
-                            id="full"
-                            className="sr-only"
-                          />
-                          <Label
-                            htmlFor="full"
-                            className={cn(
-                              "flex flex-col items-start p-4 border-2 rounded-xl cursor-pointer transition-all",
-                              paymentType === "full"
-                                ? "border-indigo-600 bg-indigo-50 shadow-sm"
-                                : "border-gray-200 hover:border-indigo-200 bg-white"
-                            )}
-                          >
-                            <div className="flex items-center justify-between w-full mb-1">
-                              <span className="font-bold">Full Payment</span>
-                              {paymentType === "full" && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
-                            </div>
-                            <span className="text-xs text-gray-500 italic">Pay the entire amount now</span>
-                            <span className="mt-2 text-lg font-bold text-indigo-700">GH₵{totalAmount.toLocaleString()}</span>
-                          </Label>
-                        </div>
-
-                        <div>
-                          <RadioGroupItem
-                            value="partial"
-                            id="partial"
-                            className="sr-only"
-                          />
-                          <Label
-                            htmlFor="partial"
-                            className={cn(
-                              "flex flex-col items-start p-4 border-2 rounded-xl cursor-pointer transition-all",
-                              paymentType === "partial"
-                                ? "border-indigo-600 bg-indigo-50 shadow-sm"
-                                : "border-gray-200 hover:border-indigo-200 bg-white"
-                            )}
-                          >
-                            <div className="flex items-center justify-between w-full mb-1">
-                              <span className="font-bold">Partial Deposit</span>
-                              {paymentType === "partial" && <CheckCircle2 className="w-4 h-4 text-indigo-600" />}
-                            </div>
-                            <span className="text-xs text-gray-500 italic">Pay {hostel.partialPaymentPercentage}% deposit now</span>
-                            <span className="mt-2 text-lg font-bold text-indigo-700">GH₵{partialAmount.toLocaleString()}</span>
-                          </Label>
-                        </div>
-                      </RadioGroup>
-                    </div>
-                  )}
-
-                  <div className="p-3 mb-6 border border-yellow-200 rounded-lg bg-yellow-50 flex items-start gap-2">
-                    <AlertCircle className="w-4 h-4 text-yellow-600 mt-0.5 shrink-0" />
-                    <p className="text-xs text-yellow-800 leading-relaxed font-sans">
+                  <Alert className={cn(
+                    "border-l-4",
+                    paymentType === "full" ? "border-l-green-500 bg-green-50/50" : "border-l-yellow-500 bg-yellow-50/50"
+                  )}>
+                    <AlertCircle className={cn(
+                      "h-4 w-4",
+                      paymentType === "full" ? "text-green-600" : "text-yellow-600"
+                    )} />
+                    <AlertTitle>Note</AlertTitle>
+                    <AlertDescription className="text-xs text-muted-foreground mt-1">
                       {paymentType === "full"
-                        ? "You are paying the full amount for your booking. No further balance will be owed for this room."
-                        : `You are paying a ${hostel?.partialPaymentPercentage}% deposit. The remaining GH₵${(totalAmount - partialAmount).toLocaleString()} must be paid upon arrival or via your dashboard.`
+                        ? "You are clearing all fees for this room."
+                        : `You are paying a deposit. The remaining balance of GH₵${(totalAmount - partialAmount).toLocaleString()} will be recorded against your account.`
                       }
-                    </p>
-                  </div>
+                    </AlertDescription>
+                  </Alert>
+
                   {/* Hidden field so RHF knows about it */}
                   <input type="hidden" {...form.register("paymentAmount", { valueAsNumber: true })} />
-                  <div className="space-y-6">
-                    {mutation.isSuccess && (
-                      <Alert className="text-green-700 border-green-500 bg-green-50">
-                        <CheckCircle2 className="w-4 h-4" />
-                        <AlertTitle>Payment Successful!</AlertTitle>
-                        <AlertDescription>Your payment has been processed successfully.</AlertDescription>
-                      </Alert>
+
+                  <Button
+                    type="submit"
+                    size="lg"
+                    disabled={mutation.isPending}
+                    className="w-full text-lg font-semibold h-12"
+                  >
+                    {mutation.isPending ? (
+                      <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      <>
+                        <CreditCard className="w-5 h-5 mr-2" />
+                        Proceed to Pay
+                      </>
                     )}
-                    {mutation.isError && (
-                      <Alert variant="destructive">
-                        <AlertCircle className="w-4 h-4" />
-                        <AlertTitle>Payment Failed</AlertTitle>
-                        <AlertDescription>
-                          There was an error processing your payment. Please try again.
-                        </AlertDescription>
-                      </Alert>
-                    )}
-                    <Button
-                      type="submit"
-                      disabled={mutation.isPending}
-                      className="w-full py-6 text-lg text-white bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
-                    >
-                      {mutation.isPending ? (
-                        <>
-                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                          Processing...
-                        </>
-                      ) : (
-                        <>
-                          <CreditCard className="w-5 h-5 mr-2" />
-                          Pay GH₵{form.getValues("paymentAmount")?.toLocaleString()}
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            </form>
-          </Form>
-        </CardContent>
-        <CardFooter className="flex items-center justify-between px-6 py-4 text-sm text-gray-500 bg-gray-50">
-          <div className="flex items-center gap-1">
-            <Calendar className="w-4 h-4" />
-            <span>Payment due: {new Date().toLocaleDateString()}</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Flag className="w-4 h-4" />
-            <span>Ghana</span>
-          </div>
-        </CardFooter>
-      </Card>
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </CardContent>
+          <CardFooter className="bg-gray-50 border-t p-4 px-8 flex justify-between text-xs text-muted-foreground">
+            <div className="flex items-center gap-2">
+              <Calendar className="w-3.5 h-3.5" />
+              <span>{new Date().toLocaleDateString()}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Flag className="w-3.5 h-3.5" />
+              <span>Secured Transaction</span>
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   )
 }

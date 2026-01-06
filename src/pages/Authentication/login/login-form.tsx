@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from "@/stores/useAuthStore";
 import { Loader, Eye, EyeOff } from 'lucide-react';
 import { useState } from 'react';
@@ -20,11 +20,17 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
+  const [searchParams] = useSearchParams();
+  const redirectPath = searchParams.get('redirect');
+
   const onSubmit = async (data: SignInFormData) => {
     const response = await login(data);
     if (response) {
-      navigate('/dashboard');
-
+      if (redirectPath) {
+        navigate(decodeURIComponent(redirectPath));
+      } else {
+        navigate('/dashboard');
+      }
     }
   };
 

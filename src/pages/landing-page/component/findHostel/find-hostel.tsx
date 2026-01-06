@@ -7,7 +7,7 @@ import { getHostels } from "@/api/hostels";
 import { Hostel } from "@/helper/types/types";
 import CustomeRefetch from "@/components/CustomeRefetch";
 import ImageSlider from "@/components/ImageSlider";
-import { MapPin, MapPinHouse, Phone } from "lucide-react";
+import { MapPin, MapPinHouse, Phone, Star } from "lucide-react";
 import { useDebounce } from "@/helper/useDebounce";
 import FilterPanel from "@components/FilterPanel";
 import FindHostelSkeleton from "@components/loaders/HostelCardSkeleton";
@@ -145,9 +145,17 @@ export function FindHostel() {
                     images={hostel?.hostelImages?.map((i) => i.imageUrl)}
                   />
                   <div className="p-4 space-y-2">
-                    <p className="font-bold text-black dark:text-white">
-                      {hostel.name}
-                    </p>
+                    <div className="flex items-center justify-between">
+                      <p className="font-bold text-black dark:text-white">
+                        {hostel.name}
+                      </p>
+                      {hostel.averageRating !== undefined && (
+                        <div className="flex items-center gap-1 bg-yellow-100 dark:bg-yellow-900/30 px-2 py-0.5 rounded-full">
+                          <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
+                          <span className="text-xs font-bold text-yellow-700 dark:text-yellow-500">{hostel.averageRating.toFixed(1)}</span>
+                        </div>
+                      )}
+                    </div>
                     <div className="flex w-full gap-2">
                       <a
                         href={`tel:${hostel.phone}`}

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Home, Info, MapPin, Users, Loader } from "lucide-react"
+import { Home, Info, MapPin, Users, Loader, Phone, Mail } from "lucide-react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
@@ -188,13 +188,31 @@ const ResidentRoomDetails = () => {
                                         <div className="grid gap-3">
                                             {/* @ts-ignore */}
                                             {roommates.map((mate: any) => (
-                                                <div key={mate.id} className="flex items-center gap-3 p-2 rounded-md bg-slate-50 dark:bg-zinc-900 border">
-                                                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                                                        {mate.name?.charAt(0) || 'U'}
+                                                <div key={mate.id} className="flex flex-col gap-2 p-3 border rounded-md bg-slate-50 dark:bg-zinc-900">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="flex items-center justify-center w-8 h-8 text-xs font-bold rounded-full bg-primary/10 text-primary">
+                                                            {mate.name?.charAt(0) || 'U'}
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-sm font-medium">{mate.name}</p>
+                                                            {mate.course && <p className="text-xs text-muted-foreground">{mate.course}</p>}
+                                                        </div>
                                                     </div>
-                                                    <div>
-                                                        <p className="text-sm font-medium">{mate.name}</p>
-                                                        {mate.course && <p className="text-xs text-muted-foreground">{mate.course}</p>}
+
+                                                    {/* Contact Details from User Object or direct */}
+                                                    <div className="pl-11 space-y-1 text-xs text-muted-foreground">
+                                                        {(mate.user?.phone || mate.phone) && (
+                                                            <div className="flex items-center gap-2">
+                                                                <Phone className="w-3 h-3" />
+                                                                <span>{mate.user?.phone || mate.phone}</span>
+                                                            </div>
+                                                        )}
+                                                        {(mate.user?.email || mate.email) && (
+                                                            <div className="flex items-center gap-2">
+                                                                <Mail className="w-3 h-3" />
+                                                                <span>{mate.user?.email || mate.email}</span>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </div>
                                             ))}
