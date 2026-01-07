@@ -157,3 +157,16 @@ export interface BookingDto {
     servicePrice?: number;
     createdAt: string;
 }
+
+export interface AnnouncementDto {
+    id: string;
+    hostelId: string;
+    title: string;
+    content: string;
+    category: "general" | "policy" | "event" | "emergency";
+    priority: "low" | "high" | "urgent";
+    startDate: string;
+    endDate: string;
+    createdAt: string;
+    updatedAt: string;
+}
