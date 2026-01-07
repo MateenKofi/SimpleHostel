@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getHostelResidents, deleteResident } from "@/api/residents";
 import CustomDataTable from "../CustomDataTable";
-import { Resident } from "@/helper/types/types";
+import { ResidentDto } from "@/types/dtos";
 import { HousePlus, Edit, Trash2, Ellipsis } from "lucide-react";
 import toast from "react-hot-toast";
 import {
@@ -23,7 +23,7 @@ const ResidentTable = () => {
   const hostelId = localStorage.getItem("hostelId");
 
   const [selectedResident, setSelectedResident] = useS<
-    Resident | Record<string, any>
+    ResidentDto | Record<string, any>
   >({
     value: {},
     key: "selectedResident",
@@ -57,7 +57,7 @@ const ResidentTable = () => {
     },
   });
 
-  const handleAssignRoom = (resident: Resident) => {
+  const handleAssignRoom = (resident: ResidentDto) => {
     setResident(resident);
     setTimeout(() => {
       navigate("/dashboard/room-assignment");
@@ -72,7 +72,7 @@ const ResidentTable = () => {
     });
   };
 
-  const handleEdit = (resident: Resident) => {
+  const handleEdit = (resident: ResidentDto) => {
     setSelectedResident(() => resident || {});
     console.log("selected resident", selectedResident);
     navigate("/dashboard/edit-resident");
@@ -81,41 +81,41 @@ const ResidentTable = () => {
   const columns = [
     {
       name: "Name",
-      selector: (row: Resident) => row.name || "",
+      selector: (row: ResidentDto) => row.name || "",
       sortable: true,
     },
     {
       name: "Access Code",
-      selector: (row: Resident) => row.accessCode || "",
+      selector: (row: ResidentDto) => row.accessCode || "",
       sortable: true,
       wrap: true,
     },
     {
       name: "Student ID",
-      selector: (row: Resident) => row.studentId || "",
+      selector: (row: ResidentDto) => row.studentId || "",
       sortable: true,
     },
     {
       name: "Phone",
-      selector: (row: Resident) => row.phone || "",
+      selector: (row: ResidentDto) => row.phone || "",
       sortable: true,
     },
     {
       name: "Email",
-      selector: (row: Resident) => row.email || "",
+      selector: (row: ResidentDto) => row.email || "",
       sortable: true,
       wrap: true,
     },
     {
       name: "Room",
-      cell: (row: Resident) => (
+      cell: (row: ResidentDto) => (
         <span>{row?.room ? row.room.number : "N/A"}</span>
       ),
     },
     {
       name: "Action",
       width: "fit",
-      cell: (row: Resident) => (
+      cell: (row: ResidentDto) => (
         <DropdownMenu>
           <DropdownMenuTrigger>
             <Ellipsis />

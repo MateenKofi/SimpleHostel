@@ -1,7 +1,7 @@
 import Modal from "../Modal";
 import { useForm } from "react-hook-form";
 import { toast } from "react-hot-toast";
-import { Resident } from "../../helper/types/types";
+import { ResidentDto } from "@/types/dtos";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addResident } from "@/api/residents";
@@ -11,7 +11,17 @@ import { useAddedResidentStore } from "@/stores/useAddedResidentStore";
 type AddResidentModalProps = {
   onClose: () => void;
 };
-type ResidentForm = Omit<Resident, "paymentMethod">;
+type ResidentForm = {
+  name: string;
+  studentId: string;
+  course: string;
+  phone: string;
+  email: string;
+  emergencyContactName: string;
+  emergencyContactPhone: string;
+  relationship: string;
+  gender: string;
+};
 
 const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
   const navigate = useNavigate();
@@ -45,7 +55,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
       return await addResident(payload);
     },
     onSuccess: (response) => {
-      const resident = response?.data?.data;
+      const resident = response?.data;
       if (resident) {
         setResident(resident);
       } else {

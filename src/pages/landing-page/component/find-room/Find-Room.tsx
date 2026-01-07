@@ -103,7 +103,7 @@ const FindRoom = () => {
 
       return await registerResident(formData);
     },
-    onSuccess: (res) => {
+    onSuccess: (res: any) => {
       const residentData = res?.isExisting ? res.data : res?.data;
       setResident(residentData);
 

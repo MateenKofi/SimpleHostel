@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { getResidentRoomDetails } from "@/api/residents"
 import ViewRoomSkeleton from "@components/loaders/ViewRoomSkeleton"
-import { Room } from "@/helper/types/types"
+import { ResidentDto, RoomDto } from "@/types/dtos"
 
 const ResidentRoomDetails = () => {
     const navigate = useNavigate()
@@ -179,38 +179,36 @@ const ResidentRoomDetails = () => {
                             </div>
 
                             {/* Roommates Section if available */}
-                            {/* @ts-ignore - roommates might not be in Room type definition yet */}
                             {roommates && roommates.length > 0 && (
                                 <>
                                     <Separator className="my-4" />
                                     <div>
                                         <h4 className="text-sm font-medium mb-3">Roommates</h4>
                                         <div className="grid gap-3">
-                                            {/* @ts-ignore */}
-                                            {roommates.map((mate: any) => (
+                                            {roommates.map((mate: ResidentDto) => (
                                                 <div key={mate.id} className="flex flex-col gap-2 p-3 border rounded-md bg-slate-50 dark:bg-zinc-900">
                                                     <div className="flex items-center gap-3">
                                                         <div className="flex items-center justify-center w-8 h-8 text-xs font-bold rounded-full bg-primary/10 text-primary">
-                                                            {mate.name?.charAt(0) || 'U'}
+                                                            {mate.user?.name?.charAt(0) || 'U'}
                                                         </div>
                                                         <div>
-                                                            <p className="text-sm font-medium">{mate.name}</p>
+                                                            <p className="text-sm font-medium">{mate.user?.name || "Unknown Resident"}</p>
                                                             {mate.course && <p className="text-xs text-muted-foreground">{mate.course}</p>}
                                                         </div>
                                                     </div>
 
                                                     {/* Contact Details from User Object or direct */}
                                                     <div className="pl-11 space-y-1 text-xs text-muted-foreground">
-                                                        {(mate.user?.phone || mate.phone) && (
+                                                        {(mate.user?.phone || mate.roomNumber) && (
                                                             <div className="flex items-center gap-2">
                                                                 <Phone className="w-3 h-3" />
-                                                                <span>{mate.user?.phone || mate.phone}</span>
+                                                                <span>{mate.user?.phone || mate.roomNumber}</span>
                                                             </div>
                                                         )}
-                                                        {(mate.user?.email || mate.email) && (
+                                                        {mate.user?.email && (
                                                             <div className="flex items-center gap-2">
                                                                 <Mail className="w-3 h-3" />
-                                                                <span>{mate.user?.email || mate.email}</span>
+                                                                <span>{mate.user?.email}</span>
                                                             </div>
                                                         )}
                                                     </div>

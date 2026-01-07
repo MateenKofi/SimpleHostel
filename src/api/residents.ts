@@ -1,5 +1,5 @@
 import axiosInstance from "./axiosInstance";
-import { MaintenanceRequestDto, ResidentDto } from "@/types/dtos";
+import { MaintenanceRequestDto, ResidentDto, UserDto } from "@/types/dtos";
 
 export const registerResident = async (formData: FormData): Promise<{ data: UserDto }> => {
     const response = await axiosInstance.post("/residents/register", formData, {

@@ -59,7 +59,10 @@ export interface HostelDto {
 export interface RoomDto {
     id: string;
     number: string;
+    roomNumber: string; // Added for legacy compatibility
     floor: string | null;
+    block: string | null; // Changed to allow null
+    type: string; // Added
     maxCap: number;
     currentResidentCount: number;
     price: number;
@@ -67,6 +70,11 @@ export interface RoomDto {
     hostelId: string;
     amenities: Amenity[];
     images: string[]; // Array of image URLs
+    RoomImage?: { id: string; imageUrl: string }[]; // Added for legacy compatibility
+    description: string | null; // Added
+    createdAt: string; // Added
+    updatedAt: string; // Added
+    gender: string | null; // Added
     hostel?: HostelDto;
 }
 
@@ -86,8 +94,17 @@ export interface ResidentDto {
     status: string;
     checkInDate: string | null;
     checkOutDate: string | null;
+    name?: string; // Legacy compatibility
+    email?: string; // Legacy compatibility
+    phone?: string; // Legacy compatibility
+    accessCode?: string | null; // Legacy compatibility
+    roomPrice?: number; // Legacy compatibility
+    amountPaid?: number | null; // Legacy compatibility
+    balanceOwed?: number | null; // Legacy compatibility
+    calendarYearId?: string; // Legacy compatibility
     user?: UserDto;
     room?: RoomDto;
+    roommates?: ResidentDto[]; // Added
 }
 
 export interface PaymentDto {

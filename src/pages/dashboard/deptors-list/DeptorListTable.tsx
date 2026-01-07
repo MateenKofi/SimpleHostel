@@ -2,22 +2,22 @@ import React, { useState } from 'react';
 import CustomDataTable from '@/components/CustomDataTable';
 import { useQuery } from '@tanstack/react-query';
 import { getHostelResidents } from '@/api/residents';
-import { Deptors } from '@/helper/types/types';
+import { ResidentDto } from '@/types/dtos';
 import { useAddedResidentStore } from '@/stores/useAddedResidentStore';
 import { useNavigate } from 'react-router-dom';
 
 const DebtorListTable: React.FC = () => {
   const navigate = useNavigate()
   const setResidetn = useAddedResidentStore((state) => state.setResident)
-  const [selectedDebtor, setSelectedDebtor] = useState<Deptors | null>(null);
+  const [selectedDebtor, setSelectedDebtor] = useState<ResidentDto | null>(null);
   const hostelId = localStorage.getItem('hostelId')
 
   console.log(selectedDebtor)
   const {
-    data: DeptorsList,
+    data: ResidentDtoList,
     isLoading,
     isError,
-    refetch: refetchDeptors,
+    refetch: refetchResidentDto,
   } = useQuery({
     queryKey: ["resident"],
     queryFn: async () => {
@@ -28,10 +28,10 @@ const DebtorListTable: React.FC = () => {
     enabled: !!hostelId,
   });
 
-  const Debtors = DeptorsList?.filter((debtor: Deptors) =>
+  const Debtors = ResidentDtoList?.filter((debtor: ResidentDto) =>
     debtor?.room && debtor?.roomPrice !== debtor?.amountPaid
   );
-  const handlePayment = (row: Deptors) => {
+  const handlePayment = (row: ResidentDto) => {
     setResidetn(row)
     setSelectedDebtor(row)
     setTimeout(() => {
@@ -43,45 +43,45 @@ const DebtorListTable: React.FC = () => {
     {
       name: 'Full Name',
       wrap: true,
-      selector: (row: Deptors) => row.name || "",
+      selector: (row: ResidentDto) => row.name || "",
       sortable: true,
     },
     {
       name: 'Student ID',
-      selector: (row: Deptors) => row.studentId || "",
+      selector: (row: ResidentDto) => row.studentId || "",
       sortable: true,
       wrap: true,
     },
     {
       name: 'Phone',
-      selector: (row: Deptors) => row.phone || "",
+      selector: (row: ResidentDto) => row.phone || "",
       sortable: true,
       wrap: true,
     },
     {
       name: 'Email',
-      selector: (row: Deptors) => row.email || "",
+      selector: (row: ResidentDto) => row.email || "",
       sortable: true,
       wrap: true,
     },
     {
       name: 'Room Price',
-      selector: (row: Deptors) => row.roomPrice ?? 0,
+      selector: (row: ResidentDto) => row.roomPrice ?? 0,
       sortable: true,
     },
     {
       name: 'Amount Paid',
-      selector: (row: Deptors) => row.amountPaid ?? 0,
+      selector: (row: ResidentDto) => row.amountPaid ?? 0,
       sortable: true,
     },
     {
       name: 'Balance Owed',
-      selector: (row: Deptors) => row.balanceOwed ?? 0,
+      selector: (row: ResidentDto) => row.balanceOwed ?? 0,
       sortable: true,
     },
     {
       name: 'Action',
-      cell: (row: Deptors) => (
+      cell: (row: ResidentDto) => (
         <div className="flex gap-2">
           <button className="px-4 py-2 text-white rounded-md bg-primary"
             onClick={() => handlePayment(row)}
@@ -97,10 +97,10 @@ const DebtorListTable: React.FC = () => {
   return (
     <div>
       <CustomDataTable
-        title='Deptors List'
+        title='ResidentDto List'
         columns={columns}
         data={Debtors}
-        refetch={refetchDeptors}
+        refetch={refetchResidentDto}
         isError={isError}
         isLoading={isLoading}
       />
