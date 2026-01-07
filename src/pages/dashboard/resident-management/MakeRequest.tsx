@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useForm, SubmitHandler } from "react-hook-form"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { getResidentRequests, createResidentRequest } from "@/api/residents"
-import { Loader, Plus, Wrench, AlertCircle, CheckCircle, Clock } from "lucide-react"
+import { Loader, Plus, Wrench, AlertCircle, CheckCircle, Clock, MoreHorizontal, Eye } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -19,9 +19,19 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { updateMaintenanceRequest } from "@/api/adminMaintenanceHelper"
 import toast from "react-hot-toast"
 import { format } from "date-fns"
 import UploadMultipleImages from "@/components/UploadMultipleImages"
+import { useEffect } from "react"
 
 // Types based on the API guide
 type RequestType = "maintenance" | "room_change" | "item_replacement" | "misconduct" | "emergency" | "other"
@@ -29,18 +39,13 @@ type RequestPriority = "low" | "medium" | "high" | "critical"
 
 interface CreateMaintenanceRequestDto {
     type: RequestType
-    subject: string
+    title: string
     description: string
     priority: RequestPriority
     images?: string[] // Optional array of URLs
 }
 
-interface MaintenanceRequest extends CreateMaintenanceRequestDto {
-    id: string
-    status: "pending" | "in-progress" | "resolved" | "rejected"
-    createdAt: string
-    updatedAt: string
-}
+import { MaintenanceRequestDto as MaintenanceRequest } from "@/types/dtos"
 
 import NoHostelAssigned from "@/components/resident/NoHostelAssigned"
 
@@ -53,6 +58,18 @@ const MakeRequest = () => {
         }
     })
     const [images, setImages] = useState<File[]>([])
+    const [editMode, setEditMode] = useState(false)
+    const [selectedRequest, setSelectedRequest] = useState<MaintenanceRequest | null>(null)
+
+    // Pre-fill form when editing
+    useEffect(() => {
+        if (editMode && selectedRequest) {
+            setValue('type', selectedRequest.type as any)
+            setValue('priority', selectedRequest.priority)
+            setValue('title', selectedRequest.title)
+            setValue('description', selectedRequest.description)
+        }
+    }, [editMode, selectedRequest, setValue])
     const queryClient = useQueryClient()
 
     // Check for hostel assignment
@@ -94,20 +111,52 @@ const MakeRequest = () => {
         }
     })
 
+    // Mutation for updating request
+    const updateRequestMutation = useMutation({
+        mutationFn: async ({ id, data }: { id: string, data: any }) => {
+            return await updateMaintenanceRequest(id, data)
+        },
+        onSuccess: () => {
+            toast.success("Request updated successfully!")
+            setEditMode(false)
+            setSelectedRequest(null)
+            reset()
+            setActiveTab("history")
+            queryClient.invalidateQueries({ queryKey: ['maintenance-requests'] })
+        },
+        onError: (error: any) => {
+            const msg = error.response?.data?.message || "Failed to update request"
+            toast.error(msg)
+        }
+    })
+
     const onSubmit: SubmitHandler<CreateMaintenanceRequestDto> = (data) => {
+        if (editMode && selectedRequest) {
+            updateRequestMutation.mutate({
+                id: selectedRequest.id,
+                data: {
+                    type: data.type,
+                    priority: data.priority,
+                    title: data.title,
+                    description: data.description
+                }
+            })
+            return
+        }
+
         const formData = new FormData()
         formData.append("type", data.type)
         formData.append("priority", data.priority)
-        formData.append("subject", data.subject)
+        formData.append("title", data.title)
         formData.append("description", data.description)
 
         if (data.type === 'misconduct') {
             formData.set("type", 'other')
-            formData.set("subject", `Misconduct Report: ${data.subject}`)
+            formData.set("title", `Misconduct Report: ${data.title}`)
         } else if (data.type === 'emergency') {
             formData.set("type", 'other')
             formData.set("priority", 'critical')
-            formData.set("subject", `EMERGENCY: ${data.subject}`)
+            formData.set("title", `EMERGENCY: ${data.title}`)
         }
 
         images.forEach((image) => {
@@ -121,9 +170,10 @@ const MakeRequest = () => {
     const getStatusBadge = (status: string) => {
         switch (status) {
             case 'pending': return <Badge variant="outline" className="border-yellow-500 text-yellow-600 bg-yellow-50"><Clock className="w-3 h-3 mr-1" /> Pending</Badge>
-            case 'in-progress': return <Badge variant="outline" className="border-blue-500 text-blue-600 bg-blue-50"><Wrench className="w-3 h-3 mr-1" /> In Progress</Badge>
+            case 'in_progress': return <Badge variant="outline" className="border-blue-500 text-blue-600 bg-blue-50"><Wrench className="w-3 h-3 mr-1" /> In Progress</Badge>
             case 'resolved': return <Badge variant="outline" className="border-green-500 text-green-600 bg-green-50"><CheckCircle className="w-3 h-3 mr-1" /> Resolved</Badge>
-            case 'rejected': return <Badge variant="destructive"><AlertCircle className="w-3 h-3 mr-1" /> Rejected</Badge>
+            case 'rejected':
+            case 'cancelled': return <Badge variant="destructive"><AlertCircle className="w-3 h-3 mr-1" /> Cancelled</Badge>
             default: return <Badge variant="secondary">{status}</Badge>
         }
     }
@@ -149,7 +199,7 @@ const MakeRequest = () => {
                         onClick={() => {
                             setValue('type', 'emergency')
                             setValue('priority', 'critical')
-                            setValue('subject', 'EMERGENCY REPORT')
+                            setValue('title', 'EMERGENCY REPORT')
                             setActiveTab('new-request')
                             toast('Emergency Report Started. Please describe the situation immediately.', { icon: '🚨' })
                         }}
@@ -167,11 +217,22 @@ const MakeRequest = () => {
 
                 <TabsContent value="new-request" className="mt-6">
                     <Card>
-                        <CardHeader>
-                            <CardTitle>Submit a New Request</CardTitle>
-                            <CardDescription>
-                                Please provide detailed information to help us resolve your issue quickly.
-                            </CardDescription>
+                        <CardHeader className="flex flex-row items-center justify-between">
+                            <div className="space-y-1">
+                                <CardTitle>{editMode ? "Update Request" : "Submit a New Request"}</CardTitle>
+                                <CardDescription>
+                                    Please provide detailed information to help us resolve your issue quickly.
+                                </CardDescription>
+                            </div>
+                            {editMode && (
+                                <Button variant="outline" size="sm" onClick={() => {
+                                    setEditMode(false)
+                                    setSelectedRequest(null)
+                                    reset()
+                                }}>
+                                    Cancel Edit
+                                </Button>
+                            )}
                         </CardHeader>
                         <form onSubmit={handleSubmit(onSubmit)}>
                             <CardContent className="space-y-4">
@@ -217,11 +278,11 @@ const MakeRequest = () => {
                                 </div>
 
                                 <TextField
-                                    label="Subject"
-                                    id="subject"
+                                    label="Title"
+                                    id="title"
                                     placeholder="e.g., Leaking Faucet, Broken Fan..."
-                                    register={register("subject", { required: "Subject is required" })}
-                                    error={errors.subject}
+                                    register={register("title", { required: "Title is required" })}
+                                    error={errors.title}
                                 />
 
                                 <div className="space-y-2">
@@ -247,14 +308,15 @@ const MakeRequest = () => {
 
                             </CardContent>
                             <CardFooter className="flex justify-end bg-gray-50 dark:bg-zinc-900/50 p-4">
-                                <Button type="submit" disabled={createRequestMutation.isPending}>
-                                    {createRequestMutation.isPending ? (
+                                <Button type="submit" disabled={createRequestMutation.isPending || updateRequestMutation.isPending}>
+                                    {(createRequestMutation.isPending || updateRequestMutation.isPending) ? (
                                         <>
-                                            <Loader className="w-4 h-4 mr-2 animate-spin" /> Submitting...
+                                            <Loader className="w-4 h-4 mr-2 animate-spin" /> {editMode ? "Updating..." : "Submitting..."}
                                         </>
                                     ) : (
                                         <>
-                                            <Plus className="w-4 h-4 mr-2" /> Submit Request
+                                            {editMode ? <Wrench className="w-4 h-4 mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
+                                            {editMode ? "Update Request" : "Submit Request"}
                                         </>
                                     )}
                                 </Button>
@@ -282,10 +344,37 @@ const MakeRequest = () => {
                                         <div key={req.id || index} className="flex flex-col p-4 border rounded-lg hover:bg-slate-50 dark:hover:bg-zinc-900 transition-colors">
                                             <div className="flex items-start justify-between mb-2">
                                                 <div>
-                                                    <h4 className="font-semibold">{req.subject}</h4>
-                                                    <span className="text-xs text-muted-foreground capitalize">{req.type.replace('_', ' ')}</span>
+                                                    <h4 className="font-semibold">{req.title}</h4>
+                                                    <span className="text-xs text-muted-foreground capitalize">{req.type?.replace('_', ' ') || 'Maintenance'}</span>
                                                 </div>
-                                                {getStatusBadge(req.status)}
+                                                <div className="flex items-start gap-2">
+                                                    {getStatusBadge(req.status)}
+                                                    <DropdownMenu>
+                                                        <DropdownMenuTrigger asChild>
+                                                            <Button variant="ghost" className="w-8 h-8 p-0">
+                                                                <MoreHorizontal className="w-4 h-4" />
+                                                            </Button>
+                                                        </DropdownMenuTrigger>
+                                                        <DropdownMenuContent align="end">
+                                                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                            <DropdownMenuItem onClick={() => {
+                                                                setSelectedRequest(req)
+                                                                setEditMode(true)
+                                                                setActiveTab('new-request')
+                                                            }}>
+                                                                <Eye className="w-4 h-4 mr-2" /> View / Update
+                                                            </DropdownMenuItem>
+                                                            <DropdownMenuSeparator />
+                                                            <DropdownMenuItem
+                                                                className="text-green-600"
+                                                                onClick={() => updateRequestMutation.mutate({ id: req.id, data: { status: 'resolved' } })}
+                                                                disabled={req.status === 'resolved'}
+                                                            >
+                                                                Mark as Resolved
+                                                            </DropdownMenuItem>
+                                                        </DropdownMenuContent>
+                                                    </DropdownMenu>
+                                                </div>
                                             </div>
                                             <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 mb-3">
                                                 {req.description}

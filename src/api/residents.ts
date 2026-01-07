@@ -1,6 +1,7 @@
 import axiosInstance from "./axiosInstance";
+import { MaintenanceRequestDto, ResidentDto } from "@/types/dtos";
 
-export const registerResident = async (formData: FormData) => {
+export const registerResident = async (formData: FormData): Promise<{ data: UserDto }> => {
     const response = await axiosInstance.post("/residents/register", formData, {
         headers: {
             "Content-Type": "multipart/form-data",
@@ -9,12 +10,12 @@ export const registerResident = async (formData: FormData) => {
     return response.data;
 };
 
-export const addResident = async (payload: any) => {
+export const addResident = async (payload: any): Promise<{ data: ResidentDto }> => {
     const response = await axiosInstance.post("/residents/add", payload);
     return response.data;
 };
 
-export const getResidentRoomDetails = async () => {
+export const getResidentRoomDetails = async (): Promise<{ data: ResidentDto }> => {
     const response = await axiosInstance.get("/residents/room");
     return response.data;
 };
@@ -29,12 +30,12 @@ export const getPaymentReceipt = async (paymentId: string) => {
     return response.data;
 };
 
-export const getResidentRequests = async () => {
+export const getResidentRequests = async (): Promise<{ data: MaintenanceRequestDto[] }> => {
     const response = await axiosInstance.get("/residents/requests");
     return response.data;
 };
 
-export const createResidentRequest = async (data: any) => {
+export const createResidentRequest = async (data: any): Promise<{ data: MaintenanceRequestDto }> => {
     const isFormData = data instanceof FormData;
     const response = await axiosInstance.post("/residents/requests", data, {
         headers: isFormData ? { "Content-Type": "multipart/form-data" } : {}

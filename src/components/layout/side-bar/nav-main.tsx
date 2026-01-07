@@ -27,7 +27,8 @@ import {
   GitPullRequest,
   HandCoins,
   HandPlatter,
-  Megaphone
+  Megaphone,
+  Wrench
 } from "lucide-react";
 import { useAuthStore } from "@/stores/useAuthStore";
 
@@ -51,7 +52,7 @@ export function NavMain() {
       { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard", description: "Overview of hostel management" },
       { title: "Calendar Year", icon: Calendar, path: "/dashboard/calendar-year-management", description: "Manage calendar years and academic sessions" },
       { title: "Room Management", icon: BedDouble, path: "/dashboard/room-management", description: "Manage rooms, blocks, and floors" },
-      { title: "Service Management", icon: HandPlatter, path: "/dashboard/service-management", description: "Manage services" },
+      { title: "Maintenance Requests", icon: Wrench, path: "/dashboard/maintenance", description: "Manage maintenance issues" },
       { title: "Announcements", icon: Megaphone, path: "/dashboard/announcement-dashboard", description: "Manage announcements" },
       { title: "Resident Management", icon: BookOpenCheck, path: "/dashboard/resident-management", description: "Manage residents, payments, and assignments" },
       { title: "Visitor Management", icon: CalendarCheck, path: "/dashboard/visitor-management", description: "Manage visitor records and approvals" },
@@ -75,7 +76,6 @@ export function NavMain() {
       { title: "View Room Details", icon: House, path: "/dashboard/view-room-details", description: "View room details" },
       { title: "Make Request", icon: GitPullRequest, path: "/dashboard/make-request", description: "Make a request" },
       { title: "Payment & Billing", icon: HandCoins, path: "/dashboard/payment-billing", description: "Make a payment" },
-      { title: "Book Service/Facility", icon: HandPlatter, path: "/dashboard/book-service-facility", description: "Book a service or facility" },
       { title: "View Announcements", icon: Megaphone, path: "/dashboard/view-announcements", description: "View announcements" },
       { title: "Documents", icon: BookOpenCheck, path: "/dashboard/documents", description: "Allocation letters & rules" },
       { title: "Feedback", icon: Megaphone, path: "/dashboard/feedback", description: "Rate services" },

@@ -47,14 +47,13 @@ import PaymentSuccess from '@components/payment-success';
 import ResidentRoomDetails from "./pages/dashboard/resident-management/ResidentRoomDetails";
 import MakeRequest from "./pages/dashboard/resident-management/MakeRequest";
 import PaymentBilling from "./pages/dashboard/resident-management/PaymentBilling";
-import BookService from "./pages/dashboard/resident-management/BookService";
 import Announcements from "./pages/dashboard/resident-management/Announcements";
 import Documents from "./pages/dashboard/resident-management/Documents";
 import Feedback from "./pages/dashboard/resident-management/Feedback";
-import ServiceManagement from "./pages/dashboard/admin/ServiceManagement";
 import AnnouncementDashboard from "./pages/dashboard/admin/AnnouncementDashboard";
 import AllocationDetails from "./pages/dashboard/resident-management/AllocationDetails";
 import ReceiptPage from "./pages/dashboard/resident-management/ReceiptPage";
+import MaintenanceManagement from "./pages/dashboard/admin/MaintenanceManagement";
 
 function App() {
   return (
@@ -112,13 +111,12 @@ function App() {
             <Route path="allocation-details" element={<AllocationDetails />} />
             <Route path="make-request" element={<MakeRequest />} />
             <Route path="payment-billing" element={<PaymentBilling />} />
-            <Route path="book-service-facility" element={<BookService />} />
             <Route path="view-announcements" element={<Announcements />} />
             <Route path="documents" element={<Documents />} />
             <Route path="receipt/:reference" element={<ReceiptPage />} />
             <Route path="feedback" element={<Feedback />} />
             <Route path="hostel-management" element={<HostelManagement />} />
-            <Route path="service-management" element={<ServiceManagement />} />
+            <Route path="maintenance" element={<MaintenanceManagement />} />
             <Route path="announcement-dashboard" element={<AnnouncementDashboard />} />
             <Route path="settings" element={<Settings />} />
             <Route path="resident-lookup" element={<ResidentLookup />} />
