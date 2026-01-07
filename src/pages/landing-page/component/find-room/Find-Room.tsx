@@ -87,21 +87,22 @@ const FindRoom = () => {
       }
 
       // If no existing profile, we must register.
-      const formData = new FormData();
-      formData.append("name", user.name);
-      formData.append("email", user.email);
-      formData.append("phone", user.phoneNumber || "0240000000");
-      formData.append("gender", selectedBookingRoom.gender.toUpperCase());
-      formData.append("studentId", "PENDING");
-      formData.append("course", "PENDING");
-      formData.append("emergencyContactName", "PENDING");
-      formData.append("emergencyContactPhone", "0240000000");
-      formData.append("relationship", "Self");
-      formData.append("hostelId", selectedBookingRoom.hostelId || "");
-      formData.append("calendarYearId", calendarYear?.id || "");
-      formData.append("roomId", selectedBookingRoom.id || "");
+      const payload = {
+        name: user.name,
+        email: user.email,
+        phone: user.phoneNumber || "0240000000",
+        gender: selectedBookingRoom.gender.toLowerCase(),
+        studentId: "PENDING",
+        course: "PENDING",
+        emergencyContactName: "PENDING",
+        emergencyContactPhone: "0240000000",
+        emergencyContactRelationship: "Self",
+        hostelId: selectedBookingRoom.hostelId || "",
+        calendarYearId: calendarYear?.id || "",
+        roomId: selectedBookingRoom.id || ""
+      };
 
-      return await registerResident(formData);
+      return await registerResident(payload);
     },
     onSuccess: (res: any) => {
       const residentData = res?.isExisting ? res.data : res?.data;
@@ -268,14 +269,13 @@ const FindRoom = () => {
                     <div className="bg-gray-50 dark:bg-zinc-800 p-2 rounded-md">
                       <p className="text-xs text-gray-600 dark:text-gray-400">Type</p>
                       <p className="font-semibold text-xs text-black dark:text-white">
-                        {room?.type?.charAt(0) + room?.type?.slice(1).toLowerCase()}
+                        {room?.type ? (room.type.charAt(0).toUpperCase() + room.type.slice(1).toLowerCase()) : "N/A"}
                       </p>
                     </div>
                     <div className="bg-gray-50 dark:bg-zinc-800 p-2 rounded-md">
                       <p className="text-xs text-gray-600 dark:text-gray-400">Gender</p>
                       <p className="font-semibold text-xs text-black dark:text-white">
-                        {room.gender.charAt(0) +
-                          room.gender.slice(1).toLowerCase()}
+                        {room?.gender ? (room.gender.charAt(0).toUpperCase() + room.gender.slice(1).toLowerCase()) : "N/A"}
                       </p>
                     </div>
 

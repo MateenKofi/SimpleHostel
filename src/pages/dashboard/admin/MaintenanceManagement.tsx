@@ -132,7 +132,7 @@ const MaintenanceManagement = () => {
     }
 
     const filteredRequests = (requests as MaintenanceRequestDto[]).filter((req) =>
-        req.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        req.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         req.residentName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         req.resident?.user?.name?.toLowerCase().includes(searchQuery.toLowerCase())
     )

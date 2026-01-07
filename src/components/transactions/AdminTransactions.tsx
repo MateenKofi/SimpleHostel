@@ -223,16 +223,16 @@ const AdminTransactions = () => {
       ?.filter((transaction: Transaction) => {
         const searchMatch =
           transaction.reference
-            .toLowerCase()
+            ?.toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          transaction.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          transaction.id?.toLowerCase().includes(searchTerm.toLowerCase()) ||
           transaction.residentId
-            .toLowerCase()
+            ?.toLowerCase()
             .includes(searchTerm.toLowerCase());
 
         const statusMatch =
           statusFilter === "all" ||
-          transaction.status.toLowerCase() === statusFilter.toLowerCase();
+          transaction.status?.toLowerCase() === statusFilter.toLowerCase();
 
         const methodMatch =
           methodFilter === "all" ||

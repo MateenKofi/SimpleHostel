@@ -66,9 +66,9 @@ const SuperAdminTransaction = () => {
   const filteredHostels =
     transactionData?.disbursements.filter(
       (hostel) =>
-        hostel.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        hostel.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        hostel.phone.includes(searchTerm)
+        hostel.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        hostel.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        hostel.phone?.includes(searchTerm)
     ) || [];
 
   // Sort hostels based on sort config
@@ -222,9 +222,9 @@ const SuperAdminTransaction = () => {
                         <Avatar className="w-8 h-8 *:rounded-full">
                           <AvatarFallback>
                             {hostel.name
-                              .split(" ")
+                              ?.split(" ")
                               .map((n) => n[0])
-                              .join("")}
+                              .join("") || "H"}
                           </AvatarFallback>
                         </Avatar>
                         {hostel.name}

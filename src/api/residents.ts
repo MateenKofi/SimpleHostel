@@ -1,12 +1,8 @@
 import axiosInstance from "./axiosInstance";
 import { MaintenanceRequestDto, ResidentDto, UserDto } from "@/types/dtos";
 
-export const registerResident = async (formData: FormData): Promise<{ data: UserDto }> => {
-    const response = await axiosInstance.post("/residents/register", formData, {
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
-    });
+export const registerResident = async (payload: any): Promise<{ data: UserDto }> => {
+    const response = await axiosInstance.post("/v1/residents/register", payload);
     return response.data;
 };
 
