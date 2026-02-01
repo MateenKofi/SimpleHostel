@@ -19,13 +19,13 @@ import { useNavigate } from "react-router-dom";
 import { useSelectedRoomStore } from "@/stores/useSelectedRoomStore";
 import { useMutation } from "@tanstack/react-query";
 import { registerResident } from "@/api/residents";
-import { ResidentFormSchema } from "@/schemas/ResidentForm.schema";
+import { ResidentFormSchema, PublicResidentFormSchema } from "@/schemas/ResidentForm.schema";
 import { z } from "zod";
 import { useSelectedCalendarYearStore } from "@/stores/useSelectedCalendarYearStore";
 import { useAddedResidentStore } from "@/stores/useAddedResidentStore";
 import SEOHelmet from "@/components/SEOHelmet";
 
-type ResidentFormInputs = z.infer<typeof ResidentFormSchema>;
+type ResidentFormInputs = z.infer<typeof PublicResidentFormSchema>;
 
 const ResidentForm = () => {
   const setResident = useAddedResidentStore((state: any) => state.setResident)
@@ -43,7 +43,7 @@ const ResidentForm = () => {
     formState: { errors },
     reset,
   } = useForm<ResidentFormInputs>({
-    resolver: zodResolver(ResidentFormSchema),
+    resolver: zodResolver(PublicResidentFormSchema),
   });
 
   const AddResidentMutation = useMutation({
@@ -54,6 +54,7 @@ const ResidentForm = () => {
       formData.append("course", resident_data.course);
       formData.append("phone", resident_data.phone || "");
       formData.append("email", resident_data.email);
+      formData.append("password", resident_data.password);
       formData.append(
         "emergencyContactName",
         resident_data.emergencyContactName
@@ -72,8 +73,14 @@ const ResidentForm = () => {
         const responseData = await registerResident(formData);
         reset();
         setResident(responseData?.data);
+        // If room is selected, go to payment; otherwise go to login
         setTimeout(() => {
-          navigate("/payment");
+          if (room?.id) {
+            navigate("/payment");
+          } else {
+            toast.success("Registration successful! Please login to continue.");
+            navigate("/login");
+          }
         }, 50);
         return responseData;
       } catch (error) {
@@ -88,13 +95,13 @@ const ResidentForm = () => {
   });
 
   const onSubmit: SubmitHandler<ResidentFormInputs> = (values) => {
-    if (room?.gender === values.gender) {
-      AddResidentMutation.mutate(values);
-    }
-    else {
+    // Only validate gender match if a room is selected
+    if (room && room.gender !== values.gender) {
       toast.error("Gender does not match selected room gender");
       toast.error("Make sure you select room according to your gender");
+      return;
     }
+    AddResidentMutation.mutate(values);
   };
 
   return (
@@ -114,10 +121,10 @@ const ResidentForm = () => {
         <CardHeader className="space-y-1 text-white bg-black rounded-t-lg">
           <div className="flex items-center gap-2">
             <UserPlus className="w-6 h-6" />
-            <CardTitle className="text-2xl font-bold">Add Resident</CardTitle>
+            <CardTitle className="text-2xl font-bold">Resident Registration</CardTitle>
           </div>
           <CardDescription className="text-primary-foreground/80">
-            Fill out the form below to add a new resident.
+            Create your account. You can book a room later or book now if you've already selected one.
           </CardDescription>
         </CardHeader>
 
@@ -181,6 +188,33 @@ const ResidentForm = () => {
                   )}
                 </div>
               </div>
+
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <div>
+                  <label className="font-medium">Password*</label>
+                  <Input
+                    type="password"
+                    placeholder="Create a password (min 8 characters)"
+                    {...register("password")}
+                  />
+                  {errors.password && (
+                    <p className="text-sm text-red-500">{errors.password.message}</p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="font-medium">Confirm Password*</label>
+                  <Input
+                    type="password"
+                    placeholder="Confirm your password"
+                    {...register("confirmPassword")}
+                  />
+                  {errors.confirmPassword && (
+                    <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
+                  )}
+                </div>
+              </div>
+
               <div>
                 <label className="font-medium">Gender*</label>
                 <select

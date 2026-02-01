@@ -25,11 +25,11 @@ import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { addResident } from "@/api/residents";
-import { ResidentFormSchema } from "@/schemas/ResidentForm.schema";
+import { ResidentFormSchema, AdminResidentFormSchema } from "@/schemas/ResidentForm.schema";
 import { z } from "zod";
 import { useAddedResidentStore } from "@/stores/useAddedResidentStore";
 
-type AddResidentInputs = z.infer<typeof ResidentFormSchema>;
+type AddResidentInputs = z.infer<typeof AdminResidentFormSchema>;
 
 const AddResident = () => {
   const setResident = useAddedResidentStore((state) => state.setResident);
@@ -45,7 +45,7 @@ const AddResident = () => {
     formState: { errors },
     reset,
   } = useForm<AddResidentInputs>({
-    resolver: zodResolver(ResidentFormSchema),
+    resolver: zodResolver(AdminResidentFormSchema),
   });
 
   const AddResidentMutation = useMutation({

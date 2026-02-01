@@ -1,5 +1,6 @@
 import Modal from "../Modal";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "react-hot-toast";
 import { ResidentDto } from "@/types/dtos";
 import { useNavigate } from "react-router-dom";
@@ -7,21 +8,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addResident } from "@/api/residents";
 import { Loader } from "lucide-react";
 import { useAddedResidentStore } from "@/stores/useAddedResidentStore";
+import { AdminResidentFormSchema } from "@/schemas/ResidentForm.schema";
+import { z } from "zod";
 
 type AddResidentModalProps = {
   onClose: () => void;
 };
-type ResidentForm = {
-  name: string;
-  studentId: string;
-  course: string;
-  phone: string;
-  email: string;
-  emergencyContactName: string;
-  emergencyContactPhone: string;
-  relationship: string;
-  gender: string;
-};
+
+type ResidentForm = z.infer<typeof AdminResidentFormSchema>;
 
 const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
   const navigate = useNavigate();
@@ -32,7 +26,9 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm<ResidentForm>();
+  } = useForm<ResidentForm>({
+    resolver: zodResolver(AdminResidentFormSchema),
+  });
   const calendarYearId = localStorage.getItem("calendarYear") || "";
   const hostelId = localStorage.getItem("hostelId") || "";
 
@@ -94,7 +90,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
             Full Name*
           </label>
           <input
-            {...register("name", { required: "Full name is required" })}
+            {...register("name")}
             type="text"
             id="name"
             placeholder="Enter full name"
@@ -113,7 +109,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
             Student ID*
           </label>
           <input
-            {...register("studentId", { required: "Student ID is required" })}
+            {...register("studentId")}
             type="text"
             id="studentId"
             placeholder="Enter student ID"
@@ -131,7 +127,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
             Course*
           </label>
           <input
-            {...register("course", { required: "Course is required" })}
+            {...register("course")}
             type="text"
             id="course"
             placeholder="Enter course name"
@@ -147,13 +143,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
             Email*
           </label>
           <input
-            {...register("email", {
-              required: "Email is required",
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: "Invalid email address",
-              },
-            })}
+            {...register("email")}
             type="email"
             id="email"
             placeholder="Enter email address"
@@ -169,13 +159,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
             Phone Number*
           </label>
           <input
-            {...register("phone", {
-              required: "Phone number is required",
-              pattern: {
-                value: /^\d{10}$/,
-                message: "Phone number must be 10 digits",
-              },
-            })}
+            {...register("phone")}
             type="tel"
             id="phone"
             placeholder="Enter phone number"
@@ -191,7 +175,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
             Gender*
           </label>
           <select
-            {...register("gender", { required: "Gender is required" })}
+            {...register("gender")}
             id="gender"
             className="p-2 border rounded-md"
           >
@@ -215,9 +199,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
               Contact Name*
             </label>
             <input
-              {...register("emergencyContactName", {
-                required: "Emergency contact name is required",
-              })}
+              {...register("emergencyContactName")}
               type="text"
               id="emergencyContactName"
               placeholder="Enter emergency contact name"
@@ -238,13 +220,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
               Contact Phone*
             </label>
             <input
-              {...register("emergencyContactPhone", {
-                required: "Emergency contact phone is required",
-                pattern: {
-                  value: /^\d{10}$/,
-                  message: "Phone number must be 10 digits",
-                },
-              })}
+              {...register("emergencyContactPhone")}
               type="tel"
               id="emergencyContactPhone"
               placeholder="Enter emergency contact phone"
@@ -265,9 +241,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
               Relationship*
             </label>
             <input
-              {...register("relationship", {
-                required: "Relationship is required",
-              })}
+              {...register("relationship")}
               type="text"
               id="relationship"
               placeholder="Enter relationship (e.g. Parent, Sibling)"

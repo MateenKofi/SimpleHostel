@@ -1,6 +1,7 @@
 import { z } from "zod";
 
-export const  ResidentFormSchema = z.object({
+// Base schema for common resident fields
+const baseResidentFields = {
   name: z.string().min(2, {
     message: "Full name must be at least 2 characters.",
   }),
@@ -28,4 +29,29 @@ export const  ResidentFormSchema = z.object({
   gender: z.string().min(1, {
     message: "Gender is required.",
   }),
+};
+
+// Schema for public self-registration (password required)
+export const PublicResidentFormSchema = z.object({
+  ...baseResidentFields,
+  password: z.string().min(8, {
+    message: "Password must be at least 8 characters.",
+  }),
+  confirmPassword: z.string().min(8, {
+    message: "Please confirm your password.",
+  }),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
 });
+
+// Schema for admin registration (password optional)
+export const AdminResidentFormSchema = z.object({
+  ...baseResidentFields,
+  password: z.string().min(8, {
+    message: "Password must be at least 8 characters.",
+  }).optional(),
+});
+
+// Legacy export for backward compatibility
+export const ResidentFormSchema = AdminResidentFormSchema;
