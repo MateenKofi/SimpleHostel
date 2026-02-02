@@ -32,7 +32,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getHostelById, updateHostel, updatePaymentSettings, updateHostelRules, updateHostelDocuments } from "@/api/hostels";
 import CustomeRefetch from "@/components/CustomeRefetch";

@@ -7,7 +7,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getUserById, updateUser } from "@/api/users";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useState, useEffect } from "react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { useModal } from "@components/Modal";
 import ChangePassword from "@/components/changepassword/ChangePasswordModal";
 import { Button } from "@/components/ui/button";

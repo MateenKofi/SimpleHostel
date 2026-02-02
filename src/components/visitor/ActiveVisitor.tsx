@@ -2,7 +2,7 @@ import CustomDataTable from "../CustomDataTable";
 import { format } from "date-fns";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getHostelVisitors, checkoutVisitor } from "@/api/visitors";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import Swal from "sweetalert2";
 import { Visitor } from "@/helper/types/types";
 

@@ -15,7 +15,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import toast from "react-hot-toast"
+import { toast } from "sonner"
 import { useState } from "react"
 import SEOHelmet from "@/components/SEOHelmet"
 

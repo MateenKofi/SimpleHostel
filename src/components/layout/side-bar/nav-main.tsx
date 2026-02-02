@@ -1,12 +1,10 @@
-"use client";
-import { useNavigate, useLocation } from "react-router-dom";
+"use client"
+import { useNavigate, useLocation } from "react-router-dom"
 import {
-  SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
+} from "@/components/ui/sidebar"
 import {
   LayoutDashboard,
   BedDouble,
@@ -17,8 +15,6 @@ import {
   Calendar,
   UserCog,
   Wallet2,
-  LogOut,
-  Layout,
   Hotel,
   Settings,
   LucideProps,
@@ -26,108 +22,89 @@ import {
   House,
   GitPullRequest,
   HandCoins,
-  HandPlatter,
   Megaphone,
-  Wrench
-} from "lucide-react";
-import { useAuthStore } from "@/stores/useAuthStore";
+  Wrench,
+  AlertCircle,
+} from "lucide-react"
+import { cn } from "@/lib/utils"
 
-type navItems = {
-  title: string;
-  icon: React.ComponentType<LucideProps>;
-  path: string;
-  description?: string;
-};
+type NavItem = {
+  title: string
+  icon: React.ComponentType<LucideProps>
+  path: string
+}
 
 export function NavMain() {
-  const userRole = localStorage.getItem("role");
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
-  const logout = useAuthStore((state) => state.logout);
+  const userRole = localStorage.getItem("role")
+  const navigate = useNavigate()
+  const { pathname } = useLocation()
 
-  let navItems: navItems[] = [];
+  let navItems: NavItem[] = []
 
   if (userRole === "admin") {
     navItems = [
-      { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard", description: "Overview of hostel management" },
-      { title: "Calendar Year", icon: Calendar, path: "/dashboard/calendar-year-management", description: "Manage calendar years and academic sessions" },
-      { title: "Room Management", icon: BedDouble, path: "/dashboard/room-management", description: "Manage rooms, blocks, and floors" },
-      { title: "Maintenance Requests", icon: Wrench, path: "/dashboard/maintenance", description: "Manage maintenance issues" },
-      { title: "Announcements", icon: Megaphone, path: "/dashboard/announcement-dashboard", description: "Manage announcements" },
-      { title: "Resident Management", icon: BookOpenCheck, path: "/dashboard/resident-management", description: "Manage residents, payments, and assignments" },
-      { title: "Visitor Management", icon: CalendarCheck, path: "/dashboard/visitor-management", description: "Manage visitor records and approvals" },
-      { title: "Staff Management", icon: Users, path: "/dashboard/staff-management", description: "Manage staff members and their roles" },
-      { title: "Transactions", icon: Wallet2, path: "/dashboard/transactions", description: "View and manage financial transactions" },
-      { title: "Hostel Settings", icon: Settings, path: '/dashboard/settings', description: "Manage hostel settings and configurations" },
-      { title: "Report", icon: Axis3D, path: '/dashboard/report', description: "Generate and view reports on hostel activities" },
-    ];
+      { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
+      { title: "Calendar Year", icon: Calendar, path: "/dashboard/calendar-year-management" },
+      { title: "Room Management", icon: BedDouble, path: "/dashboard/room-management" },
+      { title: "Maintenance", icon: Wrench, path: "/dashboard/maintenance" },
+      { title: "Announcements", icon: Megaphone, path: "/dashboard/announcement-dashboard" },
+      { title: "Residents", icon: BookOpenCheck, path: "/dashboard/resident-management" },
+      { title: "Visitors", icon: CalendarCheck, path: "/dashboard/visitor-management" },
+      { title: "Staff", icon: Users, path: "/dashboard/staff-management" },
+      { title: "Transactions", icon: Wallet2, path: "/dashboard/transactions" },
+      { title: "Debtors List", icon: AlertCircle, path: "/dashboard/deptors-list" },
+      { title: "Settings", icon: Settings, path: "/dashboard/settings" },
+      { title: "Reports", icon: Axis3D, path: "/dashboard/report" },
+    ]
   } else if (userRole === "super_admin") {
     navItems = [
-      { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard", description: "Overview of hostel management" },
-      { title: "Approve Hostel", icon: CheckSquare, path: "/dashboard/approve-hostel", description: "Approve or reject hostel applications" },
-      { title: "Transactions", icon: Wallet2, path: "/dashboard/transactions", description: "View and manage financial transactions" },
-      { title: "Users", icon: UserCog, path: "/dashboard/users", description: "Manage users and their roles" },
-      { title: "Hostel Management", icon: Hotel, path: '/dashboard/hostel-management', description: "Manage hostel facilities and services" },
-      { title: "Report", icon: Axis3D, path: '/dashboard/report', description: "Generate and view reports on hostel activities" },
-    ];
-  } else if (userRole === 'resident') {
+      { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
+      { title: "Approve Hostel", icon: CheckSquare, path: "/dashboard/approve-hostel" },
+      { title: "Transactions", icon: Wallet2, path: "/dashboard/transactions" },
+      { title: "Users", icon: UserCog, path: "/dashboard/users" },
+      { title: "Hostel Management", icon: Hotel, path: "/dashboard/hostel-management" },
+      { title: "Reports", icon: Axis3D, path: "/dashboard/report" },
+    ]
+  } else if (userRole === "resident") {
     navItems = [
-      { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard", description: "Overview of hostel management" },
-      { title: "View Room Details", icon: House, path: "/dashboard/view-room-details", description: "View room details" },
-      { title: "Make Request", icon: GitPullRequest, path: "/dashboard/make-request", description: "Make a request" },
-      { title: "Payment & Billing", icon: HandCoins, path: "/dashboard/payment-billing", description: "Make a payment" },
-      { title: "View Announcements", icon: Megaphone, path: "/dashboard/view-announcements", description: "View announcements" },
-      { title: "Documents", icon: BookOpenCheck, path: "/dashboard/documents", description: "Allocation letters & rules" },
-      { title: "Feedback", icon: Megaphone, path: "/dashboard/feedback", description: "Rate services" },
-    ];
+      { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
+      { title: "My Room", icon: House, path: "/dashboard/view-room-details" },
+      { title: "Requests", icon: GitPullRequest, path: "/dashboard/make-request" },
+      { title: "Billing", icon: HandCoins, path: "/dashboard/payment-billing" },
+      { title: "Announcements", icon: Megaphone, path: "/dashboard/view-announcements" },
+      { title: "Documents", icon: BookOpenCheck, path: "/dashboard/documents" },
+      { title: "Feedback", icon: Megaphone, path: "/dashboard/feedback" },
+    ]
   }
 
   return (
-    <div className="overflow-x-hidden">
-      <SidebarGroup className="p-0 m-0 ">
-        <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-        <SidebarMenu>
-          <SidebarMenuButton
-            onClick={() => navigate("/")}
-            tooltip="landing page"
-            className={`w-full transition-all duration-500 ease-in-out rounded-md hover:bg-destructive hover:text-destructive-foreground hover:translate-x-2 ${pathname === "/" ? "bg-destructive text-destructive-foreground" : ""}`}
-          >
-            <Layout className="w-4 h-4" />
-            <span>Home</span>
-          </SidebarMenuButton>
-          {navItems.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton
-                onClick={() => navigate(item.path)}
-                tooltip={item.title}
-                className={`flex items-center w-full gap-2 ml-3 transition-all duration-500 ease-in-out rounded-md h-fit hover:shadow-lg hover:bg-destructive hover:text-destructive-foreground hover:translate-x-1 ${pathname === item.path ? "bg-white shadow-sm border-l-4 border-destructive" : ""}`}
-              >
-                {item.icon && <item.icon className="w-8 h-8" />}
-                <div className="flex flex-col">
-                  <span>{item.title}</span>
-                  {item.description && (
-                    <span className="text-[10px] text-gray-500">{item.description}</span>
-                  )}
-                </div>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarGroup>
-      <div className="w-4/5 mx-auto my-3 bg-black border border-gray-300"></div>
-      <SidebarGroup className="p-0 m-0 ">
-        <SidebarMenuButton
-          onClick={() => logout()}
-          tooltip="Log Out"
-          className="w-full transition-all duration-500 ease-in-out rounded-md hover:bg-destructive hover:text-destructive-foreground hover:translate-x-2"
-        >
-          <LogOut className="w-4 h-4" />
-          <span>Log Out</span>
-        </SidebarMenuButton>
-      </SidebarGroup>
+    <div className="flex flex-col gap-2 px-3 py-3">
+      {/* Navigation Items */}
+      <SidebarMenu className="gap-1.5">
+        {navItems.map((item) => (
+          <SidebarMenuItem key={item.title}>
+            <SidebarMenuButton
+              onClick={() => navigate(item.path)}
+              tooltip={item.title}
+              isActive={pathname === item.path}
+              className={cn(
+                "w-full rounded-xl transition-all duration-200 py-3 px-4 h-auto",
+                "hover:!bg-forest-green-100 hover:!shadow-sm hover:!text-forest-green-700",
+                "dark:hover:!bg-forest-green-900 dark:hover:!text-forest-green-100",
+                "data-[active=true]:!bg-forest-green-300 data-[active=true]:!text-forest-green-800 data-[active=true]:!shadow-sm",
+                "dark:data-[active=true]:!bg-forest-green-700 dark:data-[active=true]:!text-forest-green-100"
+              )}
+            >
+              <item.icon className="h-5 w-5 shrink-0" />
+              <span className="font-medium text-sm">
+                {item.title}
+              </span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        ))}
+      </SidebarMenu>
     </div>
-  );
+  )
 }
 
-export default NavMain;
-
+export default NavMain

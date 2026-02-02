@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { topupPayment } from "@/api/payments";
 import { getResidentBilling } from "@/api/residents";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 
 import {
   Loader2,

@@ -7,7 +7,7 @@ import { addRoom } from "@/api/rooms";
 import { getHostelAmenities } from "@/api/amenities";
 import ImageUpload from "@/components/ImageUpload";
 import { Loader } from "lucide-react";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 
 type RoomForm = Omit<Room, "amenities"> & {
   images: File[];

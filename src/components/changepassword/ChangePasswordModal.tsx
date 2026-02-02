@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { updateUser } from "@/api/users";
 import React from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import Modal from "../Modal";
 import { Loader } from "lucide-react";
 import { Input } from "../ui/input";

@@ -9,7 +9,7 @@ import { useReactToPrint } from "react-to-print"
 import SEOHelmet from "@/components/SEOHelmet"
 import jsPDF from "jspdf"
 import html2canvas from "html2canvas"
-import toast from "react-hot-toast"
+import { toast } from "sonner"
 import ReceiptTemplate from "@/components/payment/ReceiptTemplate"
 import { PaymentReceipt } from "@/helper/types/types"
 

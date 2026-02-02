@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import { jwtDecode } from "jwt-decode";
 import { Users } from "@/helper/types/types";
 import { loginUser } from "@/api/auth";
@@ -100,17 +100,7 @@ export const useAuthStore = create<UserStore>()(
                     user: null,
                     changedPassword: undefined,
                 });
-
-                localStorage.removeItem("token");
-                localStorage.removeItem("hostelId");
-                localStorage.removeItem("userId");
-                localStorage.removeItem("role");
-                localStorage.removeItem("residentId");
-                localStorage.removeItem("calendarYear");
-                localStorage.removeItem('user')
-                localStorage.removeItem('user-storage');
-                localStorage.removeItem('added-resident-store');
-                localStorage.removeItem('changedPassword');
+                localStorage.clear();
                 toast.success("Logout successful");
                 window.location.href = "/";
             },

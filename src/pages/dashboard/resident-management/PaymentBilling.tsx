@@ -23,7 +23,7 @@ import SEOHelmet from "@/components/SEOHelmet"
 import { PaymentReceipt } from "@/helper/types/types"
 import jsPDF from "jspdf"
 import html2canvas from "html2canvas"
-import toast from "react-hot-toast"
+import { toast } from "sonner"
 import ReceiptTemplate from "@/components/payment/ReceiptTemplate"
 
 interface PaymentTransaction {

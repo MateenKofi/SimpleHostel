@@ -28,7 +28,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { updateMaintenanceRequest } from "@/api/adminMaintenanceHelper"
-import toast from "react-hot-toast"
+import { toast } from "sonner"
 import { format } from "date-fns"
 import UploadMultipleImages from "@/components/UploadMultipleImages"
 import { useEffect } from "react"

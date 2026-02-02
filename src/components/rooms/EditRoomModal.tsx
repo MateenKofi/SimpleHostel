@@ -8,7 +8,7 @@ import { getHostelAmenities } from "@/api/amenities";
 import { AxiosError } from "axios";
 import ImageUpload from "@/components/ImageUpload";
 import { Loader } from "lucide-react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 
 type RoomForm = Omit<Room, "amenities"> & {

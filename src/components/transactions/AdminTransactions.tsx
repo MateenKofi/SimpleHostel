@@ -19,7 +19,7 @@ import {
 import { format } from "date-fns";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { useReactToPrint } from "react-to-print";
 import ReceiptTemplate from "@/components/payment/ReceiptTemplate";
 import { PaymentReceipt } from "@/helper/types/types";

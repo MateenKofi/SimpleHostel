@@ -50,7 +50,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import toast from "react-hot-toast"
+import { toast } from "sonner"
 import { format } from "date-fns"
 import SEOHelmet from "@/components/SEOHelmet"
 

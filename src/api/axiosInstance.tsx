@@ -1,5 +1,5 @@
 import axios from "axios";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 const axiosInstance = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL || '/api', // Fallback to /api if env not set
@@ -29,14 +29,20 @@ axiosInstance.interceptors.response.use(
         return response;
     },
     (error) => {
-        const { response } = error;
+        const { response, config } = error;
 
         if (response) {
             if (response.status === 401) {
-                // Unauthorized - clear session and redirect to login
-                localStorage.clear();
-                window.location.href = "/login";
-                toast.error("Session expired. Please log in again.");
+                // Don't redirect if this is a login request (invalid credentials)
+                const isLoginRequest = config?.url?.includes('/login');
+
+                if (!isLoginRequest) {
+                    // Unauthorized - clear session and redirect to login
+                    localStorage.clear();
+                    window.location.href = "/login";
+                    toast.error("Session expired. Please log in again.");
+                }
+                // For login failures, let the component handle the error message
             } else if (response.status === 403) {
                 // Forbidden - permission issues
                 toast.error("You don't have permission to perform this action.");

@@ -4,7 +4,7 @@ import { getHostelRooms, deleteRoom } from "@/api/rooms";
 import { Eye, Edit, Trash2, Ellipsis } from "lucide-react";
 import React, { useState } from "react";
 import CustomDataTable from "../CustomDataTable";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import EditRoomModal from "@/components/rooms/EditRoomModal";
 import { useModal } from "../Modal";
 import { useNavigate } from "react-router-dom";

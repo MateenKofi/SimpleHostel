@@ -6,7 +6,7 @@ import EditAmenitiesModal from "./EditAmenitiesModal";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import { getHostelAmenities, deleteAmenity } from "@/api/amenities";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { useState } from "react";
 import CustomDataTable from "@/components/CustomDataTable";
 import { Amenity } from "@/helper/types/types";

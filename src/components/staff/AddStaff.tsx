@@ -5,7 +5,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Staff } from "../../helper/types/types";
 import { addStaff } from "@/api/staff";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import dayjs from "dayjs";
 import UploadSingleImage from "../UploadSingleImage";
 

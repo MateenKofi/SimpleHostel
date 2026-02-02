@@ -5,7 +5,7 @@ import { Loader } from "lucide-react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import Modal from "./Modal"
 import { useMutation } from "@tanstack/react-query"
-import toast from "react-hot-toast"
+import { toast } from "sonner"
 import { startCalendarYear } from "@/api/calendar"
 
 interface AddCalendarYearFormProps {

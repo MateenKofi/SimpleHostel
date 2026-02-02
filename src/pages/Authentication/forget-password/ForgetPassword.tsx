@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { Loader } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { resetPassword } from "@/api/auth";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 type ForgetpasswordformData = {
   email: string;

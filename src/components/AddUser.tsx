@@ -5,7 +5,7 @@ import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { signupUser } from "@/api/auth";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import UploadSingleImage from "./UploadSingleImage";
 import { TextField } from "./TextField";
 

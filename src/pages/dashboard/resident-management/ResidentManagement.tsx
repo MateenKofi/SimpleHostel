@@ -2,7 +2,7 @@ import { Plus, Users, Download } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import ResidentTable from "@/components/resident/ResidentTable";
 import SEOHelmet from "@/components/SEOHelmet";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 const ResidentManagement = () => {
   const navigate = useNavigate();

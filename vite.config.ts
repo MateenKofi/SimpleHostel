@@ -13,7 +13,7 @@ export default defineConfig({
      Sitemap({ hostname: 'https://simple-hostel.vercel.app' }),
   ],
   server: {
-    port: 2020,        // Change to your desired port
+    port: 5173,        // Frontend port (Vite default)
   },
   resolve: {
     alias: {

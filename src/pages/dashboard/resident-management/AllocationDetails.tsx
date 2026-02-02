@@ -10,7 +10,7 @@ import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import { AllocationDetails } from "@/helper/types/types";
 
 const AllocationDetailsPage = () => {

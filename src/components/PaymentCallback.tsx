@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { verifyPayment } from "@/api/payments";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 const PaymentCallback = () => {
   const location = useLocation();

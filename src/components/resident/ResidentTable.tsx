@@ -3,7 +3,7 @@ import { getHostelResidents, deleteResident } from "@/api/residents";
 import CustomDataTable from "../CustomDataTable";
 import { ResidentDto } from "@/types/dtos";
 import { HousePlus, Edit, Trash2, Ellipsis } from "lucide-react";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,

@@ -1,70 +1,119 @@
 import { Progress } from '@/components/ui/progress'
-import { Banknote, Percent, Users, House, DoorOpen, Shapes } from 'lucide-react'
+import { Banknote, Percent, Users, House, DoorOpen, Building2 } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card'
 import { Analytics } from '@/helper/types/types'
 
 type analyticsData = Analytics
+
+// Floating card base class
+const floatingCard = "bg-gradient-to-br from-white to-gray-50/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-gray-100/50"
+
+// Icon container with gradient
+const iconContainer = "p-2.5 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/50"
+const iconContainerWarning = "p-2.5 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50"
+const iconContainerInfo = "p-2.5 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50"
+const iconContainerTeal = "p-2.5 rounded-xl bg-gradient-to-br from-teal-50 to-teal-100/50"
+
+const iconClass = "h-5 w-5"
+const valueClass = "text-2xl font-bold text-gray-900"
+const labelClass = "text-sm font-medium text-gray-600"
+
 const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
   // Resident-specific cards when data has resident structure
   if (analyticsData?.residentId) {
+    const totalPaid = analyticsData?.totals?.totalPaid || 0
+    const outstandingBalance = analyticsData?.totals?.outstandingBalance || 0
+    const roomType = analyticsData?.room?.roomType || "Not assigned"
+    const roomNumber = analyticsData?.room?.roomNumber || "Not assigned"
+    const hostelName = analyticsData?.hostel?.hostelName || "Not assigned"
+
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="border-gray-200">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Total Paid</CardTitle>
-            <Banknote className="h-4 w-4 text-gray-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">GH₵{analyticsData?.totals?.totalPaid?.toFixed(2) || '0.00'}</div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-gray-200">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Outstanding Balance</CardTitle>
-            <Banknote className="h-4 w-4 text-gray-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">GH₵{analyticsData?.totals?.outstandingBalance?.toFixed(2) || '0.00'}</div>
-          </CardContent>
-        </Card>
-
-        <Card className="border-gray-200">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Room Details</CardTitle>
-            <House className="h-4 w-4 text-gray-500" />
-          </CardHeader>
-          <CardContent>
-            <div>
-              <div className="text-2xl font-bold flex items-center">
-                <Shapes />
-                <span className="ml-2">
-                  {analyticsData?.room?.roomType || "Not assigned"}
-                </span>
+        {/* Total Paid Card - Success theme */}
+        <Card className={floatingCard}>
+          <CardContent className="p-5">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <p className={labelClass}>Total Paid</p>
+                <p className={`${valueClass} mt-2 text-emerald-700`}>
+                  GH₵{totalPaid.toFixed(2)}
+                </p>
               </div>
-              <div className="text-2xl font-bold flex items-center">
-                <DoorOpen />
-                <span className="ml-2">
-                  {analyticsData?.room?.roomNumber || "Not assigned"}
-                </span>
+              <div className={iconContainer}>
+                <Banknote className={`${iconClass} text-emerald-600`} />
               </div>
+            </div>
+            <div className="mt-3 pt-3 border-t border-gray-100">
+              <p className="text-xs text-gray-500">Your total payments</p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-gray-200">
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Current Hostel</CardTitle>
-            <Users className="h-4 w-4 text-gray-500" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-sm">
-              <div className="text-2xl font-bold flex items-center">
-                <Shapes />
-                <span className="ml-2">
-                  {analyticsData?.hostel?.hostelName || "Not assigned"}
-                </span>
+        {/* Outstanding Balance Card - Warning theme */}
+        <Card className={floatingCard}>
+          <CardContent className="p-5">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <p className={labelClass}>Outstanding Balance</p>
+                <p className={`${valueClass} mt-2 ${outstandingBalance > 0 ? 'text-amber-600' : 'text-emerald-600'}`}>
+                  GH₵{outstandingBalance.toFixed(2)}
+                </p>
               </div>
+              <div className={iconContainerWarning}>
+                <Banknote className={`${iconClass} text-amber-600`} />
+              </div>
+            </div>
+            <div className="mt-3 pt-3 border-t border-gray-100">
+              <p className="text-xs text-gray-500">
+                {outstandingBalance > 0 ? 'Payment pending' : 'All clear!'}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Room Details Card - Info theme */}
+        <Card className={floatingCard}>
+          <CardContent className="p-5">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <p className={labelClass}>Room Details</p>
+                <div className="mt-2 space-y-1">
+                  <div className="flex items-center gap-1.5">
+                    <House className="h-3.5 w-3.5 text-gray-400" />
+                    <p className="text-lg font-semibold text-gray-900">{roomType}</p>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <DoorOpen className="h-3.5 w-3.5 text-gray-400" />
+                    <p className="text-lg font-semibold text-gray-900">{roomNumber}</p>
+                  </div>
+                </div>
+              </div>
+              <div className={iconContainerInfo}>
+                <House className={`${iconClass} text-blue-600`} />
+              </div>
+            </div>
+            <div className="mt-3 pt-3 border-t border-gray-100">
+              <p className="text-xs text-gray-500">Your accommodation</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Current Hostel Card - Teal theme */}
+        <Card className={floatingCard}>
+          <CardContent className="p-5">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <p className={labelClass}>Current Hostel</p>
+                <p className={`${valueClass} mt-2 text-teal-700`}>
+                  {hostelName}
+                </p>
+              </div>
+              <div className={iconContainerTeal}>
+                <Building2 className={`${iconClass} text-teal-600`} />
+              </div>
+            </div>
+            <div className="mt-3 pt-3 border-t border-gray-100">
+              <p className="text-xs text-gray-500">Your location</p>
             </div>
           </CardContent>
         </Card>
@@ -72,13 +121,15 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
     )
   }
 
-  // Admin/SuperAdmin cards (original logic)
+  // Admin/SuperAdmin cards (original logic with enhanced styling)
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <Card className="border-gray-200">
+      <Card className={floatingCard}>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-          <Banknote className="h-4 w-4 text-gray-500" />
+          <div className={iconContainer}>
+            <Banknote className={`${iconClass} text-emerald-600`} />
+          </div>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">GH₵{(analyticsData?.totalRevenue || 0).toFixed(2)}</div>
@@ -92,10 +143,12 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
         </CardContent>
       </Card>
 
-      <Card className="border-gray-200">
+      <Card className={floatingCard}>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium">Occupancy Rate</CardTitle>
-          <Percent className="h-4 w-4 text-gray-500" />
+          <div className={iconContainerInfo}>
+            <Percent className={`${iconClass} text-blue-600`} />
+          </div>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{analyticsData && analyticsData?.occupancyRate?.toFixed(1)}%</div>
@@ -112,10 +165,12 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
       </Card>
 
       {analyticsData?.totalHostels > -1 && (
-        <Card className="border-gray-200">
+        <Card className={floatingCard}>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Debt</CardTitle>
-            <Banknote className="h-4 w-4 text-gray-500" />
+            <div className={iconContainerWarning}>
+              <Banknote className={`${iconClass} text-amber-600`} />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">GH₵{(analyticsData?.totalDebt || 0).toFixed(2)}</div>
@@ -131,10 +186,12 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
       )}
 
       {analyticsData?.totalStaff > -1 && (
-        <Card className="border-gray-200">
-          <CardHeader className="flex flex-row items-end justify-between pb-2">
+        <Card className={floatingCard}>
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Total Staff</CardTitle>
-            <Users className="h-4 w-4 text-gray-500" />
+            <div className={iconContainerTeal}>
+              <Users className={`${iconClass} text-teal-600`} />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="text-4xl font-bold">{analyticsData && analyticsData.totalStaff || 0}</div>
@@ -142,10 +199,12 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
         </Card>
       )}
 
-      <Card className="border-gray-200">
+      <Card className={floatingCard}>
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium">Total Residents</CardTitle>
-          <Users className="h-4 w-4 text-gray-500" />
+          <div className={iconContainer}>
+            <Users className={`${iconClass} text-emerald-600`} />
+          </div>
         </CardHeader>
         <CardContent>
           <div className="text-4xl font-bold">{analyticsData && analyticsData.totalResidents}</div>

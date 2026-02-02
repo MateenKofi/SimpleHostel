@@ -4,48 +4,70 @@
 
 @layer base {
   :root {
-    --background: 240 20% 95%; /* pale-slate-50 */
-    --foreground: 240 22% 7%; /* pale-slate-950 */
-    --card: 240 20% 95%; /* pale-slate-50 */
-    --card-foreground: 240 22% 7%; /* pale-slate-950 */
-    --popover: 240 20% 95%; /* pale-slate-50 */
-    --popover-foreground: 240 22% 7%; /* pale-slate-950 */
-    --primary: 236 25% 50%; /* dusty-grape-500 */
+    /* Forest Green Primary Palette */
+    --background: 30 15% 98%; /* Warm gray background */
+    --foreground: 30 10% 15%; /* Dark warm gray for text */
+    --card: 30 15% 98%;
+    --card-foreground: 30 10% 15%;
+    --popover: 30 15% 98%;
+    --popover-foreground: 30 10% 15%;
+    --primary: 160 30% 38%; /* Forest Green 500 - Main primary color */
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 21.5% 80%; /* pale-slate-200 */
-    --secondary-foreground: 240 22% 7%;
-    --muted: 240 21.5% 80%; /* pale-slate-200 */
-    --muted-foreground: 240 15% 40%; /* pale-slate-600 approx */
-    --accent: 40 100% 50%; /* sunflower-gold-500 */
-    --accent-foreground: 40 100% 7%; /* sunflower-gold-950 */
-    --destructive: 0 100% 50%; /* grapefruit-pink-500 */
+    --secondary: 30 15% 85%; /* Warm gray for secondary */
+    --secondary-foreground: 30 10% 15%;
+    --muted: 30 10% 85%; /* Warm gray muted */
+    --muted-foreground: 30 10% 45%;
+    --accent: 155 25% 45%; /* Lighter green for accents */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 5 75% 55%; /* Warm red for destructive */
     --destructive-foreground: 0 0% 100%;
-    --border: 240 18% 70%; /* pale-slate-300 approx */
-    --input: 240 18% 70%;
-    --ring: 236 25% 50%; /* dusty-grape-500 */
+    --border: 30 10% 90%; /* Warm gray border */
+    --input: 30 10% 90%;
+    --ring: 160 30% 38%; /* Green focus ring */
     --radius: 0.5rem;
+
+    /* Sidebar variables - green palette */
+    --sidebar: 30 15% 98%;
+    --sidebar-foreground: 30 10% 20%;
+    --sidebar-primary: 160 30% 38%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 160 15% 92%;
+    --sidebar-accent-foreground: 160 30% 25%;
+    --sidebar-border: 30 8% 85%;
+    --sidebar-ring: 160 30% 38%;
   }
 
   .dark {
-    --background: 240 22% 7%; /* pale-slate-950 */
-    --foreground: 240 20% 95%; /* pale-slate-50 */
-    --card: 240 22% 12%; /* pale-slate-900 */
-    --card-foreground: 240 20% 95%;
-    --popover: 240 22% 12%; /* pale-slate-900 */
-    --popover-foreground: 240 20% 95%;
-    --primary: 236 25% 50%; /* dusty-grape-500 */
+    /* Dark mode with green palette */
+    --background: 30 20% 8%; /* Dark warm gray background */
+    --foreground: 30 15% 95%; /* Light warm gray for text */
+    --card: 30 20% 8%;
+    --card-foreground: 30 15% 95%;
+    --popover: 30 20% 8%;
+    --popover-foreground: 30 15% 95%;
+    --primary: 160 30% 45%; /* Lighter forest green for dark mode */
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 22% 20%; /* pale-slate-800 */
-    --secondary-foreground: 240 20% 95%;
-    --muted: 240 22% 20%; /* pale-slate-800 */
-    --muted-foreground: 240 15% 65%; /* pale-slate-400 approx */
-    --accent: 40 100% 50%;
+    --secondary: 30 20% 15%;
+    --secondary-foreground: 30 15% 95%;
+    --muted: 30 15% 20%;
+    --muted-foreground: 30 15% 65%;
+    --accent: 155 25% 50%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 100% 40%; /* grapefruit-pink-600 */
+    --destructive: 5 70% 48%; /* Darker red for dark mode */
     --destructive-foreground: 0 0% 100%;
-    --border: 240 22% 20%; /* pale-slate-800 */
-    --input: 240 22% 20%;
-    --ring: 236 25% 50%;
+    --border: 30 15% 20%;
+    --input: 30 15% 20%;
+    --ring: 160 30% 45%;
+
+    /* Sidebar variables - dark mode */
+    --sidebar: 30 20% 8%;
+    --sidebar-foreground: 30 15% 90%;
+    --sidebar-primary: 160 30% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 160 15% 20%;
+    --sidebar-accent-foreground: 160 25% 85%;
+    --sidebar-border: 30 10% 20%;
+    --sidebar-ring: 160 30% 45%;
   }
 }
 
@@ -160,7 +182,7 @@
 
 /* Text gradient */
 .text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-red-500 to-orange-500;
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-teal-500;
 }
 
 /* Responsive font sizes */

@@ -28,9 +28,9 @@ type analyticsData = Analytics
                       <XAxis dataKey="name" />
                       <YAxis />
                       <Tooltip content={<CustomTooltip />} />
-                      <Bar dataKey="Collected" fill={CHART_COLORS.green} />
-                      <Bar dataKey="Expected" fill={CHART_COLORS.yellow} />
-                      <Bar dataKey="Outstanding" fill={CHART_COLORS.blue_black} />
+                      <Bar dataKey="Collected" fill={CHART_COLORS.forest_light} />
+                      <Bar dataKey="Expected" fill={CHART_COLORS.sage} />
+                      <Bar dataKey="Outstanding" fill={CHART_COLORS.forest_dark} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>

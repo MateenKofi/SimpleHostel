@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Globe, EyeOff, Eye, ShieldOff } from 'lucide-react';
 import { publishHostel, unpublishHostel } from '@/api/hostels';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import Swal from 'sweetalert2';
 
 interface AwardStatusAlertProps {

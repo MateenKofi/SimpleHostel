@@ -4,7 +4,7 @@ import { ChevronLeft, Loader } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { getStaffById, updateStaff } from "@/api/staff";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import dayjs from "dayjs";
 import CustomeRefetch from "../CustomeRefetch";
 import UploadSingleImage from "../UploadSingleImage";

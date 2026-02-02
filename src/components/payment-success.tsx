@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { confirmPayment } from "@/api/payments"
-import toast from "react-hot-toast"
+import { toast } from "sonner"
 import { CheckCircle, FileText, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"

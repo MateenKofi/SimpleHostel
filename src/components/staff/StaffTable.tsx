@@ -5,7 +5,7 @@ import { Edit, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import CustomDataTable from "../CustomDataTable";
 import { handleSwalMutation } from "../swal/SwalMutationHelper";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 
 const StaffTable = () => {
   const navigate = useNavigate();

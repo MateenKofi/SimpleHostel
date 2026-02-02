@@ -1,5 +1,5 @@
 import { Plus, Loader } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import Modal from '@/components/Modal';
 import { Amenity } from '@/helper/types/types';

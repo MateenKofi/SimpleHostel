@@ -2,7 +2,7 @@ import React from "react";
 import { TableColumn } from "react-data-table-component";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getUnverifiedHostels, verifyHostel, deleteHostel } from "@/api/hostels";
-import toast from "react-hot-toast";
+import { toast } from "sonner";
 import Swal from "sweetalert2";
 import { Loader } from "lucide-react";
 import CustomDataTable from "@/components/CustomDataTable";

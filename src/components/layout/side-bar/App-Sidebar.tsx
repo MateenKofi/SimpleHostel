@@ -1,6 +1,7 @@
 import * as React from "react"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"
+import { NavLogout } from "./nav-logout"
 import { TeamSwitcher } from "./team-switcher"
 import {
   Sidebar,
@@ -10,21 +11,24 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
-
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar
+      collapsible="icon"
+      variant="floating"
+      {...props}
+    >
       <SidebarHeader>
-        <TeamSwitcher  />
+        <TeamSwitcher />
       </SidebarHeader>
       <SidebarContent>
         <NavMain />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser  />
+        <NavLogout />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
   )
 }
-

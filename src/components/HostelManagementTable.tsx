@@ -5,7 +5,7 @@ import { Hostel } from "@/helper/types/types";
 import { TableColumn } from "react-data-table-component";
 import CustomDataTable from "./CustomDataTable";
 import { Trash2 } from "lucide-react";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import { handleSwalMutation } from "./swal/SwalMutationHelper";
 import {
   Dialog,

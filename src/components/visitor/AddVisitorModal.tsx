@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getHostelResidents } from '@/api/residents'
 import { addVisitor } from '@/api/visitors'
 import { AxiosError } from 'axios'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 import { Resident } from '@/helper/types/types'
 import { TextField } from '../TextField'
 

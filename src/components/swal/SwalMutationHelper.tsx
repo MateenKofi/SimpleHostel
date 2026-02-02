@@ -1,6 +1,6 @@
 import Swal from "sweetalert2";
 import type { SweetAlertIcon } from "sweetalert2";
-import { toast } from "react-hot-toast";
+import { toast } from "sonner";
 import axios from "axios";
 
 export const showConfirmDialog = async ({
