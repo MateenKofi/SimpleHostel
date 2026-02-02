@@ -6,17 +6,17 @@ import { Analytics } from '@/helper/types/types'
 type analyticsData = Analytics
 
 // Floating card base class
-const floatingCard = "bg-gradient-to-br from-white to-gray-50/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-gray-100/50"
+const floatingCard = "bg-gradient-to-br from-card to-muted/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-border/50"
 
 // Icon container with gradient
 const iconContainer = "p-2.5 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/50"
 const iconContainerWarning = "p-2.5 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50"
-const iconContainerInfo = "p-2.5 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100/50"
+const iconContainerInfo = "p-2.5 rounded-xl bg-gradient-to-br from-forest-green-50 to-forest-green-100/50"
 const iconContainerTeal = "p-2.5 rounded-xl bg-gradient-to-br from-teal-50 to-teal-100/50"
 
 const iconClass = "h-5 w-5"
-const valueClass = "text-2xl font-bold text-gray-900"
-const labelClass = "text-sm font-medium text-gray-600"
+const valueClass = "text-2xl font-bold text-foreground"
+const labelClass = "text-sm font-medium text-muted-foreground"
 
 const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
   // Resident-specific cards when data has resident structure
@@ -43,8 +43,8 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
                 <Banknote className={`${iconClass} text-emerald-600`} />
               </div>
             </div>
-            <div className="mt-3 pt-3 border-t border-gray-100">
-              <p className="text-xs text-gray-500">Your total payments</p>
+            <div className="mt-3 pt-3 border-t border-border">
+              <p className="text-xs text-muted-foreground">Your total payments</p>
             </div>
           </CardContent>
         </Card>
@@ -63,8 +63,8 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
                 <Banknote className={`${iconClass} text-amber-600`} />
               </div>
             </div>
-            <div className="mt-3 pt-3 border-t border-gray-100">
-              <p className="text-xs text-gray-500">
+            <div className="mt-3 pt-3 border-t border-border">
+              <p className="text-xs text-muted-foreground">
                 {outstandingBalance > 0 ? 'Payment pending' : 'All clear!'}
               </p>
             </div>
@@ -79,21 +79,21 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
                 <p className={labelClass}>Room Details</p>
                 <div className="mt-2 space-y-1">
                   <div className="flex items-center gap-1.5">
-                    <House className="h-3.5 w-3.5 text-gray-400" />
-                    <p className="text-lg font-semibold text-gray-900">{roomType}</p>
+                    <House className="h-3.5 w-3.5 text-muted-foreground" />
+                    <p className="text-lg font-semibold text-foreground">{roomType}</p>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <DoorOpen className="h-3.5 w-3.5 text-gray-400" />
-                    <p className="text-lg font-semibold text-gray-900">{roomNumber}</p>
+                    <DoorOpen className="h-3.5 w-3.5 text-muted-foreground" />
+                    <p className="text-lg font-semibold text-foreground">{roomNumber}</p>
                   </div>
                 </div>
               </div>
               <div className={iconContainerInfo}>
-                <House className={`${iconClass} text-blue-600`} />
+                <House className={`${iconClass} text-forest-green-700`} />
               </div>
             </div>
-            <div className="mt-3 pt-3 border-t border-gray-100">
-              <p className="text-xs text-gray-500">Your accommodation</p>
+            <div className="mt-3 pt-3 border-t border-border">
+              <p className="text-xs text-muted-foreground">Your accommodation</p>
             </div>
           </CardContent>
         </Card>
@@ -112,8 +112,8 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
                 <Building2 className={`${iconClass} text-teal-600`} />
               </div>
             </div>
-            <div className="mt-3 pt-3 border-t border-gray-100">
-              <p className="text-xs text-gray-500">Your location</p>
+            <div className="mt-3 pt-3 border-t border-border">
+              <p className="text-xs text-muted-foreground">Your location</p>
             </div>
           </CardContent>
         </Card>
@@ -133,11 +133,11 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">GH₵{(analyticsData?.totalRevenue || 0).toFixed(2)}</div>
-          <p className="text-xs text-gray-500">of GH₵{(analyticsData?.expectedIncome || 0).toFixed(2)} expected</p>
+          <p className="text-xs text-muted-foreground">of GH₵{(analyticsData?.expectedIncome || 0).toFixed(2)} expected</p>
           <div className="mt-3">
             <Progress
               value={analyticsData?.expectedIncome > 0 ? (analyticsData?.totalRevenue / analyticsData?.expectedIncome) * 100 : 0}
-              className="bg-gray-200"
+              className="bg-muted"
             />
           </div>
         </CardContent>
@@ -147,18 +147,18 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
         <CardHeader className="flex flex-row items-center justify-between pb-2">
           <CardTitle className="text-sm font-medium">Occupancy Rate</CardTitle>
           <div className={iconContainerInfo}>
-            <Percent className={`${iconClass} text-blue-600`} />
+            <Percent className={`${iconClass} text-forest-green-700`} />
           </div>
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{analyticsData && analyticsData?.occupancyRate?.toFixed(1)}%</div>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-muted-foreground">
             {analyticsData && analyticsData?.occupiedRooms} of {analyticsData && analyticsData?.activeRooms} rooms occupied
           </p>
           <div className="mt-3">
             <Progress
               value={analyticsData && analyticsData.occupancyRate}
-              className="bg-gray-200"
+              className="bg-muted"
             />
           </div>
         </CardContent>
@@ -174,11 +174,11 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">GH₵{(analyticsData?.totalDebt || 0).toFixed(2)}</div>
-            <p className="text-xs text-gray-500">of GH₵{(analyticsData?.currentYearStats?.expectedRevenue || 0).toFixed(2)} expected</p>
+            <p className="text-xs text-muted-foreground">of GH₵{(analyticsData?.currentYearStats?.expectedRevenue || 0).toFixed(2)} expected</p>
             <div className="mt-3">
               <Progress
                 value={analyticsData?.currentYearStats?.expectedRevenue > 0 ? (analyticsData?.totalDebt / analyticsData?.currentYearStats?.expectedRevenue) * 100 : 0}
-                className="bg-gray-200"
+                className="bg-muted"
               />
             </div>
           </CardContent>
