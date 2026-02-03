@@ -135,7 +135,7 @@ const ApproveHostelTable = () => {
       cell: (row) => (
         <div className="flex flex-col w-full gap-2 my-2 lg:flex-row">
           <button
-            className="flex items-center justify-center w-full px-2 py-1 text-white bg-black rounded text-nowrap"
+            className="flex items-center justify-center w-full px-2 py-1 text-primary-foreground bg-primary rounded text-nowrap"
             onClick={() => handleAccept(row.id)}
           >
             {AcceptMutation.isPending ? (
@@ -145,7 +145,7 @@ const ApproveHostelTable = () => {
             )}
           </button>
           <button
-            className="flex items-center justify-center w-full px-2 py-1 text-white bg-red-400 rounded text-nowrap"
+            className="flex items-center justify-center w-full px-2 py-1 text-destructive-foreground bg-destructive rounded text-nowrap"
             onClick={() => handleDecline(row.id)}
           >
             {DeclineMutation.isPending ? (
@@ -160,7 +160,7 @@ const ApproveHostelTable = () => {
   ];
 
   return (
-    <div className="p-6 bg-white border rounded-lg shadow-md">
+    <div className="p-6 bg-card border border-border rounded-lg shadow-md">
       <CustomDataTable
         columns={columns}
         data={UnverifiedHostels || []}

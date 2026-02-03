@@ -1,13 +1,5 @@
 import { useState, useMemo } from "react";
-import { Building, Users, ArrowLeft, FileText } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { ArrowLeft, FileText, MapPin, Users, Home, BedDouble } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -17,7 +9,6 @@ import FilterPanel from "@/components/FilterPanel";
 import { RoomFilterConfig } from "@/helper/room_filter_config";
 import { parseRange } from "@/utils/parseRange";
 import FindHostelSkeleton from "@/components/loaders/HostelCardSkeleton";
-import ImageSlider from "@/components/ImageSlider";
 import CustomeRefetch from "@/components/CustomeRefetch";
 import SEOHelmet from "@/components/SEOHelmet";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -30,20 +21,15 @@ import { registerResident } from "@/api/residents";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import RoomCard from "@/components/rooms/RoomCard";
+import { FilterBar } from "@/components/filters/FilterBar";
 
 interface ActiveFilters {
   [key: string]: string[];
 }
-
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 const FindRoom = () => {
   const navigate = useNavigate();
@@ -53,36 +39,55 @@ const FindRoom = () => {
     priceRange: [],
     roomType: [],
   });
+
+  // Filter panel open state (desktop)
+  const [isFilterOpen, setIsFilterOpen] = useState(true);
+
   const { setRoom } = useSelectedRoomStore();
   const { user, token } = useAuthStore();
   const setResident = useAddedResidentStore((state) => state.setResident);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [selectedBookingRoom, setSelectedBookingRoom] = useState<Room | null>(null);
-  const [password, setPassword] = useState("");
   const calendarYear = useSelectedCalendarYearStore((state) => state.calendarYear);
 
   const BookingMutation = useMutation({
     mutationFn: async () => {
-      if (!user || !selectedBookingRoom) return;
+      if (!user || !selectedBookingRoom) {
+        throw new Error("User or room not found");
+      }
 
-      // OPTION B: Try to find existing resident profile first to skip registration
+      // Try to find existing resident profile first to skip registration
       try {
         const analyticsData = await getResidentAnalytics(user.id);
         const existingResidentId = analyticsData?.data?.residentId;
 
         if (existingResidentId) {
+          // Return a UserDto-like structure for existing residents
           return {
             success: true,
             isExisting: true,
             data: {
-              id: existingResidentId,
+              id: user.id,
               name: user.name,
               email: user.email,
-              phone: user.phoneNumber
+              phone: user.phoneNumber || undefined,
+              role: user.role,
+              residentProfile: {
+                id: existingResidentId,
+                userId: user.id,
+                hostelId: selectedBookingRoom.hostelId,
+                roomId: selectedBookingRoom.id,
+                studentId: null,
+                course: null,
+                roomNumber: selectedBookingRoom.roomNumber,
+                status: "pending",
+                checkInDate: null,
+                checkOutDate: null,
+              }
             }
-          };
+          } as const;
         }
-      } catch (err) {
+      } catch {
         console.log("No existing resident profile found or error fetching analytics.");
       }
 
@@ -105,8 +110,7 @@ const FindRoom = () => {
       return await registerResident(payload);
     },
     onSuccess: (res: any) => {
-      const residentData = res?.isExisting ? res.data : res?.data;
-      setResident(residentData);
+      setResident(res?.data || null);
 
       toast.success(res?.isExisting ? "Ready for payment!" : "Booking initiated successfully!");
       setIsBookingModalOpen(false);
@@ -114,7 +118,7 @@ const FindRoom = () => {
         navigate("/payment");
       }, 500);
     },
-    onError: (error: any) => {
+    onError: (error: { response?: { data?: { message?: string; error?: string } } }) => {
       const msg = error.response?.data?.message || error.response?.data?.error || "Failed to process booking";
       toast.error(msg);
     }
@@ -171,15 +175,6 @@ const FindRoom = () => {
     });
   }, [availableRooms, activeFilters]);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "available":
-        return "bg-green-500";
-      default:
-        return "bg-gray-500";
-    }
-  };
-
   const handleRoomClick = (room: Room) => {
     if (!token || !user) {
       toast.error("Please log in to book a room");
@@ -196,6 +191,20 @@ const FindRoom = () => {
     BookingMutation.mutate();
   };
 
+  // Clear all filters
+  const clearAllFilters = () => {
+    setActiveFilters({
+      gender: [],
+      priceRange: [],
+      roomType: [],
+    });
+  };
+
+  // Count active filters
+  const activeFilterCount = useMemo(() => {
+    return Object.values(activeFilters).filter((arr) => arr.length > 0).length;
+  }, [activeFilters]);
+
   if (isLoading) {
     return <FindHostelSkeleton />;
   }
@@ -211,157 +220,185 @@ const FindRoom = () => {
         description="Search for the best rooms on Fuse."
         keywords="find room, Fuse, student accommodation"
       />
-      <button
-        className="my-2 bg-primary text-white px-4 py-2 rounded-md flex items-center"
+      <Button
+        className="mb-4 bg-primary text-primary-foreground px-4 py-2 rounded-md flex items-center"
         onClick={() => navigate(-1)}
       >
-        <ArrowLeft className="w-6 h-6 mr-2" />
+        <ArrowLeft className="w-5 h-5 mr-2" />
         Back
-      </button>
+      </Button>
 
       <div className="w-full flex flex-col md:flex-row gap-6">
-        <div className="w-full lg:w-64">
+        {/* Sidebar with FilterBar */}
+        <div className="w-full md:w-72 lg:w-80 space-y-4">
+          <FilterBar
+            activeFilterCount={activeFilterCount}
+            onToggleFilters={() => setIsFilterOpen(!isFilterOpen)}
+            onClearAll={clearAllFilters}
+            isOpen={isFilterOpen}
+            className="md:hidden"
+          />
           <FilterPanel
             FilterConfig={RoomFilterConfig}
             activeFilters={activeFilters}
             handleFilterChange={handleFilterChange}
+            onClearAll={clearAllFilters}
+            variant="sidebar"
+            isOpen={isFilterOpen}
           />
         </div>
 
         {/* Rooms Grid */}
-        <div className="w-full flex flex-wrap gap-6">
+        <div className="flex-1 space-y-4">
           {filteredRooms.length === 0 ? (
-            <div className="text-center text-gray-500 dark:text-gray-400 mt-4">
-              No rooms match your filters.
+            <div className="text-center py-12 bg-card border border-border rounded-lg">
+              <p className="text-lg font-medium text-foreground mb-2">
+                No rooms match your filters
+              </p>
+              <p className="text-sm text-muted-foreground mb-4">
+                Try adjusting your filter options
+              </p>
+              {activeFilterCount > 0 && (
+                <Button
+                  variant="outline"
+                  onClick={clearAllFilters}
+                  className="text-destructive border-destructive/30 hover:bg-destructive/10"
+                >
+                  Clear All Filters
+                </Button>
+              )}
             </div>
           ) : (
-            filteredRooms.map((room: Room) => (
-              <Card
-                key={room.id}
-                className=" w-full md:max-w-[300px] overflow-hidden border border-gray-200 dark:border-zinc-700 shadow-sm hover:shadow-md transition-shadow duration-200 bg-white dark:bg-zinc-900"
-              >
-                <CardHeader className="p-2 border-b bg-gray-50 dark:bg-zinc-800 dark:border-zinc-700">
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <CardTitle className="text-xl font-bold text-black dark:text-white">
-                        Room {room.roomNumber}
-                      </CardTitle>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        Block {room.block} · Floor {room.floor}
-                      </p>
-                    </div>
-                    <Badge
-                      className={`${getStatusColor(
-                        room.status
-                      )} px-2 py-1 text-xs font-medium rounded-md text-white`}
-                    >
-                      {room.status}
-                    </Badge>
-                  </div>
-                </CardHeader>
-                <div>
-                  <ImageSlider
-                    images={room?.roomImages?.map((i) => i.imageUrl) ?? []}
+            <>
+              <div className="flex items-center justify-between px-2">
+                <p className="text-sm text-muted-foreground">
+                  {filteredRooms.length} room{filteredRooms.length !== 1 ? "s" : ""} available
+                </p>
+                {activeFilterCount > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={clearAllFilters}
+                    className="text-destructive hover:text-destructive"
+                  >
+                    Clear filters
+                  </Button>
+                )}
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredRooms.map((room: Room) => (
+                  <RoomCard
+                    key={room.id}
+                    room={room}
+                    onBookRoom={handleRoomClick}
                   />
-                </div>
-                <CardContent className="p-2">
-                  <div className="flex items-center justify-between">
-                    <div className="bg-gray-50 dark:bg-zinc-800 p-2 rounded-md">
-                      <p className="text-xs text-gray-600 dark:text-gray-400">Type</p>
-                      <p className="font-semibold text-xs text-black dark:text-white">
-                        {room?.type ? (room.type.charAt(0).toUpperCase() + room.type.slice(1).toLowerCase()) : "N/A"}
-                      </p>
-                    </div>
-                    <div className="bg-gray-50 dark:bg-zinc-800 p-2 rounded-md">
-                      <p className="text-xs text-gray-600 dark:text-gray-400">Gender</p>
-                      <p className="font-semibold text-xs text-black dark:text-white">
-                        {room?.gender ? (room.gender.charAt(0).toUpperCase() + room.gender.slice(1).toLowerCase()) : "N/A"}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center gap-2 p-1 bg-gray-50 dark:bg-zinc-800 rounded-md">
-                      <Users size={18} className="text-gray-600 dark:text-gray-400" />
-                      <div>
-                        <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Capacity</p>
-                        <p className="font-semibold text-xs text-black dark:text-white">
-                          {room.currentResidentCount}/{room.maxCap} residents
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardContent className="p-2">
-                  <div className="flex items-center gap-2 p-1 bg-gray-50 dark:bg-zinc-800 rounded-md">
-                    <Building size={18} className="text-gray-600 dark:text-gray-400" />
-                    <div className="flex flex-col">
-                      <p className="text-xs text-gray-600 dark:text-gray-400 mb-1">Amenities</p>
-                      <p className="w-full font-semibold text-xs text-black dark:text-white">
-                        {(room?.amenities?.length || 0) < 1 ? (
-                          <span>No Amenities</span>
-                        ) : (
-                          <>
-                            {room?.amenities?.map((amenity) => (
-                              <span
-                                key={amenity.id}
-                                className="mr-[2px] bg-green-300 dark:bg-green-700 px-1 rounded-md text-xs text-black dark:text-white"
-                              >
-                                {amenity.name}
-                              </span>
-                            ))}
-                          </>
-                        )}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-                <CardFooter className="p-2 bg-gray-50 dark:bg-zinc-800">
-                  <div className="w-full flex justify-between items-center p-0 m-0">
-                    <div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Price</p>
-                      <p className="font-semibold text-black dark:text-white">GHS {room.price}</p>
-                    </div>
-                    <Button onClick={() => handleRoomClick(room)}>
-                      Book Now
-                    </Button>
-                  </div>
-                </CardFooter>
-              </Card>
-            ))
+                ))}
+              </div>
+            </>
           )}
         </div>
       </div>
 
       <Dialog open={isBookingModalOpen} onOpenChange={setIsBookingModalOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Confirm Booking</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to book Room {selectedBookingRoom?.roomNumber}?
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <div className="bg-slate-50 p-4 rounded-md text-sm space-y-2 dark:bg-zinc-800">
-              <p><span className="font-semibold">Room:</span> {selectedBookingRoom?.roomNumber}</p>
-              <p><span className="font-semibold">Price:</span> GHS {selectedBookingRoom?.price}</p>
-              <p><span className="font-semibold">Type:</span> {selectedBookingRoom?.type}</p>
+        <DialogContent className="max-w-2xl p-0 overflow-hidden">
+          <div className="flex flex-col sm:flex-row max-h-[90vh] sm:max-h-none overflow-y-auto">
+            {/* Left Side - Room Image */}
+            <div className="sm:w-2/5 relative aspect-square sm:aspect-auto bg-muted min-h-[250px]">
+              <img
+                src={selectedBookingRoom?.roomImages?.[0]?.imageUrl || "/logo.png"}
+                alt="Room preview"
+                className="w-full h-full object-cover"
+              />
+              {/* Status badge overlay */}
+              <span className="absolute top-3 left-3 bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-semibold">
+                Available
+              </span>
             </div>
 
-            <p className="text-xs text-muted-foreground mt-4 flex items-center gap-2">
-              <FileText className="w-3 h-3" />
-              By confirming, you agree to the Hostel Rules & Regulations and will be redirected to the payment page.
-            </p>
+            {/* Right Side - Booking Details */}
+            <div className="sm:w-3/5 p-6 space-y-5">
+              {/* Header */}
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Confirm Booking</h2>
+                <p className="text-muted-foreground mt-1">
+                  Review your room selection before proceeding
+                </p>
+              </div>
+
+              {/* Room Number Badge */}
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full">
+                <Home className="w-4 h-4" />
+                <span className="font-semibold">Room {selectedBookingRoom?.roomNumber}</span>
+              </div>
+
+              {/* Room Details with Icons */}
+              <div className="space-y-3 bg-muted/50 p-4 rounded-xl">
+                <div className="flex items-center gap-3">
+                  <MapPin className="w-5 h-5 text-primary flex-shrink-0" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Location</p>
+                    <p className="font-medium">Block {selectedBookingRoom?.block}, Floor {selectedBookingRoom?.floor}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <BedDouble className="w-5 h-5 text-primary flex-shrink-0" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Room Type</p>
+                    <p className="font-medium capitalize">{selectedBookingRoom?.type}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Users className="w-5 h-5 text-primary flex-shrink-0" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Capacity</p>
+                    <p className="font-medium">{selectedBookingRoom?.currentResidentCount || 0} / {selectedBookingRoom?.maxCap} residents</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Home className="w-5 h-5 text-primary flex-shrink-0" />
+                  <div>
+                    <p className="text-xs text-muted-foreground">Gender</p>
+                    <p className="font-medium capitalize">{selectedBookingRoom?.gender}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Price Highlight */}
+              <div className="bg-primary/5 border border-primary/20 p-4 rounded-xl">
+                <p className="text-sm text-muted-foreground">Total per semester</p>
+                <p className="text-2xl font-bold text-primary">GHS {selectedBookingRoom?.price?.toLocaleString()}</p>
+              </div>
+
+              {/* Terms */}
+              <p className="text-xs text-muted-foreground flex items-start gap-2">
+                <FileText className="w-3 h-3 mt-0.5 flex-shrink-0" />
+                <span>By confirming, you agree to the Hostel Rules & Regulations and will be redirected to the payment page.</span>
+              </p>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col-reverse sm:flex-row gap-3 pt-2">
+                <Button
+                  variant="outline"
+                  onClick={() => setIsBookingModalOpen(false)}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={confirmBooking}
+                  disabled={BookingMutation.isPending}
+                  className="flex-1 bg-primary text-primary-foreground"
+                >
+                  {BookingMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Processing...
+                    </>
+                  ) : "Confirm & Pay"}
+                </Button>
+              </div>
+            </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsBookingModalOpen(false)}>Cancel</Button>
-            <Button onClick={confirmBooking} disabled={BookingMutation.isPending}>
-              {BookingMutation.isPending ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Processing...
-                </>
-              ) : "Confirm & Pay"}
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

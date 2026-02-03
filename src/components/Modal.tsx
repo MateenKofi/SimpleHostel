@@ -33,11 +33,11 @@ export default function Modal({ children, modalId, onClose, size = 'medium' }: M
       animate="visible"
       exit="exit"
       variants={variants}
-      className={`relative z-50 w-full ${sizeClasses[size]} rounded-lg bg-white p-6 shadow-lg backdrop:bg-black/90`}
+      className={`relative z-50 w-full ${sizeClasses[size]} rounded-lg bg-card p-6 shadow-lg backdrop:bg-black/90`}
     >
       <button
         onClick={onClose}
-        className="absolute right-4 top-4 rounded-sm text-gray-400 hover:text-gray-500"
+        className="absolute right-4 top-4 rounded-sm text-muted-foreground hover:text-foreground"
         aria-label="Close modal"
       >
         <X className="h-4 w-4" />

@@ -5,10 +5,10 @@ import { Analytics } from '@/helper/types/types'
 type analyticsData = Analytics
 const SystemOverviewTable = ({ analyticsData }: { analyticsData: analyticsData }) => {
   return (
-     <Card className="border-gray-200">
+     <Card className="border-border">
               <CardHeader>
                 <CardTitle>System Overview</CardTitle>
-                <CardDescription className="text-gray-500">
+                <CardDescription className="text-muted-foreground">
                   Key system-wide metrics and statistics
                 </CardDescription>
               </CardHeader>

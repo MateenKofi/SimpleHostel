@@ -3,6 +3,7 @@ import { format } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import { getHostelVisitors } from "@/api/visitors";
 import { Visitor } from "@/helper/types/types";
+import { Badge } from "@/components/ui/badge";
 
 
 const VisitorHistory = () => {
@@ -59,21 +60,19 @@ const VisitorHistory = () => {
     {
       name: "Status",
       cell: (row: Visitor) => (
-        <span
-          className={`px-2 py-1 rounded-full text-xs ${row.status === "ACTIVE"
-            ? "bg-green-100 text-green-800"
-            : "bg-gray-100 text-gray-800"
-            }`}
+        <Badge
+          variant={row.status === "ACTIVE" ? "default" : "secondary"}
+          className="capitalize"
         >
           {row.status === "ACTIVE" ? "Checked In" : "Checked Out"}
-        </span>
+        </Badge>
       ),
     },
 
   ];
 
   return (
-    <div className="p-4 bg-white border rounded-lg shadow-sm">
+    <div className="p-4 bg-card border border-border rounded-lg shadow-sm">
       <CustomDataTable
         title="Visitors History Table"
         columns={columns}

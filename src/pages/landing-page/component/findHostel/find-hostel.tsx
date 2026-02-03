@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
@@ -6,14 +6,14 @@ import { useQuery } from "@tanstack/react-query";
 import { getHostels } from "@/api/hostels";
 import { Hostel } from "@/helper/types/types";
 import CustomeRefetch from "@/components/CustomeRefetch";
-import ImageSlider from "@/components/ImageSlider";
-import { MapPin, MapPinHouse, Phone, Star } from "lucide-react";
+import HostelCard from "@/components/hostel/HostelCard";
 import { useDebounce } from "@/helper/useDebounce";
 import FilterPanel from "@components/FilterPanel";
 import FindHostelSkeleton from "@components/loaders/HostelCardSkeleton";
 import { HostetFilterConfig } from "@/helper/hostel_filter_config";
 import { useSelectedCalendarYearStore } from "@/stores/useSelectedCalendarYearStore";
 import { useNavigate } from "react-router-dom";
+import { FilterBar } from "@/components/filters/FilterBar";
 
 interface ActiveFilters {
   [key: string]: string[];
@@ -30,6 +30,12 @@ export function FindHostel() {
   const [activeFilters, setActiveFilters] = useState<ActiveFilters>({
     locations: [],
   });
+
+  // Filter panel open state (desktop)
+  const [isFilterOpen, setIsFilterOpen] = useState(true);
+
+  const [sortBy, setSortBy] = useState<"name" | "price" | "rating">("name");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const {
     data: rooms,
@@ -74,137 +80,156 @@ export function FindHostel() {
     }, 50);
   };
 
+  // Helper function to get minimum room price for a hostel (for sorting)
+  const getMinPrice = (hostel: Hostel): number => {
+    if (!hostel.rooms || hostel.rooms.length === 0) return 0;
+    return Math.min(...hostel.rooms.map(room => room.price));
+  };
+
+  // Clear all filters
+  const clearAllFilters = () => {
+    setActiveFilters({
+      locations: [],
+    });
+  };
+
+  // Count active filters
+  const activeFilterCount = useMemo(() => {
+    return Object.values(activeFilters).filter((arr) => arr.length > 0).length;
+  }, [activeFilters]);
+
   if (isLoading) return <FindHostelSkeleton />;
   if (isError) return <CustomeRefetch refetch={refetch} />;
 
-  const PublishedHostels = rooms?.filter(
+  const PublishedHostels = (rooms || []).filter(
     (room: Hostel) => room?.state === "published"
   );
 
   const filteredHostels = PublishedHostels?.filter((hostel: Hostel) => {
+    // Search filter
     const matchesSearch = hostel.name
       .toLowerCase()
       .includes(debouncedQuery.toLowerCase());
 
+    // Location filter
     const matchesLocation =
       activeFilters.locations.length === 0 ||
       activeFilters.locations.includes(hostel.location);
 
     return matchesSearch && matchesLocation;
+  })
+  .sort((a: Hostel, b: Hostel) => {
+    // Apply sorting
+    let comparison = 0;
+    if (sortBy === "price") {
+      comparison = getMinPrice(a) - getMinPrice(b);
+    } else if (sortBy === "rating") {
+      comparison = (a.averageRating || 0) - (b.averageRating || 0);
+    } else {
+      comparison = a.name.localeCompare(b.name);
+    }
+    return sortOrder === "asc" ? comparison : -comparison;
   });
 
   return (
-    <div className="px-4 py-8 mx-auto ">
-      <div className="flex flex-col gap-8 lg:flex-row">
-        <div className="w-full lg:w-64 ">
+    <div className="px-4 py-8 mx-auto">
+      <div className="flex flex-col gap-6 lg:flex-row">
+        {/* Sidebar with FilterBar */}
+        <div className="w-full lg:w-72 space-y-4">
+          <FilterBar
+            activeFilterCount={activeFilterCount}
+            onToggleFilters={() => setIsFilterOpen(!isFilterOpen)}
+            onClearAll={clearAllFilters}
+            isOpen={isFilterOpen}
+          />
           <FilterPanel
             FilterConfig={HostetFilterConfig}
             activeFilters={activeFilters}
             handleFilterChange={handleFilterChange}
+            onClearAll={clearAllFilters}
+            variant="sidebar"
+            isOpen={isFilterOpen}
           />
         </div>
-        <div className="flex-1 p-4 space-y-6 transition-colors bg-white rounded shadow dark:bg-zinc-900">
-          <Input
-            placeholder="Search For Hostel By name"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="text-black bg-white border border-gray-300 dark:bg-zinc-800 dark:text-white dark:border-zinc-700"
-          />
-          <div className="flex flex-wrap gap-2">
-            {Object.entries(activeFilters).map(([category, values]) =>
-              values.map((value) => (
-                <Badge
-                  key={`${category}-${value}`}
-                  variant="secondary"
-                  className="flex items-center gap-1 text-black bg-gray-100 dark:bg-zinc-800 dark:text-white"
-                >
-                  {value}
-                  <button
-                    onClick={() => removeFilter(category, value)}
-                    className="ml-1 hover:text-destructive"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </Badge>
-              ))
-            )}
+
+        {/* Main Content */}
+        <div className="flex-1 p-4 space-y-6 bg-card border border-border rounded-lg shadow-sm">
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <Input
+              placeholder="Search For Hostel By name"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 bg-background border-input text-foreground placeholder:text-muted-foreground"
+            />
+            <select
+              value={`${sortBy}-${sortOrder}`}
+              onChange={(e) => {
+                const [sort, order] = e.target.value.split("-");
+                setSortBy(sort as "name" | "price" | "rating");
+                setSortOrder(order as "asc" | "desc");
+              }}
+              className="px-4 py-2 bg-background border border-input rounded-md text-foreground focus:ring-2 focus:ring-ring focus:ring-offset-2"
+            >
+              <option value="name-asc">Name (A-Z)</option>
+              <option value="name-desc">Name (Z-A)</option>
+              <option value="price-asc">Price (Low to High)</option>
+              <option value="price-desc">Price (High to Low)</option>
+              <option value="rating-desc">Rating (Highest)</option>
+              <option value="rating-asc">Rating (Lowest)</option>
+            </select>
           </div>
 
-          {filteredHostels?.length === 0 ? (
-            <p className="text-center text-black dark:text-white">
-              No hostels match your search.
-            </p>
-          ) : (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-              {filteredHostels?.map((hostel: Hostel) => (
-                <div
-                  key={hostel.id}
-                  className="overflow-hidden transition-colors bg-white border rounded-md dark:border-zinc-700 dark:bg-zinc-800"
-                >
-                  <ImageSlider
-                    images={hostel?.hostelImages?.map((i) => i.imageUrl)}
-                  />
-                  <div className="p-4 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <p className="font-bold text-black dark:text-white">
-                        {hostel.name}
-                      </p>
-                      {hostel.averageRating !== undefined && (
-                        <div className="flex items-center gap-1 bg-yellow-100 dark:bg-yellow-900/30 px-2 py-0.5 rounded-full">
-                          <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-                          <span className="text-xs font-bold text-yellow-700 dark:text-yellow-500">{hostel.averageRating.toFixed(1)}</span>
-                        </div>
-                      )}
-                    </div>
-                    <div className="flex w-full gap-2">
-                      <a
-                        href={`tel:${hostel.phone}`}
-                        className="flex items-center w-full gap-2 p-2 border rounded dark:border-zinc-700"
-                      >
-                        <Phone className="w-4 h-4 text-black dark:text-white" />
-                        <div>
-                          <p className="text-xs font-bold text-black dark:text-white">
-                            {hostel.phone}
-                          </p>
-                          <p className="text-[10px] text-gray-500 dark:text-gray-400">
-                            click to call
-                          </p>
-                        </div>
-                      </a>
-                      <div className="flex items-center flex-1 w-full gap-2 p-2 border rounded dark:border-zinc-700">
-                        <MapPin className="w-4 h-4 text-black dark:text-white" />
-                        <p className="text-sm text-black dark:text-white">
-                          {hostel.location}
-                        </p>
-                      </div>
-                    </div>
-
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                        hostel.address
-                      )}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center flex-1 gap-2 p-2 transition-colors border rounded dark:border-zinc-700 hover:bg-gray-100 dark:hover:bg-zinc-700"
-                    >
-                      <MapPinHouse className="w-4 h-4 text-black dark:text-white" />
-                      <div>
-                        <p className="text-xs font-bold text-black truncate dark:text-white trancate">
-                          {hostel.address}
-                        </p>
-                        <p className="text-[10px] text-gray-500 dark:text-gray-400">
-                          click to search
-                        </p>
-                      </div>
-                    </a>
+          {/* Active filter badges (shown inline, below search) */}
+          {activeFilterCount > 0 && (
+            <div className="flex flex-wrap gap-2">
+              {Object.entries(activeFilters).map(([category, values]) =>
+                values.map((value) => (
+                  <Badge
+                    key={`${category}-${value}`}
+                    variant="secondary"
+                    className="flex items-center gap-1 bg-forest-green-100 text-forest-green-800 hover:bg-forest-green-200 dark:bg-forest-green-900 dark:text-forest-green-100"
+                  >
+                    {value}
                     <button
-                      className="w-full mt-2 text-white transition-colors bg-black btn btn-black dark:bg-white dark:text-black hover:bg-gray-900 dark:hover:bg-gray-200"
-                      onClick={() => handleFindRoom(hostel)}
+                      onClick={() => removeFilter(category, value)}
+                      className="ml-1 hover:text-destructive"
                     >
-                      Find Room
+                      <X className="w-3 h-3" />
                     </button>
-                  </div>
-                </div>
+                  </Badge>
+                ))
+              )}
+            </div>
+          )}
+
+          {filteredHostels?.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-lg font-medium text-foreground mb-2">
+                No hostels match your search
+              </p>
+              <p className="text-sm text-muted-foreground mb-4">
+                Try adjusting your filters or search query
+              </p>
+              {(activeFilterCount > 0 || debouncedQuery) && (
+                <button
+                  onClick={() => {
+                    clearAllFilters();
+                    setSearchQuery("");
+                  }}
+                  className="text-primary hover:underline"
+                >
+                  Clear all filters
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {filteredHostels?.map((hostel: Hostel) => (
+                <HostelCard
+                  key={hostel.id}
+                  hostel={hostel}
+                  onFindRoom={handleFindRoom}
+                />
               ))}
             </div>
           )}

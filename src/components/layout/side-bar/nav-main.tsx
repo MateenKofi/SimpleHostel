@@ -68,6 +68,7 @@ export function NavMain() {
   } else if (userRole === "resident") {
     navItems = [
       { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
+      { title: "Find a Room", icon: BedDouble, path: "/find-hostel" },
       { title: "My Room", icon: House, path: "/dashboard/view-room-details" },
       { title: "Requests", icon: GitPullRequest, path: "/dashboard/make-request" },
       { title: "Billing", icon: HandCoins, path: "/dashboard/payment-billing" },
