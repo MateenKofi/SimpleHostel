@@ -1,13 +1,19 @@
 import axiosInstance from "./axiosInstance";
-import { MaintenanceRequestDto, ResidentDto, UserDto } from "@/types/dtos";
+import { AddResidentRequest, CreateResidentRequestRequest, FeedbackRequest, MaintenanceRequestDto, RegisterResidentRequest, ResidentDto, UserDto } from "@/types/dtos";
 
-export const registerResident = async (payload: any): Promise<{ data: UserDto }> => {
-    const response = await axiosInstance.post("/v1/residents/register", payload);
+export const registerResident = async (payload: RegisterResidentRequest | FormData): Promise<{ data: UserDto }> => {
+    const isFormData = payload instanceof FormData;
+    const response = await axiosInstance.post("/v1/residents/register", payload, {
+        headers: isFormData ? { "Content-Type": "multipart/form-data" } : {},
+    });
     return response.data;
 };
 
-export const addResident = async (payload: any): Promise<{ data: ResidentDto }> => {
-    const response = await axiosInstance.post("/residents/add", payload);
+export const addResident = async (payload: AddResidentRequest | FormData): Promise<{ data: ResidentDto }> => {
+    const isFormData = payload instanceof FormData;
+    const response = await axiosInstance.post("/residents/add", payload, {
+        headers: isFormData ? { "Content-Type": "multipart/form-data" } : {},
+    });
     return response.data;
 };
 
@@ -31,7 +37,7 @@ export const getResidentRequests = async (): Promise<{ data: MaintenanceRequestD
     return response.data;
 };
 
-export const createResidentRequest = async (data: any): Promise<{ data: MaintenanceRequestDto }> => {
+export const createResidentRequest = async (data: CreateResidentRequestRequest | FormData): Promise<{ data: MaintenanceRequestDto }> => {
     const isFormData = data instanceof FormData;
     const response = await axiosInstance.post("/residents/requests", data, {
         headers: isFormData ? { "Content-Type": "multipart/form-data" } : {}
@@ -39,7 +45,7 @@ export const createResidentRequest = async (data: any): Promise<{ data: Maintena
     return response.data;
 };
 
-export const submitFeedback = async (data: any) => {
+export const submitFeedback = async (data: FeedbackRequest) => {
     const response = await axiosInstance.post("/residents/feedback", data);
     return response.data;
 };

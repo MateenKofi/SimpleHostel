@@ -10,6 +10,7 @@ import { Loader } from "lucide-react";
 import { useAddedResidentStore } from "@/stores/useAddedResidentStore";
 import { AdminResidentFormSchema } from "@/schemas/ResidentForm.schema";
 import { z } from "zod";
+import type { ApiError } from "@/types/dtos";
 
 type AddResidentModalProps = {
   onClose: () => void;
@@ -65,7 +66,7 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
         navigate("/dashboard/room-assignment");
       }, 50);
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       const errorMessage =
         error?.response?.data?.message || error?.message || "Failed to add resident";
       toast.error(errorMessage);

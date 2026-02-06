@@ -178,7 +178,7 @@ const FilterPanel = ({
       >
         <div
           className={cn(
-            "p-4 bg-card border border-border rounded-lg shadow-sm",
+            "p-4 bg-card border border-border rounded-lg shadow-sm overflow-y-auto max-h-[calc(100vh-8rem)]",
             !isOpen && "hidden"
           )}
         >

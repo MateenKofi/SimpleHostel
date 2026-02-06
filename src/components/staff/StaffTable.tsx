@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import CustomDataTable from "../CustomDataTable";
 import { handleSwalMutation } from "../swal/SwalMutationHelper";
 import { toast } from "sonner";
+import type { ApiError } from "@/types/dtos";
 
 const StaffTable = () => {
   const navigate = useNavigate();
@@ -29,8 +30,9 @@ const StaffTable = () => {
       try {
         await deleteStaff(id);
         refetchStaff();
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.message || "Failed to delete user";
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.message || "Failed to delete user";
         toast.error(errorMessage);
         throw error;
       }

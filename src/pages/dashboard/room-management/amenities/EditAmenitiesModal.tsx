@@ -5,6 +5,7 @@ import Modal from '@/components/Modal';
 import { Loader, Plus } from 'lucide-react';
 import { updateAmenity } from "@/api/amenities";
 import { toast } from 'sonner';
+import type { ApiError } from "@/types/dtos";
 
 interface Amenity {
     id: string;
@@ -32,7 +33,7 @@ const EditAmenitiesModal: React.FC<EditAmenitiesModalProps> = ({ onClose, formda
             toast.success("Amenity Updated Successfully");
             onClose();
         },
-        onError: (error: any) => {
+        onError: (error: ApiError) => {
             const errorMessage =
                 error.response?.data?.message || "Failed to Update Amenity";
             toast.error(errorMessage);

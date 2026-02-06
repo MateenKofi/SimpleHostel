@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 import { toast } from "sonner"
 import SEOHelmet from "@/components/SEOHelmet"
+import type { ApiError } from "@/types/dtos"
 
 interface Announcement {
     id: string
@@ -31,8 +32,16 @@ interface Announcement {
 
 const AnnouncementDashboard = () => {
     const queryClient = useQueryClient()
+    const hostelId = localStorage.getItem("hostelId") || ""
     const [isCreateOpen, setIsCreateOpen] = useState(false)
-    const [newAnnouncement, setNewAnnouncement] = useState({
+    const [newAnnouncement, setNewAnnouncement] = useState<{
+        title: string;
+        content: string;
+        category: Announcement["category"];
+        priority: Announcement["priority"];
+        startDate: string;
+        endDate: string;
+    }>({
         title: "",
         content: "",
         category: "general",
@@ -50,8 +59,8 @@ const AnnouncementDashboard = () => {
     })
 
     const createMutation = useMutation({
-        mutationFn: async (data: any) => {
-            return await createAnnouncement(data)
+        mutationFn: async (data: Omit<Announcement, "id" | "hostelId" | "createdAt" | "updatedAt">) => {
+            return await createAnnouncement({ ...data, hostelId })
         },
         onSuccess: () => {
             toast.success("Announcement posted successfully")
@@ -66,7 +75,7 @@ const AnnouncementDashboard = () => {
             })
             queryClient.invalidateQueries({ queryKey: ['admin-announcements'] })
         },
-        onError: (err: any) => {
+        onError: (err: ApiError) => {
             toast.error(err.response?.data?.message || "Failed to post announcement")
         }
     })
@@ -235,7 +244,7 @@ const AnnouncementDashboard = () => {
                             <div className="grid gap-2">
                                 <Label htmlFor="category">Category</Label>
                                 <Select
-                                    onValueChange={(val) => setNewAnnouncement({ ...newAnnouncement, category: val as any })}
+                                    onValueChange={(val) => setNewAnnouncement({ ...newAnnouncement, category: val as Announcement["category"] })}
                                     defaultValue="general"
                                 >
                                     <SelectTrigger>
@@ -252,7 +261,7 @@ const AnnouncementDashboard = () => {
                             <div className="grid gap-2">
                                 <Label htmlFor="priority">Priority</Label>
                                 <Select
-                                    onValueChange={(val) => setNewAnnouncement({ ...newAnnouncement, priority: val as any })}
+                                    onValueChange={(val) => setNewAnnouncement({ ...newAnnouncement, priority: val as Announcement["priority"] })}
                                     defaultValue="low"
                                 >
                                     <SelectTrigger>

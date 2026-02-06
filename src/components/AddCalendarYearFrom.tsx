@@ -7,6 +7,7 @@ import Modal from "./Modal"
 import { useMutation } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { startCalendarYear } from "@/api/calendar"
+import type { ApiError } from "@/types/dtos"
 
 interface AddCalendarYearFormProps {
   onClose: () => void;
@@ -36,8 +37,9 @@ const AddCalendarYearForm = ({ onClose, refectCurrentYear, refectHistoricalYears
         onClose();
         toast.success("Academic Year added successfully");
         reset();
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.message || "Failed to add Academic Year";
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.message || "Failed to add Academic Year";
         toast.error(errorMessage);
         throw error;
       }

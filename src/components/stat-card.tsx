@@ -19,22 +19,32 @@ export function StatCard({
   title,
   content,
   description,
-  backgroundColor = "bg-purple-100",
-  titleColor = "text-gray-500",
-  contentColor = "text-gray-900",
-  descriptionColor = "text-gray-500",
+  backgroundColor = "bg-card",
+  titleColor = "text-muted-foreground",
+  contentColor = "text-foreground",
+  descriptionColor = "text-muted-foreground",
   className,
 }: StatCardProps) {
   return (
-    <Card className={cn("w-full transition-all hover:shadow-md", backgroundColor, className)}>
+    <Card
+      className={cn(
+        "w-full rounded-2xl border border-border/50 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl",
+        backgroundColor,
+        className
+      )}
+    >
       <CardContent className="pt-6">
-        <div className="space-y-2">
-          <div className="flex  gap-1">
-            {Icon && <Icon className={cn("h-6 w-6 border rounded-full p-1", titleColor)} />}
-            <p className={cn("text-xl font-bold", titleColor)}>{title}</p>
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            {Icon && (
+              <div className="rounded-xl bg-gradient-to-br from-forest-green-50 to-forest-green-100/50 p-2.5">
+                <Icon className="h-5 w-5 text-forest-green-700" />
+              </div>
+            )}
+            <p className={cn("text-lg font-semibold", titleColor)}>{title}</p>
           </div>
           <div className="flex flex-col gap-1">
-            <p className={cn("text-6xl font-extrabold tracking-tight", contentColor)}>{content}</p>
+            <p className={cn("text-5xl font-extrabold tracking-tight", contentColor)}>{content}</p>
             {description && <p className={cn("text-sm", descriptionColor)}>{description}</p>}
           </div>
         </div>

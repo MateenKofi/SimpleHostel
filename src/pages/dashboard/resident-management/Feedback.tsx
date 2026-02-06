@@ -18,6 +18,7 @@ import {
 import { toast } from "sonner"
 import { useState } from "react"
 import SEOHelmet from "@/components/SEOHelmet"
+import type { ApiError } from "@/types/dtos"
 
 interface CreateFeedbackDto {
     rating: number
@@ -48,7 +49,7 @@ const Feedback = () => {
             reset()
             setRating(0)
         },
-        onError: (error: any) => {
+        onError: (error: ApiError) => {
             const msg = error.response?.data?.message || "Failed to submit feedback"
             toast.error(msg)
         }

@@ -1,4 +1,5 @@
 import axiosInstance from "./axiosInstance";
+import type { CreateAnnouncementRequest } from "@/types/dtos";
 
 export const getAnnouncements = async () => {
     const response = await axiosInstance.get("/v1/resident/announcements");
@@ -10,7 +11,7 @@ export const getHostelAnnouncements = async (hostelId: string) => {
     return response.data;
 };
 
-export const createAnnouncement = async (payload: any) => {
+export const createAnnouncement = async (payload: CreateAnnouncementRequest) => {
     const response = await axiosInstance.post("/admin/announcement/add", payload);
     return response.data;
 };

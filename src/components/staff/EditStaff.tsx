@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import CustomeRefetch from "../CustomeRefetch";
 import UploadSingleImage from "../UploadSingleImage";
 import { Staff } from "@/helper/types/types";
+import type { ApiError } from "@/types/dtos";
 
 const EditStaff: React.FC = () => {
   const { id: staffId } = useParams();
@@ -100,8 +101,9 @@ const EditStaff: React.FC = () => {
         toast.success("Staff updated successfully");
         reset();
         navigate(-1);
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.message || error.message || "Failed to update staff";
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.message || err.message || "Failed to update staff";
         toast.error(errorMessage);
         throw error;
       }

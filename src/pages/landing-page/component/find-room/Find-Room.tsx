@@ -18,6 +18,7 @@ import { useMutation } from "@tanstack/react-query";
 import { getHostelRooms } from "@/api/rooms";
 import { getResidentAnalytics } from "@/api/analytics";
 import { registerResident } from "@/api/residents";
+import type { UserDto, ResidentDto } from "@/types/dtos";
 import {
   Dialog,
   DialogContent,
@@ -51,7 +52,7 @@ const FindRoom = () => {
   const calendarYear = useSelectedCalendarYearStore((state) => state.calendarYear);
 
   const BookingMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (): Promise<{ data: UserDto | ResidentDto }> => {
       if (!user || !selectedBookingRoom) {
         throw new Error("User or room not found");
       }
@@ -64,28 +65,37 @@ const FindRoom = () => {
         if (existingResidentId) {
           // Return a UserDto-like structure for existing residents
           return {
-            success: true,
-            isExisting: true,
             data: {
               id: user.id,
-              name: user.name,
               email: user.email,
-              phone: user.phoneNumber || undefined,
-              role: user.role,
+              name: user.name,
+              role: user.role as "resident" | "staff" | "admin" | "super_admin",
+              phone: user.phoneNumber || null,
+              gender: null,
+              avatar: null,
+              imageUrl: null,
+              accountStatus: "active",
+              hostelId: selectedBookingRoom.hostelId || null,
+              adminProfile: null,
+              staffProfile: null,
               residentProfile: {
                 id: existingResidentId,
-                userId: user.id,
-                hostelId: selectedBookingRoom.hostelId,
-                roomId: selectedBookingRoom.id,
+                hostelId: selectedBookingRoom.hostelId || null,
+                roomId: selectedBookingRoom.id || null,
                 studentId: null,
                 course: null,
-                roomNumber: selectedBookingRoom.roomNumber,
+                roomNumber: selectedBookingRoom.roomNumber || null,
                 status: "pending",
                 checkInDate: null,
                 checkOutDate: null,
-              }
+                hostel: null,
+                room: null
+              },
+              superAdminProfile: null,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString()
             }
-          } as const;
+          };
         }
       } catch {
         console.log("No existing resident profile found or error fetching analytics.");
@@ -107,12 +117,12 @@ const FindRoom = () => {
         roomId: selectedBookingRoom.id || ""
       };
 
-      return await registerResident(payload);
+      return await registerResident(payload) as { data: UserDto | ResidentDto };
     },
-    onSuccess: (res: any) => {
+    onSuccess: (res) => {
       setResident(res?.data || null);
 
-      toast.success(res?.isExisting ? "Ready for payment!" : "Booking initiated successfully!");
+      toast.success("Booking initiated successfully!");
       setIsBookingModalOpen(false);
       setTimeout(() => {
         navigate("/payment");
@@ -300,10 +310,10 @@ const FindRoom = () => {
       </div>
 
       <Dialog open={isBookingModalOpen} onOpenChange={setIsBookingModalOpen}>
-        <DialogContent className="max-w-2xl p-0 overflow-hidden">
-          <div className="flex flex-col sm:flex-row max-h-[90vh] sm:max-h-none overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] p-0 overflow-hidden flex flex-col">
+          <div className="flex flex-col sm:flex-row overflow-y-auto flex-1">
             {/* Left Side - Room Image */}
-            <div className="sm:w-2/5 relative aspect-square sm:aspect-auto bg-muted min-h-[250px]">
+            <div className="sm:w-2/5 relative aspect-square sm:aspect-auto bg-muted min-h-[200px] sm:min-h-full flex-shrink-0">
               <img
                 src={selectedBookingRoom?.roomImages?.[0]?.imageUrl || "/logo.png"}
                 alt="Room preview"
@@ -316,57 +326,57 @@ const FindRoom = () => {
             </div>
 
             {/* Right Side - Booking Details */}
-            <div className="sm:w-3/5 p-6 space-y-5">
+            <div className="sm:w-3/5 p-5 sm:p-6 space-y-4 sm:space-y-5">
               {/* Header */}
               <div>
-                <h2 className="text-2xl font-bold text-foreground">Confirm Booking</h2>
-                <p className="text-muted-foreground mt-1">
+                <h2 className="text-xl sm:text-2xl font-bold text-foreground">Confirm Booking</h2>
+                <p className="text-muted-foreground mt-1 text-sm">
                   Review your room selection before proceeding
                 </p>
               </div>
 
               {/* Room Number Badge */}
-              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full">
+              <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-3 sm:px-4 py-2 rounded-full">
                 <Home className="w-4 h-4" />
-                <span className="font-semibold">Room {selectedBookingRoom?.roomNumber}</span>
+                <span className="font-semibold text-sm">Room {selectedBookingRoom?.roomNumber}</span>
               </div>
 
               {/* Room Details with Icons */}
-              <div className="space-y-3 bg-muted/50 p-4 rounded-xl">
+              <div className="space-y-3 bg-muted/50 p-3 sm:p-4 rounded-xl">
                 <div className="flex items-center gap-3">
-                  <MapPin className="w-5 h-5 text-primary flex-shrink-0" />
+                  <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
                   <div>
                     <p className="text-xs text-muted-foreground">Location</p>
-                    <p className="font-medium">Block {selectedBookingRoom?.block}, Floor {selectedBookingRoom?.floor}</p>
+                    <p className="font-medium text-sm">Block {selectedBookingRoom?.block}, Floor {selectedBookingRoom?.floor}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <BedDouble className="w-5 h-5 text-primary flex-shrink-0" />
+                  <BedDouble className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
                   <div>
                     <p className="text-xs text-muted-foreground">Room Type</p>
-                    <p className="font-medium capitalize">{selectedBookingRoom?.type}</p>
+                    <p className="font-medium text-sm capitalize">{selectedBookingRoom?.type}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Users className="w-5 h-5 text-primary flex-shrink-0" />
+                  <Users className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
                   <div>
                     <p className="text-xs text-muted-foreground">Capacity</p>
-                    <p className="font-medium">{selectedBookingRoom?.currentResidentCount || 0} / {selectedBookingRoom?.maxCap} residents</p>
+                    <p className="font-medium text-sm">{selectedBookingRoom?.currentResidentCount || 0} / {selectedBookingRoom?.maxCap} residents</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <Home className="w-5 h-5 text-primary flex-shrink-0" />
+                  <Home className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
                   <div>
                     <p className="text-xs text-muted-foreground">Gender</p>
-                    <p className="font-medium capitalize">{selectedBookingRoom?.gender}</p>
+                    <p className="font-medium text-sm capitalize">{selectedBookingRoom?.gender}</p>
                   </div>
                 </div>
               </div>
 
               {/* Price Highlight */}
-              <div className="bg-primary/5 border border-primary/20 p-4 rounded-xl">
-                <p className="text-sm text-muted-foreground">Total per semester</p>
-                <p className="text-2xl font-bold text-primary">GHS {selectedBookingRoom?.price?.toLocaleString()}</p>
+              <div className="bg-primary/5 border border-primary/20 p-3 sm:p-4 rounded-xl">
+                <p className="text-xs sm:text-sm text-muted-foreground">Total per semester</p>
+                <p className="text-xl sm:text-2xl font-bold text-primary">GHS {selectedBookingRoom?.price?.toLocaleString()}</p>
               </div>
 
               {/* Terms */}

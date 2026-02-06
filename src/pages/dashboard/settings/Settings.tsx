@@ -13,6 +13,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import type { ApiError } from "@/types/dtos";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -145,8 +146,9 @@ const Settings = () => {
         const responseData = await updateHostel(hostelId, formData);
         toast.success("Hostel updated successfully");
         return responseData;
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.error || error.response?.data?.message || "Failed to Update Hostel";
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.error || err.response?.data?.message || "Failed to Update Hostel";
         toast.error(errorMessage);
         throw error;
       }
@@ -169,7 +171,7 @@ const Settings = () => {
       refetchHostel();
       setRulesFile(null);
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       toast.error(error.response?.data?.message || "Failed to update rules");
     }
   });
@@ -181,8 +183,9 @@ const Settings = () => {
         await updatePaymentSettings(hostelId, data);
         toast.success("Payment settings updated successfully");
         refetchHostel();
-      } catch (error: any) {
-        toast.error(error.response?.data?.message || "Failed to update payment settings");
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        toast.error(err.response?.data?.message || "Failed to update payment settings");
       }
     }
   });
@@ -204,7 +207,7 @@ const Settings = () => {
       setSignatureFile(null);
       setStampFile(null);
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       toast.error(error.response?.data?.message || "Failed to update documents");
     }
   });

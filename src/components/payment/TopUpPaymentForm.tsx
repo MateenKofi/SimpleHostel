@@ -2,6 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { topupPayment } from "@/api/payments";
 import { getResidentBilling } from "@/api/residents";
 import { toast } from "sonner";
+import type { ApiError } from "@/types/dtos";
 
 import {
   Loader2,
@@ -106,9 +107,10 @@ const TopUpPaymentForm = () => {
         }
 
         return resData;
-      } catch (error: any) {
+      } catch (error: unknown) {
         console.error('Payment error:', error);
-        const errorMessage = error.response?.data?.message || error.response?.data?.error || error.message || "An unexpected error occurred";
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || "An unexpected error occurred";
         toast.error(errorMessage);
         throw error;
       }

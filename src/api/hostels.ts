@@ -1,4 +1,5 @@
 import axiosInstance from "./axiosInstance";
+import type { UpdateHostelRequest } from "@/types/dtos";
 
 export const getHostels = async () => {
     const response = await axiosInstance.get("/hostels/get");
@@ -19,8 +20,11 @@ export const addHostel = async (formData: FormData) => {
     return response.data;
 };
 
-export const updateHostel = async (hostelId: string, data: any) => {
-    const response = await axiosInstance.put(`/hostels/update/${hostelId}`, data);
+export const updateHostel = async (hostelId: string, data: UpdateHostelRequest | FormData) => {
+    const isFormData = data instanceof FormData;
+    const response = await axiosInstance.put(`/hostels/update/${hostelId}`, data, {
+        headers: isFormData ? { "Content-Type": "multipart/form-data" } : {},
+    });
     return response.data;
 };
 

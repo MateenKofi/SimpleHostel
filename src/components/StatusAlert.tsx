@@ -4,6 +4,7 @@ import { publishHostel, unpublishHostel } from '@/api/hostels';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import Swal from 'sweetalert2';
+import type { ApiError } from "@/types/dtos";
 
 interface AwardStatusAlertProps {
   status: 'PUBLISHED' | 'UNPUBLISHED';
@@ -28,8 +29,9 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
         toast.success('Hostel published successfully');
         queryClient.invalidateQueries({ queryKey: ['hostel'] });
         return responseData;
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.message || 'Failed to publish hostel';
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.message || 'Failed to publish hostel';
         toast.error(errorMessage);
         throw error;
       }
@@ -44,8 +46,9 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
         toast.success('Hostel unpublished successfully');
         queryClient.invalidateQueries({ queryKey: ['hostel'] });
         return responseData;
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.message || 'Failed to unpublish hostel';
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.message || 'Failed to unpublish hostel';
         toast.error(errorMessage);
         throw error;
       }

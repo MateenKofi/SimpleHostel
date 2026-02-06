@@ -8,6 +8,7 @@ import { getHostelAmenities } from "@/api/amenities";
 import ImageUpload from "@/components/ImageUpload";
 import { Loader } from "lucide-react";
 import { toast } from "sonner";
+import type { ApiError } from "@/types/dtos";
 
 type RoomForm = Omit<Room, "amenities"> & {
   images: File[];
@@ -104,8 +105,9 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
         setImages([]);
         onClose();
         return responseData;
-      } catch (error: any) {
-        toast.error(error.response?.data?.message || "An error occurred");
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        toast.error(err.response?.data?.message || "An error occurred");
         throw error;
       }
     },

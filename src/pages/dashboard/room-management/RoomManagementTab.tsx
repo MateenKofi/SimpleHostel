@@ -40,7 +40,7 @@ const RoomManagementTab = () => {
   const [activeTab, setActiveTab] = useState(tabData[0].id);
 
   return (
-    <main className="flex-1 p-4 overflow-y-auto bg-gray-100">
+    <main className="flex-1 p-4 overflow-y-auto bg-white">
       <SEOHelmet
         title='Room Management - Fuse'
         description='Manage your hostel rooms and amenities efficiently with our user-friendly interface.'
@@ -64,7 +64,7 @@ const RoomManagementTab = () => {
             <button
               key={tab.id}
               className={`text-nowrap font-semibold text-base focus:outline-none rounded-md px-3 py-1.5 ${activeTab === tab.id
-                ? 'bg-black text-white'
+                ? 'bg-primary text-white'
                 : 'text-gray-500 hover:text-gray-700'
                 }`}
               onClick={() => setActiveTab(tab.id)}

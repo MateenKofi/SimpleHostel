@@ -59,7 +59,7 @@ function CustomDataTable<T>({
       columns.some(col => {
         const val = typeof col.selector === 'function'
           ? col.selector(row)
-          : (col.selector && (row as any)[col.selector as string]);
+          : (col.selector && (row as Record<string, unknown>)[col.selector as string]);
         if (val == null) return false;
         return String(val).toLowerCase().includes(lower);
       })
@@ -78,7 +78,7 @@ function CustomDataTable<T>({
             // selector can be string key or function
             const val = typeof col.selector === 'function'
               ? col.selector(row)
-              : (col.selector && (row as any)[col.selector as string]);
+              : (col.selector && (row as Record<string, unknown>)[col.selector as string]);
             // wrap commas/newlines in quotes
             return JSON.stringify(val ?? '');
           })
@@ -127,7 +127,7 @@ function CustomDataTable<T>({
 
         <button
           onClick={exportToCSV}
-          className="btn btn-sm btn-black flex items-center gap-2"
+          className="btn btn-sm bg-primary py-2 px-1 text-white flex items-center gap-2"
         >
           <Download size={16} />
           Export CSV

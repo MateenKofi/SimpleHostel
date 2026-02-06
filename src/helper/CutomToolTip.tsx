@@ -1,4 +1,4 @@
-export const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: any[]; label?: string }) => {
+export const CustomTooltip = ({ active, payload, label }: { active?: boolean; payload?: { value: number; name: string; color: string }[]; label?: string }) => {
   if (active && payload && payload.length) {
     return (
       <div className="bg-white p-2 border border-gray-200 shadow-sm rounded-md">

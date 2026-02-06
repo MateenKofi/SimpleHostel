@@ -8,6 +8,7 @@ import { addStaff } from "@/api/staff";
 import { toast } from "sonner";
 import dayjs from "dayjs";
 import UploadSingleImage from "../UploadSingleImage";
+import type { ApiError } from "@/types/dtos";
 
 const roles = [
   "Manager",
@@ -66,8 +67,9 @@ const AddStaff: React.FC = () => {
         reset();
         navigate(-1);
         return responseData;
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.message || "Failed to add staff";
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.message || "Failed to add staff";
         toast.error(errorMessage);
         throw error;
       }

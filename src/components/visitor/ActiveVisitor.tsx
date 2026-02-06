@@ -5,6 +5,7 @@ import { getHostelVisitors, checkoutVisitor } from "@/api/visitors";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
 import { Visitor } from "@/helper/types/types";
+import type { ApiError } from "@/types/dtos";
 
 
 
@@ -35,8 +36,9 @@ const ActiveVisitor = () => {
         await checkoutVisitor(id);
         refetchVisitors();
         toast.success("Visitor checked out successfully");
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.message || "Failed to check out visitor";
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.message || "Failed to check out visitor";
         toast.error(errorMessage);
         throw error;
       }

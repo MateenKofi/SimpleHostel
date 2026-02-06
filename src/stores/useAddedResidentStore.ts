@@ -1,17 +1,17 @@
-import { ResidentDto } from "@/types/dtos";
+import { ResidentDto, UserDto } from "@/types/dtos";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
 type AddedResidentStore = {
-    resident: ResidentDto | null;
-    setResident: (resident: ResidentDto | null) => void;
+    resident: UserDto | ResidentDto | null;
+    setResident: (resident: UserDto | ResidentDto | null) => void;
 }
 
 export const useAddedResidentStore = create<AddedResidentStore>()(
     persist(
         (set) => ({
             resident: null,
-            setResident: (resident: ResidentDto | null) => set({ resident }),
+            setResident: (resident: UserDto | ResidentDto | null) => set({ resident }),
         }),
         {
             name: "added-resident-store",

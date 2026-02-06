@@ -170,3 +170,147 @@ export interface AnnouncementDto {
     createdAt: string;
     updatedAt: string;
 }
+
+export interface ApiError {
+    response?: {
+        data?: {
+            message?: string;
+            error?: string;
+        };
+    };
+    message?: string;
+}
+
+// === API Request Types ===
+
+export interface RegisterResidentRequest {
+    name: string;
+    email: string;
+    phone: string;
+    password?: string | null;
+    gender: string;
+    studentId?: string | null;
+    course?: string | null;
+    emergencyContactName: string;
+    emergencyContactPhone: string;
+    emergencyContactRelationship?: string | null;
+    roomId?: string | null;
+    hostelId?: string | null;
+    calendarYearId?: string | null;
+}
+
+export interface LoginRequest {
+    email: string;
+    password: string;
+}
+
+export interface AddStaffRequest {
+    name: string;
+    email: string;
+    phone: string;
+    password?: string | null;
+    role: string;
+    hostelId?: string | null;
+}
+
+export interface UpdateHostelRequest {
+    name?: string | null;
+    location?: string | null;
+    description?: string | null;
+    manager?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    images?: string[] | null;
+}
+
+export interface CreateServiceRequest {
+    name: string;
+    description?: string | null;
+    price: number;
+    hostelId: string;
+}
+
+export interface UpdateUserRequest {
+    name?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    role?: string | null;
+    password?: string | null;
+}
+
+export interface TopupPaymentRequest {
+    residentId?: string;
+    roomId?: string | null;
+    amount?: number;
+    initialPayment?: number;
+    paymentMethod?: string | null;
+}
+
+export interface FeedbackRequest {
+    rating: number;
+    comment?: string | null;
+}
+
+export interface CreateAnnouncementRequest {
+    hostelId: string;
+    title: string;
+    content: string;
+    category: "general" | "policy" | "event" | "emergency";
+    priority: "low" | "high" | "urgent";
+    startDate: string;
+    endDate: string;
+}
+
+export interface AddAmenityRequest {
+    name: string;
+}
+
+export interface UpdateAmenityRequest {
+    name: string;
+}
+
+export interface AddResidentRequest {
+    name: string;
+    email: string;
+    phone: string;
+    password?: string | null;
+    gender: string;
+    studentId?: string | null;
+    course?: string | null;
+    emergencyContactName: string;
+    emergencyContactPhone: string;
+    emergencyContactRelationship?: string | null;
+    roomId?: string | null;
+    hostelId?: string | null;
+    calendarYearId?: string | null;
+}
+
+export interface CreateResidentRequestRequest {
+    title: string;
+    description: string;
+    type: string;
+    priority?: "low" | "medium" | "high" | "critical" | null;
+    images?: string[] | null;
+}
+
+export interface CreateVisitorRequest {
+    name: string;
+    phone: string;
+    relationship: string;
+    purpose: string;
+    residentProfileId: string;
+}
+
+export interface ForgetPasswordRequest {
+    email: string;
+}
+
+export interface ResetPasswordRequest {
+    token: string;
+    newPassword: string;
+}
+
+export interface ChangePasswordRequest {
+    oldPassword: string;
+    newPassword: string;
+}

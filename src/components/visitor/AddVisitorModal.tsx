@@ -8,6 +8,7 @@ import { AxiosError } from 'axios'
 import { toast } from 'sonner'
 import { Resident } from '@/helper/types/types'
 import { TextField } from '../TextField'
+import type { ApiError } from "@/types/dtos"
 
 interface VisitorFormData {
   name: string
@@ -54,8 +55,9 @@ const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
         onClose()
         queryClient.invalidateQueries({ queryKey: ['visitors'] })
         return responseData
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.message || 'Failed to add visitor'
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.message || 'Failed to add visitor'
         toast.error(errorMessage)
         throw error
       }

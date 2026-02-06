@@ -28,6 +28,7 @@ import { addResident } from "@/api/residents";
 import { ResidentFormSchema, AdminResidentFormSchema } from "@/schemas/ResidentForm.schema";
 import { z } from "zod";
 import { useAddedResidentStore } from "@/stores/useAddedResidentStore";
+import type { ApiError } from "@/types/dtos";
 
 type AddResidentInputs = z.infer<typeof AdminResidentFormSchema>;
 
@@ -52,8 +53,8 @@ const AddResident = () => {
     mutationFn: async (resident_data: AddResidentInputs) => {
       const formData = new FormData();
       formData.append("name", resident_data.name);
-      formData.append("studentId", resident_data.studentId);
-      formData.append("course", resident_data.course);
+      formData.append("studentId", resident_data.studentId || "");
+      formData.append("course", resident_data.course || "");
       formData.append("phone", resident_data.phone || "");
       formData.append("email", resident_data.email);
       formData.append(
@@ -77,8 +78,9 @@ const AddResident = () => {
           navigate("/dashboard/room-assignment");
         }, 50);
         return responseData;
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.message || "Failed to Add Resident";
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.message || "Failed to Add Resident";
         toast.error(errorMessage);
         throw error;
       }

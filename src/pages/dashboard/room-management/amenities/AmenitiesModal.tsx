@@ -5,6 +5,7 @@ import Modal from '@/components/Modal';
 import { Amenity } from '@/helper/types/types';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addAmenity } from "@/api/amenities";
+import type { ApiError } from "@/types/dtos";
 
 interface AmenitiesModalProps {
   onClose: () => void;
@@ -26,7 +27,7 @@ const AmenitiesModal = ({ onClose }: AmenitiesModalProps) => {
       queryClient.invalidateQueries({ queryKey: ["amenities"] });
       reset();
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       const errorMessage =
         error.response?.data?.message || "Failed to add Amenities";
       toast.error(errorMessage);

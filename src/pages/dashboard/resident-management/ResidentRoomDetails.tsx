@@ -108,7 +108,7 @@ const ResidentRoomDetails = () => {
                                 {/* Thumbnails */}
                                 {room.RoomImage.length > 1 && (
                                     <div className="flex gap-2 p-2 overflow-x-auto">
-                                        {room.RoomImage.map((image: any, index: number) => (
+                                        {room.RoomImage.map((image: { id: string; imageUrl: string }, index: number) => (
                                             <div
                                                 key={image.id}
                                                 className={`w-20 h-20 relative cursor-pointer rounded-md overflow-hidden border-2 ${index === activeImageIndex ? "border-primary" : "border-transparent"}`}

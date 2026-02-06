@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { handleSwalMutation } from "../swal/SwalMutationHelper";
+import type { ApiError } from "@/types/dtos";
 
 const RoomTable = () => {
   const navigate = useNavigate()
@@ -47,8 +48,9 @@ const RoomTable = () => {
         await deleteRoom(id);
         refetchRooms();
         toast.success("Room deleted successfully");
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.message || "Failed to delete room";
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.message || "Failed to delete room";
         toast.error(errorMessage);
         throw error;
       }
@@ -143,7 +145,7 @@ const RoomTable = () => {
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <button
-                className="flex items-center justify-center w-full gap-1 p-2 text-xs text-white bg-black rounded "
+                className="flex items-center justify-center w-full gap-1 p-2 text-xs text-white bg-primary rounded "
                 onClick={() => navigate(`/dashboard/view-room/:${row.id}`)}
               >
                 <Eye className="w-4 h-4" />

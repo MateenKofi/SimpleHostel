@@ -24,6 +24,7 @@ import { PublicResidentFormSchema } from "@/schemas/ResidentForm.schema";
 import { z } from "zod";
 import { useSelectedCalendarYearStore } from "@/stores/useSelectedCalendarYearStore";
 import { useAddedResidentStore } from "@/stores/useAddedResidentStore";
+import type { ApiError } from "@/types/dtos";
 import SEOHelmet from "@/components/SEOHelmet";
 import {
   Select,
@@ -36,8 +37,8 @@ import {
 type ResidentFormInputs = z.infer<typeof PublicResidentFormSchema>;
 
 const ResidentForm = () => {
-  const setResident = useAddedResidentStore((state: any) => state.setResident);
-  const calendarYear = useSelectedCalendarYearStore((state: any) => state.calendarYear);
+  const setResident = useAddedResidentStore((state) => state.setResident);
+  const calendarYear = useSelectedCalendarYearStore((state) => state.calendarYear);
   const { room } = useSelectedRoomStore();
   const navigate = useNavigate();
 
@@ -62,8 +63,8 @@ const ResidentForm = () => {
     mutationFn: async (resident_data: ResidentFormInputs) => {
       const formData = new FormData();
       formData.append("name", resident_data.name);
-      formData.append("studentId", resident_data.studentId);
-      formData.append("course", resident_data.course);
+      formData.append("studentId", resident_data.studentId ?? "");
+      formData.append("course", resident_data.course ?? "");
       formData.append("phone", resident_data.phone || "");
       formData.append("email", resident_data.email);
       formData.append("password", resident_data.password);
@@ -92,7 +93,7 @@ const ResidentForm = () => {
         throw error;
       }
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       const errorMessage =
         error.response?.data?.message || error.response?.data?.error || "Failed to Add Resident";
       toast.error(errorMessage);
@@ -211,7 +212,7 @@ const ResidentForm = () => {
                         <Label htmlFor="gender" className="text-sm font-medium">Gender</Label>
                         <Select
                           value={watch("gender")}
-                          onValueChange={(val) => setValue("gender", val as any, { shouldValidate: true })}
+                          onValueChange={(val) => setValue("gender", val as "MALE" | "FEMALE", { shouldValidate: true })}
                         >
                           <SelectTrigger className="h-11">
                             <SelectValue placeholder="Select gender" />

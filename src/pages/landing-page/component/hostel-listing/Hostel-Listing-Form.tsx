@@ -23,6 +23,7 @@ import SuccessfulListing from "@/components/SuccessfulListing";
 import UploadMultipleImages from "@/components/UploadMultipleImages";
 import SEOHelmet from "@/components/SEOHelmet";
 import UploadSingleImage from "@/components/UploadSingleImage";
+import type { ApiError } from "@/types/dtos";
 
 const formSchema = z.object({
   hostelImage: z.string().optional(),
@@ -97,9 +98,10 @@ const HostelListingForm = () => {
         toast.success("Hostel Listed successfully");
         setSubmitted(true);
         return responseData;
-      } catch (error: any) {
+      } catch (error: unknown) {
         setSubmitted(false);
-        const errorMessage = error.response?.data?.error || error.response?.data?.message || "Failed to List Hostel";
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.error || err.response?.data?.message || "Failed to List Hostel";
         toast.error(errorMessage);
         throw error;
       }

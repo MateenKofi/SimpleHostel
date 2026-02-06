@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getHostels, deleteHostel, updateHostelRules } from "@/api/hostels";
 import { Hostel } from "@/helper/types/types";
 import { TableColumn } from "react-data-table-component";
 import CustomDataTable from "./CustomDataTable";
-import { Trash2 } from "lucide-react";
+import { Trash2, FileText, Upload, Loader2 as Loader } from "lucide-react";
 import { toast } from "sonner";
 import { handleSwalMutation } from "./swal/SwalMutationHelper";
 import {
@@ -18,8 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { FileText, Upload, Loader2 as Loader } from "lucide-react";
-import { useState } from "react";
+import type { ApiError } from "@/types/dtos";
 
 const HostelManagementTable = () => {
   const {
@@ -41,8 +40,9 @@ const HostelManagementTable = () => {
         await deleteHostel(id);
         toast.success("Hostel deleted successfully");
         refetchAllHostels();
-      } catch (error: any) {
-        const errorMessage = error?.response?.data?.error || "Failed to delete hostel";
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err?.response?.data?.error || "Failed to delete hostel";
         toast.error(errorMessage);
         throw error;
       }
@@ -73,7 +73,7 @@ const HostelManagementTable = () => {
       setSelectedHostelId(null);
       refetchAllHostels();
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       const errorMessage = error?.response?.data?.error || error.message || "Failed to upload rules";
       toast.error(errorMessage);
     },

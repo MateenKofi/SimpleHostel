@@ -1,10 +1,11 @@
 // Note: This routes file assumes an Express-like environment.
+// These are example backend routes for reference only.
 
-import {
-    getAllMaintenanceRequestsController,
-    updateMaintenanceRequestController,
-    getMaintenanceStatsController
-} from "../controllers/adminMaintenanceController";
+// import {
+//     getAllMaintenanceRequestsController,
+//     updateMaintenanceRequestController,
+//     getMaintenanceStatsController
+// } from "../controllers/adminMaintenanceController";
 
 // Assuming a router instance is passed or imported
 // export const registerAdminMaintenanceRoutes = (router: any) => {

@@ -7,6 +7,7 @@ import { Loader } from "lucide-react";
 import { Input } from "../ui/input";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
+import type { ApiError } from "@/types/dtos";
 
 interface ResetPasswordFormValues {
   password: string;
@@ -29,8 +30,9 @@ const ChangePassword = () => {
         await updateUser(userId!, { password: data.password });
         toast.success("Password updated successfully");
         navigate('/login');
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.message || "Failed to Update Password";
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.message || "Failed to Update Password";
         toast.error(errorMessage);
         throw error;
       }

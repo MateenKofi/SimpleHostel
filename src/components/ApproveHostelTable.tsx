@@ -8,6 +8,7 @@ import { Loader } from "lucide-react";
 import CustomDataTable from "@/components/CustomDataTable";
 import { Hostel } from "@/helper/types/types";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import type { ApiError } from "@/types/dtos";
 
 const ApproveHostelTable = () => {
   const queryClient = useQueryClient();
@@ -31,8 +32,9 @@ const ApproveHostelTable = () => {
         toast.success("Hostel Approved Successfully");
         queryClient.invalidateQueries({ queryKey: ["hostels"] });
         refetchUnverifiedHostels();
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.message || "Failed to Approve Hostel";
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.message || "Failed to Approve Hostel";
         toast.error(errorMessage);
         throw error;
       }
@@ -46,8 +48,9 @@ const ApproveHostelTable = () => {
         toast.success("Hostel Declined Successfully");
         queryClient.invalidateQueries({ queryKey: ["hostels"] });
         refetchUnverifiedHostels();
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.message || "Failed to Decline Hostel";
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.message || "Failed to Decline Hostel";
         toast.error(errorMessage);
         throw error;
       }

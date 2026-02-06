@@ -1,13 +1,26 @@
 // Note: This controller assumes an Express-like environment.
 // It handles fetching, updating, and summarizing maintenance requests.
+// This is an example backend controller for reference only.
+
+// Simple types for example backend controller (to avoid importing express types)
+interface Request {
+    query?: Record<string, unknown>;
+    params?: Record<string, string>;
+    body?: Record<string, unknown>;
+}
+
+interface Response {
+    status: (code: number) => Response;
+    json: (data: Record<string, unknown>) => void;
+}
 
 /**
  * Controller for fetching all maintenance requests.
  * Supports filtering by status and priority.
  */
-export const getAllMaintenanceRequestsController = async (req: any, res: any) => {
+export const getAllMaintenanceRequestsController = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { status, priority } = req.query;
+        const { status, priority } = req.query || {};
         // Logic to fetch from database (e.g., Prisma)
         // const requests = await prisma.maintenanceRequest.findMany({ where: { ... } });
 
@@ -23,10 +36,10 @@ export const getAllMaintenanceRequestsController = async (req: any, res: any) =>
 /**
  * Controller for updating a specific request's status or priority.
  */
-export const updateMaintenanceRequestController = async (req: any, res: any) => {
+export const updateMaintenanceRequestController = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { requestId } = req.params;
-        const { status, priority } = req.body;
+        const { requestId } = req.params || {};
+        const { status, priority } = req.body || {};
 
         // Logic to update in database
         // const updatedRequest = await prisma.maintenanceRequest.update({ where: { id: requestId }, data: { status, priority } });
@@ -43,7 +56,7 @@ export const updateMaintenanceRequestController = async (req: any, res: any) => 
 /**
  * Controller for fetching maintenance statistics.
  */
-export const getMaintenanceStatsController = async (req: any, res: any) => {
+export const getMaintenanceStatsController = async (req: Request, res: Response): Promise<void> => {
     try {
         // Logic to aggregate counts from database
         res.status(200).json({

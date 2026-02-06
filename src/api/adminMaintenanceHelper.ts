@@ -5,7 +5,7 @@ import { MaintenanceRequestDto } from "@/types/dtos";
  * Fetch all maintenance requests with optional filtering by status and priority.
  */
 export const getAllMaintenanceRequests = async (filters?: { status?: string; priority?: string }): Promise<{ data: MaintenanceRequestDto[] }> => {
-    const response = await axiosInstance.get("/v1/admin/maintenance", {
+    const response = await axiosInstance.get("/admin/maintenance", {
         params: filters
     });
     return response.data;
@@ -15,7 +15,7 @@ export const getAllMaintenanceRequests = async (filters?: { status?: string; pri
  * Update the status or priority of a specific maintenance request.
  */
 export const updateMaintenanceRequest = async (requestId: string, data: { status?: string; priority?: string }): Promise<{ data: MaintenanceRequestDto }> => {
-    const response = await axiosInstance.patch(`/v1/admin/maintenance/${requestId}`, data);
+    const response = await axiosInstance.patch(`/admin/maintenance/${requestId}`, data);
     return response.data;
 };
 
@@ -23,6 +23,6 @@ export const updateMaintenanceRequest = async (requestId: string, data: { status
  * Get summary statistics for maintenance requests.
  */
 export const getMaintenanceStats = async (): Promise<{ data: { pending: number, in_progress: number, resolved: number, rejected: number, critical: number } }> => {
-    const response = await axiosInstance.get("/v1/admin/maintenance/stats");
+    const response = await axiosInstance.get("/admin/maintenance/stats");
     return response.data;
 };

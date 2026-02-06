@@ -7,6 +7,7 @@ import Modal from "../Modal";
 import { Loader } from "lucide-react";
 import { Input } from "../ui/input";
 import { Button } from "@/components/ui/button";
+import type { ApiError } from "@/types/dtos";
 
 interface ResetPasswordFormValues {
   password: string;
@@ -34,7 +35,7 @@ const ChangePasswordModal: React.FC<ChangePasswordProps> = ({ onClose }) => {
     onSuccess: () => {
       toast.success("Password Updated Successfully");
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       const errorMessage =
         error.response?.data?.message || error.response?.data?.error || "Failed to Update Password";
       toast.error(errorMessage);

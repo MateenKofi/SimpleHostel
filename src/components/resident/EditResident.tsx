@@ -24,13 +24,14 @@ import { useAddedResidentStore } from "@/stores/useAddedResidentStore";
 import { useS } from "use-s-react";
 import { Resident } from "@/helper/types/types";
 import { useEffect } from "react";
+import type { ApiError } from "@/types/dtos";
 
 type EditResidentInputs = z.infer<typeof ResidentFormSchema>;
 
 const EditResident = () => {
   const setResident = useAddedResidentStore((state) => state.setResident);
   const hostelId = localStorage.getItem("hostelId") || "";
-  const [selectedResident] = useS<Resident | Record<string, any>>({
+  const [selectedResident] = useS<Partial<Resident>>({
     value: {},
     key: "selectedResident",
   });
@@ -48,22 +49,22 @@ const EditResident = () => {
   });
 
   useEffect(() => {
-    if (selectedResident) {
-      setValue("name", selectedResident.name || "");
-      setValue("studentId", selectedResident.studentId || "");
-      setValue("course", selectedResident.course || "");
-      setValue("phone", selectedResident.phone || "");
-      setValue("email", selectedResident.email || "");
+    if (selectedResident && selectedResident.id) {
+      setValue("name", (selectedResident.name as string | undefined) || "");
+      setValue("studentId", (selectedResident.studentId as string | undefined) || "");
+      setValue("course", (selectedResident.course as string | undefined) || "");
+      setValue("phone", (selectedResident.phone as string | undefined) || "");
+      setValue("email", (selectedResident.email as string | undefined) || "");
       setValue(
         "emergencyContactName",
-        selectedResident.emergencyContactName || ""
+        (selectedResident.emergencyContactName as string | undefined) || ""
       );
       setValue(
         "emergencyContactPhone",
-        selectedResident.emergencyContactPhone || ""
+        (selectedResident.emergencyContactPhone as string | undefined) || ""
       );
-      setValue("relationship", selectedResident.relationship || "");
-      setValue("gender", selectedResident.gender || "");
+      setValue("relationship", (selectedResident.relationship as string | undefined) || "");
+      setValue("gender", (selectedResident.gender as string | undefined) || "");
     }
   }, [selectedResident, setValue]);
 
@@ -71,8 +72,8 @@ const EditResident = () => {
     mutationFn: async (resident_data: EditResidentInputs) => {
       const formData = new FormData();
       formData.append("name", resident_data.name);
-      formData.append("studentId", resident_data.studentId);
-      formData.append("course", resident_data.course);
+      formData.append("studentId", resident_data.studentId || "");
+      formData.append("course", resident_data.course || "");
       formData.append("phone", resident_data.phone || "");
       formData.append("email", resident_data.email);
       formData.append(
@@ -88,7 +89,7 @@ const EditResident = () => {
       formData.append("hostelId", hostelId);
 
       try {
-        const responseData = await updateResident(selectedResident.id!, formData);
+        const responseData = await updateResident(selectedResident.id as string, formData);
         toast.success("Resident updated successfully");
         reset();
         setResident(responseData?.data);
@@ -96,8 +97,9 @@ const EditResident = () => {
           navigate("/dashboard/resident-management");
         }, 50);
         return responseData;
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.message || "Failed to update Resident";
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.message || "Failed to update Resident";
         toast.error(errorMessage);
         throw error;
       }

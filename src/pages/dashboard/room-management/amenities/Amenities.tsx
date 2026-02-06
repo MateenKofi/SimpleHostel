@@ -11,6 +11,7 @@ import { useState } from "react";
 import CustomDataTable from "@/components/CustomDataTable";
 import { Amenity } from "@/helper/types/types";
 import SEOHelmet from "@/components/SEOHelmet";
+import type { ApiError } from "@/types/dtos";
 
 const Amenities = () => {
   const queryClient = useQueryClient();
@@ -46,7 +47,7 @@ const Amenities = () => {
       queryClient.invalidateQueries({ queryKey: ["amenities"] });
       setDeletingAmenityId(null);
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       const errorMessage =
         error.response?.data?.message || "Failed to delete amenity";
       toast.error(errorMessage);
@@ -130,7 +131,7 @@ const Amenities = () => {
         </div>
         <div className="flex gap-2">
           <button
-            className="flex gap-2 px-4 py-2 text-white bg-black rounded-md"
+            className="flex gap-2 px-4 py-2 text-white bg-primary rounded-md"
             onClick={() => openAmenitiesModal()}
           >
             <Plus />

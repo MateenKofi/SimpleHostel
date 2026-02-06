@@ -8,6 +8,7 @@ import { signupUser } from "@/api/auth";
 import { toast } from "sonner";
 import UploadSingleImage from "./UploadSingleImage";
 import { TextField } from "./TextField";
+import type { ApiError } from "@/types/dtos";
 
 type AddUserProps = {
   onClose: () => void;
@@ -43,8 +44,9 @@ const AddUser = ({ onClose }: AddUserProps) => {
         toast.success("User Added successfully");
         handleClose();
         querclient.invalidateQueries({ queryKey: ['AllUsers'] });
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.message || "Failed to add user";
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.message || "Failed to add user";
         toast.error(errorMessage);
         throw error;
       }

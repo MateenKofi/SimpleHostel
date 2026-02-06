@@ -11,18 +11,15 @@ import { MaintenanceRequestDto } from "@/types/dtos"
 import {
     Loader,
     Wrench,
-    AlertCircle,
-    CheckCircle,
     Clock,
-    Filter,
     Search,
     MoreHorizontal,
     Eye,
-    TrendingUp,
     AlertTriangle,
     CheckCircle2
 } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { StatCard } from "@/components/stat-card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -54,6 +51,11 @@ import { toast } from "sonner"
 import { format } from "date-fns"
 import SEOHelmet from "@/components/SEOHelmet"
 
+interface UpdateMaintenanceData {
+    status?: string;
+    priority?: string;
+}
+
 const MaintenanceManagement = () => {
     const queryClient = useQueryClient()
     const [statusFilter, setStatusFilter] = useState<string>("all")
@@ -83,7 +85,7 @@ const MaintenanceManagement = () => {
 
     // 3. Update Mutation
     const updateMutation = useMutation({
-        mutationFn: ({ id, data }: { id: string, data: any }) => updateMaintenanceRequest(id, data),
+        mutationFn: ({ id, data }: { id: string, data: UpdateMaintenanceData }) => updateMaintenanceRequest(id, data),
         onSuccess: () => {
             toast.success("Request updated successfully!")
             setIsUpdateModalOpen(false)
@@ -95,7 +97,7 @@ const MaintenanceManagement = () => {
         }
     })
 
-    const handleUpdateClick = (request: any) => {
+    const handleUpdateClick = (request: MaintenanceRequestDto) => {
         setSelectedRequest(request)
         setNewStatus(request.status)
         setNewPriority(request.priority)
@@ -148,46 +150,46 @@ const MaintenanceManagement = () => {
 
             {/* Stats Section */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <CardTitle className="text-sm font-medium">Pending Requests</CardTitle>
-                        <Clock className="w-4 h-4 text-yellow-600" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{stats?.data?.pending || 0}</div>
-                        <p className="text-xs text-muted-foreground">Awaiting attention</p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <CardTitle className="text-sm font-medium">In Progress</CardTitle>
-                        <Wrench className="w-4 h-4 text-blue-600" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{stats?.data?.in_progress || 0}</div>
-                        <p className="text-xs text-muted-foreground">Currently being fixed</p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <CardTitle className="text-sm font-medium">Resolved Today</CardTitle>
-                        <CheckCircle2 className="w-4 h-4 text-green-600" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">{stats?.data?.resolved || 0}</div>
-                        <p className="text-xs text-muted-foreground">Completed requests</p>
-                    </CardContent>
-                </Card>
-                <Card className="border-red-100 bg-red-50/30">
-                    <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-                        <CardTitle className="text-sm font-medium text-red-600">Critical Issues</CardTitle>
-                        <AlertTriangle className="w-4 h-4 text-red-600" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-red-600">{stats?.data?.critical || 0}</div>
-                        <p className="text-xs text-red-600/70">Urgent action required</p>
-                    </CardContent>
-                </Card>
+                <StatCard
+                    icon={CheckCircle2}
+                    title="Resolved Today"
+                    content={String(stats?.data?.resolved || 0)}
+                    description="Completed requests"
+                    backgroundColor="bg-gradient-to-br from-sage-green-50 to-sage-green-100/30"
+                    titleColor="text-sage-green-700"
+                    contentColor="text-sage-green-600"
+                    descriptionColor="text-sage-green-600/70"
+                />
+                <StatCard
+                    icon={Wrench}
+                    title="In Progress"
+                    content={String(stats?.data?.in_progress || 0)}
+                    description="Currently being fixed"
+                    backgroundColor="bg-gradient-to-br from-teal-green-50 to-teal-green-100/30"
+                    titleColor="text-teal-green-700"
+                    contentColor="text-teal-green-600"
+                    descriptionColor="text-teal-green-600/70"
+                />
+                <StatCard
+                    icon={Clock}
+                    title="Pending Requests"
+                    content={String(stats?.data?.pending || 0)}
+                    description="Awaiting attention"
+                    backgroundColor="bg-gradient-to-br from-warm-gray-100 to-warm-gray-200/30"
+                    titleColor="text-warm-gray-700"
+                    contentColor="text-warm-gray-600"
+                    descriptionColor="text-warm-gray-600/70"
+                />
+                <StatCard
+                    icon={AlertTriangle}
+                    title="Critical Issues"
+                    content={String(stats?.data?.critical || 0)}
+                    description="Urgent action required"
+                    backgroundColor="bg-gradient-to-br from-warm-red-50 to-warm-red-100/30"
+                    titleColor="text-warm-red-700"
+                    contentColor="text-warm-red-600"
+                    descriptionColor="text-warm-red-600/70"
+                />
             </div>
 
             {/* Filters and List */}

@@ -10,6 +10,7 @@ import { Loader } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
 import { resetPassword } from "@/api/auth";
 import { toast } from "sonner";
+import type { ApiError } from "@/types/dtos";
 
 type ForgetpasswordformData = {
   email: string;
@@ -29,8 +30,9 @@ const ForgetPassword = () => {
         await resetPassword({ email: data.email });
         toast.success("A default password will be sent to this email");
         navigate("/login");
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.message || "Failed to reset password";
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.message || "Failed to reset password";
         toast.error(errorMessage);
         throw error;
       }

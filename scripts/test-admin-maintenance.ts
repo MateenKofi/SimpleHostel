@@ -41,13 +41,18 @@ async function runTests() {
         console.log("Updated Data:", updateResponse.data.data);
 
         console.log("\nAll tests completed successfully!");
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error("\nTest failed!");
-        if (error.response) {
-            console.error(`Status: ${error.response.status}`);
-            console.error("Data:", error.response.data);
+        if (error instanceof Error) {
+            if ("response" in error) {
+                const err = error as { response?: { status: number; data: unknown } };
+                console.error(`Status: ${err.response?.status}`);
+                console.error("Data:", err.response?.data);
+            } else {
+                console.error("Error:", error.message);
+            }
         } else {
-            console.error("Error:", error.message);
+            console.error("Unknown error occurred");
         }
     }
 }

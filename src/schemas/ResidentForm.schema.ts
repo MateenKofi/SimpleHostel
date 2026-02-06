@@ -5,12 +5,8 @@ const baseResidentFields = {
   name: z.string().min(2, {
     message: "Full name must be at least 2 characters.",
   }),
-  studentId: z.string().min(1, {
-    message: "Student ID is required.",
-  }),
-  course: z.string().min(1, {
-    message: "Course is required.",
-  }),
+  studentId: z.string().optional(),
+  course: z.string().optional(),
   email: z.string().email({
     message: "Please enter a valid email address.",
   }),

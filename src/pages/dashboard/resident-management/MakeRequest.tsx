@@ -46,6 +46,7 @@ interface CreateMaintenanceRequestDto {
 }
 
 import { MaintenanceRequestDto as MaintenanceRequest } from "@/types/dtos"
+import type { ApiError } from "@/types/dtos"
 
 import NoHostelAssigned from "@/components/resident/NoHostelAssigned"
 
@@ -64,7 +65,7 @@ const MakeRequest = () => {
     // Pre-fill form when editing
     useEffect(() => {
         if (editMode && selectedRequest) {
-            setValue('type', selectedRequest.type as any)
+            setValue('type', selectedRequest.type as RequestType)
             setValue('priority', selectedRequest.priority)
             setValue('title', selectedRequest.title)
             setValue('description', selectedRequest.description)
@@ -95,7 +96,7 @@ const MakeRequest = () => {
 
     // Mutation for creating request
     const createRequestMutation = useMutation({
-        mutationFn: async (data: CreateMaintenanceRequestDto) => {
+        mutationFn: async (data: FormData) => {
             return await createResidentRequest(data)
         },
         onSuccess: () => {
@@ -105,7 +106,7 @@ const MakeRequest = () => {
             setActiveTab("history")
             queryClient.invalidateQueries({ queryKey: ['maintenance-requests'] })
         },
-        onError: (error: any) => {
+        onError: (error: ApiError) => {
             const msg = error.response?.data?.message || "Failed to submit request"
             toast.error(msg)
         }
@@ -113,7 +114,7 @@ const MakeRequest = () => {
 
     // Mutation for updating request
     const updateRequestMutation = useMutation({
-        mutationFn: async ({ id, data }: { id: string, data: any }) => {
+        mutationFn: async ({ id, data }: { id: string, data: CreateMaintenanceRequestDto | { status?: string; priority?: string } }) => {
             return await updateMaintenanceRequest(id, data)
         },
         onSuccess: () => {
@@ -124,7 +125,7 @@ const MakeRequest = () => {
             setActiveTab("history")
             queryClient.invalidateQueries({ queryKey: ['maintenance-requests'] })
         },
-        onError: (error: any) => {
+        onError: (error: ApiError) => {
             const msg = error.response?.data?.message || "Failed to update request"
             toast.error(msg)
         }
@@ -163,7 +164,7 @@ const MakeRequest = () => {
             formData.append("images", image)
         })
 
-        createRequestMutation.mutate(formData as any)
+        createRequestMutation.mutate(formData)
     }
 
     // Helper for status colors

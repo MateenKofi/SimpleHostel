@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { handleSwalMutation } from "./swal/SwalMutationHelper";
 import { AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Avatar } from "@radix-ui/react-avatar";
+import type { ApiError } from "@/types/dtos";
 
 const UserTable = () => {
   const {
@@ -29,8 +30,9 @@ const UserTable = () => {
         await deleteUser(id);
         toast.success("User deleted successfully");
         refetchAllUsers();
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.message || "Failed to delete user";
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.message || "Failed to delete user";
         toast.error(errorMessage);
         throw error;
       }

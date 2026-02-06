@@ -12,6 +12,7 @@ import { useModal } from "@components/Modal";
 import ChangePassword from "@/components/changepassword/ChangePasswordModal";
 import { Button } from "@/components/ui/button";
 import UploadSingleImage from "./UploadSingleImage";
+import type { ApiError } from "@/types/dtos";
 
 interface PersonalInfoFormValues {
   name: string;
@@ -69,8 +70,9 @@ const ProfileForms = () => {
         refectUser();
         toast.success("User Details Updated Successfully");
         queryClient.invalidateQueries({ queryKey: ["userProfile"] });
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.error || "Failed to update user details";
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.error || "Failed to update user details";
         toast.error(errorMessage);
         throw error;
       }

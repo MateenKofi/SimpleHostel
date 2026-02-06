@@ -6,6 +6,7 @@ import { registerResident } from "@/api/residents";
 import { toast } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import type { ApiError } from "@/types/dtos";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -32,32 +33,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Progress } from "@/components/ui/progress";
 
 const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
+  const [stepSubmitted, setStepSubmitted] = useState<Set<number>>(new Set());
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid, touchedFields },
+    formState: { errors},
     trigger,
     setValue,
     watch,
     reset,
   } = useForm<RegistrationFormValues>({
     resolver: zodResolver(registrationSchema),
-    mode: "onBlur",
+    mode: "onChange",
   });
 
   const registerMutation = useMutation({
     mutationFn: async (values: RegistrationFormValues) => {
-      // Consolidate name if needed (though we now use a single name field)
       // Omit confirmPassword before sending
-      const { confirmPassword, ...payload } = values;
+      const {...payload } = values;
       return await registerResident(payload);
     },
     onSuccess: () => {
@@ -65,13 +65,16 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
       reset();
       navigate("/login");
     },
-    onError: (error: any) => {
+    onError: (error: ApiError) => {
       const errorMessage = error.response?.data?.message || "Registration failed. Please try again.";
       toast.error(errorMessage);
     }
   });
 
   const nextStep = async () => {
+    // Mark current step as submitted so errors show if validation fails
+    setStepSubmitted((prev) => new Set(prev).add(step));
+
     let fieldsToValidate: (keyof RegistrationFormValues)[] = [];
     if (step === 0) {
       fieldsToValidate = ["name", "email", "phone", "gender", "studentId", "course"];
@@ -80,12 +83,16 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
     }
 
     const isStepValid = await trigger(fieldsToValidate);
-    if (isStepValid) setStep((s) => s + 1);
+    if (isStepValid) {
+      setStep((s) => s + 1);
+    }
   };
 
   const prevStep = () => setStep((s) => s - 1);
 
   const onSubmit = (values: RegistrationFormValues) => {
+    // Mark step 2 as submitted so errors show if validation fails
+    setStepSubmitted((prev) => new Set(prev).add(2));
     registerMutation.mutate(values);
   };
 
@@ -136,7 +143,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><User size={18} /></span>
                             <Input id="name" placeholder="John Doe" className="pl-10 h-11" {...register("name")} />
                           </div>
-                          {errors.name && touchedFields.name && <p className="text-xs text-red-500 font-medium">{errors.name.message}</p>}
+                          {errors.name && stepSubmitted.has(step) && <p className="text-xs text-red-500 font-medium">{errors.name.message}</p>}
                         </div>
 
                         <div className="space-y-2">
@@ -145,7 +152,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Mail size={18} /></span>
                             <Input id="email" type="email" placeholder="john@example.com" className="pl-10 h-11" {...register("email")} />
                           </div>
-                          {errors.email && touchedFields.email && <p className="text-xs text-red-500 font-medium">{errors.email.message}</p>}
+                          {errors.email && stepSubmitted.has(step) && <p className="text-xs text-red-500 font-medium">{errors.email.message}</p>}
                         </div>
 
                         <div className="space-y-2">
@@ -154,14 +161,14 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Phone size={18} /></span>
                             <Input id="phone" placeholder="024XXXXXXX" className="pl-10 h-11" {...register("phone")} />
                           </div>
-                          {errors.phone && touchedFields.phone && <p className="text-xs text-red-500 font-medium">{errors.phone.message}</p>}
+                          {errors.phone && stepSubmitted.has(step) && <p className="text-xs text-red-500 font-medium">{errors.phone.message}</p>}
                         </div>
 
                         <div className="space-y-2">
                           <Label htmlFor="gender" className="text-sm font-medium">Gender</Label>
                           <Select
                             value={watch("gender")}
-                            onValueChange={(val) => setValue("gender", val as any, { shouldValidate: true })}
+                            onValueChange={(val) => setValue("gender", val as "male" | "female" | "other", { shouldValidate: true })}
                           >
                             <SelectTrigger className="h-11">
                               <SelectValue placeholder="Select gender" />
@@ -172,7 +179,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                               <SelectItem value="other">Other</SelectItem>
                             </SelectContent>
                           </Select>
-                          {errors.gender && touchedFields.gender && <p className="text-xs text-red-500 font-medium">{errors.gender.message}</p>}
+                          {errors.gender && stepSubmitted.has(step) && <p className="text-xs text-red-500 font-medium">{errors.gender.message}</p>}
                         </div>
 
                         <div className="space-y-2">
@@ -209,7 +216,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Heart size={18} /></span>
                           <Input id="emergencyContactName" placeholder="Emergency contact full name" className="pl-10 h-11" {...register("emergencyContactName")} />
                         </div>
-                        {errors.emergencyContactName && touchedFields.emergencyContactName && <p className="text-xs text-red-500 font-medium">{errors.emergencyContactName.message}</p>}
+                        {errors.emergencyContactName && stepSubmitted.has(step) && <p className="text-xs text-red-500 font-medium">{errors.emergencyContactName.message}</p>}
                       </div>
 
                       <div className="space-y-2">
@@ -218,7 +225,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Phone size={18} /></span>
                           <Input id="emergencyContactPhone" placeholder="Emergency Contact Number" className="pl-10 h-11" {...register("emergencyContactPhone")} />
                         </div>
-                        {errors.emergencyContactPhone && touchedFields.emergencyContactPhone && <p className="text-xs text-red-500 font-medium">{errors.emergencyContactPhone.message}</p>}
+                        {errors.emergencyContactPhone && stepSubmitted.has(step) && <p className="text-xs text-red-500 font-medium">{errors.emergencyContactPhone.message}</p>}
                       </div>
 
                       <div className="space-y-2">
@@ -256,7 +263,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                             {isPasswordVisible ? <EyeOff className="w-5 h-5 text-slate-400" /> : <Eye className="w-5 h-5 text-slate-400" />}
                           </button>
                         </div>
-                        {errors.password && touchedFields.password && <p className="text-xs text-red-500 font-medium">{errors.password.message}</p>}
+                        {errors.password && stepSubmitted.has(step) && <p className="text-xs text-red-500 font-medium">{errors.password.message}</p>}
                       </div>
 
                       <div className="space-y-2">
@@ -278,7 +285,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                             {isConfirmPasswordVisible ? <EyeOff className="w-5 h-5 text-slate-400" /> : <Eye className="w-5 h-5 text-slate-400" />}
                           </button>
                         </div>
-                        {errors.confirmPassword && touchedFields.confirmPassword && <p className="text-xs text-red-500 font-medium">{errors.confirmPassword.message}</p>}
+                        {errors.confirmPassword && stepSubmitted.has(step) && <p className="text-xs text-red-500 font-medium">{errors.confirmPassword.message}</p>}
                       </div>
                     </motion.div>
                   )}

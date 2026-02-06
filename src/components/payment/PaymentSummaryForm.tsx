@@ -37,16 +37,40 @@ import { useNavigate } from "react-router-dom"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
+import type { UserDto, ResidentDto, ApiError } from "@/types/dtos"
 
 const paymentFormSchema = z.object({
   paymentAmount: z.number().min(1, "Payment amount must be greater than 0"),
 })
 type PaymentInputs = z.infer<typeof paymentFormSchema>
 
+// Helper function to get resident properties from union type
+const getResidentName = (resident: UserDto | ResidentDto): string => resident.name || "";
+const getResidentEmail = (resident: UserDto | ResidentDto): string => resident.email || "";
+const getResidentPhone = (resident: UserDto | ResidentDto): string => resident.phone || "";
+const getResidentStudentId = (resident: UserDto | ResidentDto): string | null => {
+  if ("studentId" in resident) return resident.studentId;
+  return resident.residentProfile?.studentId || null;
+};
+const getResidentCourse = (resident: UserDto | ResidentDto): string | null => {
+  if ("course" in resident) return resident.course;
+  return resident.residentProfile?.course || null;
+};
+const getResidentGender = (resident: UserDto | ResidentDto): string | null => {
+  // UserDto has gender directly, ResidentDto has it in user property (legacy)
+  if ("userId" in resident) {
+    // This is ResidentDto, but it doesn't have user populated in this context
+    // Return null since gender is not available
+    return null;
+  }
+  // This is UserDto which has gender directly
+  return resident.gender || null;
+};
+
 const PaymentSummaryForm = () => {
   const navigate = useNavigate()
-  const room = useSelectedRoomStore((s: any) => s.room)
-  const resident = useAddedResidentStore((s: any) => s.resident)
+  const room = useSelectedRoomStore((s) => s.room)
+  const resident = useAddedResidentStore((s) => s.resident)
 
   // Redirect if required data is missing
   if (!room || !resident) {
@@ -113,8 +137,9 @@ const PaymentSummaryForm = () => {
         }
 
         return resData
-      } catch (error: any) {
-        const errorMessage = error.response?.data?.message || error.response?.data?.error || "An unexpected error occurred"
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err.response?.data?.message || err.response?.data?.error || "An unexpected error occurred"
         toast.error(errorMessage)
         throw error
       }
@@ -154,14 +179,14 @@ const PaymentSummaryForm = () => {
               <div className="flex items-center gap-4">
                 <Avatar className="w-16 h-16 border border-gray-100">
                   <AvatarFallback className="text-xl bg-primary/10 text-primary font-bold">
-                    {getInitials(resident?.name || "")}
+                    {getInitials(getResidentName(resident))}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">{resident?.name || ""}</h1>
+                  <h1 className="text-2xl font-bold text-gray-900">{getResidentName(resident)}</h1>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <GraduationCap className="w-4 h-4" />
-                    <span className="text-sm">{resident?.studentId || "Student ID"}</span>
+                    <span className="text-sm">{getResidentStudentId(resident) || "Student ID"}</span>
                   </div>
                 </div>
               </div>
@@ -184,25 +209,25 @@ const PaymentSummaryForm = () => {
                     <dt className="text-muted-foreground flex items-center gap-2">
                       <GraduationCap className="w-3.5 h-3.5" /> Course
                     </dt>
-                    <dd className="font-medium text-right">{resident?.course || "-"}</dd>
+                    <dd className="font-medium text-right">{getResidentCourse(resident) || "-"}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-muted-foreground flex items-center gap-2">
                       <Mail className="w-3.5 h-3.5" /> Email
                     </dt>
-                    <dd className="font-medium text-right">{resident?.email || "-"}</dd>
+                    <dd className="font-medium text-right">{getResidentEmail(resident) || "-"}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-muted-foreground flex items-center gap-2">
                       <Phone className="w-3.5 h-3.5" /> Phone
                     </dt>
-                    <dd className="font-medium text-right">{resident?.phone || "-"}</dd>
+                    <dd className="font-medium text-right">{getResidentPhone(resident) || "-"}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-muted-foreground flex items-center gap-2">
                       <Users className="w-3.5 h-3.5" /> Gender
                     </dt>
-                    <dd className="font-medium text-right">{resident?.gender || "-"}</dd>
+                    <dd className="font-medium text-right">{getResidentGender(resident) || "-"}</dd>
                   </div>
                 </dl>
               </div>

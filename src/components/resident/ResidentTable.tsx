@@ -16,6 +16,7 @@ import { handleSwalMutation } from "../swal/SwalMutationHelper";
 import { useNavigate } from "react-router-dom";
 import { useAddedResidentStore } from "@/stores/useAddedResidentStore";
 import { useS } from "use-s-react";
+import type { ApiError } from "@/types/dtos";
 
 const ResidentTable = () => {
   const navigate = useNavigate();
@@ -23,7 +24,7 @@ const ResidentTable = () => {
   const hostelId = localStorage.getItem("hostelId");
 
   const [selectedResident, setSelectedResident] = useS<
-    ResidentDto | Record<string, any>
+    Partial<ResidentDto>
   >({
     value: {},
     key: "selectedResident",
@@ -49,8 +50,9 @@ const ResidentTable = () => {
         await deleteResident(id, hostelId!);
         toast.success("Resident deleted successfully");
         refetchResident();
-      } catch (error: any) {
-        const errorMessage = error?.response?.data?.error || "An unexpected error occured";
+      } catch (error: unknown) {
+        const err = error as ApiError;
+        const errorMessage = err?.response?.data?.error || "An unexpected error occured";
         toast.error(errorMessage);
         throw error;
       }

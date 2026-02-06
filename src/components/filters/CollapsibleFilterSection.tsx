@@ -35,7 +35,7 @@ export const CollapsibleFilterSection = ({
       <div
         className={cn(
           "overflow-hidden transition-all duration-200 ease-in-out",
-          isOpen ? "max-h-96 opacity-100 mt-2" : "max-h-0 opacity-0"
+          isOpen ? "max-h-[500px] overflow-y-auto opacity-100 mt-2" : "max-h-0 opacity-0"
         )}
       >
         {children}

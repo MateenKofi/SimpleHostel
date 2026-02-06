@@ -1,11 +1,12 @@
 import axiosInstance from "./axiosInstance";
+import type { UpdateUserRequest } from "@/types/dtos";
 
 export const getUserById = async (userId: string) => {
     const response = await axiosInstance.get(`/users/get/${userId}`);
     return response.data;
 };
 
-export const updateUser = async (userId: string, data: any) => {
+export const updateUser = async (userId: string, data: UpdateUserRequest | FormData) => {
     const isFormData = data instanceof FormData;
     const response = await axiosInstance.put(`/users/update/${userId}`, data, {
         headers: isFormData ? { "Content-Type": "multipart/form-data" } : {},
