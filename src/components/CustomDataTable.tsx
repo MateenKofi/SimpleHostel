@@ -1,27 +1,85 @@
 import React, { useState, useMemo } from 'react';
 import DataTable, { TableColumn } from 'react-data-table-component';
-import { Download,  Search } from 'lucide-react';
+import { Download, Search, FileX, SearchX } from 'lucide-react';
 import TableLoader from './loaders/TableLoader';
 import CustomeRefetch from './CustomeRefetch';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
 
 interface DataTableProps<T> {
   title?: string;
   columns: TableColumn<T>[];
-  data: T[];                        // full dataset
+  data: T[];
   searchable?: boolean;
   onRowClicked?: (row: T) => void;
-  serverSide?: boolean;             // if true, data might be paginated
+  serverSide?: boolean;
   totalRows?: number;
   perPage?: number;
   onPageChange?: (page: number, totalRows: number) => void;
   onPerPageChange?: (page: number, totalRows: number) => void;
   exportFilename?: string;
-  exportAllData?: T[];              // optional full data override (for server-side)
-  onSearchChange?: (searchText: string) => void; // new prop for server-side search
-  isLoading?:boolean;
-  isError?:boolean;
-  refetch?:()=>void ;
+  exportAllData?: T[];
+  onSearchChange?: (searchText: string) => void;
+  isLoading?: boolean;
+  isError?: boolean;
+  refetch?: () => void;
+  showEmptyState?: boolean;
+  emptyStateMessage?: string;
+  showDataCount?: boolean;
 }
+
+// Custom styles using CSS variables
+const customStyles = {
+  table: {
+    style: {
+      backgroundColor: 'hsl(var(--card))',
+      color: 'hsl(var(--card-foreground))',
+    },
+  },
+  header: {
+    style: {
+      backgroundColor: 'hsl(var(--card))',
+      color: 'hsl(var(--card-foreground))',
+    },
+  },
+  headRow: {
+    style: {
+      backgroundColor: 'hsl(var(--muted))',
+      borderBottomColor: 'hsl(var(--border))',
+    },
+  },
+  headCells: {
+    style: {
+      color: 'hsl(var(--muted-foreground))',
+      fontWeight: '600',
+      fontSize: '0.875rem',
+    },
+  },
+  rows: {
+    style: {
+      color: 'hsl(var(--card-foreground))',
+      backgroundColor: 'hsl(var(--card))',
+      borderBottomColor: 'hsl(var(--border))',
+      minHeight: '48px',
+      '&:hover': {
+        backgroundColor: 'hsl(var(--muted) / 0.5)',
+      },
+    },
+  },
+  pagination: {
+    style: {
+      backgroundColor: 'hsl(var(--card))',
+      color: 'hsl(var(--foreground))',
+      borderTopColor: 'hsl(var(--border))',
+    },
+  },
+  paginationInfo: {
+    style: {
+      color: 'hsl(var(--muted-foreground))',
+    },
+  },
+};
 
 function CustomDataTable<T>({
   title,
@@ -40,6 +98,9 @@ function CustomDataTable<T>({
   isLoading,
   isError,
   refetch,
+  showEmptyState = true,
+  emptyStateMessage,
+  showDataCount = true,
 }: DataTableProps<T>) {
   const [searchText, setSearchText] = useState('');
 
@@ -67,7 +128,6 @@ function CustomDataTable<T>({
   }, [data, columns, searchText, serverSide, searchable]);
 
   const exportToCSV = () => {
-    // Use full data if provided, otherwise fallback to data prop
     const rowsForExport = exportAllData ?? data;
 
     const headers = columns.map(col => col.name).join(',');
@@ -75,11 +135,9 @@ function CustomDataTable<T>({
       .map(row =>
         columns
           .map(col => {
-            // selector can be string key or function
             const val = typeof col.selector === 'function'
               ? col.selector(row)
               : (col.selector && (row as Record<string, unknown>)[col.selector as string]);
-            // wrap commas/newlines in quotes
             return JSON.stringify(val ?? '');
           })
           .join(',')
@@ -99,57 +157,160 @@ function CustomDataTable<T>({
     URL.revokeObjectURL(url);
   };
 
-  if(isLoading){
-    return <TableLoader/>
+  const displayData = serverSide ? data : filteredData;
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <Card>
+        <CardContent className="pt-6">
+          <TableLoader />
+        </CardContent>
+      </Card>
+    );
   }
-  
-  if(isError){
-    return <CustomeRefetch refetch={refetch} />
+
+  // Error state
+  if (isError) {
+    return (
+      <Card>
+        <CardContent className="pt-6">
+          <CustomeRefetch refetch={refetch} />
+        </CardContent>
+      </Card>
+    );
   }
+
+  // Empty state
+  if (data.length === 0 && showEmptyState) {
+    return (
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            {title && <CardTitle>{title}</CardTitle>}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="rounded-full bg-muted p-4 mb-4">
+              <FileX className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground">No data found</h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              {emptyStateMessage || 'No data available at the moment.'}
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // No search results state (only for client-side search)
+  if (!serverSide && searchable && searchText && filteredData.length === 0) {
+    return (
+      <Card>
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            {title && <CardTitle>{title}</CardTitle>}
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <Search className="h-4 w-4 text-muted-foreground shrink-0" />
+              <Input
+                type="text"
+                placeholder="Search..."
+                value={searchText}
+                onChange={handleSearchChange}
+                className="max-w-xs"
+              />
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="rounded-full bg-muted p-4 mb-4">
+              <SearchX className="h-8 w-8 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-semibold text-foreground">No results found</h3>
+            <p className="text-sm text-muted-foreground mt-1">
+              Try adjusting your search terms
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Data count indicator
+  const DataCountIndicator = () => {
+    if (!showDataCount) return null;
+
+    const totalCount = totalRows ?? data.length;
+    const showingCount = displayData.length;
+
+    return (
+      <div className="text-sm text-muted-foreground">
+        {serverSide || !searchText
+          ? `${totalCount} ${totalCount === 1 ? 'result' : 'results'}`
+          : `${showingCount} of ${totalCount} ${totalCount === 1 ? 'result' : 'results'}`
+        }
+      </div>
+    );
+  };
 
   return (
-    <div className="space-y-4">
-      {title && <h2 className="text-xl font-semibold">{title}</h2>}
-
-      <div className="flex flex-wrap items-center gap-4 justify-between">
-        {searchable && (
-          <div className="flex items-center gap-2">
-            <Search size={16} />
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchText}
-              onChange={handleSearchChange}
-              className="input input-bordered border rounded input-sm border-gray-300 p-1 "
-            />
+    <Card>
+      <CardHeader>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            {title && <CardTitle>{title}</CardTitle>}
+            <DataCountIndicator />
           </div>
-        )}
 
-        <button
-          onClick={exportToCSV}
-          className="btn btn-sm bg-primary py-2 px-1 text-white flex items-center gap-2"
-        >
-          <Download size={16} />
-          Export CSV
-        </button>
-      </div>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            {searchable && (
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <Search className="h-4 w-4 text-muted-foreground shrink-0" />
+                <Input
+                  type="text"
+                  placeholder="Search..."
+                  value={searchText}
+                  onChange={handleSearchChange}
+                  className="max-w-xs"
+                />
+              </div>
+            )}
 
-      <DataTable
-        columns={columns}
-        data={serverSide ? data : filteredData}
-        pagination
-        paginationServer={serverSide}
-        paginationTotalRows={totalRows}
-        paginationPerPage={perPage}
-        onChangePage={onPageChange}
-        onChangeRowsPerPage={onPerPageChange}
-        responsive
-        highlightOnHover
-        pointerOnHover={!!onRowClicked}
-        onRowClicked={onRowClicked}
-        persistTableHead
-      />
-    </div>
+            <Button
+              onClick={exportToCSV}
+              variant="default"
+              size="sm"
+              className="w-full sm:w-auto gap-2"
+            >
+              <Download className="h-4 w-4" />
+              Export CSV
+            </Button>
+          </div>
+        </div>
+      </CardHeader>
+
+      <CardContent>
+        <DataTable
+          columns={columns}
+          data={displayData}
+          pagination
+          paginationServer={serverSide}
+          paginationTotalRows={totalRows}
+          paginationPerPage={perPage}
+          onChangePage={onPageChange}
+          onChangeRowsPerPage={onPerPageChange}
+          responsive
+          highlightOnHover
+          pointerOnHover={!!onRowClicked}
+          onRowClicked={onRowClicked}
+          persistTableHead
+          customStyles={customStyles}
+        />
+      </CardContent>
+    </Card>
   );
 }
 

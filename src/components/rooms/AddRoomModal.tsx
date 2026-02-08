@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import Modal from "@/components/Modal";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { roomSchema, ROOM_TYPE_CAPACITY, ROOM_STATUS, GENDER_OPTIONS } from "@/schemas/roomSchema";
+import type { RoomFormData } from "@/schemas/roomSchema";
 import type { Room } from "../../helper/types/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { addRoom } from "@/api/rooms";
@@ -9,21 +12,16 @@ import ImageUpload from "@/components/ImageUpload";
 import { Loader } from "lucide-react";
 import { toast } from "sonner";
 import type { ApiError } from "@/types/dtos";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 
 type RoomForm = Omit<Room, "amenities"> & {
   images: File[];
   amenities: string[];
   type: Room["type"];
-};
-
-const ROOM_STATUS = ["available", "Maintenance", "occupied"] as const;
-const GENDER = ["Male", "Female", "Mix"] as const;
-
-const ROOM_TYPE_CAPACITY = {
-  single: 1,
-  double: 2,
-  suite: 3,
-  quad: 4,
 };
 
 const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
@@ -35,10 +33,13 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
     watch,
     reset,
     setError,
-  } = useForm<RoomForm>({
+  } = useForm<RoomFormData>({
+    resolver: zodResolver(roomSchema),
     defaultValues: {
       images: [],
       amenities: [],
+      type: undefined,
+      status: "available",
     },
   });
 
@@ -51,17 +52,24 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
     if (newImages.length === 0) {
       setError("images", { message: "Please upload at least one image" });
       setImages([]);
-      console.error("No images uploaded");
     } else {
       const imageArray = Array.from(newImages).map((image) => {
         const file = new File([image], image.name, { type: image.type });
         return file;
       });
       setImages(imageArray);
+      // Clear error if images are now valid
+      if (errors.images) {
+        setError("images", { message: undefined });
+      }
     }
   };
 
-  const { data: Amenities } = useQuery<{
+  const {
+    data: amenitiesData,
+    isLoading: amenitiesLoading,
+    isError: amenitiesError,
+  } = useQuery<{
     data: { id: string; name: string; price: number }[];
   }>({
     queryKey: ["amenities"],
@@ -85,7 +93,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
       formData.append("price", data.basePrice.toString());
       formData.append("description", data.description || "");
       formData.append("status", data.status.toUpperCase());
-      formData.append("gender", data.gender.toUpperCase());
+      formData.append("gender", data.gender);
 
       if (Array.isArray(data.amenities)) {
         data.amenities.forEach((amenityId) => {
@@ -113,12 +121,12 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
     },
   });
 
-  const onSubmit = (data: RoomForm) => {
+  const onSubmit = (data: RoomFormData) => {
     if (images.length === 0) {
       setError("images", { message: "Room images are required" });
       return;
     }
-    mutation.mutate(data);
+    mutation.mutate(data as RoomForm);
   };
 
   // Watch the type field and update maxOccupancy accordingly
@@ -127,7 +135,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
     if (roomType) {
       setValue(
         "maxOccupancy",
-        ROOM_TYPE_CAPACITY[roomType as keyof typeof ROOM_TYPE_CAPACITY]
+        ROOM_TYPE_CAPACITY[roomType]
       );
     }
   }, [roomType, setValue]);
@@ -139,106 +147,83 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
     setImageUploadKey((prevKey) => prevKey + 1);
   };
 
+  const selectedAmenities = watch("amenities") || [];
+
   return (
     <Modal modalId="add_room_modal" onClose={handleClose} size="large">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
         <div className="space-y-1">
-          <h2 className="text-2xl font-bold text-gray-500 ">Add New Room</h2>
-          <p className="text-sm text-gray-500">
+          <h2 className="text-2xl font-bold text-foreground">Add New Room</h2>
+          <p className="text-sm text-muted-foreground">
             Fill in the details below to add a new room
           </p>
         </div>
 
         {/* Image Upload */}
-        <div className="flex flex-col gap-1">
-          <label htmlFor="images" className="text-sm font-medium text-gray-900">
-            Images
-          </label>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="images">Images</Label>
           <ImageUpload
             key={imageUploadKey}
             onImagesChange={handleImagesChange}
           />
           {errors.images && (
-            <span className="text-sm text-red-500">
+            <p className="text-destructive text-sm" role="alert">
               {errors.images.message}
-            </span>
+            </p>
           )}
-          <p className="text-sm italic font-thin text-gray-500">
-            you can only upload a max of 3 images
+          <p className="text-sm text-muted-foreground italic">
+            You can only upload a max of 3 images
           </p>
         </div>
 
         {/* Rest of the form fields */}
         <div className="grid grid-cols-2 gap-4">
           {/* Room Number */}
-          <div className="flex flex-col gap-1">
-            <label
-              htmlFor="number"
-              className="text-sm font-medium text-gray-500 "
-            >
-              Room Number*
-            </label>
-            <input
-              {...register("roomNumber", {
-                required: "Room number is required",
-              })}
-              type="text"
-              id="number"
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="roomNumber">Room Number</Label>
+            <Input
+              id="roomNumber"
               placeholder="e.g., A101"
-              className="p-2 border rounded-md"
+              aria-invalid={errors.roomNumber ? "true" : "false"}
+              aria-describedby={errors.roomNumber ? "roomNumber-error" : undefined}
+              {...register("roomNumber")}
             />
             {errors.roomNumber && (
-              <span className="text-sm text-red-500">
+              <p id="roomNumber-error" className="text-destructive text-sm" role="alert">
                 {errors.roomNumber.message}
-              </span>
+              </p>
             )}
           </div>
 
           {/* Block */}
-          <div className="flex flex-col gap-1">
-            <label
-              htmlFor="block"
-              className="text-sm font-medium text-gray-500 "
-            >
-              Block (optional)
-            </label>
-            <input
-              {...register("block")}
-              type="text"
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="block">Block (optional)</Label>
+            <Input
               id="block"
               placeholder="e.g., A"
-              className="p-2 border rounded-md"
+              {...register("block")}
             />
           </div>
 
           {/* Floor */}
-          <div className="flex flex-col gap-1">
-            <label
-              htmlFor="floor"
-              className="text-sm font-medium text-gray-500 "
-            >
-              Floor (optional)
-            </label>
-            <input
-              {...register("floor")}
-              type="number"
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="floor">Floor (optional)</Label>
+            <Input
               id="floor"
-              className="p-2 border rounded-md"
+              type="number"
+              {...register("floor")}
             />
           </div>
 
           {/* Room Type */}
-          <div className="flex flex-col gap-1">
-            <label
-              htmlFor="type"
-              className="text-sm font-medium text-gray-500 "
-            >
-              Room Type*
-            </label>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="type">Room Type</Label>
             <select
-              {...register("type", { required: "Room type is required" })}
               id="type"
-              className="p-2 border rounded-md "
+              className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              aria-invalid={errors.type ? "true" : "false"}
+              aria-describedby={errors.type ? "type-error" : undefined}
+              {...register("type")}
             >
               <option value="">-- Select Room Type --</option>
               <option value="single">Single</option>
@@ -247,172 +232,160 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
               <option value="quad">Quad</option>
             </select>
             {errors.type && (
-              <span className="text-sm text-red-500">
+              <p id="type-error" className="text-destructive text-sm" role="alert">
                 {errors.type.message}
-              </span>
+              </p>
             )}
           </div>
 
           {/* Max Occupancy (Read-only) */}
-          <div className="flex flex-col gap-1">
-            <label
-              htmlFor="maxOccupancy"
-              className="text-sm font-medium text-gray-500 "
-            >
-              Maximum Occupancy
-            </label>
-            <input
-              {...register("maxOccupancy")}
-              type="number"
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="maxOccupancy">Maximum Occupancy</Label>
+            <Input
               id="maxOccupancy"
-              className="p-2 border rounded-md"
+              type="number"
               readOnly
+              className="bg-muted cursor-not-allowed"
+              {...register("maxOccupancy")}
             />
           </div>
 
           {/* Base Price */}
-          <div className="flex flex-col gap-1">
-            <label
-              htmlFor="basePrice"
-              className="text-sm font-medium text-gray-500 "
-            >
-              Base Price
-            </label>
-            <input
-              {...register("basePrice", { required: "Base price is required" })}
-              type="number"
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="basePrice">Base Price</Label>
+            <Input
               id="basePrice"
-              className="p-2 border rounded-md"
+              type="number"
               step="0.01"
+              placeholder="0.00"
+              aria-invalid={errors.basePrice ? "true" : "false"}
+              aria-describedby={errors.basePrice ? "basePrice-error" : undefined}
+              {...register("basePrice")}
             />
             {errors.basePrice && (
-              <span className="text-sm text-red-500">
+              <p id="basePrice-error" className="text-destructive text-sm" role="alert">
                 {errors.basePrice.message}
-              </span>
+              </p>
             )}
           </div>
         </div>
 
         {/* Gender */}
-        <div className="flex flex-col gap-1">
-          <label
-            htmlFor="gender"
-            className="text-sm font-medium text-gray-500 "
-          >
-            Gender*
-          </label>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="gender">Gender</Label>
           <select
-            {...register("gender", { required: "Gender is required" })}
             id="gender"
-            className="p-2 border rounded-md"
+            className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            aria-invalid={errors.gender ? "true" : "false"}
+            aria-describedby={errors.gender ? "gender-error" : undefined}
+            {...register("gender")}
           >
-            <option value="">-- select gender --</option>
-            {GENDER.map((gender) => (
+            <option value="">-- Select Gender --</option>
+            {GENDER_OPTIONS.map((gender) => (
               <option key={gender} value={gender}>
                 {gender}
               </option>
             ))}
           </select>
-          {errors.status && (
-            <span className="text-sm text-red-500">
-              {errors.status.message}
-            </span>
+          {errors.gender && (
+            <p id="gender-error" className="text-destructive text-sm" role="alert">
+              {errors.gender.message}
+            </p>
           )}
         </div>
 
         {/* Status */}
-        <div className="flex flex-col gap-1">
-          <label
-            htmlFor="status"
-            className="text-sm font-medium text-gray-500 "
-          >
-            Status*
-          </label>
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="status">Status</Label>
           <select
-            {...register("status", { required: "Status is required" })}
             id="status"
-            className="p-2 border rounded-md"
+            className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            aria-invalid={errors.status ? "true" : "false"}
+            aria-describedby={errors.status ? "status-error" : undefined}
+            {...register("status")}
           >
             <option value="">-- Select Status --</option>
             {ROOM_STATUS.map((status) => (
               <option key={status} value={status}>
-                {status}
+                {status.charAt(0).toUpperCase() + status.slice(1)}
               </option>
             ))}
           </select>
           {errors.status && (
-            <span className="text-sm text-red-500">
+            <p id="status-error" className="text-destructive text-sm" role="alert">
               {errors.status.message}
-            </span>
+            </p>
           )}
         </div>
 
         {/* Amenities */}
-        <div className="flex flex-col gap-1">
-          <label className="text-sm font-medium text-gray-500 ">
-            Amenities
-          </label>
+        <div className="flex flex-col gap-2">
+          <Label>Amenities</Label>
+          {amenitiesLoading && (
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Loader className="w-4 h-4 animate-spin" />
+              <span className="text-sm">Loading amenities...</span>
+            </div>
+          )}
+          {amenitiesError && (
+            <p className="text-destructive text-sm">Failed to load amenities</p>
+          )}
+          {!amenitiesLoading && !amenitiesError && amenitiesData?.data?.length === 0 && (
+            <p className="text-sm text-muted-foreground">No amenities available</p>
+          )}
           <div className="flex flex-wrap gap-2">
-            {Amenities?.data?.map((amenity) => (
-              <label
-                key={amenity.id}
-                className={`
-                  w-fit cursor-pointer px-4 py-2 rounded-full border transition-colors shadow
-                  ${Array.isArray(watch("amenities")) &&
-                    (watch("amenities") as unknown as string[]).includes(amenity.id)
-                    ? "bg-black text-white border-black"
-                    : "bg-gray-100 text-gray-900 border-gray-200 hover:bg-gray-50"
-                  }
-                `}
-              >
-                <input
-                  type="checkbox"
-                  value={amenity.id}
-                  {...register("amenities")}
-                  className="hidden"
-                />
-                {amenity.name}
-              </label>
-            ))}
+            {amenitiesData?.data?.map((amenity) => {
+              const isSelected = selectedAmenities.includes(amenity.id);
+              return (
+                <label
+                  key={amenity.id}
+                  className={cn(
+                    "inline-flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-colors shadow-sm",
+                    isSelected
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-muted text-muted-foreground border-border hover:bg-muted/80"
+                  )}
+                >
+                  <input
+                    type="checkbox"
+                    value={amenity.id}
+                    {...register("amenities")}
+                    className="hidden"
+                  />
+                  {amenity.name}
+                </label>
+              );
+            })}
           </div>
         </div>
 
         {/* Description */}
-        <div className="flex flex-col gap-1">
-          <label
-            htmlFor="description"
-            className="text-sm font-medium text-gray-500 "
-          >
-            Description
-          </label>
-          <textarea
-            {...register("description")}
+        <div className="flex flex-col gap-2">
+          <Label htmlFor="description">Description</Label>
+          <Textarea
             id="description"
             rows={3}
-            className="p-2 border rounded-md"
             placeholder="Additional details about the room..."
+            {...register("description")}
           />
         </div>
 
-        <div className="flex justify-end gap-2 mt-4">
-          <button
+        <div className="flex justify-end gap-3 mt-4">
+          <Button
             type="button"
+            variant="outline"
             onClick={handleClose}
-            className="px-4 py-2 text-white transition-colors duration-200 bg-red-500 border rounded-md hover:bg-red-600"
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="flex items-center justify-center px-4 py-2 text-white bg-black rounded-md"
             disabled={mutation.isPending}
           >
-            {mutation.isPending ? (
-              <Loader className="w-4 h-4 animate-spin" />
-            ) : (
-              "Add Room"
-            )}
-          </button>
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            disabled={mutation.isPending}
+          >
+            {mutation.isPending && <Loader className="w-4 h-4 mr-2 animate-spin" />}
+            {mutation.isPending ? "Adding..." : "Add Room"}
+          </Button>
         </div>
       </form>
     </Modal>

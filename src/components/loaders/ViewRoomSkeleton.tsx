@@ -1,17 +1,17 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Building } from 'lucide-react'
 
 const ViewRoomSkeleton = () => {
   return (
     <div className="container mx-auto px-4 py-6 max-w-5xl">
       {/* Back button */}
-      <Button variant="ghost" className="mb-4">
+      <Button variant="ghost" className="mb-4" disabled>
         <ArrowLeft className="h-4 w-4 mr-2" />
         <Skeleton className="h-4 w-24" />
       </Button>
@@ -66,14 +66,15 @@ const ViewRoomSkeleton = () => {
             </CardContent>
           </Card>
 
-          {/* Hall information card skeleton */}
+          {/* Hostel information card skeleton */}
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg">
-                <Skeleton className="h-6 w-32" />
-              </CardTitle>
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-2">
+                <Building className="w-5 h-5 text-muted-foreground" />
+                <Skeleton className="h-6 w-40" />
+              </div>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent>
               <div className="flex items-center gap-3">
                 <Skeleton className="h-12 w-12 rounded-full" />
                 <div className="space-y-2">
@@ -94,11 +95,12 @@ const ViewRoomSkeleton = () => {
             <TabsTrigger value="students">Students</TabsTrigger>
             <TabsTrigger value="history">Assignment History</TabsTrigger>
           </TabsList>
-          <div className="p-4 border rounded-md mt-2">
+          <div className="p-4 border rounded-md mt-2 bg-card">
             <div className="space-y-4">
+              {/* About section skeleton */}
               <div>
                 <div className="flex items-center gap-2">
-                  <Skeleton className="h-6 w-6" />
+                  <Skeleton className="h-6 w-6 rounded" />
                   <Skeleton className="h-6 w-40" />
                 </div>
                 <div className="mt-2 space-y-2">
@@ -110,16 +112,37 @@ const ViewRoomSkeleton = () => {
 
               <Separator />
 
+              {/* Amenities section skeleton */}
+              <div>
+                <Skeleton className="h-6 w-32 mb-3" />
+                <div className="flex flex-wrap gap-2">
+                  {[1, 2, 3, 4].map((index) => (
+                    <Skeleton key={index} className="h-7 w-20 rounded-full" />
+                  ))}
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Room details section skeleton */}
               <div>
                 <Skeleton className="h-6 w-32 mb-2" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
                   <div className="space-y-2">
                     <Skeleton className="h-4 w-20" />
-                    <Skeleton className="h-4 w-40" />
+                    <Skeleton className="h-4 w-32" />
                   </div>
                   <div className="space-y-2">
                     <Skeleton className="h-4 w-20" />
-                    <Skeleton className="h-4 w-40" />
+                    <Skeleton className="h-4 w-32" />
+                  </div>
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-4 w-32" />
+                  </div>
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-20" />
+                    <Skeleton className="h-4 w-32" />
                   </div>
                 </div>
               </div>

@@ -1,20 +1,36 @@
+import { Skeleton } from '../../components/ui/skeleton';
+
 const TableLoader = () => {
-    return (
-     <div className="bg-white p-4 rounded-md">
-       <div className="animate-pulse">
-        <div className="h-6 bg-gray-300 rounded w-1/4 mb-4"></div>
-        <div className="h-10 bg-gray-300 rounded mb-4"></div>
-        <div className="space-y-4">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <div key={index} className="flex items-center gap-4">
-              <div className="h-10 w-10 bg-gray-300 rounded-full"></div>
-              <div className="flex-1 h-6 bg-gray-300 rounded"></div>
-              <div className="h-6 w-20 bg-gray-300 rounded"></div>
-            </div>
-          ))}
-        </div>
+  return (
+    <div className="space-y-4 w-full">
+      {/* Title skeleton */}
+      <Skeleton className="h-6 w-1/4" />
+
+      {/* Search bar skeleton */}
+      <div className="flex items-center gap-2">
+        <Skeleton className="h-9 w-9 shrink-0" />
+        <Skeleton className="h-9 w-64" />
       </div>
-     </div>
-    );
-  };
+
+      {/* Table rows skeleton */}
+      <div className="space-y-3 pt-2">
+        {Array.from({ length: 5 }).map((_, index) => (
+          <div key={index} className="flex items-center gap-4">
+            <Skeleton className="h-10 w-10 shrink-0 rounded-full" />
+            <Skeleton className="flex-1 h-10" />
+            <Skeleton className="h-10 w-20 shrink-0" />
+            <Skeleton className="h-10 w-20 shrink-0" />
+          </div>
+        ))}
+      </div>
+
+      {/* Pagination skeleton */}
+      <div className="flex items-center justify-between pt-4">
+        <Skeleton className="h-9 w-32" />
+        <Skeleton className="h-9 w-32" />
+      </div>
+    </div>
+  );
+};
+
 export default TableLoader;
