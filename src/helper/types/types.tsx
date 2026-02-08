@@ -39,6 +39,29 @@ export type Visitor = {
   resident?: Resident;
 };
 
+export type RoomResident = {
+  id: string;
+  userId: string;
+  roomId: string | null;
+  studentId: string | null;
+  course: string | null;
+  status: string;
+  checkInDate: string | null;
+  checkOutDate: string | null;
+  emergencyContactName: string | null;
+  emergencyContactPhone: string | null;
+  emergencyContactRelationship: string | null;
+  // User fields
+  name?: string;
+  email?: string;
+  phone?: string;
+  gender?: string;
+  avatar?: string | null;
+  imageUrl?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
+};
+
 export type Room = {
   id: string;
   hallId: string;
@@ -73,6 +96,8 @@ export type Room = {
   updatedAt?: string;
   description?: string | null;
   Amenities?: Amenity[];
+  // Residents with full user details
+  residents?: RoomResident[];
 };
 
 export type images = {
