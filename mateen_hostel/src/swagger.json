@@ -1,0 +1,260 @@
+
+{
+    "openapi":"3.1.0",
+        "info": {
+            "title": "EduQuest API Documentation",
+            "version": "1.0.0",
+            "description": "API documentation for EduQuest"
+        },
+        "servers": [
+            {
+                "url": "http://localhost:4500/api",
+                "description": "Development server"
+            },
+            {
+                "url": "https://eduquest.edu.gh",
+                "description": "Production server"
+            }
+        ],
+        "tags":[
+            {
+                "name": "Tutors",
+                "description":"tutors endpoints"
+            },
+            {
+                "name": "Students",
+                "description":"students endpoints"
+            }
+        ],
+        "paths": {
+            "/students":{
+                "get":{
+                    "summary": "Get all students",
+                    "description": "Returns all students",
+                    "tags": ["Students"],
+                    "responses": {
+                        "200": {
+                            "description": "Students fetched successfully",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/Student"
+                                    }
+                                }
+                            }
+                        },
+                        "401": {
+                            "description": "Unauthorized"
+                        }
+                    }
+                }
+            },
+           
+            "/tutors":{
+                "get":{
+                    "summary": "Get all tutors",
+                    "description": "Returns all tutors",
+                    "tags": ["Tutors"],
+                    "responses": {
+                        "200": {
+                            "description": "Tutors fetched successfully",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/Tutor"
+                                    }
+                                }
+                            }
+                        },
+                        "401": {
+                            "description": "Unauthorized"
+                        }
+                    }
+                }
+            },
+            "/tutors/{id}": {
+                "get": {
+                    "summary": "Get a specific tutor",
+                    "description": "Returns a specific tutor",
+                    "tags": ["Tutors"],
+                    "parameters": [
+                        {
+                            "name": "id",
+                            "in": "path",
+                            "required": true,
+                            "schema": {
+                                "type": "string"
+                            }
+                        }
+                    ],
+                    "responses": {
+                        "200": {
+                            "description": "Tutor fetched successfully",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/Tutor"
+                                    }
+                                }
+                            }
+                        },
+                        "401": {
+                            "description": "Unauthorized"
+                        },
+                        "404": {
+                            "description": "Tutor not found"
+                        }
+                    }
+                }
+            },
+            "/tutors/save": {
+                "post": {
+                    "summary": "Create a new tutor",
+                    "description": "Creates a new tutor",
+                    "tags": ["Tutors"],
+                    "requestBody": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Tutor"
+                                }
+                            }
+                        }
+                    },
+                    "responses": {
+                        "201": {
+                            "description": "Tutor created successfully",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "$ref": "#/components/schemas/Tutor"
+                                    }
+                                }
+                            }
+                        },
+                        "401": {
+                            "description": "Unauthorized"
+                        },
+                        "422": {
+                            "description": "Validation error"
+                        }
+                    }
+                }
+            }
+
+        },
+       
+        "components": {
+            "schemas": {
+                "Tutor": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "firstName": {
+                            "type": "string"
+                        },
+                        "lastName": {
+                            "type": "string"
+                        },
+                        "otherName": {
+                            "type": "string"
+                        },
+                        "email": {
+                            "type": "string"
+                        },
+                        "password": {
+                            "type": "string"
+                        },
+                        "gender": {
+                            "type": "string"
+                        },
+                        "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        "updatedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    "required": ["firstName", "lastName", "otherName", "email", "password", "gender"],
+                    "description": "Tutor model"
+                },
+                "Student": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        },
+                        "firstName": {
+                            "type": "string"
+                        },
+                        "lastName": {
+                            "type": "string"
+                        },
+                        "otherName": {
+                            "type": "string"
+                        },
+                        "email": {
+                            "type": "string"
+                        },
+                        "password": {
+                            "type": "string"
+                        },
+                        "gender": {
+                            "type": "string"
+                        },
+                        "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                        },
+                        "updatedAt": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    "required": ["firstName", "lastName", "otherName", "email", "password", "gender"],
+                    "description": "Student model"
+                }
+            },
+            "securitySchemes": {
+                "BearerAuth": {
+                    "type": "http",
+                    "scheme": "bearer",
+                    "bearerFormat": "JWT"
+                }
+            },
+            "responses": {
+                "Unauthorized": {
+                    "description": "Unauthorized request"
+                }
+            },
+            "parameters": {
+                "Authorization": {
+                    "name": "Authorization",
+                    "in": "header",
+                    "required": true,
+                    "schema": {
+                        "type": "string",
+                        "format": "bearer"
+                    }
+                },
+                "id": {
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }
+            },
+        "security": [
+            {
+                "BearerAuth": []
+            }
+        ]
+       
+    }
+}

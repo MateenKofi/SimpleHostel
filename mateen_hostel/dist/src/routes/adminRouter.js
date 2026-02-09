@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const adminPanel_1 = require("../controller/adminPanel");
+const jsonwebtoken_1 = require("../utils/jsonwebtoken");
+const adminRouter = (0, express_1.Router)();
+adminRouter.use(jsonwebtoken_1.authenticateJWT);
+adminRouter.use((0, jsonwebtoken_1.authorizeRole)(["super_admin"]));
+adminRouter.post("/clear-database", adminPanel_1.clearDatabase);
+exports.default = adminRouter;

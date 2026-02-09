@@ -1,0 +1,409 @@
+[
+  {
+    "modelName": "erd",
+    "fields": [
+      "provider"
+    ]
+  },
+  {
+    "modelName": "client",
+    "fields": [
+      "provider"
+    ]
+  },
+  {
+    "modelName": "db",
+    "fields": [
+      "provider",
+      "url",
+      "directUrl"
+    ]
+  },
+  {
+    "modelName": "Hostel",
+    "fields": [
+      "id",
+      "name",
+      "description",
+      "address",
+      "manager",
+      "email",
+      "phone",
+      "ghCard",
+      "createdAt",
+      "updatedAt",
+      "isVerified",
+      "delFlag",
+      "state",
+      "location",
+      "logoKey",
+      "logoUrl",
+      "allowPartialPayment",
+      "partialPaymentPercentage"
+    ]
+  },
+  {
+    "modelName": "Room",
+    "fields": [
+      "id",
+      "number",
+      "block",
+      "floor",
+      "maxCap",
+      "hostelId",
+      "price",
+      "description",
+      "type",
+      "status",
+      "createdAt",
+      "updatedAt",
+      "delFlag",
+      "gender",
+      "currentResidentCount"
+    ]
+  },
+  {
+    "modelName": "Staff",
+    "fields": [
+      "id",
+      "hostelId",
+      "firstName",
+      "middleName",
+      "lastName",
+      "dateOfBirth",
+      "nationality",
+      "gender",
+      "maritalStatus",
+      "ghanaCardNumber",
+      "phoneNumber",
+      "religion",
+      "email",
+      "residence",
+      "block",
+      "dateOfAppointment",
+      "updatedAt",
+      "passportUrl",
+      "passportKey",
+      "delFlag",
+      "role",
+      "qualification",
+      "type"
+    ]
+  },
+  {
+    "modelName": "Amenities",
+    "fields": [
+      "id",
+      "name",
+      "price",
+      "createdAt",
+      "updatedAt",
+      "hostelId"
+    ]
+  },
+  {
+    "modelName": "Resident",
+    "fields": [
+      "id",
+      "name",
+      "studentId",
+      "course",
+      "phone",
+      "email",
+      "emergencyContactName",
+      "emergencyContactPhone",
+      "relationship",
+      "roomId",
+      "gender",
+      "roomAssigned",
+      "createdAt",
+      "updatedAt",
+      "amountPaid",
+      "balanceOwed",
+      "roomPrice",
+      "delFlag",
+      "calendarYearId",
+      "hostelId",
+      "accessCode"
+    ]
+  },
+  {
+    "modelName": "Payment",
+    "fields": [
+      "id",
+      "amount",
+      "date",
+      "residentId",
+      "status",
+      "roomId",
+      "reference",
+      "method",
+      "updatedAt",
+      "delFlag",
+      "calendarYearId",
+      "historicalResidentId"
+    ]
+  },
+  {
+    "modelName": "Visitor",
+    "fields": [
+      "id",
+      "name",
+      "email",
+      "phone",
+      "residentId",
+      "timeIn",
+      "timeOut",
+      "status",
+      "updatedAt"
+    ]
+  },
+  {
+    "modelName": "User",
+    "fields": [
+      "id",
+      "name",
+      "email",
+      "password",
+      "phoneNumber",
+      "phone",
+      "role",
+      "createdAt",
+      "updatedAt",
+      "imageUrl",
+      "imageKey",
+      "avatar",
+      "gender",
+      "accountStatus",
+      "delFlag",
+      "hostelId",
+      "changedPassword"
+    ]
+  },
+  {
+    "modelName": "Leave",
+    "fields": [
+      "id",
+      "userId",
+      "startDate",
+      "endDate",
+      "reason",
+      "status",
+      "createdAt",
+      "updatedAt",
+      "delFlag"
+    ]
+  },
+  {
+    "modelName": "RoomImage",
+    "fields": [
+      "id",
+      "roomId",
+      "imageUrl",
+      "imageKey",
+      "createdAt",
+      "updatedAt",
+      "delFlag"
+    ]
+  },
+  {
+    "modelName": "CalendarYear",
+    "fields": [
+      "id",
+      "name",
+      "startDate",
+      "endDate",
+      "isActive",
+      "hostelId",
+      "createdAt",
+      "updatedAt"
+    ]
+  },
+  {
+    "modelName": "HistoricalResident",
+    "fields": [
+      "id",
+      "residentId",
+      "roomId",
+      "calendarYearId",
+      "amountPaid",
+      "roomPrice",
+      "createdAt",
+      "updatedAt",
+      "hostelId",
+      "residentCourse",
+      "residentEmail",
+      "residentName",
+      "residentPhone"
+    ]
+  },
+  {
+    "modelName": "HostelImages",
+    "fields": [
+      "id",
+      "hostelId",
+      "imageUrl",
+      "imageKey",
+      "createdAt",
+      "updatedAt",
+      "delFlag"
+    ]
+  },
+  {
+    "modelName": "UserRole",
+    "fields": [
+      "admin",
+      "super_admin"
+    ]
+  },
+  {
+    "modelName": "VisitorStatus",
+    "fields": [
+      "ACTIVE",
+      "CHECKED_OUT"
+    ]
+  },
+  {
+    "modelName": "PaymentStatus",
+    "fields": [
+      "PENDING",
+      "CONFIRMED",
+      "CANCELLED"
+    ]
+  },
+  {
+    "modelName": "Location",
+    "fields": [
+      "AHAFO",
+      "ASHANTI",
+      "BONO",
+      "BONO_EAST",
+      "CENTRAL",
+      "EASTERN",
+      "GREATER_ACCRA",
+      "NORTH_EAST",
+      "NORTHERN",
+      "OTI",
+      "SAVANNAH",
+      "UPPER_EAST",
+      "UPPER_WEST",
+      "VOLTA",
+      "WESTERN",
+      "WESTERN_NORTH"
+    ]
+  },
+  {
+    "modelName": "Religion",
+    "fields": [
+      "CHRISTIAN",
+      "MUSLIM",
+      "TRADITIONALIST"
+    ]
+  },
+  {
+    "modelName": "RoomStatus",
+    "fields": [
+      "AVAILABLE",
+      "OCCUPIED",
+      "MAINTENANCE"
+    ]
+  },
+  {
+    "modelName": "RoomType",
+    "fields": [
+      "SINGLE",
+      "DOUBLE",
+      "SUITE",
+      "QUAD"
+    ]
+  },
+  {
+    "modelName": "Gender",
+    "fields": [
+      "MALE",
+      "FEMALE",
+      "OTHER"
+    ]
+  },
+  {
+    "modelName": "paymentMethod",
+    "fields": [
+      "CASH",
+      "CARD",
+      "BANK",
+      "MOMO",
+      "USSD",
+      "QR_CODE",
+      "VISA",
+      "MASTER_CARD",
+      "ONLINE"
+    ]
+  },
+  {
+    "modelName": "StaffStatus",
+    "fields": [
+      "ACTIVE",
+      "INACTIVE"
+    ]
+  },
+  {
+    "modelName": "MaritalStatus",
+    "fields": [
+      "SINGLE",
+      "MARRIED",
+      "DIVORCED",
+      "WIDOWED"
+    ]
+  },
+  {
+    "modelName": "RoomGender",
+    "fields": [
+      "MALE",
+      "FEMALE",
+      "MIX"
+    ]
+  },
+  {
+    "modelName": "HostelState",
+    "fields": [
+      "PUBLISHED",
+      "UNPUBLISHED"
+    ]
+  },
+  {
+    "modelName": "StaffType",
+    "fields": [
+      "admin",
+      "OTHERS"
+    ]
+  },
+  {
+    "modelName": "LeaveStatus",
+    "fields": [
+      "PENDING",
+      "APPROVED",
+      "REJECTED",
+      "CANCELLED"
+    ]
+  },
+  {
+    "modelName": "paymentSettings",
+    "fields": [
+      "allowPartialPayment",
+      "partialPaymentPercentage"
+    ]
+  },
+  {
+    "modelName": "Announcement",
+    "fields": [
+      "title",
+      "content",
+      "category",
+      "priority",
+      "hostelId",
+      "startDate",
+      "endDate",
+      "type"
+    ]
+  }
+]

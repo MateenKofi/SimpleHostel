@@ -1,0 +1,220 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Forest Green Primary Palette */
+    --background: 30 15% 98%; /* Warm gray background */
+    --foreground: 30 10% 15%; /* Dark warm gray for text */
+    --card: 30 15% 98%;
+    --card-foreground: 30 10% 15%;
+    --popover: 30 15% 98%;
+    --popover-foreground: 30 10% 15%;
+    --primary: 160 30% 38%; /* Forest Green 500 - Main primary color */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 15% 85%; /* Warm gray for secondary */
+    --secondary-foreground: 30 10% 15%;
+    --muted: 30 10% 85%; /* Warm gray muted */
+    --muted-foreground: 30 10% 45%;
+    --accent: 155 25% 45%; /* Lighter green for accents */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 5 75% 55%; /* Warm red for destructive */
+    --destructive-foreground: 0 0% 100%;
+    --border: 30 10% 90%; /* Warm gray border */
+    --input: 30 10% 90%;
+    --ring: 160 30% 38%; /* Green focus ring */
+    --radius: 0.5rem;
+
+    /* Sidebar variables - green palette */
+    --sidebar: 30 15% 98%;
+    --sidebar-foreground: 30 10% 20%;
+    --sidebar-primary: 160 30% 38%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 160 15% 92%;
+    --sidebar-accent-foreground: 160 30% 25%;
+    --sidebar-border: 30 8% 85%;
+    --sidebar-ring: 160 30% 38%;
+  }
+
+  .dark {
+    /* Dark mode with green palette */
+    --background: 30 20% 8%; /* Dark warm gray background */
+    --foreground: 30 15% 95%; /* Light warm gray for text */
+    --card: 30 20% 8%;
+    --card-foreground: 30 15% 95%;
+    --popover: 30 20% 8%;
+    --popover-foreground: 30 15% 95%;
+    --primary: 160 30% 45%; /* Lighter forest green for dark mode */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 20% 15%;
+    --secondary-foreground: 30 15% 95%;
+    --muted: 30 15% 20%;
+    --muted-foreground: 30 15% 65%;
+    --accent: 155 25% 50%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 5 70% 48%; /* Darker red for dark mode */
+    --destructive-foreground: 0 0% 100%;
+    --border: 30 15% 20%;
+    --input: 30 15% 20%;
+    --ring: 160 30% 45%;
+
+    /* Sidebar variables - dark mode */
+    --sidebar: 30 20% 8%;
+    --sidebar-foreground: 30 15% 90%;
+    --sidebar-primary: 160 30% 45%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 160 15% 20%;
+    --sidebar-accent-foreground: 160 25% 85%;
+    --sidebar-border: 30 10% 20%;
+    --sidebar-ring: 160 30% 45%;
+  }
+}
+
+@layer base {
+ 
+ 
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold tracking-tight;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-primary/50 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-primary/70;
+  }
+}
+
+/* Animation utilities */
+@layer utilities {
+  .animation-delay-200 {
+    animation-delay: 0.2s;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 0.4s;
+  }
+
+  .animation-delay-600 {
+    animation-delay: 0.6s;
+  }
+}
+
+/* Custom animations */
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes bounce-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse 3s ease-in-out infinite;
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 2s ease-in-out infinite;
+}
+
+/* Container styles */
+.container {
+  @apply mx-auto px-4 sm:px-6 lg:px-8 max-w-7xl;
+}
+
+/* Button styles */
+.btn {
+  @apply inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2  focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background;
+}
+
+.btn-black {
+  @apply bg-zinc-900 text-zinc-50 hover:bg-zinc-800 h-10 py-2 px-4;
+}
+
+/* Card hover effects */
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+}
+
+/* Image hover effects */
+.img-hover {
+  @apply transition-all duration-300 hover:scale-105;
+}
+
+/* Text gradient */
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-teal-500;
+}
+
+/* Responsive font sizes */
+.text-responsive {
+  @apply text-base sm:text-lg md:text-xl lg:text-2xl;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Prevent layout shift during animations */
+.overflow-hidden {
+  overflow: hidden;
+}
+
+/* Prevent text selection during animations */
+.no-select {
+  user-select: none;
+}
+
+/* Backdrop blur for modals and overlays */
+.backdrop-blur {
+  backdrop-filter: blur(8px);
+}
+
+/* Glass effect */
+.glass {
+  @apply bg-white/10 backdrop-blur-md border border-white/20;
+}
+
+.dark .glass {
+  @apply bg-black/10 border-black/20;
+}

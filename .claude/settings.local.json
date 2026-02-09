@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npm install:*)",
+      "Bash(pnpm run generate:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npx eslint:*)",
+      "WebSearch",
+      "Bash(dir:*)",
+      "Bash(npx tsc:*)",
+      "Bash(find:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm run build:*)",
+      "Bash(pnpm run build)",
+      "Bash(pnpm install:*)",
+      "Bash(git checkout:*)",
+      "Bash(ls:*)",
+      "Bash(if not exist \"E:\\\\Projects\\\\Fuse\\\\SimpleHostel\\\\src\\\\components\\\\announcement\" mkdir \"E:\\\\Projects\\\\Fuse\\\\SimpleHostel\\\\src\\\\components\\\\announcement\")",
+      "Bash(npm ls:*)",
+      "Bash(pnpm migrate:*)",
+      "Bash(npx prisma db push:*)",
+      "Bash(pnpm build:*)",
+      "Bash(git init:*)"
+    ]
+  }
+}

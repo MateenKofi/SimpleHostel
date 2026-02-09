@@ -1,0 +1,13 @@
+src/components/resident/AddResidentModal.tsx(40,17): error TS18047: 'data.gender' is possibly 'null'.
+src/components/resident/ResidentTable.tsx(183,9): error TS2322: Type '({ name: string; selector: (row: Resident) => string | null | undefined; sortable: boolean; wrap: boolean; cell?: undefined; width?: undefined; } | { name: string; selector: (row: Resident) => string | null; sortable: boolean; wrap?: undefined; cell?: undefined; width?: undefined; } | { ...; } | { ...; })[]' is not assignable to type 'TableColumn<Resident>[]'.
+  Type '{ name: string; selector: (row: Resident) => string | null | undefined; sortable: boolean; wrap: boolean; cell?: undefined; width?: undefined; } | { name: string; selector: (row: Resident) => string | null; sortable: boolean; wrap?: undefined; cell?: undefined; width?: undefined; } | { ...; } | { ...; }' is not assignable to type 'TableColumn<Resident>'.
+    Type '{ name: string; selector: (row: Resident) => string | null | undefined; sortable: boolean; wrap: boolean; cell?: undefined; width?: undefined; }' is not assignable to type 'TableColumn<Resident>'.
+      The types returned by 'selector(...)' are incompatible between these types.
+        Type 'string | null | undefined' is not assignable to type 'Primitive'.
+          Type 'undefined' is not assignable to type 'Primitive'.
+src/pages/dashboard/deptors-list/DeptorListTable.tsx(100,9): error TS2322: Type '({ name: string; selector: (row: Resident) => string | null; sortable: boolean; wrap: boolean; cell?: undefined; } | { name: string; selector: (row: Resident) => number; sortable: boolean; wrap?: undefined; cell?: undefined; } | { ...; })[]' is not assignable to type 'TableColumn<Resident>[]'.
+  Type '{ name: string; selector: (row: Resident) => string | null; sortable: boolean; wrap: boolean; cell?: undefined; } | { name: string; selector: (row: Resident) => number; sortable: boolean; wrap?: undefined; cell?: undefined; } | { ...; }' is not assignable to type 'TableColumn<Resident>'.
+    Type '{ name: string; selector: (row: Deptors) => string | null; sortable: boolean; wrap: boolean; cell?: undefined; }' is not assignable to type 'TableColumn<Resident>'.
+      The types returned by 'selector(...)' are incompatible between these types.
+        Type 'string | null' is not assignable to type 'Primitive'.
+          Type 'null' is not assignable to type 'Primitive'.
