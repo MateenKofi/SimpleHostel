@@ -22,7 +22,14 @@
       "Bash(pnpm migrate:*)",
       "Bash(npx prisma db push:*)",
       "Bash(pnpm build:*)",
-      "Bash(git init:*)"
+      "Bash(git init:*)",
+      "Bash(pnpm generate-access-codes:*)",
+      "Bash(npx prisma migrate dev:*)",
+      "Bash(set:*)",
+      "Bash(pnpm generate:*)",
+      "Bash(npx prisma migrate:*)",
+      "Bash(git clean:*)",
+      "Bash(powershell -Command \"Remove-Item -Path ''NUL'' -Force -ErrorAction SilentlyContinue\")"
     ]
   }
 }

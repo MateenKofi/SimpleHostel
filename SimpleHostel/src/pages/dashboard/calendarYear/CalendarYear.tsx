@@ -8,6 +8,7 @@ import SEOHelmet from "@/components/SEOHelmet";
 import { Button } from "@/components/ui/button";
 import { Plus, Calendar } from "lucide-react";
 import { useModal } from "@/components/Modal";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 const CalendarYear = () => {
   const AddCalendarYearAction = useModal("add-calendar-year-modal");
@@ -60,22 +61,23 @@ const CalendarYear = () => {
   const isError = false; // You can add error handling if needed
 
   return (
-    <div className="p-6">
+    <div className="min-h-screen bg-white flex flex-col">
       <SEOHelmet
         title="Calendar Year Management - Fuse"
         description="Manage your calendar years efficiently with our user-friendly interface. Add, view, and manage historical years seamlessly."
         keywords="calendar year management, academic year, Fuse"
       />
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center gap-2">
-          <Calendar className="w-6 h-6" />
-          <h1 className="text-2xl font-bold">Calendar Year Management</h1>
-        </div>
-        <Button onClick={() => AddCalendarYearAction.open()}>
-          <Plus className="w-4 h-4 mr-2" />
-          Start New Year
-        </Button>
-      </div>
+      <PageHeader
+        title="Calendar Year Management"
+        subtitle="Manage academic calendar years and track resident history"
+        icon={Calendar}
+        actions={
+          <Button size="sm" onClick={() => AddCalendarYearAction.open()}>
+            <Plus className="w-4 h-4 mr-2" />
+            Start New Year
+          </Button>
+        }
+      />
 
       {/* Add Calendar Year Modal */}
       <AddCalendarYearForm
@@ -84,22 +86,26 @@ const CalendarYear = () => {
         refectHistoricalYears={refetchAll}
       />
 
-      {/* Stat Cards */}
-      <CalendarYearStats
-        activeYearsCount={activeYearsCount}
-        totalYearsCount={totalYearsCount}
-        totalResidents={totalResidents}
-        currentYearName={currentYear?.name}
-      />
+      <main className="flex-1 p-4 md:p-8">
+        <div className="max-w-6xl mx-auto space-y-6">
+          {/* Stat Cards */}
+          <CalendarYearStats
+            activeYearsCount={activeYearsCount}
+            totalYearsCount={totalYearsCount}
+            totalResidents={totalResidents}
+            currentYearName={currentYear?.name}
+          />
 
-      {/* Data Table */}
-      <CalendarYearTable
-        currentYear={currentYear}
-        historicalYears={historicalYears}
-        isLoading={isLoading}
-        isError={isError}
-        refetch={refetchAll}
-      />
+          {/* Data Table */}
+          <CalendarYearTable
+            currentYear={currentYear}
+            historicalYears={historicalYears}
+            isLoading={isLoading}
+            isError={isError}
+            refetch={refetchAll}
+          />
+        </div>
+      </main>
     </div>
   );
 };

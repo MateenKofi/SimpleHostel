@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { Loader, Plus } from "lucide-react"
+import { Loader, Plus, Megaphone } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { AnnouncementCard, AnnouncementDialog, AnnouncementFilters } from "@/components/announcement"
 import {
@@ -21,6 +21,7 @@ import SEOHelmet from "@/components/SEOHelmet"
 import type { ApiError } from "@/types/dtos"
 import type { Announcement, AnnouncementCategory, AnnouncementPriority, AnnouncementStatus } from "@/types/announcement"
 import { filterAnnouncements } from "@/helper/announcementUtils"
+import { PageHeader } from "@/components/layout/PageHeader"
 
 const AnnouncementDashboard = () => {
     const queryClient = useQueryClient()
@@ -150,53 +151,58 @@ const AnnouncementDashboard = () => {
     const isMutating = createMutation.isPending || updateMutation.isPending || deleteMutation.isPending
 
     return (
-        <div className="p-6">
+        <div className="min-h-screen bg-white flex flex-col">
             <SEOHelmet
                 title="Announcements Dashboard - Fuse"
                 description="Broadcast messages to hostel residents."
             />
-
-            <div className="flex items-center justify-between mb-6">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Announcements</h1>
-                    <p className="text-muted-foreground">Broadcast news, alerts, and events to all residents.</p>
-                </div>
-                <Button onClick={() => setIsCreateDialogOpen(true)}>
-                    <Plus className="w-4 h-4 mr-2" /> Create Announcement
-                </Button>
-            </div>
-
-            <AnnouncementFilters
-                filters={filters}
-                onFiltersChange={setFilters}
-                resultCount={filteredAnnouncements.length}
+            <PageHeader
+                title="Announcements"
+                subtitle="Broadcast news, alerts, and events to all residents"
+                icon={Megaphone}
+                actions={
+                    <Button size="sm" onClick={() => setIsCreateDialogOpen(true)}>
+                        <Plus className="w-4 h-4 mr-2" /> Create Announcement
+                    </Button>
+                }
             />
 
-            {isLoading ? (
-                <div className="flex justify-center p-8">
-                    <Loader className="animate-spin" />
+            <main className="flex-1 p-4 md:p-8">
+                <div className="max-w-6xl mx-auto space-y-6">
+                    <AnnouncementFilters
+                        filters={filters}
+                        onFiltersChange={setFilters}
+                        resultCount={filteredAnnouncements.length}
+                    />
+
+                    {isLoading ? (
+                        <div className="flex justify-center p-8">
+                            <Loader className="animate-spin" />
+                        </div>
+                    ) : filteredAnnouncements.length > 0 ? (
+                        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                            {filteredAnnouncements.map((announcement) => (
+                                <AnnouncementCard
+                                    key={announcement.id}
+                                    announcement={announcement}
+                                    variant="admin"
+                                    onEdit={handleEdit}
+                                    onDelete={handleDeleteClick}
+                                />
+                            ))}
+                        </div>
+                    ) : (
+                        <div className="text-center py-12 border border-dashed rounded-lg bg-muted/30">
+                            <Megaphone className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                            <p className="text-muted-foreground">
+                                {announcements && announcements.length > 0
+                                    ? "No announcements match your filters."
+                                    : "No announcements found. Create your first announcement!"}
+                            </p>
+                        </div>
+                    )}
                 </div>
-            ) : filteredAnnouncements.length > 0 ? (
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {filteredAnnouncements.map((announcement) => (
-                        <AnnouncementCard
-                            key={announcement.id}
-                            announcement={announcement}
-                            variant="admin"
-                            onEdit={handleEdit}
-                            onDelete={handleDeleteClick}
-                        />
-                    ))}
-                </div>
-            ) : (
-                <div className="text-center py-12 border border-dashed rounded-lg bg-muted/30">
-                    <p className="text-muted-foreground">
-                        {announcements && announcements.length > 0
-                            ? "No announcements match your filters."
-                            : "No announcements found. Create your first announcement!"}
-                    </p>
-                </div>
-            )}
+            </main>
 
             {/* Create Dialog */}
             <AnnouncementDialog

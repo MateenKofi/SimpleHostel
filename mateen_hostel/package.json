@@ -12,7 +12,8 @@
     "generate": "npx prisma generate",
     "vercel-build": "npx prisma generate --no-engine",
     "extra:fields": "ts-node extractFields.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "generate-access-codes": "ts-node src/scripts/generateMissingAccessCodes.ts"
   },
   "keywords": [],
   "author": "",

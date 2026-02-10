@@ -50,6 +50,7 @@ import {
 import { toast } from "sonner"
 import { format } from "date-fns"
 import SEOHelmet from "@/components/SEOHelmet"
+import { PageHeader } from "@/components/layout/PageHeader"
 
 interface UpdateMaintenanceData {
     status?: string;
@@ -140,13 +141,17 @@ const MaintenanceManagement = () => {
     )
 
     return (
-        <div className="container py-6 mx-auto space-y-8">
+        <div className="min-h-screen bg-white flex flex-col">
             <SEOHelmet title="Maintenance Management - Admin" />
 
-            <div className="flex flex-col gap-2">
-                <h1 className="text-3xl font-bold tracking-tight">Maintenance Requests</h1>
-                <p className="text-muted-foreground">Monitor and manage all maintenance issues reported by residents.</p>
-            </div>
+            <PageHeader
+                title="Maintenance Requests"
+                subtitle="Monitor and manage all maintenance issues reported by residents"
+                icon={Wrench}
+            />
+
+            <main className="flex-1 p-4 md:p-8">
+                <div className="max-w-6xl mx-auto space-y-6">
 
             {/* Stats Section */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -366,6 +371,8 @@ const MaintenanceManagement = () => {
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
+                </div>
+            </main>
         </div>
     )
 }
