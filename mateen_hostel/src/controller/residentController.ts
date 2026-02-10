@@ -116,10 +116,25 @@ export const deleteResidentController = async (req: Request, res: Response) => {
   try {
     await residentHelper.deleteResident(residentId);
     res.status(HttpStatus.OK).json({
-      message: "Resident deleted successfully",
+      message: "Resident archived successfully",
     });
   } catch (error) {
     const err = formatPrismaError(error); // Ensure this function is used
+    res.status(err.status).json({ message: err.message });
+  }
+};
+
+// Restore a Resident
+export const restoreResidentController = async (req: Request, res: Response) => {
+  const { residentId } = req.params;
+
+  try {
+    await residentHelper.restoreResident(residentId);
+    res.status(HttpStatus.OK).json({
+      message: "Resident restored successfully",
+    });
+  } catch (error) {
+    const err = formatPrismaError(error);
     res.status(err.status).json({ message: err.message });
   }
 };

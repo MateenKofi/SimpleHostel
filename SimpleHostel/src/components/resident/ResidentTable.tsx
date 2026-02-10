@@ -11,17 +11,32 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { HousePlus, Edit, Trash2, MoreHorizontal, User, Mail, Phone, MapPin, Eye } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { useAddedResidentStore } from "@/stores/useAddedResidentStore"
 import type { ResidentDto } from "@/types/dtos"
 import type { ApiError } from "@/types/dtos"
+import { useState } from "react"
 
 const ResidentTable = () => {
   const navigate = useNavigate()
   const setResident = useAddedResidentStore((state) => state.setResident)
   const hostelId = localStorage.getItem("hostelId")
+
+  // State for delete dialog
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [residentToDelete, setResidentToDelete] = useState<ResidentDto | null>(null)
 
   const {
     data: residents,
@@ -43,6 +58,8 @@ const ResidentTable = () => {
     },
     onSuccess: () => {
       refetch()
+      setDeleteDialogOpen(false)
+      setResidentToDelete(null)
     },
     onError: (err: ApiError) => {
       console.error("Failed to delete resident:", err)
@@ -64,10 +81,19 @@ const ResidentTable = () => {
     navigate("/dashboard/edit-resident")
   }
 
-  const handleDelete = (resident: ResidentDto) => {
-    if (confirm(`Are you sure you want to delete ${resident.user?.name || "this resident"}?`)) {
-      deleteMutation.mutate(resident.id)
+  const handleDeleteClick = (resident: ResidentDto) => {
+    setResidentToDelete(resident)
+    setDeleteDialogOpen(true)
+  }
+
+  const handleDeleteConfirm = () => {
+    if (residentToDelete) {
+      deleteMutation.mutate(residentToDelete.id)
     }
+  }
+
+  const handleDelete = (resident: ResidentDto) => {
+    handleDeleteClick(resident)
   }
 
   const getStatusBadge = (status: string) => {
@@ -210,17 +236,41 @@ const ResidentTable = () => {
   ]
 
   return (
-    <CustomDataTable
-      title="Resident Table"
-      columns={columns}
-      data={residents || []}
-      isLoading={isLoading}
-      isError={isError}
-      refetch={refetch}
-      searchable
-      emptyStateMessage="No residents found. Add residents to get started."
-      exportFilename="residents.csv"
-    />
+    <>
+      <CustomDataTable
+        title="Resident Table"
+        columns={columns}
+        data={residents || []}
+        isLoading={isLoading}
+        isError={isError}
+        refetch={refetch}
+        searchable
+        emptyStateMessage="No residents found. Add residents to get started."
+        exportFilename="residents.csv"
+      />
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Archive Resident</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to archive "{residentToDelete?.user?.name || "this resident"}"?
+              Their data will be retained but they will no longer be visible in the system.
+              This action can be reversed by an administrator.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleteMutation.isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              disabled={deleteMutation.isPending}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleteMutation.isPending ? "Archiving..." : "Archive"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   )
 }
 

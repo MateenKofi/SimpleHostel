@@ -7,6 +7,7 @@ import {
   updateResidentController,
   registerResidentController,
   deleteResidentController,
+  restoreResidentController,
   getAllresidentsForHostel,
   getDebtorsForHostel,
   addResidentFromHostelController,
@@ -103,6 +104,7 @@ residentRouter.post(
   "/add",
   authenticateJWT,
   authorizeRole(["super_admin", "admin"]),
+  upload.none(), // Parse multipart/form-data without files
   validatePayload("Resident"),
   validateHostelAccess,
   addResidentFromHostelController,
@@ -144,6 +146,14 @@ residentRouter.delete(
   authorizeRole(["super_admin", "admin"]),
   validateHostelAccess,
   deleteResidentController,
+);
+
+residentRouter.post(
+  "/restore/:residentId",
+  authenticateJWT,
+  authorizeRole(["super_admin", "admin"]),
+  validateHostelAccess,
+  restoreResidentController,
 );
 
 residentRouter.get(

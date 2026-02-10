@@ -237,6 +237,7 @@ model ResidentProfile {
   checkOutDate DateTime?
   accessCode   String?  @unique
   accessCodeExpiry DateTime?
+  deletedAt    DateTime?
 
   hostel              Hostel?              @relation(fields: [hostelId], references: [id])
   room                Room?                @relation(fields: [roomId], references: [id])

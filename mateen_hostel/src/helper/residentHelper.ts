@@ -1,4 +1,5 @@
 import prisma from "../utils/prisma";
+import { Gender } from "@prisma/client";
 import HttpException from "../utils/http-error";
 import { HttpStatus } from "../utils/http-status";
 import { ErrorResponse } from "../utils/types";
@@ -111,7 +112,7 @@ export const register = async (residentData: ResidentRequestDto) => {
         email: normalizedEmail,
         password: hashed,
         name: residentData.name,
-        gender: residentData.gender,
+        gender: residentData.gender.toLowerCase() as Gender, // Convert to lowercase for Prisma enum
         phone: residentData.phone,
         role: "resident",
       },
@@ -143,6 +144,7 @@ export const register = async (residentData: ResidentRequestDto) => {
 export const getAllResident = async () => {
   try {
     const residents = await prisma.residentProfile.findMany({
+      where: { deletedAt: null },
       include: { room: { include: { hostel: true } }, user: true },
     });
     return residents.map((resident) => toResidentDto(resident as any));
@@ -198,23 +200,45 @@ export const updateResident = async (
 
     const resident = await prisma.residentProfile.findUnique({
       where: { id: residentId },
+      include: { user: true },
     });
     if (!resident) {
       throw new HttpException(HttpStatus.NOT_FOUND, "resident not found");
     }
+
+    // Update User fields if provided
+    if (residentData.name || residentData.email || residentData.phone || residentData.gender) {
+      await prisma.user.update({
+        where: { id: resident.userId },
+        data: {
+          ...(residentData.name && { name: residentData.name }),
+          ...(residentData.email && { email: residentData.email }),
+          ...(residentData.phone && { phone: residentData.phone }),
+          ...(residentData.gender && {
+            gender: residentData.gender.toLowerCase() as "male" | "female" | "other"
+          }),
+        },
+      });
+    }
+
+    // Update ResidentProfile fields
     const updatedResident = await prisma.residentProfile.update({
       where: { id: residentId },
       data: {
-        hostelId: residentData.hostelId ?? resident.hostelId,
-        roomId: residentData.roomId ?? resident.roomId,
-        studentId: residentData.studentId ?? resident.studentId,
-        course: residentData.course ?? resident.course,
-        roomNumber: residentData.roomNumber ?? resident.roomNumber,
-        status: residentData.status ?? resident.status,
-        checkInDate: residentData.checkInDate ?? resident.checkInDate,
-        checkOutDate: residentData.checkOutDate ?? resident.checkOutDate,
+        ...(residentData.hostelId && { hostelId: residentData.hostelId }),
+        ...(residentData.roomId && { roomId: residentData.roomId }),
+        ...(residentData.studentId && { studentId: residentData.studentId }),
+        ...(residentData.course && { course: residentData.course }),
+        ...(residentData.roomNumber && { roomNumber: residentData.roomNumber }),
+        ...(residentData.status && { status: residentData.status }),
+        ...(residentData.checkInDate && { checkInDate: residentData.checkInDate }),
+        ...(residentData.checkOutDate && { checkOutDate: residentData.checkOutDate }),
+        ...(residentData.emergencyContactName && { emergencyContactName: residentData.emergencyContactName }),
+        ...(residentData.emergencyContactPhone && { emergencyContactPhone: residentData.emergencyContactPhone }),
+        ...(residentData.emergencyContactRelationship !== undefined && { emergencyContactRelationship: residentData.emergencyContactRelationship }),
       },
     });
+
     const updatedResidentWithDetails = await prisma.residentProfile.findUnique({
       where: { id: residentId },
       include: { room: true, user: true },
@@ -227,25 +251,36 @@ export const updateResident = async (
 
 export const deleteResident = async (residentId: string) => {
   try {
-    const findResident = await prisma.residentProfile.findUnique({
+    const resident = await prisma.residentProfile.findUnique({
       where: { id: residentId },
-      include: { room: true },
+      include: {
+        room: true,
+        user: true,
+      },
     });
-    if (!findResident) {
+
+    if (!resident) {
       throw new HttpException(HttpStatus.NOT_FOUND, "Resident not found");
     }
+
     const result = await prisma.$transaction(async (tx) => {
-      await tx.payment.updateMany({
-        where: { residentProfileId: residentId },
-        data: { residentProfileId: null },
+      // Soft delete by setting deletedAt timestamp
+      await tx.residentProfile.update({
+        where: { id: residentId },
+        data: {
+          deletedAt: new Date(),
+          // Clear room assignment if resident has one
+          roomId: resident.roomId ? null : undefined,
+        },
       });
 
-      await tx.residentProfile.delete({ where: { id: residentId } });
-
-      if (findResident.roomId) {
-        const currentCount = await tx.residentProfile.count({ where: { roomId: findResident.roomId } });
+      // Update room count if resident was assigned
+      if (resident.roomId) {
+        const currentCount = await tx.residentProfile.count({
+          where: { roomId: resident.roomId },
+        });
         await tx.room.update({
-          where: { id: findResident.roomId },
+          where: { id: resident.roomId },
           data: {
             currentResidentCount: currentCount,
             status: currentCount >= 1 ? "occupied" : "available",
@@ -253,10 +288,51 @@ export const deleteResident = async (residentId: string) => {
         });
       }
 
-      return { archived: false };
+      // Archive the associated user record (soft delete user too)
+      await tx.user.update({
+        where: { id: resident.userId },
+        data: { deletedAt: new Date() },
+      });
+
+      return { archived: true };
     });
 
     return result;
+  } catch (error) {
+    throw formatPrismaError(error);
+  }
+};
+
+export const restoreResident = async (residentId: string) => {
+  try {
+    const resident = await prisma.residentProfile.findUnique({
+      where: { id: residentId },
+      include: {
+        user: true,
+      },
+    });
+
+    if (!resident) {
+      throw new HttpException(HttpStatus.NOT_FOUND, "Resident not found");
+    }
+
+    if (!resident.deletedAt) {
+      throw new HttpException(HttpStatus.BAD_REQUEST, "Resident is not archived");
+    }
+
+    // Restore resident and user
+    await prisma.$transaction([
+      prisma.residentProfile.update({
+        where: { id: residentId },
+        data: { deletedAt: null },
+      }),
+      prisma.user.update({
+        where: { id: resident.userId },
+        data: { deletedAt: null },
+      }),
+    ]);
+
+    return { restored: true };
   } catch (error) {
     throw formatPrismaError(error);
   }
@@ -273,7 +349,10 @@ export const getDebtors = async () => {
       .map((d: { residentProfileId: string | null }) => d.residentProfileId)
       .filter((x: string | null): x is string => !!x);
     if (ids.length === 0) return [];
-    const debtors = await prisma.residentProfile.findMany({ where: { id: { in: ids } }, include: { room: true, user: true } });
+    const debtors = await prisma.residentProfile.findMany({
+      where: { id: { in: ids }, deletedAt: null },
+      include: { room: true, user: true }
+    });
     return debtors.map((d) => toResidentDto(d as any));
   } catch (error) {
     throw formatPrismaError(error);
@@ -291,7 +370,10 @@ export const getDebtorsForHostel = async (hostelId: string) => {
       .map((d: { residentProfileId: string | null }) => d.residentProfileId)
       .filter((x: string | null): x is string => !!x);
     if (ids.length === 0) return [];
-    const debtors = await prisma.residentProfile.findMany({ where: { id: { in: ids } }, include: { room: true, user: true } });
+    const debtors = await prisma.residentProfile.findMany({
+      where: { id: { in: ids }, deletedAt: null },
+      include: { room: true, user: true }
+    });
     return debtors.map((d) => toResidentDto(d as any));
   } catch (error) {
     const err = error as ErrorResponse;
@@ -306,6 +388,7 @@ export const getAllresidentsForHostel = async (hostelId: string) => {
   try {
     const residents = await prisma.residentProfile.findMany({
       where: {
+        deletedAt: null,
         OR: [
           { room: { hostelId } },
           { hostelId },
@@ -436,7 +519,28 @@ export const verifyResidentCode = async (code: string, hostelId?: string) => {
     throw new HttpException(HttpStatus.BAD_REQUEST, "Access code has expired");
   }
 
-  return toResidentDto(resident as any);
+  // Fetch payments to calculate financial summary
+  const payments = await prisma.payment.findMany({
+    where: { residentProfileId: resident.id },
+    orderBy: { createdAt: "desc" },
+  });
+
+  // Calculate totals based on the latest confirmed payment
+  const confirmedPayments = payments.filter((p) => p.status === "confirmed");
+  const latestConfirmed = confirmedPayments[0]; // Ordered by createdAt desc
+
+  const amountPaid = latestConfirmed?.amountPaid ?? 0;
+  const balanceOwed = latestConfirmed?.balanceOwed ?? (resident.room?.price || 0);
+  const roomPrice = resident.room?.price || 0;
+
+  const residentDto = toResidentDto(resident as any);
+
+  return {
+    ...residentDto,
+    amountPaid,
+    roomPrice,
+    balanceOwed,
+  };
 };
 
 export const checkInResident = async (residentId: string) => {
@@ -509,6 +613,7 @@ export const getResidentRoomDetails = async (userId: string) => {
       where: {
         roomId: resident.roomId,
         id: { not: resident.id }, // Exclude the resident themselves
+        deletedAt: null, // Exclude archived residents
       },
       include: {
         user: {

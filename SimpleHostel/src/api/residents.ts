@@ -67,12 +67,15 @@ export const deleteResident = async (residentId: string, hostelId: string) => {
     return response.data;
 };
 
-export const updateResident = async (residentId: string, formData: FormData) => {
-    const response = await axiosInstance.put(`/residents/update/${residentId}`, formData, {
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
+export const restoreResident = async (residentId: string, hostelId: string) => {
+    const response = await axiosInstance.post(`/residents/restore/${residentId}`, {}, {
+        params: { hostelId }
     });
+    return response.data;
+};
+
+export const updateResident = async (residentId: string, data: Partial<ResidentDto> & { name?: string; email?: string; phone?: string; gender?: string; emergencyContactRelationship?: string }) => {
+    const response = await axiosInstance.put(`/residents/update/${residentId}`, data);
     return response.data;
 };
 
