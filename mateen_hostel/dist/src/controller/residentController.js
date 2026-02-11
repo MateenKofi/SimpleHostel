@@ -45,7 +45,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPaymentReceiptController = exports.getAllocationLetterController = exports.createFeedbackController = exports.getResidentAnnouncementsController = exports.getResidentBillingController = exports.getResidentRequestsController = exports.createMaintenanceRequestController = exports.getResidentRoomDetailsController = exports.checkInResidentController = exports.verifyResidentCodeController = exports.assignRoomToResidentController = exports.addResidentFromHostelController = exports.getAllresidentsForHostel = exports.getDebtorsForHostel = exports.getAlldebtors = exports.deleteResidentController = exports.updateResidentController = exports.getResidentByEmailController = exports.getResidentByIdController = exports.getAllResidentsController = exports.registerResidentController = void 0;
+exports.getPaymentReceiptController = exports.getAllocationLetterController = exports.createFeedbackController = exports.getResidentAnnouncementsController = exports.getResidentBillingController = exports.getResidentRequestsController = exports.createMaintenanceRequestController = exports.getResidentRoomDetailsController = exports.checkInResidentController = exports.verifyResidentCodeController = exports.assignRoomToResidentController = exports.addResidentFromHostelController = exports.getAllresidentsForHostel = exports.getDebtorsForHostel = exports.getAlldebtors = exports.restoreResidentController = exports.deleteResidentController = exports.updateResidentController = exports.getResidentByEmailController = exports.getResidentByIdController = exports.getAllResidentsController = exports.registerResidentController = void 0;
 const residentHelper = __importStar(require("../helper/residentHelper")); // Assuming your helper functions are in this file
 const http_status_1 = require("../utils/http-status");
 const http_error_1 = __importDefault(require("../utils/http-error"));
@@ -139,7 +139,7 @@ const deleteResidentController = (req, res) => __awaiter(void 0, void 0, void 0,
     try {
         yield residentHelper.deleteResident(residentId);
         res.status(http_status_1.HttpStatus.OK).json({
-            message: "Resident deleted successfully",
+            message: "Resident archived successfully",
         });
     }
     catch (error) {
@@ -148,6 +148,21 @@ const deleteResidentController = (req, res) => __awaiter(void 0, void 0, void 0,
     }
 });
 exports.deleteResidentController = deleteResidentController;
+// Restore a Resident
+const restoreResidentController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { residentId } = req.params;
+    try {
+        yield residentHelper.restoreResident(residentId);
+        res.status(http_status_1.HttpStatus.OK).json({
+            message: "Resident restored successfully",
+        });
+    }
+    catch (error) {
+        const err = (0, formatPrisma_1.formatPrismaError)(error);
+        res.status(err.status).json({ message: err.message });
+    }
+});
+exports.restoreResidentController = restoreResidentController;
 const getAlldebtors = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const debtors = yield residentHelper.getDebtors();

@@ -23,7 +23,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPaymentReceiptData = exports.getAllocationDetails = exports.createFeedback = exports.getResidentAnnouncements = exports.getResidentBilling = exports.getResidentRequests = exports.createMaintenanceRequest = exports.getResidentRoomDetails = exports.checkInResident = exports.verifyResidentCode = exports.assignRoomToResident = exports.addResidentFromHostel = exports.getAllresidentsForHostel = exports.getDebtorsForHostel = exports.getDebtors = exports.deleteResident = exports.updateResident = exports.getResidentByEmail = exports.getResidentById = exports.getAllResident = exports.register = exports.sendPasswordSetupEmail = exports.generateAccessCode = exports.generateRandomPassword = void 0;
+exports.getPaymentReceiptData = exports.getAllocationDetails = exports.createFeedback = exports.getResidentAnnouncements = exports.getResidentBilling = exports.getResidentRequests = exports.createMaintenanceRequest = exports.getResidentRoomDetails = exports.checkInResident = exports.verifyResidentCode = exports.assignRoomToResident = exports.addResidentFromHostel = exports.getAllresidentsForHostel = exports.getDebtorsForHostel = exports.getDebtors = exports.restoreResident = exports.deleteResident = exports.updateResident = exports.getResidentByEmail = exports.getResidentById = exports.getAllResident = exports.register = exports.sendPasswordSetupEmail = exports.generateAccessCode = exports.generateRandomPassword = void 0;
 const prisma_1 = __importDefault(require("../utils/prisma"));
 const http_error_1 = __importDefault(require("../utils/http-error"));
 const http_status_1 = require("../utils/http-status");
@@ -114,7 +114,7 @@ const register = (residentData) => __awaiter(void 0, void 0, void 0, function* (
                 email: normalizedEmail,
                 password: hashed,
                 name: residentData.name,
-                gender: residentData.gender,
+                gender: residentData.gender.toLowerCase(), // Convert to lowercase for Prisma enum
                 phone: residentData.phone,
                 role: "resident",
             },
@@ -145,6 +145,7 @@ exports.register = register;
 const getAllResident = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const residents = yield prisma_1.default.residentProfile.findMany({
+            where: { deletedAt: null },
             include: { room: { include: { hostel: true } }, user: true },
         });
         return residents.map((resident) => (0, dto_1.toResidentDto)(resident));
@@ -188,7 +189,6 @@ const getResidentByEmail = (email) => __awaiter(void 0, void 0, void 0, function
 });
 exports.getResidentByEmail = getResidentByEmail;
 const updateResident = (residentId, residentData) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g, _h;
     try {
         const validateResident = residentSchema_1.updateResidentSchema.safeParse(residentData);
         if (!validateResident.success) {
@@ -197,22 +197,24 @@ const updateResident = (residentId, residentData) => __awaiter(void 0, void 0, v
         }
         const resident = yield prisma_1.default.residentProfile.findUnique({
             where: { id: residentId },
+            include: { user: true },
         });
         if (!resident) {
             throw new http_error_1.default(http_status_1.HttpStatus.NOT_FOUND, "resident not found");
         }
+        // Update User fields if provided
+        if (residentData.name || residentData.email || residentData.phone || residentData.gender) {
+            yield prisma_1.default.user.update({
+                where: { id: resident.userId },
+                data: Object.assign(Object.assign(Object.assign(Object.assign({}, (residentData.name && { name: residentData.name })), (residentData.email && { email: residentData.email })), (residentData.phone && { phone: residentData.phone })), (residentData.gender && {
+                    gender: residentData.gender.toLowerCase()
+                })),
+            });
+        }
+        // Update ResidentProfile fields
         const updatedResident = yield prisma_1.default.residentProfile.update({
             where: { id: residentId },
-            data: {
-                hostelId: (_a = residentData.hostelId) !== null && _a !== void 0 ? _a : resident.hostelId,
-                roomId: (_b = residentData.roomId) !== null && _b !== void 0 ? _b : resident.roomId,
-                studentId: (_c = residentData.studentId) !== null && _c !== void 0 ? _c : resident.studentId,
-                course: (_d = residentData.course) !== null && _d !== void 0 ? _d : resident.course,
-                roomNumber: (_e = residentData.roomNumber) !== null && _e !== void 0 ? _e : resident.roomNumber,
-                status: (_f = residentData.status) !== null && _f !== void 0 ? _f : resident.status,
-                checkInDate: (_g = residentData.checkInDate) !== null && _g !== void 0 ? _g : resident.checkInDate,
-                checkOutDate: (_h = residentData.checkOutDate) !== null && _h !== void 0 ? _h : resident.checkOutDate,
-            },
+            data: Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign(Object.assign({}, (residentData.hostelId && { hostelId: residentData.hostelId })), (residentData.roomId && { roomId: residentData.roomId })), (residentData.studentId && { studentId: residentData.studentId })), (residentData.course && { course: residentData.course })), (residentData.roomNumber && { roomNumber: residentData.roomNumber })), (residentData.status && { status: residentData.status })), (residentData.checkInDate && { checkInDate: residentData.checkInDate })), (residentData.checkOutDate && { checkOutDate: residentData.checkOutDate })), (residentData.emergencyContactName && { emergencyContactName: residentData.emergencyContactName })), (residentData.emergencyContactPhone && { emergencyContactPhone: residentData.emergencyContactPhone })), (residentData.emergencyContactRelationship !== undefined && { emergencyContactRelationship: residentData.emergencyContactRelationship })),
         });
         const updatedResidentWithDetails = yield prisma_1.default.residentProfile.findUnique({
             where: { id: residentId },
@@ -227,30 +229,45 @@ const updateResident = (residentId, residentData) => __awaiter(void 0, void 0, v
 exports.updateResident = updateResident;
 const deleteResident = (residentId) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const findResident = yield prisma_1.default.residentProfile.findUnique({
+        const resident = yield prisma_1.default.residentProfile.findUnique({
             where: { id: residentId },
-            include: { room: true },
+            include: {
+                room: true,
+                user: true,
+            },
         });
-        if (!findResident) {
+        if (!resident) {
             throw new http_error_1.default(http_status_1.HttpStatus.NOT_FOUND, "Resident not found");
         }
         const result = yield prisma_1.default.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
-            yield tx.payment.updateMany({
-                where: { residentProfileId: residentId },
-                data: { residentProfileId: null },
+            // Soft delete by setting deletedAt timestamp
+            yield tx.residentProfile.update({
+                where: { id: residentId },
+                data: {
+                    deletedAt: new Date(),
+                    // Clear room assignment if resident has one
+                    roomId: resident.roomId ? null : undefined,
+                },
             });
-            yield tx.residentProfile.delete({ where: { id: residentId } });
-            if (findResident.roomId) {
-                const currentCount = yield tx.residentProfile.count({ where: { roomId: findResident.roomId } });
+            // Update room count if resident was assigned
+            if (resident.roomId) {
+                const currentCount = yield tx.residentProfile.count({
+                    where: { roomId: resident.roomId },
+                });
                 yield tx.room.update({
-                    where: { id: findResident.roomId },
+                    where: { id: resident.roomId },
                     data: {
                         currentResidentCount: currentCount,
                         status: currentCount >= 1 ? "occupied" : "available",
                     },
                 });
             }
-            return { archived: false };
+            // Archive the associated user record (soft delete user too)
+            yield tx.user.update({
+                where: { id: resident.userId },
+                data: { deletedAt: new Date() },
+            });
+            return { archived: true };
         }));
         return result;
     }
@@ -259,6 +276,38 @@ const deleteResident = (residentId) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.deleteResident = deleteResident;
+const restoreResident = (residentId) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const resident = yield prisma_1.default.residentProfile.findUnique({
+            where: { id: residentId },
+            include: {
+                user: true,
+            },
+        });
+        if (!resident) {
+            throw new http_error_1.default(http_status_1.HttpStatus.NOT_FOUND, "Resident not found");
+        }
+        if (!resident.deletedAt) {
+            throw new http_error_1.default(http_status_1.HttpStatus.BAD_REQUEST, "Resident is not archived");
+        }
+        // Restore resident and user
+        yield prisma_1.default.$transaction([
+            prisma_1.default.residentProfile.update({
+                where: { id: residentId },
+                data: { deletedAt: null },
+            }),
+            prisma_1.default.user.update({
+                where: { id: resident.userId },
+                data: { deletedAt: null },
+            }),
+        ]);
+        return { restored: true };
+    }
+    catch (error) {
+        throw (0, formatPrisma_1.formatPrismaError)(error);
+    }
+});
+exports.restoreResident = restoreResident;
 const getDebtors = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const debtorRefs = yield prisma_1.default.payment.findMany({
@@ -271,7 +320,10 @@ const getDebtors = () => __awaiter(void 0, void 0, void 0, function* () {
             .filter((x) => !!x);
         if (ids.length === 0)
             return [];
-        const debtors = yield prisma_1.default.residentProfile.findMany({ where: { id: { in: ids } }, include: { room: true, user: true } });
+        const debtors = yield prisma_1.default.residentProfile.findMany({
+            where: { id: { in: ids }, deletedAt: null },
+            include: { room: true, user: true }
+        });
         return debtors.map((d) => (0, dto_1.toResidentDto)(d));
     }
     catch (error) {
@@ -291,7 +343,10 @@ const getDebtorsForHostel = (hostelId) => __awaiter(void 0, void 0, void 0, func
             .filter((x) => !!x);
         if (ids.length === 0)
             return [];
-        const debtors = yield prisma_1.default.residentProfile.findMany({ where: { id: { in: ids } }, include: { room: true, user: true } });
+        const debtors = yield prisma_1.default.residentProfile.findMany({
+            where: { id: { in: ids }, deletedAt: null },
+            include: { room: true, user: true }
+        });
         return debtors.map((d) => (0, dto_1.toResidentDto)(d));
     }
     catch (error) {
@@ -304,6 +359,7 @@ const getAllresidentsForHostel = (hostelId) => __awaiter(void 0, void 0, void 0,
     try {
         const residents = yield prisma_1.default.residentProfile.findMany({
             where: {
+                deletedAt: null,
                 OR: [
                     { room: { hostelId } },
                     { hostelId },
@@ -388,6 +444,7 @@ const assignRoomToResident = (residentId, roomId) => __awaiter(void 0, void 0, v
 });
 exports.assignRoomToResident = assignRoomToResident;
 const verifyResidentCode = (code, hostelId) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c, _d;
     const normalizedCode = code.trim().toUpperCase();
     const resident = yield prisma_1.default.residentProfile.findFirst({
         where: Object.assign({ accessCode: {
@@ -408,7 +465,21 @@ const verifyResidentCode = (code, hostelId) => __awaiter(void 0, void 0, void 0,
     if (resident.accessCodeExpiry && new Date() > resident.accessCodeExpiry) {
         throw new http_error_1.default(http_status_1.HttpStatus.BAD_REQUEST, "Access code has expired");
     }
-    return (0, dto_1.toResidentDto)(resident);
+    // Fetch payments to calculate financial summary
+    const payments = yield prisma_1.default.payment.findMany({
+        where: { residentProfileId: resident.id },
+        orderBy: { createdAt: "desc" },
+    });
+    // Calculate totals based on the latest confirmed payment
+    const confirmedPayments = payments.filter((p) => p.status === "confirmed");
+    const latestConfirmed = confirmedPayments[0]; // Ordered by createdAt desc
+    const amountPaid = (_a = latestConfirmed === null || latestConfirmed === void 0 ? void 0 : latestConfirmed.amountPaid) !== null && _a !== void 0 ? _a : 0;
+    const balanceOwed = (_b = latestConfirmed === null || latestConfirmed === void 0 ? void 0 : latestConfirmed.balanceOwed) !== null && _b !== void 0 ? _b : (((_c = resident.room) === null || _c === void 0 ? void 0 : _c.price) || 0);
+    const roomPrice = ((_d = resident.room) === null || _d === void 0 ? void 0 : _d.price) || 0;
+    const residentDto = (0, dto_1.toResidentDto)(resident);
+    return Object.assign(Object.assign({}, residentDto), { amountPaid,
+        roomPrice,
+        balanceOwed });
 });
 exports.verifyResidentCode = verifyResidentCode;
 const checkInResident = (residentId) => __awaiter(void 0, void 0, void 0, function* () {
@@ -472,6 +543,7 @@ const getResidentRoomDetails = (userId) => __awaiter(void 0, void 0, void 0, fun
             where: {
                 roomId: resident.roomId,
                 id: { not: resident.id }, // Exclude the resident themselves
+                deletedAt: null, // Exclude archived residents
             },
             include: {
                 user: {
