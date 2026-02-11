@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getCurrentCalendarYear, getHistoricalCalendarYears } from "@/api/calendar";
 import { getCalendarYearReport } from "@/api/analytics";
 import { DashboardLoading } from "../loaders/DashboardLoader";
-import CustomeRefetch from "../CustomeRefetch";
+import CustomeRefetch from "../CustomRefetch";
 import MonthlyRevenue from "./charts/MonthlyRevenue";
 import PaymentMethod from "./charts/PaymentMethod";
 import PaymentMethodBreakDown from "./PaymentMethodBreakDown";

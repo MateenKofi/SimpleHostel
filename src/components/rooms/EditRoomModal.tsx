@@ -160,7 +160,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
       setValue("type", (formdata?.type?.toLowerCase() || "single") as "single" | "double" | "suite" | "quad");
       setValue("maxOccupancy", formdata?.maxCap);
       setValue("basePrice", formdata?.price);
-      setValue("description", formdata?.description);
+      setValue("description", formdata?.description ?? undefined);
       setValue("status", (formdata?.status?.toLowerCase() || "available") as 'available' | 'maintenance' | 'occupied');
       setValue("gender", (formdata?.gender?.charAt(0).toUpperCase() + formdata?.gender?.slice(1).toLowerCase() || "Male") as "Male" | "Female" | "Mix");
 

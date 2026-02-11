@@ -94,14 +94,21 @@ export interface ResidentDto {
     status: string;
     checkInDate: string | null;
     checkOutDate: string | null;
+    accessCode?: string | null;
+    accessCodeExpiry?: string | null;
+    emergencyContactName?: string | null;
+    emergencyContactPhone?: string | null;
+    emergencyContactRelationship?: string | null;
     name?: string; // Legacy compatibility
     email?: string; // Legacy compatibility
     phone?: string; // Legacy compatibility
-    accessCode?: string | null; // Legacy compatibility
+    gender?: string | null; // Legacy compatibility
+    relationship?: string | null; // Legacy compatibility
     roomPrice?: number; // Legacy compatibility
     amountPaid?: number | null; // Legacy compatibility
     balanceOwed?: number | null; // Legacy compatibility
     calendarYearId?: string; // Legacy compatibility
+    deletedAt?: string | null; // Soft delete timestamp
     user?: UserDto;
     room?: RoomDto;
     roommates?: ResidentDto[]; // Added

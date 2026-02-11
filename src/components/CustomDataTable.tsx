@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import DataTable, { TableColumn } from 'react-data-table-component';
 import { Download, Search, FileX, SearchX } from 'lucide-react';
 import TableLoader from './loaders/TableLoader';
-import CustomeRefetch from './CustomeRefetch';
+import CustomeRefetch from './CustomRefetch';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';

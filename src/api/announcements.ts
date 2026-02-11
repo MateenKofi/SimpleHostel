@@ -16,6 +16,16 @@ export const createAnnouncement = async (payload: CreateAnnouncementRequest) => 
     return response.data;
 };
 
+export const updateAnnouncement = async (announcementId: string, payload: Partial<CreateAnnouncementRequest>) => {
+    const response = await axiosInstance.patch(`/admin/announcement/${announcementId}`, payload);
+    return response.data;
+};
+
+export const deleteAnnouncement = async (announcementId: string) => {
+    const response = await axiosInstance.delete(`/admin/announcement/${announcementId}`);
+    return response.data;
+};
+
 export const getAnnouncementHistory = async () => {
     const response = await axiosInstance.get('/residents/announcements');
     return response.data;

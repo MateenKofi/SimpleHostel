@@ -36,7 +36,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getHostelById, updateHostel, updatePaymentSettings, updateHostelRules, updateHostelDocuments } from "@/api/hostels";
-import CustomeRefetch from "@/components/CustomeRefetch";
+import CustomeRefetch from "@/components/CustomRefetch";
 import ImageUpload from "@/components/ImageUpload";
 import UploadSingleImage from "@/components/UploadSingleImage";
 import SEOHelmet from "@/components/SEOHelmet";

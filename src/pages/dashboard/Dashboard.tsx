@@ -3,6 +3,8 @@ import SuperAdmin from "@/components/dashboard/SuperAdmin";
 import SEOHelmet from "@/components/SEOHelmet";
 import { useAuthStore } from "@/stores/useAuthStore";
 import Resident from "@/components/dashboard/Resident";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { LayoutDashboard } from "lucide-react";
 
 const Dashboard = () => {
   const { user } = useAuthStore();
@@ -17,12 +19,12 @@ const Dashboard = () => {
       />
       {/* Show header only for non-resident users (resident has its own in-component header) */}
       {!isResident && (
-        <div className="p-4">
-          <h1 className="text-2xl font-bold">Welcome, {user?.name || 'Guest'}</h1>
-          <p className="mt-2 text-gray-600">
-            This is your dashboard where you can manage your account and settings.
-          </p>
-        </div>
+        <PageHeader
+          title={`Welcome, ${user?.name || 'Guest'}`}
+          subtitle="This is your dashboard where you can manage your account and settings"
+          icon={LayoutDashboard}
+          sticky={false}
+        />
       )}
       <div>
         {user && user.role === 'super_admin' && <SuperAdmin />}

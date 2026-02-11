@@ -1,5 +1,5 @@
 import React from "react";
-import CustomeRefetch from "./CustomeRefetch";
+import CustomeRefetch from "./CustomRefetch";
 import LogoLoader from "./loaders/logoLoader";
 import { TextField } from "@/components/TextField";
 import { Loader } from "lucide-react";

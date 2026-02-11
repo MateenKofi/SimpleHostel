@@ -37,35 +37,26 @@ import { useNavigate } from "react-router-dom"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
-import type { UserDto, ResidentDto, ApiError } from "@/types/dtos"
+import type { ResidentDto, UserDto, ApiError } from "@/types/dtos"
 
 const paymentFormSchema = z.object({
   paymentAmount: z.number().min(1, "Payment amount must be greater than 0"),
 })
 type PaymentInputs = z.infer<typeof paymentFormSchema>
 
-// Helper function to get resident properties from union type
-const getResidentName = (resident: UserDto | ResidentDto): string => resident.name || "";
-const getResidentEmail = (resident: UserDto | ResidentDto): string => resident.email || "";
-const getResidentPhone = (resident: UserDto | ResidentDto): string => resident.phone || "";
-const getResidentStudentId = (resident: UserDto | ResidentDto): string | null => {
-  if ("studentId" in resident) return resident.studentId;
-  return resident.residentProfile?.studentId || null;
-};
-const getResidentCourse = (resident: UserDto | ResidentDto): string | null => {
-  if ("course" in resident) return resident.course;
-  return resident.residentProfile?.course || null;
-};
-const getResidentGender = (resident: UserDto | ResidentDto): string | null => {
-  // UserDto has gender directly, ResidentDto has it in user property (legacy)
-  if ("userId" in resident) {
-    // This is ResidentDto, but it doesn't have user populated in this context
-    // Return null since gender is not available
-    return null;
-  }
-  // This is UserDto which has gender directly
-  return resident.gender || null;
-};
+// Helper function to get resident properties
+const getResidentName = (resident: UserDto | ResidentDto): string =>
+  (resident as any)?.user?.name || (resident as any)?.name || "";
+const getResidentEmail = (resident: UserDto | ResidentDto): string =>
+  (resident as any)?.user?.email || (resident as any)?.email || "";
+const getResidentPhone = (resident: UserDto | ResidentDto): string =>
+  (resident as any)?.user?.phone || (resident as any)?.phone || "";
+const getResidentStudentId = (resident: UserDto | ResidentDto): string | null =>
+  (resident as any)?.studentId || (resident as any)?.residentProfile?.studentId || null;
+const getResidentCourse = (resident: UserDto | ResidentDto): string | null =>
+  (resident as any)?.course || (resident as any)?.residentProfile?.course || null;
+const getResidentGender = (resident: UserDto | ResidentDto): string | null =>
+  (resident as any)?.user?.gender || (resident as any)?.gender || null;
 
 const PaymentSummaryForm = () => {
   const navigate = useNavigate()
@@ -179,7 +170,7 @@ const PaymentSummaryForm = () => {
               <div className="flex items-center gap-4">
                 <Avatar className="w-16 h-16 border border-gray-100">
                   <AvatarFallback className="text-xl bg-primary/10 text-primary font-bold">
-                    {getInitials(getResidentName(resident))}
+                    {getInitials(getResidentName(resident) || "Resident")}
                   </AvatarFallback>
                 </Avatar>
                 <div>

@@ -67,11 +67,29 @@ export const deleteResident = async (residentId: string, hostelId: string) => {
     return response.data;
 };
 
-export const updateResident = async (residentId: string, formData: FormData) => {
-    const response = await axiosInstance.put(`/residents/update/${residentId}`, formData, {
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
+export const restoreResident = async (residentId: string, hostelId: string) => {
+    const response = await axiosInstance.post(`/residents/restore/${residentId}`, {}, {
+        params: { hostelId }
     });
+    return response.data;
+};
+
+export const updateResident = async (residentId: string, data: Partial<ResidentDto> & { name?: string; email?: string; phone?: string; gender?: string; emergencyContactRelationship?: string }) => {
+    const response = await axiosInstance.put(`/residents/update/${residentId}`, data);
+    return response.data;
+};
+
+export const getResidentById = async (residentId: string): Promise<{ data: ResidentDto }> => {
+    const response = await axiosInstance.get(`/residents/${residentId}`);
+    return response.data;
+};
+
+export const verifyResidentAccessCode = async (code: string, hostelId?: string): Promise<{ data: ResidentDto }> => {
+    const response = await axiosInstance.post("/residents/verify", { code, hostelId });
+    return response.data;
+};
+
+export const checkInResident = async (residentId: string): Promise<{ data: ResidentDto }> => {
+    const response = await axiosInstance.post(`/residents/${residentId}/checkin`);
     return response.data;
 };

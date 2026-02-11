@@ -1,4 +1,6 @@
-export const fadeIn = (direction: "up" | "down" | "left" | "right", delay = 0) => {
+import type { Variants } from "framer-motion"
+
+export const fadeIn = (direction: "up" | "down" | "left" | "right", delay = 0): Variants => {
   return {
     hidden: {
       y: direction === "up" ? 80 : direction === "down" ? -80 : 0,
@@ -10,7 +12,7 @@ export const fadeIn = (direction: "up" | "down" | "left" | "right", delay = 0) =
       x: 0,
       opacity: 1,
       transition: {
-        type: "tween",
+        type: "tween" as const,
         duration: 0.8,
         delay,
         ease: [0.25, 0.25, 0.25, 0.75],

@@ -63,7 +63,7 @@ const RoomCard = ({ room, onBookRoom }: RoomCardProps) => {
 
   return (
     <div
-      className="relative aspect-[3/4] overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-all duration-300 group cursor-pointer bg-muted"
+      className="relative aspect-[3/4] overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-all duration-300 h-auto group cursor-pointer bg-muted"
       onClick={() => onBookRoom(room)}
     >
       {/* Background Image */}

@@ -5,7 +5,7 @@ import { X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getHostels } from "@/api/hostels";
 import { Hostel } from "@/helper/types/types";
-import CustomeRefetch from "@/components/CustomeRefetch";
+import CustomeRefetch from "@/components/CustomRefetch";
 import HostelCard from "@/components/hostel/HostelCard";
 import { useDebounce } from "@/helper/useDebounce";
 import FilterPanel from "@components/FilterPanel";

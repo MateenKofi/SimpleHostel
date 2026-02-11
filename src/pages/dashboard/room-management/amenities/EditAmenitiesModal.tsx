@@ -80,7 +80,7 @@ const EditAmenitiesModal: React.FC<EditAmenitiesModalProps> = ({ onClose, formda
                     {errors.price && <span className="text-sm text-red-500">{errors.price.message}</span>}
                     <button
                         type="submit"
-                        className="flex items-center gap-2 px-4 py-2 text-white bg-black rounded-md"
+                        className="flex items-center gap-2 px-4 py-2 text-white bg-primary rounded-md"
                     >
                         {AddAmenitiesMutation.isPending ? <Loader className="w-4 h-4 animate-spin" /> :
                             (

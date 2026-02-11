@@ -98,6 +98,14 @@ export type Room = {
   Amenities?: Amenity[];
   // Residents with full user details
   residents?: RoomResident[];
+  // Hostel information (optional, may not always be included)
+  hostel?: {
+    id: string;
+    name: string;
+    location: string;
+    address: string;
+    logoUrl: string | null;
+  } | null;
 };
 
 export type images = {

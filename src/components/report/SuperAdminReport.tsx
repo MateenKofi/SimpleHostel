@@ -8,7 +8,7 @@ import { getCurrentCalendarYear, getHistoricalCalendarYears } from "@/api/calend
 import { getCalendarYearReport } from "@/api/analytics";
 import { Hostel } from "@/helper/types/types";
 import { DashboardLoading } from "../loaders/DashboardLoader";
-import CustomeRefetch from "../CustomeRefetch";
+import CustomeRefetch from "../CustomRefetch";
 import MonthlyRevenue from "./charts/MonthlyRevenue";
 import PaymentMethod from "./charts/PaymentMethod";
 import PaymentMethodBreakDown from "./PaymentMethodBreakDown";

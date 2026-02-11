@@ -45,6 +45,7 @@ import EditResident from "./components/resident/EditResident";
 import Report from './pages/dashboard/report/Report';
 import PaymentSuccess from '@components/payment-success';
 import ResidentRoomDetails from "./pages/dashboard/resident-management/ResidentRoomDetails";
+import ViewResident from "./pages/dashboard/resident-management/ViewResident";
 import MakeRequest from "./pages/dashboard/resident-management/MakeRequest";
 import PaymentBilling from "./pages/dashboard/resident-management/PaymentBilling";
 import Announcements from "./pages/dashboard/resident-management/Announcements";
@@ -95,6 +96,7 @@ function App() {
             <Route path="room-assignment" element={<RoomAssignmentAndPayment />} />
             <Route path="resident-management" element={<ResidentManagement />} />
             <Route path="resident-management/add-resident" element={<AddResident />} />
+            <Route path="view-resident" element={<ViewResident />} />
             <Route path="deptors-list" element={<DeptorsList />} />
             <Route path="payment" element={<PaymentSummaryForm />} />
             <Route path="top-up" element={<TopUpPaymentForm />} />

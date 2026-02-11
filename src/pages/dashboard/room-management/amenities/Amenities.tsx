@@ -1,5 +1,5 @@
 "use client";
-import { Building, Plus, Edit, Trash2, Loader } from "lucide-react";
+import { Plus, Edit, Trash2, Loader } from "lucide-react";
 import { useModal } from "@/components/Modal";
 import AmenitiesModal from "./AmenitiesModal";
 import EditAmenitiesModal from "./EditAmenitiesModal";
@@ -10,8 +10,8 @@ import { toast } from "sonner";
 import { useState } from "react";
 import CustomDataTable from "@/components/CustomDataTable";
 import { Amenity } from "@/helper/types/types";
-import SEOHelmet from "@/components/SEOHelmet";
 import type { ApiError } from "@/types/dtos";
+import { Button } from "@/components/ui/button";
 
 const Amenities = () => {
   const queryClient = useQueryClient();
@@ -92,70 +92,52 @@ const Amenities = () => {
       name: "Actions",
       cell: (row: Amenity) => (
         <div className="flex gap-2 text-nowrap">
-          <button
-            className="flex items-center gap-1 p-1 text-white bg-black rounded"
+          <Button
+            size="sm"
             onClick={() => handleEditAmenities(row)}
           >
-            <Edit className="w-4 h-4" />
-            <span>Edit</span>
-          </button>
-          <button
-            className="flex items-center gap-1 p-1 text-white bg-black rounded"
+            <Edit className="w-4 h-4 mr-1" />
+            Edit
+          </Button>
+          <Button
+            size="sm"
+            variant="destructive"
             onClick={() => handleDeleteAmenities(row.id)}
+            disabled={deletingAmenityId === row.id}
           >
             {deletingAmenityId === row.id ? (
-              <Loader className="animate-spin" />
+              <Loader className="w-4 h-4 animate-spin" />
             ) : (
-              <div className="flex items-center gap-1">
-                <Trash2 className="w-4 h-4" />
-                <span>Delete</span>
-              </div>
+              <Trash2 className="w-4 h-4" />
             )}
-          </button>
+          </Button>
         </div>
       ),
     },
   ];
 
   return (
-    <div className="p-6">
-      <SEOHelmet
-        title="Amenities Management - Fuse"
-        description="Manage your hostel amenities efficiently with our user-friendly interface."
-        keywords="amenities management, hostel, Fuse"
-      />
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-2">
-          <Building className="w-6 h-6" />
-          <h1 className="text-2xl font-bold">Amenities Management</h1>
-        </div>
-        <div className="flex gap-2">
-          <button
-            className="flex gap-2 px-4 py-2 text-white bg-primary rounded-md"
-            onClick={() => openAmenitiesModal()}
-          >
-            <Plus />
-            <span>Amenities</span>
-          </button>
-          <AmenitiesModal onClose={closeAmenitiesModal} />
-        </div>
+    <>
+      <AmenitiesModal onClose={closeAmenitiesModal} />
+
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold">Amenities</h2>
+        <Button size="sm" onClick={() => openAmenitiesModal()}>
+          <Plus className="w-4 h-4 mr-2" />
+          Add Amenity
+        </Button>
       </div>
 
       {amenities?.length === 0 ? (
-        <div className="flex flex-col items-center justify-center w-full gap-4 py-4 mt-20 text-center">
-          <p>No amenities found. Please add some amenities.</p>
-          <div>
-            <button
-              className="flex gap-2 px-4 py-2 text-white bg-black rounded-md"
-              onClick={() => openAmenitiesModal()}
-            >
-              <Plus />
-              <span>Amenities</span>
-            </button>
-          </div>
+        <div className="flex flex-col items-center justify-center w-full gap-4 py-12 text-center border border-dashed rounded-lg bg-muted/30">
+          <p className="text-muted-foreground">No amenities found. Please add some amenities.</p>
+          <Button onClick={() => openAmenitiesModal()}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Amenity
+          </Button>
         </div>
       ) : (
-        <div className="p-4 bg-white rounded-lg shadow-sm ">
+        <div className="p-4 bg-card border border-border rounded-lg shadow-sm">
           <CustomDataTable
             title="Amenities Table"
             columns={columns}
@@ -170,7 +152,7 @@ const Amenities = () => {
         onClose={closeEditAmenitiesModal}
         formdata={selectedAmenity || { id: "", name: "", price: 0 }}
       />
-    </div>
+    </>
   );
 };
 

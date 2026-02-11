@@ -120,9 +120,9 @@ const ViewRoom = () => {
             {roomImages.length > 0 ? (
               <div className="relative">
                 <div className="relative overflow-hidden aspect-video">
-                  <img
+				  <img
                     src={roomImages[activeImageIndex]?.imageUrl || "/placeholder.svg?height=400&width=600"}
-                    alt={`${room.roomNumber} - Image ${activeImageIndex + 1}`}
+                    alt={`${room?.roomNumber ?? "Room"} - Image ${activeImageIndex + 1}`}
                     className="object-cover w-full h-full"
                   />
                 </div>
@@ -141,7 +141,7 @@ const ViewRoom = () => {
                       >
                         <img
                           src={image.imageUrl || "/placeholder.svg"}
-                          alt={`${room.roomNumber} thumbnail ${index + 1}`}
+                          alt={`${room?.roomNumber ?? "Room"} thumbnail ${index + 1}`}
                           className="object-cover w-full h-full"
                         />
                       </div>

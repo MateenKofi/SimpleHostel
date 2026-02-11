@@ -55,7 +55,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getHostelTransactions } from "@/api/payments";
 import { getHostelResidents } from "@/api/residents";
 import TransactionsSkeleton from "../loaders/TransactionLoader";
-import CustomeRefetch from "../CustomeRefetch";
+import CustomeRefetch from "../CustomRefetch";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"
 import {

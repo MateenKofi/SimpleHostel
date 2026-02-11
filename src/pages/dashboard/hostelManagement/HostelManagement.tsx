@@ -1,20 +1,26 @@
 import HostelManagementTable from '@/components/HostelManagementTable'
 import SEOHelmet from '@/components/SEOHelmet'
+import { PageHeader } from "@/components/layout/PageHeader"
+import { Building2 } from "lucide-react"
 
 const HostelManagement = () => {
   return (
-    <div className='p-6'>
+    <div className="min-h-screen bg-white flex flex-col">
       <SEOHelmet
         title='Hostel Management - Fuse'
         description='Manage your hostel efficiently with our user-friendly interface.'
         keywords='hostel management, hostel, Fuse'
       />
-        <div className='flex  justify-between items-center  p-6 border shadow-md rounded-lg bg-white mb-3'>
-           <div> <h1 className='text-2xl font-bold text-gray-500'>Hostel Managment</h1>
-            <p className='text-gray-500 italic'>Manage hostels here</p>
-            <p className='text-gray-700 italic'>Hostel management functionality will be implemented here.</p></div>
+      <PageHeader
+        title="Hostel Management"
+        subtitle="Manage and configure hostel properties"
+        icon={Building2}
+      />
+      <main className="flex-1 p-4 md:p-8">
+        <div className="max-w-6xl mx-auto">
+          <HostelManagementTable />
         </div>
-      <HostelManagementTable/>
+      </main>
     </div>
   )
 }

@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import { getStaffById, updateStaff } from "@/api/staff";
 import { toast } from "sonner";
 import dayjs from "dayjs";
-import CustomeRefetch from "../CustomeRefetch";
+import CustomeRefetch from "../CustomRefetch";
 import UploadSingleImage from "../UploadSingleImage";
 import { Staff } from "@/helper/types/types";
 import type { ApiError } from "@/types/dtos";

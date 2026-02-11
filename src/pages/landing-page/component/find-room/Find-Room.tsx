@@ -9,7 +9,7 @@ import FilterPanel from "@/components/FilterPanel";
 import { RoomFilterConfig } from "@/helper/room_filter_config";
 import { parseRange } from "@/utils/parseRange";
 import FindHostelSkeleton from "@/components/loaders/HostelCardSkeleton";
-import CustomeRefetch from "@/components/CustomeRefetch";
+import CustomeRefetch from "@/components/CustomRefetch";
 import SEOHelmet from "@/components/SEOHelmet";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { useSelectedCalendarYearStore } from "@/stores/useSelectedCalendarYearStore";

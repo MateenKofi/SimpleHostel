@@ -26,7 +26,7 @@ import {
 import TransactionsSkeleton from "../loaders/TransactionLoader";
 import { getDisbursementSummary } from "@/api/analytics";
 import { useQuery } from "@tanstack/react-query";
-import CustomeRefetch from "../CustomeRefetch";
+import CustomeRefetch from "../CustomRefetch";
 import { Avatar, AvatarFallback } from "../ui/avatar";
 
 interface Hostel {

@@ -2,7 +2,18 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
-import { ArrowLeft, Loader2, UserPlus } from "lucide-react";
+import {
+  ArrowLeft,
+  Loader2,
+  UserPlus,
+  Mail,
+  Phone,
+  GraduationCap,
+  Heart,
+  User,
+  UserCircle,
+  Info,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -21,11 +32,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { useNavigate } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { addResident } from "@/api/residents";
-import { ResidentFormSchema, AdminResidentFormSchema } from "@/schemas/ResidentForm.schema";
+import { AdminResidentFormSchema } from "@/schemas/ResidentForm.schema";
 import { z } from "zod";
 import { useAddedResidentStore } from "@/stores/useAddedResidentStore";
 import type { ApiError } from "@/types/dtos";
@@ -43,7 +53,7 @@ const AddResident = () => {
     register,
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, touchedFields },
     reset,
   } = useForm<AddResidentInputs>({
     resolver: zodResolver(AdminResidentFormSchema),
@@ -102,8 +112,8 @@ const AddResident = () => {
           Back
         </button>
       </div>
-      <Card className="w-full max-w-2xl mx-auto my-4 shadow-lg">
-        <CardHeader className="space-y-1 text-white bg-black rounded-t-lg">
+      <Card className="w-full max-w-2xl mx-auto my-4 shadow-lg border-border/50">
+        <CardHeader className="space-y-1 bg-primary text-primary-foreground rounded-t-lg">
           <div className="flex items-center gap-2">
             <UserPlus className="w-6 h-6" />
             <CardTitle className="text-2xl font-bold">Add Resident</CardTitle>
@@ -114,35 +124,74 @@ const AddResident = () => {
         </CardHeader>
 
         <CardContent className="pt-6">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+            {/* Personal Information Section */}
+            <div className="space-y-5">
+              <div className="flex items-center gap-2 pb-2 border-b border-border">
+                <UserCircle className="w-5 h-5 text-primary" />
+                <h3 className="text-lg font-semibold text-foreground">Personal Information</h3>
+              </div>
+
+              {/* Full Name Field */}
               <div>
-                <label className="font-medium">Full Name*</label>
-                <Input placeholder="Enter full name" {...register("name")} />
-                {errors.name && (
-                  <p className="text-sm text-red-500">{errors.name.message}</p>
+                <label htmlFor="name" className="font-medium text-sm text-foreground">
+                  Full Name*
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    id="name"
+                    placeholder="Enter full name"
+                    className="h-11 pl-10"
+                    {...register("name")}
+                  />
+                </div>
+                {touchedFields.name && errors.name && (
+                  <p className="mt-1.5 text-sm text-destructive flex items-center gap-1">
+                    <Info className="w-3.5 h-3.5" />
+                    {errors.name.message}
+                  </p>
                 )}
               </div>
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label className="font-medium">Student ID*</label>
-                  <Input
-                    placeholder="Enter student ID"
-                    {...register("studentId")}
-                  />
-                  {errors.studentId && (
-                    <p className="text-sm text-red-500">
+                  <label htmlFor="studentId" className="font-medium text-sm text-foreground">
+                    Student ID*
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/70" />
+                    <Input
+                      id="studentId"
+                      placeholder="Enter student ID"
+                      className="h-11 pl-10"
+                      {...register("studentId")}
+                    />
+                  </div>
+                  {touchedFields.studentId && errors.studentId && (
+                    <p className="mt-1.5 text-sm text-destructive flex items-center gap-1">
+                      <Info className="w-3.5 h-3.5" />
                       {errors.studentId.message}
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <label className="font-medium">Course*</label>
-                  <Input placeholder="Enter course" {...register("course")} />
-                  {errors.course && (
-                    <p className="text-sm text-red-500">
+                  <label htmlFor="course" className="font-medium text-sm text-foreground">
+                    Course*
+                  </label>
+                  <div className="relative">
+                    <GraduationCap className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      id="course"
+                      placeholder="Enter course"
+                      className="h-11 pl-10"
+                      {...register("course")}
+                    />
+                  </div>
+                  {touchedFields.course && errors.course && (
+                    <p className="mt-1.5 text-sm text-destructive flex items-center gap-1">
+                      <Info className="w-3.5 h-3.5" />
                       {errors.course.message}
                     </p>
                   )}
@@ -151,27 +200,43 @@ const AddResident = () => {
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
-                  <label className="font-medium">Email*</label>
-                  <Input
-                    type="email"
-                    placeholder="Enter email"
-                    {...register("email")}
-                  />
-                  {errors.email && (
-                    <p className="text-sm text-red-500">
+                  <label htmlFor="email" className="font-medium text-sm text-foreground">
+                    Email*
+                  </label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="Enter email"
+                      className="h-11 pl-10"
+                      {...register("email")}
+                    />
+                  </div>
+                  {touchedFields.email && errors.email && (
+                    <p className="mt-1.5 text-sm text-destructive flex items-center gap-1">
+                      <Info className="w-3.5 h-3.5" />
                       {errors.email.message}
                     </p>
                   )}
                 </div>
 
                 <div>
-                  <label className="font-medium">Phone Number*</label>
-                  <Input
-                    placeholder="Enter phone number"
-                    {...register("phone")}
-                  />
-                  {errors.phone && (
-                    <p className="text-sm text-red-500">
+                  <label htmlFor="phone" className="font-medium text-sm text-foreground">
+                    Phone Number*
+                  </label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      id="phone"
+                      placeholder="Enter phone number"
+                      className="h-11 pl-10"
+                      {...register("phone")}
+                    />
+                  </div>
+                  {touchedFields.phone && errors.phone && (
+                    <p className="mt-1.5 text-sm text-destructive flex items-center gap-1">
+                      <Info className="w-3.5 h-3.5" />
                       {errors.phone.message}
                     </p>
                   )}
@@ -180,13 +245,15 @@ const AddResident = () => {
 
               {/* Gender Select with Controller */}
               <div>
-                <label className="font-medium">Gender*</label>
+                <label htmlFor="gender" className="font-medium text-sm text-foreground">
+                  Gender*
+                </label>
                 <Controller
                   name="gender"
                   control={control}
                   render={({ field }) => (
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger>
+                      <SelectTrigger className="h-11">
                         <SelectValue placeholder="Select gender" />
                       </SelectTrigger>
                       <SelectContent>
@@ -196,90 +263,117 @@ const AddResident = () => {
                     </Select>
                   )}
                 />
-                {errors.gender && (
-                  <p className="text-sm text-red-500">
+                {touchedFields.gender && errors.gender && (
+                  <p className="mt-1.5 text-sm text-destructive flex items-center gap-1">
+                    <Info className="w-3.5 h-3.5" />
                     {errors.gender.message}
                   </p>
                 )}
               </div>
             </div>
+            {/* End Personal Information Section */}
 
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium">Emergency Contact</h3>
-              <Separator className="my-2" />
-
-              <div>
-                <label className="font-medium">Contact Name*</label>
-                <Input
-                  placeholder="Enter emergency contact name"
-                  {...register("emergencyContactName")}
-                />
-                {errors.emergencyContactName && (
-                  <p className="text-sm text-red-500">
-                    {errors.emergencyContactName.message}
-                  </p>
-                )}
+            {/* Emergency Contact Section */}
+            <div className="space-y-5">
+              <div className="flex items-center gap-2 pb-2 border-b border-border">
+                <Heart className="w-5 h-5 text-destructive" />
+                <h3 className="text-lg font-semibold text-foreground">Emergency Contact</h3>
               </div>
 
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div className="space-y-4">
                 <div>
-                  <label className="font-medium">Contact Phone*</label>
-                  <Input
-                    placeholder="Enter contact phone"
-                    {...register("emergencyContactPhone")}
-                  />
-                  {errors.emergencyContactPhone && (
-                    <p className="text-sm text-red-500">
-                      {errors.emergencyContactPhone.message}
+                  <label htmlFor="emergencyContactName" className="font-medium text-sm text-foreground">
+                    Contact Name*
+                  </label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      id="emergencyContactName"
+                      placeholder="Enter emergency contact name"
+                      className="h-11 pl-10"
+                      {...register("emergencyContactName")}
+                    />
+                  </div>
+                  {touchedFields.emergencyContactName && errors.emergencyContactName && (
+                    <p className="mt-1.5 text-sm text-destructive flex items-center gap-1">
+                      <Info className="w-3.5 h-3.5" />
+                      {errors.emergencyContactName.message}
                     </p>
                   )}
                 </div>
 
-                {/* Relationship Select with Controller */}
-                <div>
-                  <label className="font-medium">Relationship*</label>
-                  <Controller
-                    name="relationship"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select relationship" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="parent">Parent</SelectItem>
-                          <SelectItem value="sibling">Sibling</SelectItem>
-                          <SelectItem value="spouse">Spouse</SelectItem>
-                          <SelectItem value="child">Child</SelectItem>
-                          <SelectItem value="guardian">Guardian</SelectItem>
-                          <SelectItem value="friend">Friend</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
-                        </SelectContent>
-                      </Select>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <div>
+                    <label htmlFor="emergencyContactPhone" className="font-medium text-sm text-foreground">
+                      Contact Phone*
+                    </label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        id="emergencyContactPhone"
+                        placeholder="Enter contact phone"
+                        className="h-11 pl-10"
+                        {...register("emergencyContactPhone")}
+                      />
+                    </div>
+                    {touchedFields.emergencyContactPhone && errors.emergencyContactPhone && (
+                      <p className="mt-1.5 text-sm text-destructive flex items-center gap-1">
+                        <Info className="w-3.5 h-3.5" />
+                        {errors.emergencyContactPhone.message}
+                      </p>
                     )}
-                  />
-                  {errors.relationship && (
-                    <p className="text-sm text-red-500">
-                      {errors.relationship.message}
-                    </p>
-                  )}
+                  </div>
+
+                  {/* Relationship Select with Controller */}
+                  <div>
+                    <label htmlFor="relationship" className="font-medium text-sm text-foreground">
+                      Relationship*
+                    </label>
+                    <Controller
+                      name="relationship"
+                      control={control}
+                      render={({ field }) => (
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <SelectTrigger className="h-11">
+                            <SelectValue placeholder="Select relationship" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="parent">Parent</SelectItem>
+                            <SelectItem value="sibling">Sibling</SelectItem>
+                            <SelectItem value="spouse">Spouse</SelectItem>
+                            <SelectItem value="child">Child</SelectItem>
+                            <SelectItem value="guardian">Guardian</SelectItem>
+                            <SelectItem value="friend">Friend</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                    {touchedFields.relationship && errors.relationship && (
+                      <p className="mt-1.5 text-sm text-destructive flex items-center gap-1">
+                        <Info className="w-3.5 h-3.5" />
+                        {errors.relationship.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>
+            {/* End Emergency Contact Section */}
 
-            <CardFooter className="px-0 pt-2 pb-0">
+            <CardFooter className="px-0 pt-4 pb-0">
               <Button
                 type="submit"
-                className="w-full"
+                className="w-full h-11 bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg shadow-primary/20 font-medium"
                 disabled={AddResidentMutation.isPending}
               >
                 {AddResidentMutation.isPending ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Adding Resident...
+                    Creating Resident Profile...
                   </>
                 ) : (
                   <>
