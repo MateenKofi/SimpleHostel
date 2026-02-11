@@ -3,7 +3,7 @@ import { AddResidentRequest, CreateResidentRequestRequest, FeedbackRequest, Main
 
 export const registerResident = async (payload: RegisterResidentRequest | FormData): Promise<{ data: UserDto }> => {
     const isFormData = payload instanceof FormData;
-    const response = await axiosInstance.post("/v1/residents/register", payload, {
+    const response = await axiosInstance.post("/residents/register", payload, {
         headers: isFormData ? { "Content-Type": "multipart/form-data" } : {},
     });
     return response.data;
