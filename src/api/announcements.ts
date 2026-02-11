@@ -2,7 +2,7 @@ import axiosInstance from "./axiosInstance";
 import type { CreateAnnouncementRequest } from "@/types/dtos";
 
 export const getAnnouncements = async () => {
-    const response = await axiosInstance.get("/v1/resident/announcements");
+    const response = await axiosInstance.get("/resident/announcements");
     return response.data;
 };
 
