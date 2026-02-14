@@ -26,6 +26,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { format } from "date-fns"
+import { useAuthStore } from "@/stores/useAuthStore"
 
 interface PaymentData {
   id: string
@@ -85,6 +86,7 @@ const PaymentSuccess = () => {
   const [payment, setPayment] = useState<PaymentData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [copied, setCopied] = useState(false)
+  const { user, fetchUser } = useAuthStore()
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search)
@@ -112,6 +114,12 @@ const PaymentSuccess = () => {
         if (paymentData) {
           setPayment(paymentData)
           toast.success("Payment verified successfully!")
+          // Refresh user data to get updated hostelId after payment
+          if (user?.id) {
+            fetchUser(user.id).catch((err) => {
+              console.error("Failed to refresh user data:", err)
+            })
+          }
         } else {
           throw new Error("No payment data received")
         }
@@ -123,7 +131,7 @@ const PaymentSuccess = () => {
       .finally(() => {
         setIsLoading(false)
       })
-  }, [location])
+  }, [location, user, fetchUser])
 
   const handleCopyAccessCode = () => {
     const accessCode = payment?.residentProfile?.accessCode

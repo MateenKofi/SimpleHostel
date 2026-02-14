@@ -8,6 +8,7 @@ import PrivateRoute from "./components/routes/PrivateRoute";
 import Home from './pages/landing-page/page'
 import About from './pages/landing-page/About'
 import Contact from './pages/landing-page/Contact'
+import Services from './pages/landing-page/Services'
 import FindHostel from './pages/landing-page/component/findHostel/page'
 import LoginForm from "./pages/Authentication/login/login-form";
 import RegisterForm from "./pages/Authentication/register/register-form";
@@ -80,6 +81,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="about" element={<About />} />
           <Route path="contact" element={<Contact />} />
+          <Route path="services" element={<Services />} />
           <Route path="find-hostel" element={<FindHostel />} />
 
           <Route path="resident-form" element={<ResidentForm />} />

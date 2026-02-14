@@ -26,7 +26,7 @@ export default function AboutPage() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="mb-6 text-4xl font-bold md:text-5xl lg:text-6xl"
               >
-                About <span className="text-red-500">Fuse</span>
+                About <span className="text-primary">Fuse</span>
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -122,22 +122,22 @@ function MissionSection() {
 
   const values = [
     {
-      icon: <Users className="w-8 h-8 text-red-500" />,
+      icon: <Users className="w-8 h-8 text-primary" />,
       title: "Community",
       description: "We believe travel is better when shared with others.",
     },
     {
-      icon: <Target className="w-8 h-8 text-red-500" />,
+      icon: <Target className="w-8 h-8 text-primary" />,
       title: "Accessibility",
       description: "Making travel possible for everyone, regardless of budget.",
     },
     {
-      icon: <Clock className="w-8 h-8 text-red-500" />,
+      icon: <Clock className="w-8 h-8 text-primary" />,
       title: "Reliability",
       description: "Providing accurate information and seamless bookings.",
     },
     {
-      icon: <Award className="w-8 h-8 text-red-500" />,
+      icon: <Award className="w-8 h-8 text-primary" />,
       title: "Quality",
       description: "Curating the best hostels that meet our high standards.",
     },
@@ -230,7 +230,7 @@ function TimelineSection() {
 
         <div className="relative">
           {/* Timeline line */}
-          <div className="absolute w-1 h-full transform -translate-x-1/2 bg-red-200 left-1/2 dark:bg-red-900"></div>
+          <div className="absolute w-1 h-full transform -translate-x-1/2 bg-forest-green-100 left-1/2 dark:bg-forest-green-900"></div>
 
           <div className="space-y-12">
             {timelineEvents.map((event, index) => (
@@ -242,8 +242,8 @@ function TimelineSection() {
                 className={`relative flex items-center ${index % 2 === 0 ? "flex-row" : "flex-row-reverse"}`}
               >
                 <div className="w-1/2"></div>
-                <div className="absolute z-10 flex items-center justify-center w-12 h-12 transform -translate-x-1/2 bg-red-500 rounded-full left-1/2">
-                  <span className="font-bold text-white">{event.year}</span>
+                <div className="absolute z-10 flex items-center justify-center w-12 h-12 transform -translate-x-1/2 bg-primary rounded-full left-1/2">
+                  <span className="font-bold text-primary-foreground">{event.year}</span>
                 </div>
                 <div
                   className={`w-1/2 bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-md border ${
@@ -328,7 +328,7 @@ function TeamSection() {
               </div>
               <div className="p-6">
                 <h3 className="mb-1 text-xl font-semibold">{member.name}</h3>
-                <p className="mb-3 font-medium text-red-500">{member.role}</p>
+                <p className="mb-3 font-medium text-primary">{member.role}</p>
                 <p className="mb-4 text-zinc-600 dark:text-zinc-400">{member.bio}</p>
               </div>
             </motion.div>

@@ -27,8 +27,10 @@ const ActiveVisitor = () => {
   });
 
   const ActiveVisitors = Array.isArray(visitors) ? visitors.filter((active: Visitor) => {
-    return active.status === 'ACTIVE';
+    return active.status === 'active';
   }) : [];
+
+  console.log("data from active visitor component: ", ActiveVisitors)
 
   const CheckOutVisitor = useMutation({
     mutationFn: async (id: string) => {
@@ -68,16 +70,16 @@ const ActiveVisitor = () => {
       sortable: true,
     },
     {
-      name: "V Phone",
+      name: "Visitor Phone",
       selector: (row: Visitor) => row.phone,
     },
     {
-      name: 'Resident',
-      selector: (row: Visitor) => row?.resident?.name ?? ""
+      name: 'Resident Name',
+      selector: (row: Visitor) => row?.resident?.user?.name ?? ""
     },
     {
-      name: 'R Phone',
-      selector: (row: Visitor) => row?.resident?.phone ?? ""
+      name: 'Resident Phone',
+      selector: (row: Visitor) => row?.resident?.user?.phone ?? ""
     },
     {
       name: "Check-in Time",
@@ -91,22 +93,22 @@ const ActiveVisitor = () => {
       name: "Status",
       cell: (row: Visitor) => (
         <span
-          className={`px-2 py-1 rounded-full text-xs ${row.status === "ACTIVE"
+          className={`px-2 py-1 rounded-full text-xs ${row.status === "active"
             ? "bg-green-100 text-green-800"
             : "bg-gray-100 text-gray-800"
             }`}
         >
-          {row.status === "ACTIVE" ? "Checked In" : "Checked Out"}
+          {row.status === "active" ? "Checked In" : "Checked Out"}
         </span>
       ),
     },
     {
       name: "Action",
       cell: (row: Visitor) =>
-        row.status === "ACTIVE" ? (
+        row.status === "active" ? (
           <button
             onClick={() => handleCheckOut(row.id)}
-            className="px-3 py-1 text-sm text-white bg-blue-500 rounded-md"
+            className="px-3 py-1 text-sm text-white bg-primary rounded-md"
           >
             Check Out
           </button>

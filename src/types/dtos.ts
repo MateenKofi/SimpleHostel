@@ -110,7 +110,8 @@ export interface ResidentDto {
     calendarYearId?: string; // Legacy compatibility
     deletedAt?: string | null; // Soft delete timestamp
     user?: UserDto;
-    room?: RoomDto;
+    room?: RoomDto; // API returns lowercase "room"
+    Room?: RoomDto; // Legacy compatibility
     roommates?: ResidentDto[]; // Added
 }
 

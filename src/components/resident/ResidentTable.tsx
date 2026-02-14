@@ -66,8 +66,14 @@ const ResidentTable = () => {
   } = useQuery({
     queryKey: ["residents", hostelId],
     queryFn: async () => {
+      console.log("Fetching residents for hostelId:", hostelId)
       const responseData = await getHostelResidents(hostelId!)
-      return responseData?.data ?? []
+      console.log("API Response:", responseData)
+      console.log("Residents data:", responseData?.data)
+      const residentsData = responseData?.data ?? []
+      console.log("Final residents array:", residentsData)
+      console.log("Residents array length:", residentsData.length)
+      return residentsData
     },
     enabled: !!hostelId,
   })
@@ -147,6 +153,7 @@ const ResidentTable = () => {
       name: "Resident",
       sortable: true,
       grow: 2,
+      selector: (row: ResidentDto) => row.user?.name || row.name || "N/A",
       cell: (row: ResidentDto) => (
         <div className="flex items-center gap-3 py-2">
           <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
@@ -187,13 +194,14 @@ const ResidentTable = () => {
       name: "Room",
       sortable: true,
       grow: 0,
+      selector: (row: ResidentDto) => row.room?.roomNumber || row.room?.number || row.roomNumber || "N/A",
       cell: (row: ResidentDto) =>
         row.room ? (
           <div className="flex items-center gap-1.5">
             <MapPin className="w-4 h-4 text-muted-foreground" />
             <span className="text-sm">
               {row.room.block && `Block ${row.room.block}, `}
-              {row.room.roomNumber || row.roomNumber || "N/A"}
+              {row.room.roomNumber || row.room.number || row.roomNumber || "N/A"}
             </span>
           </div>
         ) : (
@@ -204,6 +212,7 @@ const ResidentTable = () => {
       name: "Status",
       sortable: true,
       grow: 0,
+      selector: (row: ResidentDto) => row.status,
       cell: (row: ResidentDto) => getStatusBadge(row.status),
     },
     {
@@ -277,6 +286,7 @@ const ResidentTable = () => {
     },
   ]
 
+  console.log("Rendering ResidentTable with residents:", residents, "length:", residents?.length)
   return (
     <>
       <CustomDataTable

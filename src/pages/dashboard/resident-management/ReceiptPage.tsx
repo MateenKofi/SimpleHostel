@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query"
 import { useParams, useNavigate } from "react-router-dom"
 import { getPaymentByRef } from "@/api/payments"
-import { Loader2, Download, Printer, ArrowLeft, AlertCircle } from "lucide-react"
+import { Loader2, Download, Printer, AlertCircle, Receipt, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { useRef } from "react"
@@ -12,6 +12,7 @@ import html2canvas from "html2canvas"
 import { toast } from "sonner"
 import ReceiptTemplate from "@/components/payment/ReceiptTemplate"
 import { PaymentReceipt } from "@/helper/types/types"
+import { PageHeader } from "@/components/layout/PageHeader"
 
 const ReceiptPage = () => {
     const { reference } = useParams<{ reference: string }>()
@@ -118,23 +119,23 @@ const ReceiptPage = () => {
                 description="View and download your official hostel payment receipt."
             />
 
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                <div>
-                    <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-2 -ml-2">
-                        <ArrowLeft className="h-4 w-4 mr-2" /> Back
-                    </Button>
-                    <h1 className="text-3xl font-bold tracking-tight">Official Receipt</h1>
-                    <p className="text-muted-foreground">Reference: {reference}</p>
-                </div>
-                <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <Button variant="outline" size="sm" onClick={handlePrint} className="flex-1 sm:flex-none">
-                        <Printer className="h-4 w-4 mr-2" /> Print
-                    </Button>
-                    <Button size="sm" onClick={handleDownloadPDF} className="flex-1 sm:flex-none">
-                        <Download className="h-4 w-4 mr-2" /> Download PDF
-                    </Button>
-                </div>
-            </div>
+            <PageHeader
+                title="Official Receipt"
+                subtitle={`Reference: ${reference}`}
+                icon={Receipt}
+                showBackButton={true}
+                sticky={true}
+                actions={
+                    <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm" onClick={handlePrint} className="flex-1 sm:flex-none">
+                            <Printer className="h-4 w-4 mr-2" /> Print
+                        </Button>
+                        <Button size="sm" onClick={handleDownloadPDF} className="flex-1 sm:flex-none">
+                            <Download className="h-4 w-4 mr-2" /> Download PDF
+                        </Button>
+                    </div>
+                }
+            />
 
             <Card className="shadow-2xl border-none overflow-hidden bg-white">
                 <ReceiptTemplate data={receiptData} ref={receiptRef} />

@@ -5,12 +5,15 @@ export const getHostelVisitors = async (hostelId: string) => {
     return response.data;
 };
 
-export const addVisitor = async (formData: FormData) => {
-    const response = await axiosInstance.post(`/visitors/add`, formData, {
-        headers: {
-            "Content-Type": "multipart/form-data",
-        },
-    });
+export interface AddVisitorRequest {
+    name: string;
+    phone: string;
+    email: string;
+    residentId: string;
+}
+
+export const addVisitor = async (data: AddVisitorRequest) => {
+    const response = await axiosInstance.post(`/visitors/add`, data);
     return response.data;
 };
 

@@ -9,6 +9,7 @@ import SEOHelmet from "@/components/SEOHelmet"
 import NoHostelAssigned from "@/components/resident/NoHostelAssigned"
 import type { Announcement, AnnouncementCategory, AnnouncementPriority, AnnouncementStatus } from "@/types/announcement"
 import { filterAnnouncements } from "@/helper/announcementUtils"
+import { PageHeader } from "@/components/layout/PageHeader"
 
 const Announcements = () => {
     const hostelId = localStorage.getItem("hostelId")
@@ -53,10 +54,11 @@ const Announcements = () => {
                 description="Stay updated with the latest news and announcements."
             />
 
-            <div className="flex flex-col gap-2 mb-8">
-                <h1 className="text-3xl font-bold tracking-tight">Announcements</h1>
-                <p className="text-muted-foreground">Latest news, events, and updates from the hostel administration.</p>
-            </div>
+            <PageHeader sticky={true}
+                title="Announcements"
+                subtitle="Latest news, events, and updates from the hostel administration."
+                icon={Bell}
+            />
 
             <AnnouncementFilters
                 filters={filters}

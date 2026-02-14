@@ -101,7 +101,8 @@ export function FindHostel() {
   if (isLoading) return <FindHostelSkeleton />;
   if (isError) return <CustomeRefetch refetch={refetch} />;
 
-  const PublishedHostels = (rooms || []).filter(
+  const roomsArray = Array.isArray(rooms) ? rooms : [];
+  const PublishedHostels = roomsArray.filter(
     (room: Hostel) => room?.state === "published"
   );
 

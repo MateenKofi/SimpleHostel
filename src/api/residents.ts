@@ -93,3 +93,19 @@ export const checkInResident = async (residentId: string): Promise<{ data: Resid
     const response = await axiosInstance.post(`/residents/${residentId}/checkin`);
     return response.data;
 };
+
+// Download Allocation Letter as PDF
+export const downloadAllocationLetterPDF = async () => {
+    const response = await axiosInstance.get("/residents/allocation-details/download", {
+        responseType: "blob", // Important: get the response as a Blob
+    });
+    return response.data;
+};
+
+// Download Payment Receipt as PDF
+export const downloadPaymentReceiptPDF = async (paymentId: string) => {
+    const response = await axiosInstance.get(`/residents/receipt/${paymentId}/download`, {
+        responseType: "blob", // Important: get the response as a Blob
+    });
+    return response.data;
+};

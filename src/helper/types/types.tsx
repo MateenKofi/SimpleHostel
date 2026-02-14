@@ -21,6 +21,15 @@ export type Resident = {
   calendarYearId: string;
   hostelId: string | null;
   room?: Omit<Room, "resident">;
+  // User information (when included in queries)
+  user?: {
+    name?: string;
+    email?: string;
+    phone?: string;
+    gender?: string;
+    avatar?: string | null;
+    imageUrl?: string | null;
+  };
 };
 
 export type Deptors = Resident
@@ -31,11 +40,11 @@ export type Visitor = {
   phone: string;
   residentId: string;
   purpose: string;
-  checkInTime: string;
+  checkInTime?: string;
   checkOutTime?: string;
   timeIn: string;
   timeOut: string;
-  status: "ACTIVE" | "CHECKED_OUT";
+  status: "ACTIVE" | "CHECKED_OUT" | 'active' | 'checked_out';
   resident?: Resident;
 };
 
@@ -342,6 +351,8 @@ export type AllocationDetails = {
   hostelEmail: string;
   hostelPhone: string;
   hostelLogo?: string;
+  hostelSignature?: string;
+  hostelStamp?: string;
   roomNumber: string;
   roomType: string;
   roomFloor?: string;

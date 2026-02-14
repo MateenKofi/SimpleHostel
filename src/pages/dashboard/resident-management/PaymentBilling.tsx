@@ -1,8 +1,9 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
-import { getResidentBilling, getPaymentReceipt } from "@/api/residents"
+import { getResidentBilling, getPaymentReceipt, downloadAllocationLetterPDF, downloadPaymentReceiptPDF } from "@/api/residents"
 import { Loader, Download, CreditCard, History, Wallet, AlertCircle, FileText, Printer } from "lucide-react"
+import { toast } from "sonner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import {
     Dialog,
@@ -23,8 +24,10 @@ import SEOHelmet from "@/components/SEOHelmet"
 import { PaymentReceipt } from "@/helper/types/types"
 import jsPDF from "jspdf"
 import html2canvas from "html2canvas"
-import { toast } from "sonner"
 import ReceiptTemplate from "@/components/payment/ReceiptTemplate"
+import { useAuthStore } from "@/stores/useAuthStore"
+import NoHostelAssigned from "@/components/resident/NoHostelAssigned"
+import { PageHeader } from "@/components/layout/PageHeader"
 
 interface PaymentTransaction {
     id: string
@@ -55,8 +58,7 @@ interface BillingSummary {
     }
 }
 
-import { useAuthStore } from "@/stores/useAuthStore"
-import NoHostelAssigned from "@/components/resident/NoHostelAssigned"
+
 
 const PaymentBilling = () => {
     const navigate = useNavigate()
@@ -86,7 +88,55 @@ const PaymentBilling = () => {
     }
 
     const [viewReceiptId, setViewReceiptId] = useState<string | null>(null);
+    const [downloadingReceipt, setDownloadingReceipt] = useState<string | null>(null);
+    const [downloadingAllocation, setDownloadingAllocation] = useState(false);
     const receiptRef = useRef<HTMLDivElement>(null)
+
+    // Download Allocation Letter PDF
+    const handleDownloadAllocationLetter = async () => {
+        if (downloadingAllocation) return;
+        setDownloadingAllocation(true);
+        try {
+            const blob = await downloadAllocationLetterPDF();
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `Allocation-Letter-${new Date().getTime()}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+            toast.success("Allocation letter downloaded successfully!");
+        } catch (error) {
+            console.error("Failed to download allocation letter:", error);
+            toast.error("Failed to download allocation letter");
+        } finally {
+            setDownloadingAllocation(false);
+        }
+    };
+
+    // Download Payment Receipt PDF (from backend)
+    const handleDownloadReceiptPDF = async (paymentId: string) => {
+        if (downloadingReceipt === paymentId) return;
+        setDownloadingReceipt(paymentId);
+        try {
+            const blob = await downloadPaymentReceiptPDF(paymentId);
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `Receipt-${paymentId}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+            toast.success("Receipt downloaded successfully!");
+        } catch (error) {
+            console.error("Failed to download receipt:", error);
+            toast.error("Failed to download receipt");
+        } finally {
+            setDownloadingReceipt(null);
+        }
+    };
 
     const handlePrint = useReactToPrint({
         contentRef: receiptRef,
@@ -175,10 +225,12 @@ const PaymentBilling = () => {
                 description="Manage your hostel payments and view billing history."
             />
 
-            <div className="flex flex-col gap-2 mb-8">
-                <h1 className="text-3xl font-bold tracking-tight">Payments & Billing</h1>
-                <p className="text-muted-foreground">View your payment history, receipts, and outstanding balance.</p>
-            </div>
+            <PageHeader
+                title="Payments & Billing"
+                subtitle="View your payment history, receipts, and outstanding balance."
+                icon={CreditCard}
+                sticky={true}
+            />
 
             {/* Summary Cards */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
@@ -212,6 +264,16 @@ const PaymentBilling = () => {
                 <Card>
                     <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-medium text-muted-foreground">Room Info</CardTitle>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            className="ml-auto h-8 gap-1"
+                            onClick={handleDownloadAllocationLetter}
+                            disabled={downloadingAllocation}
+                        >
+                            <Download className="w-4 h-4" />
+                            {downloadingAllocation ? "Downloading..." : "Allocation Letter"}
+                        </Button>
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">
@@ -321,8 +383,8 @@ const PaymentBilling = () => {
                                     <Button variant="outline" className="flex-1 sm:flex-none h-11" onClick={handlePrint}>
                                         <Printer className="w-4 h-4 mr-2" /> Print Receipt
                                     </Button>
-                                    <Button variant="outline" className="flex-1 sm:flex-none h-11" onClick={handleDownloadPDF}>
-                                        <Download className="w-4 h-4 mr-2" /> Download PDF
+                                    <Button variant="outline" className="flex-1 sm:flex-none h-11" onClick={() => viewReceiptId && handleDownloadReceiptPDF(viewReceiptId)} disabled={downloadingReceipt === viewReceiptId}>
+                                        <Download className="w-4 h-4 mr-2" /> {downloadingReceipt === viewReceiptId ? "Downloading..." : "Download PDF"}
                                     </Button>
                                     {receiptData.reference && (
                                         <Button className="flex-1 sm:flex-none h-11" onClick={() => navigate(`/dashboard/receipt/${receiptData.reference}`)}>

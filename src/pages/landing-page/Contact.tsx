@@ -30,7 +30,7 @@ export default function ContactPage() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="mb-6 text-4xl font-bold md:text-5xl lg:text-6xl"
               >
-                Get in <span className="text-red-500">Touch</span>
+                Get in <span className="text-primary">Touch</span>
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -100,7 +100,7 @@ function ContactFormSection() {
 
   const contactInfo = [
     {
-      icon: <MapPin className="w-6 h-6 text-red-500" />,
+      icon: <MapPin className="w-6 h-6 text-primary" />,
       title: "Our Location",
       details: [
         "Kumasi",
@@ -109,17 +109,17 @@ function ContactFormSection() {
       ],
     },
     {
-      icon: <Phone className="w-6 h-6 text-red-500" />,
+      icon: <Phone className="w-6 h-6 text-primary" />,
       title: "Phone Number",
       details: ["+233 54 3983 427"],
     },
     {
-      icon: <Mail className="w-6 h-6 text-red-500" />,
+      icon: <Mail className="w-6 h-6 text-primary" />,
       title: "Email Address",
       details: ["fusehostel01@gmail.com"],
     },
     {
-      icon: <Clock className="w-6 h-6 text-red-500" />,
+      icon: <Clock className="w-6 h-6 text-primary" />,
       title: "Working Hours",
       details: [
         "Monday - Friday: 9am - 6pm",
@@ -158,7 +158,7 @@ function ContactFormSection() {
                 </p>
                 <Button
                   onClick={() => setIsSubmitted(false)}
-                  className="text-white bg-red-500 hover:bg-red-600"
+                  className="text-primary-foreground bg-primary hover:bg-primary"
                 >
                   Send Another Message
                 </Button>
@@ -239,7 +239,7 @@ function ContactFormSection() {
                 >
                   <Button
                     type="submit"
-                    className="w-full text-white bg-red-500 hover:bg-red-600"
+                    className="w-full text-primary-foreground bg-primary hover:bg-primary"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (
@@ -288,7 +288,7 @@ function ContactFormSection() {
                   transition={{ duration: 0.5, delay: 0.3 + index * 0.1 }}
                   className="flex items-start"
                 >
-                  <div className="p-3 mr-4 bg-red-100 rounded-lg dark:bg-red-900/30">
+                  <div className="p-3 mr-4 bg-forest-green-100 rounded-lg dark:bg-forest-green-900/30">
                     {item.icon}
                   </div>
                   <div>
@@ -307,17 +307,17 @@ function ContactFormSection() {
               <h3 className="mb-4 text-lg font-semibold">Follow Us</h3>
               <div className="flex space-x-4">
                 {[
-                  { icon: <Facebook className="w-6 h-6 text-red-500" />, href: "#" },
-                  { icon: <Twitter className="w-6 h-6 text-red-500" />, href: "#" },
-                  { icon: <Instagram className="w-6 h-6 text-red-500" />, href: "#" },
-                  { icon: <Linkedin className="w-6 h-6 text-red-500" />, href: "#" },
+                  { icon: <Facebook className="w-6 h-6 text-primary" />, href: "#" },
+                  { icon: <Twitter className="w-6 h-6 text-primary" />, href: "#" },
+                  { icon: <Instagram className="w-6 h-6 text-primary" />, href: "#" },
+                  { icon: <Linkedin className="w-6 h-6 text-primary" />, href: "#" },
                 ].map((social, index) => (
                   <motion.a
                     key={index}
                     href={social.href}
                     whileHover={{ y: -5, scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    className="p-3 transition-colors rounded-full bg-zinc-100 dark:bg-zinc-700 hover:bg-red-100 dark:hover:bg-red-900/30"
+                    className="p-3 transition-colors rounded-full bg-zinc-100 dark:bg-zinc-700 hover:bg-forest-green-100 dark:hover:bg-forest-green-900/30"
                   >
                     {social.icon}
                   </motion.a>
