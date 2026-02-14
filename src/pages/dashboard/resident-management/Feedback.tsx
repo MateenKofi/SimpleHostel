@@ -27,6 +27,7 @@ interface CreateFeedbackDto {
 }
 
 import NoHostelAssigned from "@/components/resident/NoHostelAssigned"
+import { PageHeader } from "@/components/layout/PageHeader"
 
 const Feedback = () => {
     const [rating, setRating] = useState(0)
@@ -70,10 +71,12 @@ const Feedback = () => {
                 description="Rate your hostel experience and suggest improvements."
             />
 
-            <div className="flex flex-col gap-2 mb-8 text-center">
-                <h1 className="text-3xl font-bold tracking-tight">We Value Your Feedback</h1>
-                <p className="text-muted-foreground">Help us improve your hostel experience.</p>
-            </div>
+            <PageHeader
+                title="Feedback"
+                subtitle="Help us improve your hostel experience."
+                icon={MessageSquare}
+                sticky={true}
+            />
 
             <Card>
                 <CardHeader>

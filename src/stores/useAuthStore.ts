@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 import { toast } from "sonner";
 import { jwtDecode } from "jwt-decode";
 import { Users } from "@/helper/types/types";
-import { loginUser } from "@/api/auth";
+import { loginUser, logoutUser } from "@/api/auth";
 import { getUserById } from "@/api/users";
 import axios from "axios";
 
@@ -26,7 +26,7 @@ type UserStore = {
     user: Users | null;
     changedPassword: boolean | undefined;
     login: (data: { email: string; password: string }) => Promise<boolean>;
-    logout: () => void;
+    logout: () => Promise<void>;
     fetchUser: (userId: string) => Promise<void>;
 };
 
@@ -88,21 +88,29 @@ export const useAuthStore = create<UserStore>()(
                 }
             },
 
-            logout: () => {
-                set({
-                    name: "",
-                    email: "",
-                    imageUrl: null,
-                    token: null,
-                    role: null,
-                    hostelId: null,
-                    isProcessing: false,
-                    user: null,
-                    changedPassword: undefined,
-                });
-                localStorage.clear();
-                toast.success("Logout successful");
-                window.location.href = "/";
+            logout: async () => {
+                try {
+                    // Call logout API to blacklist the token
+                    await logoutUser();
+                } catch (error) {
+                    // Still proceed with local logout even if API call fails
+                    console.error("Logout API call failed:", error);
+                } finally {
+                    // Clear state regardless of API result
+                    set({
+                        name: "",
+                        email: "",
+                        imageUrl: null,
+                        token: null,
+                        role: null,
+                        hostelId: null,
+                        isProcessing: false,
+                        user: null,
+                        changedPassword: undefined,
+                    });
+                    localStorage.clear();
+                    toast.success("Logout successful");
+                }
             },
 
             fetchUser: async (userId: string) => {
@@ -110,13 +118,22 @@ export const useAuthStore = create<UserStore>()(
                     // Note: Authorization header is handled by axiosInstance interceptor
                     const user: Users = await getUserById(userId);
 
+                    // Extract hostelId from either direct field or nested hostel object
+                    const userHostelId = user.hostelId || user.hostel?.id || null;
+
                     set({
                         name: user.name,
                         email: user.email,
                         imageUrl: user.imageUrl || null,
+                        hostelId: userHostelId,
                         user,
                         changedPassword: user.changedPassword,
                     });
+
+                    // Update localStorage if hostelId changed
+                    if (userHostelId) {
+                        localStorage.setItem("hostelId", userHostelId);
+                    }
                 } catch (error) {
                     if (axios.isAxiosError(error)) {
                         const errorMessage = error.response?.data?.error || "Failed to fetch user data";

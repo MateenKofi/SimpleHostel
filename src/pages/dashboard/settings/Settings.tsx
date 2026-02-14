@@ -65,6 +65,8 @@ const Settings = () => {
   const [signatureFile, setSignatureFile] = useState<File | null>(null);
   const [stampFile, setStampFile] = useState<File | null>(null);
   const [rulesFile, setRulesFile] = useState<File | null>(null);
+  const [signaturePreview, setSignaturePreview] = useState<string>("");
+  const [stampPreview, setStampPreview] = useState<string>("");
   const hostelId = localStorage.getItem("hostelId");
 
   const {
@@ -101,12 +103,10 @@ const Settings = () => {
     if (hostelData) {
       form.reset(hostelData);
       setPreviewLogo(hostelData.logoUrl);
-      const hostelImages = hostelData.HostelImages?.map(
-        (hostelImage: { imageUrl: string }) => {
-          return hostelImage.imageUrl;
-        }
-      );
-      setDefaultImages(hostelImages || []);
+      setSignaturePreview(hostelData.signatureUrl || "");
+      setStampPreview(hostelData.stampUrl || "");
+      // Backend returns 'images' array of URLs directly
+      setDefaultImages(hostelData.images || []);
     }
   }, [hostelData, form]);
 
@@ -311,7 +311,7 @@ const Settings = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="mx-10">
-              {hostelData.HostelImages?.length < 1 ? (
+              {(hostelData?.images?.length ?? 0) < 1 ? (
                 <div className="p-10 text-center border rounded-lg">
                   <p className="text-muted-foreground">No images yet.</p>
                   <ImageUpload onImagesChange={handleImagesChange} />
@@ -319,7 +319,7 @@ const Settings = () => {
               ) : (
                 <>
                   <span className="text-sm text-muted-foreground">
-                    {3 - hostelData?.HostelImages?.length} slots left
+                    {3 - (hostelData?.images?.length ?? 0)} slots left
                   </span>
                   <ImageUpload
                     onImagesChange={handleImagesChange}
@@ -512,15 +512,12 @@ const Settings = () => {
                 {/* Signature Upload */}
                 <div className="space-y-4">
                   <h3 className="text-sm font-semibold">Manager Signature</h3>
-                  {hostelData?.logoKey && ( // Assuming hostel data might contain signatureUrl/stampUrl in future but using image upload pattern
-                    // Actually Backend guide says "These images are now returned in GET /api/v1/resident/allocation-details as hostelSignature and hostelStamp"
-                    // But for Admin Dashboard display, we might not have them in getHostelById response unless updated.
-                    // Let's assume we just allow upload for now.
-                    // Or if getHostelById returns them? The guide doesn't explicitly say getHostelById returns them, but likely it does or will.
-                    // Safest to just provide upload UI.
-                    null
+                  {signaturePreview && (
+                    <div className="p-3 border rounded-lg bg-zinc-50 dark:bg-zinc-900/50">
+                      <p className="text-xs text-zinc-500 mb-2">Current Signature:</p>
+                      <img src={signaturePreview} alt="Signature" className="h-20 object-contain" />
+                    </div>
                   )}
-
                   <div className="grid gap-2">
                     <Label htmlFor="signature-upload" className="cursor-pointer">
                       <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/50 hover:bg-indigo-50/30 dark:hover:bg-indigo-900/5 transition-all">
@@ -550,6 +547,12 @@ const Settings = () => {
                 {/* Stamp Upload */}
                 <div className="space-y-4">
                   <h3 className="text-sm font-semibold">Hostel Stamp</h3>
+                  {stampPreview && (
+                    <div className="p-3 border rounded-lg bg-zinc-50 dark:bg-zinc-900/50">
+                      <p className="text-xs text-zinc-500 mb-2">Current Stamp:</p>
+                      <img src={stampPreview} alt="Stamp" className="h-20 object-contain" />
+                    </div>
+                  )}
                   <div className="grid gap-2">
                     <Label htmlFor="stamp-upload" className="cursor-pointer">
                       <div className="flex flex-col items-center justify-center p-6 border-2 border-dashed rounded-xl border-zinc-200 dark:border-zinc-800 hover:border-indigo-500/50 hover:bg-indigo-50/30 dark:hover:bg-indigo-900/5 transition-all">

@@ -9,6 +9,7 @@ import { getResidentAllocationDetails } from "@/api/residents"
 import { useNavigate } from "react-router-dom"
 
 import NoHostelAssigned from "@/components/resident/NoHostelAssigned"
+import { PageHeader } from "@/components/layout/PageHeader"
 
 const Documents = () => {
     const userId = localStorage.getItem("userId")
@@ -62,10 +63,12 @@ const Documents = () => {
                 description="Download important hostel documents."
             />
 
-            <div className="flex flex-col gap-2 mb-8">
-                <h1 className="text-3xl font-bold tracking-tight">My Documents</h1>
-                <p className="text-muted-foreground">Access and download your official documents.</p>
-            </div>
+            <PageHeader
+                title="My Documents"
+                subtitle="Access and download your official documents."
+                icon={FileText}
+                sticky={true}
+            />
 
             <div className="grid gap-6 md:grid-cols-2">
                 {documents.map((doc) => (

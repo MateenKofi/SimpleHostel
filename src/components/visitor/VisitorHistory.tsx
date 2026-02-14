@@ -25,7 +25,7 @@ const VisitorHistory = () => {
   });
 
   const InactiveVisitors = Array.isArray(visitors) ? visitors.filter((active: Visitor) => {
-    return active.status === 'CHECKED_OUT';
+    return active.status === 'checked_out';
   }) : [];
 
 
@@ -52,6 +52,14 @@ const VisitorHistory = () => {
     {
       name: "Check-in Time",
       selector: (row: Visitor) =>
+        row.timeIn && !isNaN(new Date(row.timeIn).getTime())
+          ? format(new Date(row.timeIn), "MMM dd, yyyy HH:mm")
+          : "-",
+      sortable: true,
+    },
+    {
+      name: "Check-out Time",
+      selector: (row: Visitor) =>
         row.timeOut && !isNaN(new Date(row.timeOut).getTime())
           ? format(new Date(row.timeOut), "MMM dd, yyyy HH:mm")
           : "-",
@@ -61,10 +69,10 @@ const VisitorHistory = () => {
       name: "Status",
       cell: (row: Visitor) => (
         <Badge
-          variant={row.status === "ACTIVE" ? "default" : "secondary"}
+          variant={row.status === "active" ? "default" : "secondary"}
           className="capitalize"
         >
-          {row.status === "ACTIVE" ? "Checked In" : "Checked Out"}
+          {row.status === "active" ? "Checked In" : "Checked Out"}
         </Badge>
       ),
     },

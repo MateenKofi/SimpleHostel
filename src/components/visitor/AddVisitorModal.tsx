@@ -1,156 +1,283 @@
-import Modal from '@/components/Modal'
-import { useForm, Controller } from 'react-hook-form'
-import Select from 'react-select'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { getHostelResidents } from '@/api/residents'
-import { addVisitor } from '@/api/visitors'
-import { AxiosError } from 'axios'
-import { toast } from 'sonner'
-import { Resident } from '@/helper/types/types'
-import { TextField } from '../TextField'
-import type { ApiError } from "@/types/dtos"
+"use client";
 
-interface VisitorFormData {
-  name: string
-  phone: string
-  email: string
-  residentId: { value: string; label: string } | null
-  purpose: string
-}
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SubmitHandler, useForm, Controller } from "react-hook-form";
+import { UserPlus, Mail, Phone, User, Info, Users } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getHostelResidents } from "@/api/residents";
+import { addVisitor } from "@/api/visitors";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { VisitorFormSchema, type VisitorFormInputs } from "@/schemas/VisitorForm.schema";
+import type { ApiError } from "@/types/dtos";
+import type { ResidentDto } from "@/types/dtos";
 
 interface AddVisitorModalProps {
-  onClose: () => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
-const AddVisitorModal = ({ onClose }: AddVisitorModalProps) => {
-  const { register, handleSubmit, reset, control, formState: { errors } } = useForm<VisitorFormData>()
+const AddVisitorModal = ({ open, onOpenChange }: AddVisitorModalProps) => {
+  const queryClient = useQueryClient();
+  const hostelId = localStorage.getItem("hostelId") || "";
 
-  const { data: Residents, isLoading: isLoadingResidents } = useQuery({
-    queryKey: ['residents'],
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors, touchedFields },
+    reset,
+  } = useForm<VisitorFormInputs>({
+    resolver: zodResolver(VisitorFormSchema),
+  });
+
+  // Fetch residents for dropdown
+  const { data: residents, isLoading: isLoadingResidents } = useQuery({
+    queryKey: ["residents", hostelId],
     queryFn: async () => {
-      const hostelId = localStorage.getItem('hostelId')
-      if (!hostelId) return []
-      const responseData = await getHostelResidents(hostelId)
-      return responseData?.data
+      if (!hostelId) return [];
+      const responseData = await getHostelResidents(hostelId);
+      return responseData?.data ?? [];
     },
-  })
+    enabled: !!hostelId && open,
+  });
 
-  const queryClient = useQueryClient()
+  // Add visitor mutation
+  const addVisitorMutation = useMutation({
+    mutationFn: async (visitor_data: VisitorFormInputs) => {
+      const responseData = await addVisitor({
+        name: visitor_data.name,
+        phone: visitor_data.phone,
+        email: visitor_data.email,
+        residentId: visitor_data.residentId,
+      });
+      return responseData;
+    },
+    onSuccess: () => {
+      toast.success("Visitor added successfully!");
+      reset();
+      onOpenChange(false);
+      queryClient.invalidateQueries({ queryKey: ["visitors"] });
+      queryClient.refetchQueries({ queryKey: ["visitors"] });
+    },
+    onError: (err: ApiError) => {
+      const errorMessage = err.response?.data?.message || "Failed to add visitor";
+      toast.error(errorMessage);
+    },
+  });
 
-  const mutation = useMutation({
-    mutationFn: async (data: VisitorFormData) => {
-      const hostelId = localStorage.getItem('hostelId')
-      const formData = new FormData()
-      formData.append('name', data.name)
-      formData.append('phone', data.phone)
-      formData.append('email', data.email)
-      formData.append('residentId', data.residentId?.value || '')
-      formData.append('status', 'ACTIVE')
-      // formData.append('purpose', data.purpose)
+  const onSubmit: SubmitHandler<VisitorFormInputs> = (values) => {
+    addVisitorMutation.mutate(values);
+  };
 
-      try {
-        const responseData = await addVisitor(formData)
-        toast.success('Visitor added successfully!')
-        reset()
-        onClose()
-        queryClient.invalidateQueries({ queryKey: ['visitors'] })
-        return responseData
-      } catch (error: unknown) {
-        const err = error as ApiError;
-        const errorMessage = err.response?.data?.message || 'Failed to add visitor'
-        toast.error(errorMessage)
-        throw error
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!addVisitorMutation.isPending) {
+      onOpenChange(newOpen);
+      if (!newOpen) {
+        reset();
       }
-    },
-  })
-
-  const onSubmit = (data: VisitorFormData) => {
-    mutation.mutate(data)
-  }
+    }
+  };
 
   return (
-    <Modal modalId="add_visitor_modal" onClose={onClose}>
-      <div className="flex flex-col h-full">
-        <div className="flex items-center justify-between px-6 py-4 border-b">
-          <h2 className="text-xl font-bold text-gray-500">New Visitor</h2>
-        </div>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-primary/10">
+              <UserPlus className="w-5 h-5 text-primary" />
+            </div>
+            <div>
+              <DialogTitle>Add New Visitor</DialogTitle>
+              <DialogDescription>
+                Fill in the visitor details to check them in.
+              </DialogDescription>
+            </div>
+          </div>
+        </DialogHeader>
 
-        <div className="flex-1 p-6 overflow-y-auto">
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div>
-              <TextField id='name' label='Visitor Name' error={errors.name} register={register('name')} />
-            </div>
-            <div>
-              <TextField id='phone' label='Phone Number' error={errors.phone} register={register('phone', { required: 'Phone number is required' })} />
-            </div>
-            <div>
-              <TextField id='email' label='Email Address' error={errors.email} register={register('email', { required: 'Email is required' })} />
-            </div>
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-500">
-                Select Resident
-              </label>
-              <Controller
-                name="residentId"
-                control={control}
-                rules={{ required: 'Please select a resident' }}
-                render={({ field }) => (
-                  <Select
-                    {...field}
-                    options={
-                      Residents?.map((resident: Resident) => ({
-                        value: resident.id,
-                        label: resident?.name + ' - ' + (resident?.room?.number || "No Room"),
-                      })) || []
-                    }
-                    isLoading={isLoadingResidents}
-                    className="w-full text-gray-500"
-                    placeholder="Search for a resident..."
-                    isClearable
-                    name="color"
-                  />
-                )}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          {/* Visitor Name */}
+          <div>
+            <label htmlFor="name" className="font-medium text-sm text-foreground">
+              Visitor Name*
+            </label>
+            <div className="relative mt-2">
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                id="name"
+                placeholder="Enter visitor's full name"
+                className="h-10 pl-10"
+                {...register("name")}
               />
-              {errors.residentId && (
-                <p className="mt-1 text-sm text-red-500">{errors.residentId.message}</p>
-              )}
             </div>
+            {touchedFields.name && errors.name && (
+              <p className="mt-1.5 text-sm text-destructive flex items-center gap-1">
+                <Info className="w-3.5 h-3.5" />
+                {errors.name.message}
+              </p>
+            )}
+          </div>
 
-            <div>
-              <label className="block mb-2 text-sm font-medium text-gray-500">
-                Purpose of Visit
-              </label>
-              <textarea
-                {...register('purpose', { required: 'Purpose is required' })}
-                className="w-full p-2 border rounded-md"
-                rows={3}
+          {/* Email */}
+          <div>
+            <label htmlFor="email" className="font-medium text-sm text-foreground">
+              Email Address*
+            </label>
+            <div className="relative mt-2">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                id="email"
+                type="email"
+                placeholder="visitor@example.com"
+                className="h-10 pl-10"
+                {...register("email")}
               />
-              {errors.purpose && (
-                <p className="mt-1 text-sm text-red-500">{errors.purpose.message}</p>
+            </div>
+            {touchedFields.email && errors.email && (
+              <p className="mt-1.5 text-sm text-destructive flex items-center gap-1">
+                <Info className="w-3.5 h-3.5" />
+                {errors.email.message}
+              </p>
+            )}
+          </div>
+
+          {/* Phone */}
+          <div>
+            <label htmlFor="phone" className="font-medium text-sm text-foreground">
+              Phone Number*
+            </label>
+            <div className="relative mt-2">
+              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                id="phone"
+                placeholder="Enter phone number"
+                className="h-10 pl-10"
+                {...register("phone")}
+              />
+            </div>
+            {touchedFields.phone && errors.phone && (
+              <p className="mt-1.5 text-sm text-destructive flex items-center gap-1">
+                <Info className="w-3.5 h-3.5" />
+                {errors.phone.message}
+              </p>
+            )}
+          </div>
+
+          {/* Resident Select */}
+          <div>
+            <label htmlFor="residentId" className="font-medium text-sm text-foreground">
+              Visiting Resident*
+            </label>
+            <Controller
+              name="residentId"
+              control={control}
+              render={({ field }) => (
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger className="h-10 mt-2">
+                    {isLoadingResidents ? (
+                      <SelectValue placeholder="Loading residents..." />
+                    ) : (
+                      <SelectValue placeholder="Select a resident" />
+                    )}
+                  </SelectTrigger>
+                  <SelectContent>
+                    {residents?.map((resident: ResidentDto) => (
+                      <SelectItem
+                        key={resident.id}
+                        value={resident.id}
+                        disabled={!resident.roomId}
+                      >
+                        <div className="flex items-center gap-2">
+                          <Users className="w-3.5 h-3.5 text-muted-foreground" />
+                          <span>
+                            {resident.user?.name || resident.name}
+                            {resident.room ? (
+                              <span className="text-muted-foreground">
+                                {" "}
+                                - {resident.room.block && `Block ${resident.room.block}, `}
+                                {resident.room.number || resident.roomNumber}
+                              </span>
+                            ) : (
+                              <span className="text-muted-foreground text-xs">
+                                {" "}
+                                (No room assigned)
+                              </span>
+                            )}
+                          </span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                    {!residents?.length && !isLoadingResidents && (
+                      <div className="px-2 py-1.5 text-sm text-muted-foreground">
+                        No residents found
+                      </div>
+                    )}
+                  </SelectContent>
+                </Select>
               )}
-            </div>
+            />
+            {touchedFields.residentId && errors.residentId && (
+              <p className="mt-1.5 text-sm text-destructive flex items-center gap-1">
+                <Info className="w-3.5 h-3.5" />
+                {errors.residentId.message}
+              </p>
+            )}
+          </div>
 
-            <div className="flex justify-end gap-4">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-white bg-red-500 border rounded-md"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 text-white bg-black rounded-md"
-                disabled={mutation.isPending}
-              >
-                {mutation.isPending ? 'Adding...' : 'Add Visitor'}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </Modal>
-  )
-}
+          {/* Purpose (Optional) */}
+          <div>
+            <label htmlFor="purpose" className="font-medium text-sm text-foreground">
+              Purpose of Visit
+              <span className="text-muted-foreground font-normal ml-1">(optional)</span>
+            </label>
+            <Textarea
+              id="purpose"
+              placeholder="What is the purpose of this visit?"
+              className="mt-2 resize-none"
+              rows={2}
+              {...register("purpose")}
+            />
+          </div>
 
-export default AddVisitorModal
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => handleOpenChange(false)}
+              disabled={addVisitorMutation.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={addVisitorMutation.isPending}
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              {addVisitorMutation.isPending ? "Adding..." : "Add Visitor"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default AddVisitorModal;

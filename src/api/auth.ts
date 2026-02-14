@@ -18,3 +18,8 @@ export const resetPassword = async (data: { email: string }) => {
     const response = await axiosInstance.post("/users/reset-password", data);
     return response.data;
 };
+
+export const logoutUser = async () => {
+    const response = await axiosInstance.post("/users/logout");
+    return response.data;
+};

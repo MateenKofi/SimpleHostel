@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { initPayment } from "@/api/payments"
 import { getHostelById } from "@/api/hostels"
+import { getResidentById } from "@/api/residents"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { useState } from "react"
@@ -83,6 +84,18 @@ const PaymentSummaryForm = () => {
     },
     enabled: !!room?.hostelId,
   })
+
+  const { data: residentData } = useQuery({
+    queryKey: ["resident", resident?.id],
+    queryFn: async () => {
+      if (!resident?.id) return null
+      const res = await getResidentById(resident.id)
+      return res.data
+    },
+    enabled: !!resident?.id,
+  })
+
+  const activeResident = residentData || resident
 
   const form = useForm<PaymentInputs>({
     resolver: zodResolver(paymentFormSchema),
@@ -170,14 +183,14 @@ const PaymentSummaryForm = () => {
               <div className="flex items-center gap-4">
                 <Avatar className="w-16 h-16 border border-gray-100">
                   <AvatarFallback className="text-xl bg-primary/10 text-primary font-bold">
-                    {getInitials(getResidentName(resident) || "Resident")}
+                    {getInitials(getResidentName(activeResident) || "Resident")}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">{getResidentName(resident)}</h1>
+                  <h1 className="text-2xl font-bold text-gray-900">{getResidentName(activeResident)}</h1>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <GraduationCap className="w-4 h-4" />
-                    <span className="text-sm">{getResidentStudentId(resident) || "Student ID"}</span>
+                    <span className="text-sm">{getResidentStudentId(activeResident) || "Student ID"}</span>
                   </div>
                 </div>
               </div>
@@ -200,25 +213,25 @@ const PaymentSummaryForm = () => {
                     <dt className="text-muted-foreground flex items-center gap-2">
                       <GraduationCap className="w-3.5 h-3.5" /> Course
                     </dt>
-                    <dd className="font-medium text-right">{getResidentCourse(resident) || "-"}</dd>
+                    <dd className="font-medium text-right">{getResidentCourse(activeResident) || "-"}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-muted-foreground flex items-center gap-2">
                       <Mail className="w-3.5 h-3.5" /> Email
                     </dt>
-                    <dd className="font-medium text-right">{getResidentEmail(resident) || "-"}</dd>
+                    <dd className="font-medium text-right">{getResidentEmail(activeResident) || "-"}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-muted-foreground flex items-center gap-2">
                       <Phone className="w-3.5 h-3.5" /> Phone
                     </dt>
-                    <dd className="font-medium text-right">{getResidentPhone(resident) || "-"}</dd>
+                    <dd className="font-medium text-right">{getResidentPhone(activeResident) || "-"}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-muted-foreground flex items-center gap-2">
                       <Users className="w-3.5 h-3.5" /> Gender
                     </dt>
-                    <dd className="font-medium text-right">{getResidentGender(resident) || "-"}</dd>
+                    <dd className="font-medium text-right">{getResidentGender(activeResident) || "-"}</dd>
                   </div>
                 </dl>
               </div>

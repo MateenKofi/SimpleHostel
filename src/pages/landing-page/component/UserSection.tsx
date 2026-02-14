@@ -1,7 +1,8 @@
 "use client"
+import { useState } from "react"
 import { motion } from "framer-motion"
-import { User, LogOut, KeyRound, LayoutDashboard } from "lucide-react"
-import { Link } from "react-router-dom"
+import { User, LogOut, KeyRound, LayoutDashboard, Loader2 } from "lucide-react"
+import { Link, useNavigate } from "react-router-dom"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,7 +15,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useAuthStore } from "@/stores/useAuthStore"
 
 const UserSection = () => {
-  const { user, logout } = useAuthStore((state) => state);
+  const { user, logout } = useAuthStore((state) => state)
+  const navigate = useNavigate()
+  const [isLoggingOut, setIsLoggingOut] = useState(false)
+
+  const handleLogout = async () => {
+    setIsLoggingOut(true)
+    try {
+      await logout()
+      navigate("/login")
+    } finally {
+      setIsLoggingOut(false)
+    }
+  }
 
   return (
     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -43,12 +56,17 @@ const UserSection = () => {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem className="text-destructive focus:text-destructive"
-            onClick={() => {
-              logout()
-            }}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Log out
+          <DropdownMenuItem
+            className="text-destructive focus:text-destructive"
+            disabled={isLoggingOut}
+            onClick={handleLogout}
+          >
+            {isLoggingOut ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <LogOut className="h-4 w-4 mr-2" />
+            )}
+            {isLoggingOut ? "Logging out..." : "Log out"}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

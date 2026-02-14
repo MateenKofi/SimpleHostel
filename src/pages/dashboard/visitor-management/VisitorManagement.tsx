@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Users, Clock, UserPlus } from 'lucide-react'
-import { useModal } from '../../../components/Modal'
-import AddVisitorModal from '../../../components/visitor/AddVisitorModal'
+import AddVisitorModal from '@/components/visitor/AddVisitorModal'
 import ActiveVisitor from '@/components/visitor/ActiveVisitor'
 import VisitorHistory from '@/components/visitor/VisitorHistory'
 import SEOHelmet from '@/components/SEOHelmet'
@@ -32,10 +31,10 @@ const VisitorManagement = () => {
   ]
 
   const [activeTab, setActiveTab] = useState<string>(tabData[0].id);
-  const { open: openAddVisitorModal, close: closeAddVisitorModal } = useModal('add_visitor_modal');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <SEOHelmet
         title="Visitor Management - Fuse"
         description="Manage visitors effectively with Fuse."
@@ -46,7 +45,7 @@ const VisitorManagement = () => {
         subtitle="Track and manage all visitor check-ins and check-outs"
         icon={Users}
         actions={
-          <Button size="sm" onClick={openAddVisitorModal}>
+          <Button size="sm" onClick={() => setIsAddModalOpen(true)}>
             <UserPlus className="w-4 h-4 mr-2" />
             Add Visitor
           </Button>
@@ -54,7 +53,7 @@ const VisitorManagement = () => {
       />
       <main className="flex-1 p-4 md:p-8">
         <div className="max-w-6xl mx-auto">
-          <AddVisitorModal onClose={closeAddVisitorModal} />
+          <AddVisitorModal open={isAddModalOpen} onOpenChange={setIsAddModalOpen} />
           {/* Tabs */}
           <div className="flex gap-2 border-b border-border mb-6">
             {tabData.map((tab) => (

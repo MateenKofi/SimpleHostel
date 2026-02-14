@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getResidentAllocationDetails } from "@/api/residents";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, Download, Printer, ArrowLeft, Building2, MapPin, Phone, Mail, CheckCircle2 } from "lucide-react";
+import { Loader2, Download, Printer, Building2, MapPin, Phone, Mail, CheckCircle2, ArrowLeft } from "lucide-react";
 import SEOHelmet from "@/components/SEOHelmet";
 import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
@@ -12,6 +12,7 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { toast } from "sonner";
 import { AllocationDetails } from "@/helper/types/types";
+import { PageHeader } from "@/components/layout/PageHeader";
 
 const AllocationDetailsPage = () => {
     const navigate = useNavigate();
@@ -103,23 +104,23 @@ const AllocationDetailsPage = () => {
                 description="Your official room allocation letter."
             />
 
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                <div>
-                    <Button variant="ghost" size="sm" onClick={() => navigate(-1)} className="mb-2 -ml-2">
-                        <ArrowLeft className="h-4 w-4 mr-2" /> Back
-                    </Button>
-                    <h1 className="text-3xl font-bold tracking-tight">Allocation Letter</h1>
-                    <p className="text-muted-foreground">Official proof of residency</p>
-                </div>
-                <div className="flex items-center gap-2 w-full sm:w-auto">
-                    <Button variant="outline" size="sm" onClick={handlePrint} className="flex-1 sm:flex-none">
-                        <Printer className="h-4 w-4 mr-2" /> Print
-                    </Button>
-                    <Button size="sm" onClick={handleDownloadPDF} className="flex-1 sm:flex-none">
-                        <Download className="h-4 w-4 mr-2" /> Download PDF
-                    </Button>
-                </div>
-            </div>
+            <PageHeader
+                title="Allocation Letter"
+                subtitle="Official proof of residency"
+                icon={Building2}
+                showBackButton={true}
+                sticky={true}
+                actions={
+                    <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm" onClick={handlePrint} className="flex-1 sm:flex-none">
+                            <Printer className="h-4 w-4 mr-2" /> Print
+                        </Button>
+                        <Button size="sm" onClick={handleDownloadPDF} className="flex-1 sm:flex-none">
+                            <Download className="h-4 w-4 mr-2" /> Download PDF
+                        </Button>
+                    </div>
+                }
+            />
 
             <Card className="shadow-2xl border-none overflow-hidden bg-white text-black dark:text-black">
                 <div ref={letterRef} className="p-10 md:p-16 bg-white min-h-[1000px] flex flex-col">
@@ -254,23 +255,49 @@ const AllocationDetailsPage = () => {
                     </div>
 
                     {/* F. Authorization */}
-                    <div className="mt-auto grid grid-cols-2 gap-10 pt-10">
-                        <div className="space-y-10">
-                            <div className="h-20 flex items-end">
-                                <div className="w-48 border-b-2 border-dashed border-gray-400"></div>
+                    {details.hostelSignature || details.hostelStamp ? (
+                        <div className="mt-auto grid grid-cols-2 gap-10 pt-10">
+                            {/* Signature */}
+                            {details.hostelSignature && (
+                                <div className="space-y-2">
+                                    <p className="text-xs text-gray-500 uppercase tracking-widest">Authorized Signature</p>
+                                    <div className="h-20 flex items-center justify-center border-b-2 border-gray-300">
+                                        <img src={details.hostelSignature} alt="Signature" className="h-16 object-contain" />
+                                    </div>
+                                    <p className="text-sm font-medium text-center">{details.hostelName}</p>
+                                    <p className="text-xs text-gray-500 text-center">Hostel Manager</p>
+                                </div>
+                            )}
+                            {/* Stamp */}
+                            {details.hostelStamp && (
+                                <div className="space-y-2">
+                                    <p className="text-xs text-gray-500 uppercase tracking-widest">Official Stamp</p>
+                                    <div className="h-20 flex items-center justify-center">
+                                        <img src={details.hostelStamp} alt="Stamp" className="h-20 object-contain" />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        // Fallback placeholders if not uploaded
+                        <div className="mt-auto grid grid-cols-2 gap-10 pt-10">
+                            <div className="space-y-10">
+                                <div className="h-20 flex items-end">
+                                    <div className="w-48 border-b-2 border-dashed border-gray-400"></div>
+                                </div>
+                                <div className="space-y-0.5">
+                                    <p className="font-bold text-gray-900">Hostel Manager Signature</p>
+                                    <p className="text-xs text-gray-500 uppercase tracking-widest">{details.hostelName}</p>
+                                </div>
                             </div>
-                            <div className="space-y-0.5">
-                                <p className="font-bold text-gray-900">Hostel Manager Signature</p>
-                                <p className="text-xs text-gray-500 uppercase tracking-widest">{details.hostelName}</p>
+                            <div className="flex flex-col items-center justify-center">
+                                <div className="h-32 w-32 border-4 border-double border-gray-200 rounded-full flex items-center justify-center text-center opacity-20 rotate-12">
+                                    <p className="text-[10px] font-bold uppercase tracking-tighter">OFFICIAL<br />HOSTEL STAMP<br />REQUIRED</p>
+                                </div>
+                                <p className="mt-4 text-[10px] text-gray-400 uppercase font-mono">Digitally Issued via SimpleHostel</p>
                             </div>
                         </div>
-                        <div className="flex flex-col items-center justify-center">
-                            <div className="h-32 w-32 border-4 border-double border-gray-200 rounded-full flex items-center justify-center text-center opacity-20 rotate-12">
-                                <p className="text-[10px] font-bold uppercase tracking-tighter">OFFICIAL<br />HOSTEL STAMP<br />REQUIRED</p>
-                            </div>
-                            <p className="mt-4 text-[10px] text-gray-400 uppercase font-mono">Digitally Issued via SimpleHostel</p>
-                        </div>
-                    </div>
+                    )}
 
                     <div className="mt-10 pt-4 border-t border-gray-100 flex justify-between items-center opacity-30 text-[9px] font-mono uppercase">
                         <div className="flex items-center gap-1">
