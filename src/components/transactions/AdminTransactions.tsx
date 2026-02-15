@@ -34,13 +34,11 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { TableColumn } from "react-data-table-component";
+import CustomDataTable from "../CustomDataTable";
 import { Badge } from "@/components/ui/badge";
 import {
   Select,
@@ -60,12 +58,9 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import Modal, { useModal } from "../Modal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -76,6 +71,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useRef } from "react";
 
+
+const safeFormat = (dateValue: any, formatStr: string) => {
+  if (!dateValue) return "N/A";
+  const date = new Date(dateValue);
+  if (isNaN(date.getTime())) return "N/A";
+  return format(date, formatStr);
+};
 
 const AdminTransactions = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -91,7 +93,7 @@ const AdminTransactions = () => {
   });
 
   const [viewReceiptId, setViewReceiptId] = useState<string | null>(null);
-  const [isReceiptOpen, setIsReceiptOpen] = useState(false);
+  const { open: openReceiptModal, close: closeReceiptModal, isOpen: isReceiptOpen } = useModal('view_receipt');
   const receiptRef = useRef<HTMLDivElement>(null);
 
   const handlePrint = useReactToPrint({
@@ -130,7 +132,7 @@ const AdminTransactions = () => {
 
   const handleViewReceipt = (id: string) => {
     setViewReceiptId(id);
-    setIsReceiptOpen(true);
+    openReceiptModal();
   };
 
   const hostel_id = localStorage.getItem("hostelId") || "";
@@ -143,11 +145,19 @@ const AdminTransactions = () => {
     queryKey: ["transaction_admin"],
     queryFn: async () => {
       const responseData = await getHostelTransactions(hostel_id);
-      return responseData?.data;
+      const rawData = responseData?.data || [];
+      // Map fields if they are missing or named differently in the raw response
+      return rawData.map((t: any) => ({
+        ...t,
+        date: t.date || t.createdAt,
+        residentId: t.residentId || t.residentProfileId
+      }));
     },
     enabled: !!hostel_id,
   });
 
+  // Handle null/undefined transactionsData
+  const transactions = transactionsData || [];
 
   const hostelId = localStorage.getItem('hostelId')
   const { data: Residents } = useQuery({
@@ -159,12 +169,46 @@ const AdminTransactions = () => {
     },
   })
 
+  // Calculate total amount
+  const totalAmount = useMemo(() => {
+    return transactions
+      ?.reduce(
+        (sum: number, transaction: Transaction) => sum + transaction.amount,
+        0
+      )
+      .toFixed(2);
+  }, [transactions]);
+
+  // Calculate successful transactions amount
+  const successfulAmount = useMemo(() => {
+    return transactions
+      ?.filter(
+        (t: Transaction) => t.status?.toUpperCase() === "SUCCESS" || t.status?.toUpperCase() === "CONFIRMED"
+      )
+      .reduce(
+        (sum: number, transaction: Transaction) => sum + transaction.amount,
+        0
+      )
+      .toFixed(2);
+  }, [transactions]);
+
+  // Calculate pending transactions amount
+  const pendingAmount = useMemo(() => {
+    return transactions
+      ?.filter((t: Transaction) => t.status?.toUpperCase() === "PENDING")
+      .reduce(
+        (sum: number, transaction: Transaction) => sum + transaction.amount,
+        0
+      )
+      .toFixed(2);
+  }, [transactions]);
+
   // Fetch specific receipt data for the modal
   const { data: receiptData, isLoading: isReceiptLoading } = useQuery<PaymentReceipt>({
     queryKey: ['receipt', viewReceiptId],
     queryFn: async () => {
       // Find the transaction in the current list or fetch if needed
-      const tx = transactionsData?.find((t: Transaction) => t.id === viewReceiptId);
+      const tx = transactions?.find((t: Transaction) => t.id === viewReceiptId);
       const resident = Residents?.find((r: Resident) => r.id === tx?.residentId);
 
       return {
@@ -181,46 +225,14 @@ const AdminTransactions = () => {
         reference: tx?.reference
       };
     },
-    enabled: !!viewReceiptId && !!transactionsData
+    enabled: !!viewReceiptId && !!transactions && transactions.length > 0
   });
 
-  // Calculate total amount
-  const totalAmount = useMemo(() => {
-    return transactionsData
-      ?.reduce(
-        (sum: number, transaction: Transaction) => sum + transaction.amount,
-        0
-      )
-      .toFixed(2);
-  }, [transactionsData]);
-
-  // Calculate successful transactions amount
-  const successfulAmount = useMemo(() => {
-    return transactionsData
-      ?.filter(
-        (t: Transaction) => t.status === "success" || t.status === "CONFIRMED"
-      )
-      .reduce(
-        (sum: number, transaction: Transaction) => sum + transaction.amount,
-        0
-      )
-      .toFixed(2);
-  }, [transactionsData]);
-
-  // Calculate pending transactions amount
-  const pendingAmount = useMemo(() => {
-    return transactionsData
-      ?.filter((t: Transaction) => t.status === "PENDING")
-      .reduce(
-        (sum: number, transaction: Transaction) => sum + transaction.amount,
-        0
-      )
-      .toFixed(2);
-  }, [transactionsData]);
-
   const filteredTransactions = useMemo(() => {
-    return transactionsData
-      ?.filter((transaction: Transaction) => {
+    if (!transactions || transactions.length === 0) return [];
+
+    return transactions
+      .filter((transaction: Transaction) => {
         const searchMatch =
           transaction.reference
             ?.toLowerCase()
@@ -232,17 +244,17 @@ const AdminTransactions = () => {
 
         const statusMatch =
           statusFilter === "all" ||
-          transaction.status?.toLowerCase() === statusFilter.toLowerCase();
+          transaction.status?.toUpperCase() === statusFilter.toUpperCase();
 
         const methodMatch =
           methodFilter === "all" ||
           (methodFilter === "none" && transaction.method === null) ||
-          transaction.method?.toLowerCase() === methodFilter.toLowerCase();
+          transaction.method?.toUpperCase() === methodFilter.toUpperCase();
 
         const dateMatch =
           !selectedDate ||
-          format(new Date(transaction.date), "yyyy-MM-dd") ===
-          format(selectedDate, "yyyy-MM-dd");
+          safeFormat(transaction.date, "yyyy-MM-dd") ===
+          safeFormat(selectedDate, "yyyy-MM-dd");
 
         return searchMatch && statusMatch && methodMatch && dateMatch;
       })
@@ -254,9 +266,18 @@ const AdminTransactions = () => {
             ? a[key] - b[key]
             : b[key] - a[key];
         } else if (key === "date") {
+          const aTime = new Date(a[key]).getTime();
+          const bTime = new Date(b[key]).getTime();
+          const aValid = !isNaN(aTime);
+          const bValid = !isNaN(bTime);
+
+          if (!aValid && !bValid) return 0;
+          if (!aValid) return 1;
+          if (!bValid) return -1;
+
           return sortConfig.direction === "asc"
-            ? new Date(a[key]).getTime() - new Date(b[key]).getTime()
-            : new Date(b[key]).getTime() - new Date(a[key]).getTime();
+            ? aTime - bTime
+            : bTime - aTime;
         } else {
           const aValue = String(a[key]).toLowerCase();
           const bValue = String(b[key]).toLowerCase();
@@ -271,10 +292,10 @@ const AdminTransactions = () => {
     methodFilter,
     selectedDate,
     sortConfig,
-    transactionsData,
+    transactions,
   ]);
 
-  // Handle sorting
+  // Handle sorting (kept if needed elsewhere, but CustomDataTable handles its own sorting usually)
   const handleSort = (key: keyof Transaction) => {
     setSortConfig((prevConfig) => ({
       key,
@@ -284,6 +305,112 @@ const AdminTransactions = () => {
           : "asc",
     }));
   };
+
+  const columns: TableColumn<Transaction>[] = [
+    {
+      name: "Reference",
+      selector: (row) => row.reference || "",
+      sortable: true,
+      grow: 1,
+    },
+    {
+      name: "Amount",
+      cell: (row) => (
+        <span
+          className={cn(
+            "font-medium",
+            row.status?.toUpperCase() === "PENDING"
+              ? "text-yellow-600"
+              : "text-green-600"
+          )}
+        >
+          GH¢{row.amount.toFixed(2)}
+        </span>
+      ),
+      sortable: true,
+      selector: (row) => row.amount,
+    },
+    {
+      name: "Date",
+      cell: (row) => (
+        <div className="flex flex-col">
+          <span>{safeFormat(row.date, "MMM d, yyyy")}</span>
+          <span className="text-xs text-muted-foreground">
+            {safeFormat(row.date, "h:mm a")}
+          </span>
+        </div>
+      ),
+      sortable: true,
+      selector: (row) => new Date(row.date).getTime(),
+    },
+    {
+      name: "Status",
+      cell: (row) => getStatusBadge(row.status),
+      sortable: true,
+      selector: (row) => row.status,
+    },
+    {
+      name: "Method",
+      cell: (row) => (
+        <div className="flex items-center gap-2">
+          {getMethodIcon(row.method)}
+          <span>{row.method ? "Mobile Money" : "Not specified"}</span>
+        </div>
+      ),
+      sortable: true,
+      selector: (row) => row.method || "",
+    },
+    {
+      name: "Resident",
+      grow: 2,
+      cell: (row) => {
+        const resident = Residents?.find(
+          (resident: Resident) => resident.id === row.residentId
+        );
+        if (!resident) return "Unknown Resident";
+        return (
+          <div className="py-2">
+            <div>{resident.name}</div>
+            <div className="text-xs text-muted-foreground">
+              Room: {resident.room?.number || "N/A"}
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      name: "Action",
+      right: true,
+      cell: (row) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="w-8 h-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => handleViewReceipt(row.id)}>
+              <FileText className="w-4 h-4 mr-2" /> View Receipt
+            </DropdownMenuItem>
+            {(row.status?.toUpperCase() === "SUCCESS" ||
+              row.status?.toUpperCase() === "CONFIRMED") && (
+                <DropdownMenuItem
+                  onClick={() => {
+                    setViewReceiptId(row.id);
+                    setTimeout(handleDownloadPDF, 100);
+                  }}
+                >
+                  <Download className="w-4 h-4 mr-2" /> Download PDF
+                </DropdownMenuItem>
+              )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ),
+    },
+  ];
 
   // Get status badge
   const getStatusBadge = (status: string) => {
@@ -331,6 +458,8 @@ const AdminTransactions = () => {
   if (isError) {
     return <CustomeRefetch refetch={refetch} />;
   }
+
+
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
@@ -344,10 +473,10 @@ const AdminTransactions = () => {
           <CardContent>
             <div className="flex items-center">
               <BadgeCent className="w-5 h-5 mr-2 text-muted-foreground" />
-              <div className="text-2xl font-bold">GH¢{totalAmount}</div>
+              <div className="text-2xl font-bold">GH¢{totalAmount || "0.00"}</div>
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              {transactionsData.length} transactions
+              {transactions.length} transactions
             </p>
           </CardContent>
         </Card>
@@ -362,12 +491,12 @@ const AdminTransactions = () => {
             <div className="flex items-center">
               <CheckCircle2 className="w-5 h-5 mr-2 text-green-500" />
               <div className="text-2xl font-bold text-green-600">
-                GH¢{successfulAmount}
+                GH¢{successfulAmount || "0.00"}
               </div>
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
               {
-                transactionsData.filter(
+                transactions.filter(
                   (t: Transaction) =>
                     t.status === "success" || t.status === "CONFIRMED"
                 ).length
@@ -387,12 +516,12 @@ const AdminTransactions = () => {
             <div className="flex items-center">
               <Clock className="w-5 h-5 mr-2 text-yellow-500" />
               <div className="text-2xl font-bold text-yellow-600">
-                GH¢{pendingAmount}
+                GH¢{pendingAmount || "0.00"}
               </div>
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
               {
-                transactionsData.filter(
+                transactions.filter(
                   (t: Transaction) => t.status === "PENDING"
                 ).length
               }{" "}
@@ -467,162 +596,25 @@ const AdminTransactions = () => {
       </div>
 
       {/* Transactions Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Transactions</CardTitle>
-          <CardDescription>
-            Showing {filteredTransactions.length} of {transactionsData.length}{" "}
-            transactions
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="border rounded-md">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[100px]">
-                    <Button
-                      variant="ghost"
-                      className="h-8 p-0 font-medium"
-                      onClick={() => handleSort("reference")}
-                    >
-                      Reference
-                      <ArrowUpDown className="w-3 h-3 ml-2" />
-                    </Button>
-                  </TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      className="h-8 p-0 font-medium"
-                      onClick={() => handleSort("amount")}
-                    >
-                      Amount
-                      <ArrowUpDown className="w-3 h-3 ml-2" />
-                    </Button>
-                  </TableHead>
-                  <TableHead>
-                    <Button
-                      variant="ghost"
-                      className="h-8 p-0 font-medium"
-                      onClick={() => handleSort("date")}
-                    >
-                      Date
-                      <ArrowUpDown className="w-3 h-3 ml-2" />
-                    </Button>
-                  </TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Method</TableHead>
-                  <TableHead className="hidden md:table-cell">
-                    Resident
-                  </TableHead>
-                  <TableHead className="text-right">Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredTransactions.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center">
-                      No transactions found.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredTransactions.map((transaction: Transaction) => (
-                    <TableRow key={transaction.id} className="group">
-                      <TableCell className="font-medium">
-                        {transaction.reference}
-                      </TableCell>
-                      <TableCell
-                        className={cn(
-                          "font-medium",
-                          transaction.status.toUpperCase() === "PENDING"
-                            ? "text-yellow-600"
-                            : "text-green-600"
-                        )}
-                      >
-                        GH¢{transaction.amount.toFixed(2)}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-col">
-                          <span>
-                            {format(new Date(transaction.date), "MMM d, yyyy")}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            {format(new Date(transaction.date), "h:mm a")}
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {getStatusBadge(transaction.status)}
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          {getMethodIcon(transaction.method)}
-                          <span>
-                            {transaction.method
-                              ? "Mobile Money"
-                              : "Not specified"}
-                          </span>
-                        </div>
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell  max-w-[150px]">
-                        {(() => {
-                          const resident = Residents?.find(
-                            (resident: Resident) => resident.id === transaction.residentId
-                          );
-                          if (!resident) return "Unknown Resident";
-                          return (
-                            <div>
-                              <div>{resident.name}</div>
-                              <div className="text-xs text-muted-foreground">
-                                Room: {resident.room?.number || "N/A"}
-                              </div>
-                            </div>
-                          );
-                        })()}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" className="w-8 h-8 p-0">
-                              <span className="sr-only">Open menu</span>
-                              <MoreHorizontal className="w-4 h-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem onClick={() => handleViewReceipt(transaction.id)}>
-                              <FileText className="w-4 h-4 mr-2" /> View Receipt
-                            </DropdownMenuItem>
-                            {(transaction.status.toUpperCase() === 'SUCCESS' || transaction.status.toUpperCase() === 'CONFIRMED') && (
-                              <DropdownMenuItem onClick={() => {
-                                setViewReceiptId(transaction.id);
-                                setTimeout(handleDownloadPDF, 100);
-                              }}>
-                                <Download className="w-4 h-4 mr-2" /> Download PDF
-                              </DropdownMenuItem>
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
+      <CustomDataTable
+        title="Transactions"
+        columns={columns}
+        data={filteredTransactions}
+        isLoading={isLoading}
+        isError={isError}
+        refetch={refetch}
+        searchable={false} // We are using our own search bar above
+      />
 
       {/* Receipt Modal */}
-      <Dialog open={isReceiptOpen} onOpenChange={setIsReceiptOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Payment Receipt</DialogTitle>
-            <DialogDescription>
+      <Modal modalId="view_receipt" onClose={() => setViewReceiptId(null)} size="large">
+        <div className="space-y-4 pt-4">
+          <div className="pb-4">
+            <h2 className="text-lg font-semibold text-foreground">Payment Receipt</h2>
+            <p className="text-sm text-muted-foreground">
               Official payment details and transaction record.
-            </DialogDescription>
-          </DialogHeader>
+            </p>
+          </div>
 
           {isReceiptLoading ? (
             <div className="flex flex-col items-center justify-center py-10 space-y-4">
@@ -635,7 +627,7 @@ const AdminTransactions = () => {
                 <ReceiptTemplate data={receiptData} ref={receiptRef} />
               </div>
 
-              <DialogFooter className="flex-col gap-2 sm:flex-row mt-4">
+              <div className="flex flex-col gap-2 sm:flex-row mt-4 pt-4 border-t">
                 <Button variant="outline" className="w-full sm:flex-1" onClick={handlePrint}>
                   <Printer className="w-4 h-4 mr-2" /> Print
                 </Button>
@@ -647,15 +639,15 @@ const AdminTransactions = () => {
                     <FileText className="w-4 h-4 mr-2" /> Full View
                   </Button>
                 )}
-              </DialogFooter>
+              </div>
             </div>
           ) : (
             <div className="py-10 text-center text-muted-foreground">
               Failed to load receipt information.
             </div>
           )}
-        </DialogContent>
-      </Dialog>
+        </div>
+      </Modal>
 
     </div>
   );

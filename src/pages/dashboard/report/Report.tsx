@@ -23,7 +23,7 @@ const Report = () => {
       <main className="flex-1 p-4 md:p-8">
         <div className="max-w-6xl mx-auto">
           {user && user.role === 'super_admin' && <SuperAdminReport />}
-          {user && user.role === 'ADMIN' && <AdminReport />}
+          {user && user.role === 'admin' && <AdminReport />}
         </div>
       </main>
     </div>

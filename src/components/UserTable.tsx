@@ -10,6 +10,7 @@ import { handleSwalMutation } from "./swal/SwalMutationHelper";
 import { AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Avatar } from "@radix-ui/react-avatar";
 import type { ApiError } from "@/types/dtos";
+import { formatDistanceToNow, parseISO } from "date-fns";
 
 const UserTable = () => {
   const {
@@ -86,13 +87,26 @@ const UserTable = () => {
       cell: (row) => (
         <span
           className={` rounded-md text-center text-[10px] px-2 py-1 capitalize text-white ${row.role === "super_admin"
-              ? "bg-green-400 "
-              : row.role === "admin"
-                ? "bg-blue-400 "
-                : "bg-yellow-400"
+            ? "bg-green-400 "
+            : row.role === "admin"
+              ? "bg-blue-400 "
+              : "bg-yellow-400"
             }`}
         >
           {row.role}
+        </span>
+      ),
+      sortable: true,
+    },
+    {
+      name: "Last Login",
+      cell: (row) => (
+        <span className="text-xs text-gray-500">
+          {row.lastLoginAt
+            ? formatDistanceToNow(parseISO(row.lastLoginAt), {
+              addSuffix: true,
+            })
+            : "Never"}
         </span>
       ),
       sortable: true,

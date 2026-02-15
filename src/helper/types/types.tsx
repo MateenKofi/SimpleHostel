@@ -185,6 +185,7 @@ export type Users = {
   hostelId: string | null;
   hostel: Hostel;
   changedPassword: boolean;
+  lastLoginAt: string | null;
 };
 
 export type Hostel = {
