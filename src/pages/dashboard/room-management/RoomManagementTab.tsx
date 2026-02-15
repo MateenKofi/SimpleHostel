@@ -53,6 +53,7 @@ const RoomManagementTab = () => {
         title="Room Management"
         subtitle="Manage and plan your rooms for the semester. Add, edit, and organize rooms with amenities."
         icon={Building}
+        sticky={true}
       />
 
       {/* Tabs */}

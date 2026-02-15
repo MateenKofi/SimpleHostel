@@ -23,7 +23,7 @@ const Dashboard = () => {
           title={`Welcome, ${user?.name || 'Guest'}`}
           subtitle="This is your dashboard where you can manage your account and settings"
           icon={LayoutDashboard}
-          sticky={false}
+          sticky={true}
         />
       )}
       <div>

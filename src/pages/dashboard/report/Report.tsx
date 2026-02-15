@@ -18,6 +18,7 @@ const Report = () => {
         title="Reports"
         subtitle="Generate and view analytical reports on hostel activities"
         icon={BarChart3}
+        sticky={true}
       />
       <main className="flex-1 p-4 md:p-8">
         <div className="max-w-6xl mx-auto">

@@ -19,6 +19,7 @@ const Users = () => {
         title="User Management"
         subtitle="Manage user accounts and permissions"
         icon={UserCog}
+        sticky={true}
         actions={
           <Button size="sm" onClick={openUserModal}>
             Add User

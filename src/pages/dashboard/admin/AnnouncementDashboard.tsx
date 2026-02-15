@@ -160,6 +160,7 @@ const AnnouncementDashboard = () => {
                 title="Announcements"
                 subtitle="Broadcast news, alerts, and events to all residents"
                 icon={Megaphone}
+                sticky={true}
                 actions={
                     <Button size="sm" onClick={() => setIsCreateDialogOpen(true)}>
                         <Plus className="w-4 h-4 mr-2" /> Create Announcement

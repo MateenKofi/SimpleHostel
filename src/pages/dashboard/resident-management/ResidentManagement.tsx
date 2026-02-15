@@ -20,6 +20,7 @@ const ResidentManagement = () => {
         title="Resident Management"
         subtitle="Manage all hostel residents here. Add new residents, verify room assignments, and view resident details."
         icon={Users}
+        sticky={true}
         actions={
           <div className="flex gap-2">
             <Button

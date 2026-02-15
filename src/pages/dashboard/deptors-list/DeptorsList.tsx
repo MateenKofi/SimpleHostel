@@ -16,6 +16,7 @@ const DeptorsList = () => {
         title="Debtors"
         subtitle="Manage all hostel debtors here. Make payments, and view debtor details."
         icon={Users}
+        sticky={true}
       />
       <main className="flex-1 p-4 md:p-8">
         <div className="max-w-6xl mx-auto">

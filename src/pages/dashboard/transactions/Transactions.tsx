@@ -18,6 +18,7 @@ const Transactions = () => {
         title="Transactions"
         subtitle="View and manage all payment transactions"
         icon={Receipt}
+        sticky={true}
       />
       <main className="flex-1 p-4 md:p-8">
         <div className="max-w-6xl mx-auto">

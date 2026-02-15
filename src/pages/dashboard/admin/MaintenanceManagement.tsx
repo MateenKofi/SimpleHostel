@@ -148,6 +148,7 @@ const MaintenanceManagement = () => {
                 title="Maintenance Requests"
                 subtitle="Monitor and manage all maintenance issues reported by residents"
                 icon={Wrench}
+                sticky={true}
             />
 
             <main className="flex-1 p-4 md:p-8">

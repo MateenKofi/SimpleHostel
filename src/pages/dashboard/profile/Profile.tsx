@@ -16,6 +16,7 @@ const ProfileForm = () => {
         title="Account Settings"
         subtitle="Manage your account settings and update your personal information"
         icon={UserCircle}
+        sticky={true}
       />
       <main className="flex-1 p-4 md:p-8">
         <div className="max-w-3xl mx-auto">

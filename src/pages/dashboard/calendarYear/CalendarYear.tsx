@@ -71,6 +71,7 @@ const CalendarYear = () => {
         title="Calendar Year Management"
         subtitle="Manage academic calendar years and track resident history"
         icon={Calendar}
+        sticky={true}
         actions={
           <Button size="sm" onClick={() => AddCalendarYearAction.open()}>
             <Plus className="w-4 h-4 mr-2" />

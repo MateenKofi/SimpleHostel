@@ -15,6 +15,7 @@ const HostelManagement = () => {
         title="Hostel Management"
         subtitle="Manage and configure hostel properties"
         icon={Building2}
+        sticky={true}
       />
       <main className="flex-1 p-4 md:p-8">
         <div className="max-w-6xl mx-auto">
