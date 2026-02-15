@@ -25,7 +25,7 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
     const outstandingBalance = analyticsData?.totals?.outstandingBalance || 0
     const roomType = analyticsData?.room?.roomType || "Not assigned"
     const roomNumber = analyticsData?.room?.roomNumber || "Not assigned"
-    const hostelName = analyticsData?.hostel?.hostelName || "Not assigned"
+    const hostelName = analyticsData?.currentHostel?.name || "Not assigned"
 
     return (
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

@@ -279,8 +279,12 @@ export type Analytics = {
     label: string;
     value: number;
   }>;
-  hostel?: {
-    hostelName: string;
+  currentHostel?: {
+    id: string | null;
+    name: string | null;
+    address: string | null;
+    logoUrl: string | null;
+    hostelImages: any[];
   };
 };
 
