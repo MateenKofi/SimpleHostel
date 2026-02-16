@@ -1,49 +1,44 @@
-import React from "react"
-
+import React, { useState } from "react"
 import { motion } from "framer-motion"
 import { useInView } from "react-intersection-observer"
-import { Search, MapPin, Calendar, CreditCard } from "lucide-react"
+import { ChevronDown, ChevronUp, Lightbulb, Shield, Camera, Thermometer, Clock } from "lucide-react"
 
-interface StepProps {
-  icon: React.ReactNode
+interface AccordionItemProps {
+  step: number
   title: string
   description: string
-  step: number
-  delay: number
+  isOpen: boolean
+  onToggle: () => void
 }
 
-function Step({ icon, title, description, step, delay }: StepProps) {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  })
-
+function AccordionItem({ step, title, description, isOpen, onToggle }: AccordionItemProps) {
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-      transition={{ duration: 0.5, delay }}
-      className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-6"
-    >
-      <div className="flex-shrink-0">
+    <div className="border-b border-border last:border-b-0">
+      <button
+        onClick={onToggle}
+        className="w-full py-4 flex items-center justify-between text-left hover:bg-muted/50 transition-colors"
+      >
+        <span className="font-medium text-foreground">
+          Step {step}: {title}
+        </span>
+        {isOpen ? (
+          <ChevronUp className="w-5 h-5 text-muted-foreground" />
+        ) : (
+          <ChevronDown className="w-5 h-5 text-muted-foreground" />
+        )}
+      </button>
+      {isOpen && (
         <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={inView ? { scale: 1, opacity: 1 } : { scale: 0.8, opacity: 0 }}
-          transition={{ duration: 0.4, delay: delay + 0.2 }}
-          className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg z-50"
+          initial={{ height: 0, opacity: 0 }}
+          animate={{ height: "auto", opacity: 1 }}
+          exit={{ height: 0, opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="pb-4 px-1"
         >
-          {step}
+          <p className="text-muted-foreground leading-relaxed">{description}</p>
         </motion.div>
-      </div>
-      <div className="flex-1">
-        <div className="flex items-center mb-2">
-          <div className="mr-3 text-primary">{icon}</div>
-          <h3 className="text-xl font-semibold">{title}</h3>
-        </div>
-        <p className="text-muted-foreground">{description}</p>
-      </div>
-    </motion.div>
+      )}
+    </div>
   )
 }
 
@@ -53,35 +48,29 @@ export function HowItWorksSection() {
     threshold: 0.1,
   })
 
+  const [openIndex, setOpenIndex] = useState(0)
+
   const steps = [
     {
-      icon: <Search className="h-5 w-5" />,
-      title: "Search for Hostels",
-      description: "Enter your destination and dates to find available hostels.",
-      step: 1,
+      title: "Search for Your Perfect Hostel",
+      description: "Choose the location and features you need from available hostels. Browse through verified properties with detailed information about amenities and nearby attractions.",
     },
     {
-      icon: <MapPin className="h-5 w-5" />,
-      title: "Compare Options",
-      description: "Browse hostels, read reviews, and check amenities.",
-      step: 2,
+      title: "Compare Options & Reviews",
+      description: "Review ratings, read verified guest reviews, and compare prices to find the best match for your needs and budget.",
     },
     {
-      icon: <Calendar className="h-5 w-5" />,
       title: "Book Your Stay",
-      description: "Select your room and secure your reservation.",
-      step: 3,
+      description: "Select your preferred room type, choose your dates, and complete your booking with our secure payment system. Get instant confirmation.",
     },
     {
-      icon: <CreditCard className="h-5 w-5" />,
-      title: "Enjoy Your Trip",
-      description: "Get instant confirmation and start your adventure.",
-      step: 4,
+      title: "Enjoy Your Experience",
+      description: "Arrive at your hostel with confidence. Access 24/7 support and enjoy a comfortable, verified accommodation experience.",
     },
   ]
 
   return (
-    <section ref={ref} className="py-16 md:py-24 bg-muted/30">
+    <section ref={ref} className="py-16 md:py-24 bg-background">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -89,30 +78,95 @@ export function HowItWorksSection() {
           transition={{ duration: 0.5 }}
           className="text-center max-w-3xl mx-auto mb-12"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">How Fuse Works</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
           <p className="text-lg text-muted-foreground">
-            Book your hostel in 4 simple steps
+            From setup to everyday use, we've made booking effortless.
           </p>
         </motion.div>
 
-        <div className="max-w-4xl mx-auto">
-          <div className="relative">
-            {/* Vertical line connecting steps */}
-            <div className="absolute left-6 top-6 bottom-6 w-0.5 bg-primary/20 hidden md:block -z-10"></div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 max-w-6xl mx-auto">
+          {/* Left: Feature Showcase Card */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -30 }}
+            transition={{ duration: 0.6 }}
+            className="bg-gradient-to-br from-muted/40 to-muted/20 rounded-2xl p-8 lg:p-12 flex items-center justify-center"
+          >
+            <div className="w-full max-w-sm">
+              {/* Brand/Logo Area */}
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center gap-2 mb-2">
+                  <div className="w-8 h-8 bg-amber-400 rounded-full flex items-center justify-center">
+                    <span className="text-xl">⭐</span>
+                  </div>
+                  <span className="text-2xl font-bold text-amber-500">Fuse</span>
+                </div>
+              </div>
 
-            <div className="space-y-12">
+              {/* Feature Grid */}
+              <div className="grid grid-cols-2 gap-6">
+                <div className="bg-card border border-border rounded-xl p-6 flex flex-col items-center gap-3 hover:shadow-lg transition-shadow">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Lightbulb className="w-6 h-6 text-primary" />
+                  </div>
+                  <span className="text-sm font-medium text-muted-foreground">Search</span>
+                </div>
+
+                <div className="bg-card border border-border rounded-xl p-6 flex flex-col items-center gap-3 hover:shadow-lg transition-shadow">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Shield className="w-6 h-6 text-primary" />
+                  </div>
+                  <span className="text-sm font-medium text-muted-foreground">Security</span>
+                </div>
+
+                <div className="bg-card border border-border rounded-xl p-6 flex flex-col items-center gap-3 hover:shadow-lg transition-shadow">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Camera className="w-6 h-6 text-primary" />
+                  </div>
+                  <span className="text-sm font-medium text-muted-foreground">Reviews</span>
+                </div>
+
+                <div className="bg-card border border-border rounded-xl p-6 flex flex-col items-center gap-3 hover:shadow-lg transition-shadow">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Thermometer className="w-6 h-6 text-primary" />
+                  </div>
+                  <span className="text-sm font-medium text-muted-foreground">Comfort</span>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Right: Accordion Steps */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: 30 }}
+            transition={{ duration: 0.6 }}
+            className="flex flex-col justify-center"
+          >
+            <div className="bg-card border border-border rounded-xl p-6 mb-6">
               {steps.map((step, index) => (
-                <Step
+                <AccordionItem
                   key={index}
-                  icon={step.icon}
+                  step={index + 1}
                   title={step.title}
                   description={step.description}
-                  step={step.step}
-                  delay={index * 0.1}
+                  isOpen={openIndex === index}
+                  onToggle={() => setOpenIndex(openIndex === index ? -1 : index)}
                 />
               ))}
             </div>
-          </div>
+
+            {/* CTA Button */}
+            <div className="flex items-center gap-4 flex-wrap">
+              <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-lg transition-colors flex items-center gap-2">
+                Start now
+              </button>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Clock className="w-4 h-4" />
+                <span>5 mins to complete steps</span>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>
