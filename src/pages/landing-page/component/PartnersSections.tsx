@@ -10,12 +10,6 @@ export function PartnersSection() {
   // Replace with real company names and logo URLs
   const partners = [
     {
-      id: 1,
-      name: "SamaSoft",
-      image:
-        "/Samasoftlogo.png",
-    },
-    {
       id: 2,
       name: "Airbnb",
       image:
