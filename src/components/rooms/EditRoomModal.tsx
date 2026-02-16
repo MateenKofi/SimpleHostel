@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { SelectInput } from "@/components/form";
 
 type RoomForm = Omit<Room, "amenities"> & {
   images: File[];
@@ -264,24 +265,18 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
           {/* Room Type */}
           <div className="flex flex-col gap-2">
             <Label htmlFor="type">Room Type</Label>
-            <select
-              id="type"
-              className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-              aria-invalid={errors.type ? "true" : "false"}
-              aria-describedby={errors.type ? "type-error" : undefined}
-              {...register("type")}
-            >
-              <option value="">Select Room Type</option>
-              <option value="single">Single</option>
-              <option value="double">Double</option>
-              <option value="suite">Suite</option>
-              <option value="quad">Quad</option>
-            </select>
-            {errors.type && (
-              <p id="type-error" className="text-destructive text-sm" role="alert">
-                {errors.type.message}
-              </p>
-            )}
+            <SelectInput
+              value={watch("type")}
+              onValueChange={(value) => setValue("type", value as RoomFormData["type"], { shouldValidate: true })}
+              placeholder="Select Room Type"
+              options={[
+                { value: "single", label: "Single" },
+                { value: "double", label: "Double" },
+                { value: "suite", label: "Suite" },
+                { value: "quad", label: "Quad" },
+              ]}
+              error={errors.type?.message}
+            />
           </div>
 
           {/* Maximum Occupancy (Read-only) */}
@@ -319,24 +314,16 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
         {/* Status */}
         <div className="flex flex-col gap-2">
           <Label htmlFor="status">Status</Label>
-          <select
-            id="status"
-            className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-            aria-invalid={errors.status ? "true" : "false"}
-            aria-describedby={errors.status ? "status-error" : undefined}
-            {...register("status")}
-          >
-            {ROOM_STATUS.map((status) => (
-              <option key={status} value={status}>
-                {status.charAt(0).toUpperCase() + status.slice(1)}
-              </option>
-            ))}
-          </select>
-          {errors.status && (
-            <p id="status-error" className="text-destructive text-sm" role="alert">
-              {errors.status.message}
-            </p>
-          )}
+          <SelectInput
+            value={watch("status")}
+            onValueChange={(value) => setValue("status", value as RoomFormData["status"], { shouldValidate: true })}
+            placeholder="Select Status"
+            options={ROOM_STATUS.map((status) => ({
+              value: status,
+              label: status.charAt(0).toUpperCase() + status.slice(1),
+            }))}
+            error={errors.status?.message}
+          />
         </div>
 
         {/* Amenities */}

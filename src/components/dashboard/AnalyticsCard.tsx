@@ -1,21 +1,33 @@
 import { Progress } from '@/components/ui/progress'
-import { Banknote, Percent, Users, House, DoorOpen, Building2 } from 'lucide-react'
+import { Banknote, Percent, Users, House, DoorOpen, Building2, TrendingUp, TrendingDown } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card'
 import { Analytics } from '@/helper/types/types'
+import BentoCard from './BentoCard'
+import AnimatedValue from './AnimatedValue'
+import TrendIndicator from './TrendIndicator'
 
 type analyticsData = Analytics
 
-// Floating card base class
-const floatingCard = "bg-gradient-to-br from-card to-muted/50 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] border border-border/50"
+// Icon container gradients by type
+const iconContainers = {
+  revenue: "p-2.5 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/20",
+  occupancy: "p-2.5 rounded-xl bg-gradient-to-br from-forest-green-50 to-sage-green-50 dark:from-forest-green-950/30 dark:to-sage-green-950/20",
+  debt: "p-2.5 rounded-xl bg-gradient-to-br from-amber-50 to-warm-red-50 dark:from-amber-950/30 dark:to-warm-red-950/20",
+  residents: "p-2.5 rounded-xl bg-gradient-to-br from-sage-green-50 to-teal-green-50 dark:from-sage-green-950/30 dark:to-teal-green-950/20",
+  staff: "p-2.5 rounded-xl bg-gradient-to-br from-teal-green-50 to-forest-green-50 dark:from-teal-green-950/30 dark:to-forest-green-950/20",
+  default: "p-2.5 rounded-xl bg-gradient-to-br from-muted to-muted/50",
+}
 
-// Icon container with gradient
-const iconContainer = "p-2.5 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100/50"
-const iconContainerWarning = "p-2.5 rounded-xl bg-gradient-to-br from-amber-50 to-amber-100/50"
-const iconContainerInfo = "p-2.5 rounded-xl bg-gradient-to-br from-forest-green-50 to-forest-green-100/50"
-const iconContainerTeal = "p-2.5 rounded-xl bg-gradient-to-br from-teal-50 to-teal-100/50"
+const iconClasses = {
+  revenue: "text-emerald-600 dark:text-emerald-400",
+  occupancy: "text-forest-green-700 dark:text-forest-green-400",
+  debt: "text-amber-600 dark:text-amber-400",
+  residents: "text-sage-green-700 dark:text-sage-green-400",
+  staff: "text-teal-green-600 dark:text-teal-green-400",
+  default: "text-muted-foreground",
+}
 
-const iconClass = "h-5 w-5"
-const valueClass = "text-2xl font-bold text-foreground"
+const valueClass = "text-2xl sm:text-3xl md:text-4xl font-bold text-foreground tracking-tight"
 const labelClass = "text-sm font-medium text-muted-foreground"
 
 const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
@@ -29,187 +41,218 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
 
     return (
       <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Total Paid Card - Success theme */}
-        <Card className={floatingCard}>
-          <CardContent className="p-3 sm:p-5">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex-1 min-w-0">
-                <p className={labelClass}>Total Paid</p>
-                <p className={`${valueClass} mt-2 text-emerald-700 break-all`}>
-                  GH₵{totalPaid.toFixed(2)}
-                </p>
-              </div>
-              <div className={iconContainer + " shrink-0"}>
-                <Banknote className={`${iconClass} text-emerald-600`} />
-              </div>
-            </div>
-            <div className="mt-3 pt-3 border-t border-border">
-              <p className="text-xs text-muted-foreground">Your total payments</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Outstanding Balance Card - Warning theme */}
-        <Card className={floatingCard}>
-          <CardContent className="p-3 sm:p-5">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex-1 min-w-0">
-                <p className={labelClass}>Outstanding Balance</p>
-                <p className={`${valueClass} mt-2 ${outstandingBalance > 0 ? 'text-amber-600' : 'text-emerald-600'} break-all`}>
-                  GH₵{outstandingBalance.toFixed(2)}
-                </p>
-              </div>
-              <div className={iconContainerWarning + " shrink-0"}>
-                <Banknote className={`${iconClass} text-amber-600`} />
-              </div>
-            </div>
-            <div className="mt-3 pt-3 border-t border-border">
-              <p className="text-xs text-muted-foreground">
-                {outstandingBalance > 0 ? 'Payment pending' : 'All clear!'}
+        {/* Total Paid Card - Revenue theme */}
+        <BentoCard variant="revenue" delay={0} className="card-glow">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <p className={labelClass}>Total Paid</p>
+              <p className={`${valueClass} mt-3 text-emerald-700 dark:text-emerald-400`}>
+                GH₵<AnimatedValue value={totalPaid} format="currency" decimals={2} duration={800} />
               </p>
             </div>
-          </CardContent>
-        </Card>
+            <div className={iconContainers.revenue + " shrink-0"}>
+              <Banknote className={`h-5 w-5 ${iconClasses.revenue}`} />
+            </div>
+          </div>
+          <div className="mt-4 pt-3 border-t border-border/60">
+            <p className="text-xs text-muted-foreground">Your total payments</p>
+          </div>
+        </BentoCard>
 
-        {/* Room Details Card - Info theme */}
-        <Card className={floatingCard}>
-          <CardContent className="p-3 sm:p-5">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex-1 min-w-0">
-                <p className={labelClass}>Room Details</p>
-                <div className="mt-2 space-y-1">
-                  <div className="flex items-center gap-1.5">
-                    <House className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                    <p className="text-base sm:text-lg font-semibold text-foreground truncate">{roomType}</p>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <DoorOpen className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                    <p className="text-base sm:text-lg font-semibold text-foreground truncate">{roomNumber}</p>
-                  </div>
+        {/* Outstanding Balance Card - Debt theme */}
+        <BentoCard variant="debt" delay={75} className="card-glow">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <p className={labelClass}>Outstanding Balance</p>
+              <p className={`${valueClass} mt-3 ${outstandingBalance > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
+                GH₵<AnimatedValue value={outstandingBalance} format="currency" decimals={2} duration={800} />
+              </p>
+            </div>
+            <div className={iconContainers.debt + " shrink-0"}>
+              <Banknote className={`h-5 w-5 ${iconClasses.debt}`} />
+            </div>
+          </div>
+          <div className="mt-4 pt-3 border-t border-border/60">
+            <p className="text-xs text-muted-foreground">
+              {outstandingBalance > 0 ? 'Payment pending' : 'All clear!'}
+            </p>
+          </div>
+        </BentoCard>
+
+        {/* Room Details Card - Occupancy theme */}
+        <BentoCard variant="occupancy" delay={150} className="card-glow">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <p className={labelClass}>Room Details</p>
+              <div className="mt-3 space-y-2">
+                <div className="flex items-center gap-2">
+                  <House className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <p className="text-base sm:text-lg font-semibold text-foreground truncate">{roomType}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <DoorOpen className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <p className="text-base sm:text-lg font-semibold text-foreground truncate">{roomNumber}</p>
                 </div>
               </div>
-              <div className={iconContainerInfo + " shrink-0"}>
-                <House className={`${iconClass} text-forest-green-700`} />
-              </div>
             </div>
-            <div className="mt-3 pt-3 border-t border-border">
-              <p className="text-xs text-muted-foreground">Your accommodation</p>
+            <div className={iconContainers.occupancy + " shrink-0"}>
+              <House className={`h-5 w-5 ${iconClasses.occupancy}`} />
             </div>
-          </CardContent>
-        </Card>
+          </div>
+          <div className="mt-4 pt-3 border-t border-border/60">
+            <p className="text-xs text-muted-foreground">Your accommodation</p>
+          </div>
+        </BentoCard>
 
-        {/* Current Hostel Card - Teal theme */}
-        <Card className={floatingCard}>
-          <CardContent className="p-3 sm:p-5">
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex-1 min-w-0">
-                <p className={labelClass}>Current Hostel</p>
-                <p className={`${valueClass} mt-2 text-teal-700 truncate`}>
-                  {hostelName}
-                </p>
-              </div>
-              <div className={iconContainerTeal + " shrink-0"}>
-                <Building2 className={`${iconClass} text-teal-600`} />
-              </div>
+        {/* Current Hostel Card - Staff theme */}
+        <BentoCard variant="staff" delay={225} className="card-glow">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <p className={labelClass}>Current Hostel</p>
+              <p className={`${valueClass} mt-3 text-teal-700 dark:text-teal-400 truncate`}>
+                {hostelName}
+              </p>
             </div>
-            <div className="mt-3 pt-3 border-t border-border">
-              <p className="text-xs text-muted-foreground">Your location</p>
+            <div className={iconContainers.staff + " shrink-0"}>
+              <Building2 className={`h-5 w-5 ${iconClasses.staff}`} />
             </div>
-          </CardContent>
-        </Card>
+          </div>
+          <div className="mt-4 pt-3 border-t border-border/60">
+            <p className="text-xs text-muted-foreground">Your location</p>
+          </div>
+        </BentoCard>
       </div>
     )
   }
 
-  // Admin/SuperAdmin cards (original logic with enhanced styling)
+  // Admin/SuperAdmin cards with modern bento grid layout
+  const hasDebtCard = analyticsData?.totalHostels > -1
+  const hasStaffCard = analyticsData?.totalStaff > -1
+
   return (
-    <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-      <Card className={floatingCard}>
-        <CardHeader className="flex flex-row items-center justify-between pb-2 gap-2">
-          <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
-          <div className={iconContainer + " shrink-0"}>
-            <Banknote className={`${iconClass} text-emerald-600`} />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="text-xl sm:text-2xl font-bold break-all">GH₵{(analyticsData?.totalRevenue || 0).toFixed(2)}</div>
-          <p className="text-xs text-muted-foreground truncate">of GH₵{(analyticsData?.expectedIncome || 0).toFixed(2)} expected</p>
-          <div className="mt-3">
-            <Progress
-              value={analyticsData?.expectedIncome > 0 ? (analyticsData?.totalRevenue / analyticsData?.expectedIncome) * 100 : 0}
-              className="bg-muted"
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className={floatingCard}>
-        <CardHeader className="flex flex-row items-center justify-between pb-2 gap-2">
-          <CardTitle className="text-sm font-medium">Occupancy Rate</CardTitle>
-          <div className={iconContainerInfo + " shrink-0"}>
-            <Percent className={`${iconClass} text-forest-green-700`} />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="text-xl sm:text-2xl font-bold">{analyticsData && analyticsData?.occupancyRate?.toFixed(1)}%</div>
-          <p className="text-xs text-muted-foreground truncate">
-            {analyticsData && analyticsData?.occupiedRooms} of {analyticsData && analyticsData?.activeRooms} rooms occupied
-          </p>
-          <div className="mt-3">
-            <Progress
-              value={analyticsData && analyticsData.occupancyRate}
-              className="bg-muted"
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {analyticsData?.totalHostels > -1 && (
-        <Card className={floatingCard}>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 gap-2">
-            <CardTitle className="text-sm font-medium">Total Debt</CardTitle>
-            <div className={iconContainerWarning + " shrink-0"}>
-              <Banknote className={`${iconClass} text-amber-600`} />
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-xl sm:text-2xl font-bold break-all">GH₵{(analyticsData?.totalDebt || 0).toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground truncate">of GH₵{(analyticsData?.currentYearStats?.expectedRevenue || 0).toFixed(2)} expected</p>
-            <div className="mt-3">
+    <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 bento-grid">
+      {/* Total Revenue Card - Large, spans 2 columns on desktop */}
+      <BentoCard variant="revenue" colSpan={hasDebtCard ? 1 : 2} delay={0} className="card-glow">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <p className={labelClass}>Total Revenue</p>
+            <p className={`${valueClass} mt-3 text-emerald-700 dark:text-emerald-400`}>
+              GH₵<AnimatedValue value={analyticsData?.totalRevenue || 0} format="currency" decimals={2} duration={1000} />
+            </p>
+            <p className="text-xs text-muted-foreground mt-2 truncate">
+              of GH₵{(analyticsData?.expectedIncome || 0).toFixed(2)} expected
+            </p>
+            {/* Progress bar with gradient */}
+            <div className="mt-4">
               <Progress
-                value={analyticsData?.currentYearStats?.expectedRevenue > 0 ? (analyticsData?.totalDebt / analyticsData?.currentYearStats?.expectedRevenue) * 100 : 0}
-                className="bg-muted"
+                value={analyticsData?.expectedIncome > 0 ? (analyticsData?.totalRevenue / analyticsData?.expectedIncome) * 100 : 0}
+                className="bg-muted/50 h-2"
               />
             </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {analyticsData?.totalStaff > -1 && (
-        <Card className={floatingCard}>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 gap-2">
-            <CardTitle className="text-sm font-medium">Total Staff</CardTitle>
-            <div className={iconContainerTeal + " shrink-0"}>
-              <Users className={`${iconClass} text-teal-600`} />
+            {/* Trend indicator placeholder */}
+            <div className="mt-3">
+              <TrendIndicator value={12.5} label="vs last month" direction="up" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-3xl sm:text-4xl font-bold">{analyticsData && analyticsData.totalStaff || 0}</div>
-          </CardContent>
-        </Card>
+          </div>
+          <div className={iconContainers.revenue + " shrink-0"}>
+            <Banknote className={`h-6 w-6 ${iconClasses.revenue}`} />
+          </div>
+        </div>
+      </BentoCard>
+
+      {/* Occupancy Rate Card */}
+      <BentoCard variant="occupancy" delay={75} className="card-glow">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <p className={labelClass}>Occupancy Rate</p>
+            <p className={`${valueClass} mt-3 text-forest-green-700 dark:text-forest-green-400`}>
+              <AnimatedValue value={analyticsData?.occupancyRate || 0} format="number" decimals={1} duration={800} />%
+            </p>
+            <p className="text-xs text-muted-foreground mt-2 truncate">
+              {analyticsData?.occupiedRooms || 0} of {analyticsData?.activeRooms || 0} rooms occupied
+            </p>
+            <div className="mt-4">
+              <Progress
+                value={analyticsData?.occupancyRate || 0}
+                className="bg-muted/50 h-2"
+              />
+            </div>
+            <div className="mt-3">
+              <TrendIndicator value={5.2} label="vs last month" direction="up" />
+            </div>
+          </div>
+          <div className={iconContainers.occupancy + " shrink-0"}>
+            <Percent className={`h-6 w-6 ${iconClasses.occupancy}`} />
+          </div>
+        </div>
+      </BentoCard>
+
+      {/* Total Debt Card - Only show if hostels data exists */}
+      {hasDebtCard && (
+        <BentoCard variant="debt" delay={150} className="card-glow">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <p className={labelClass}>Total Debt</p>
+              <p className={`${valueClass} mt-3 text-amber-600 dark:text-amber-400`}>
+                GH₵<AnimatedValue value={analyticsData?.totalDebt || 0} format="currency" decimals={2} duration={800} />
+              </p>
+              <p className="text-xs text-muted-foreground mt-2 truncate">
+                of GH₵{(analyticsData?.currentYearStats?.expectedRevenue || 0).toFixed(2)} expected
+              </p>
+              <div className="mt-4">
+                <Progress
+                  value={analyticsData?.currentYearStats?.expectedRevenue > 0 ? ((analyticsData?.totalDebt || 0) / analyticsData?.currentYearStats?.expectedRevenue) * 100 : 0}
+                  className="bg-muted/50 h-2"
+                />
+              </div>
+              <div className="mt-3">
+                <TrendIndicator value={-3.8} label="vs last month" direction="down" />
+              </div>
+            </div>
+            <div className={iconContainers.debt + " shrink-0"}>
+              <Banknote className={`h-6 w-6 ${iconClasses.debt}`} />
+            </div>
+          </div>
+        </BentoCard>
       )}
 
-      <Card className={floatingCard}>
-        <CardHeader className="flex flex-row items-center justify-between pb-2 gap-2">
-          <CardTitle className="text-sm font-medium">Total Residents</CardTitle>
-          <div className={iconContainer + " shrink-0"}>
-            <Users className={`${iconClass} text-emerald-600`} />
+      {/* Total Staff Card - Only show if staff data exists */}
+      {hasStaffCard && (
+        <BentoCard variant="staff" delay={hasDebtCard ? 225 : 150} className="card-glow">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <p className={labelClass}>Total Staff</p>
+              <p className={`${valueClass} mt-3 text-teal-700 dark:text-teal-400`}>
+                <AnimatedValue value={analyticsData?.totalStaff || 0} format="number" duration={600} />
+              </p>
+              <div className="mt-3">
+                <TrendIndicator value={2} label="new this month" direction="up" />
+              </div>
+            </div>
+            <div className={iconContainers.staff + " shrink-0"}>
+              <Users className={`h-6 w-6 ${iconClasses.staff}`} />
+            </div>
           </div>
-        </CardHeader>
-        <CardContent>
-          <div className="text-3xl sm:text-4xl font-bold">{analyticsData && analyticsData.totalResidents}</div>
-        </CardContent>
-      </Card>
+        </BentoCard>
+      )}
+
+      {/* Total Residents Card - Always show for admins */}
+      <BentoCard variant="residents" delay={hasDebtCard ? 300 : 225} className="card-glow">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <p className={labelClass}>Total Residents</p>
+            <p className={`${valueClass} mt-3 text-sage-green-700 dark:text-sage-green-400`}>
+              <AnimatedValue value={analyticsData?.totalResidents || 0} format="number" duration={700} />
+            </p>
+            <div className="mt-3">
+              <TrendIndicator value={8.1} label="vs last month" direction="up" />
+            </div>
+          </div>
+          <div className={iconContainers.residents + " shrink-0"}>
+            <Users className={`h-6 w-6 ${iconClasses.residents}`} />
+          </div>
+        </div>
+      </BentoCard>
     </div>
   )
 }

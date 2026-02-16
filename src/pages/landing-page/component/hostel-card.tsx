@@ -40,7 +40,7 @@ export function HostelCard({ image, title, location, index, id, rating }: Hostel
           </div>
           <CardContent className="p-4">
             <motion.h3
-              className="font-semibold transition-colors group-hover:text-red-500"
+              className="font-semibold transition-colors group-hover:text-primary"
               whileHover={{ x: 2 }}
               transition={{ duration: 0.2 }}
             >

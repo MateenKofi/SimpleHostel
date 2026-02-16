@@ -47,11 +47,11 @@ export function ContactSection() {
       variants={containerVariants}
       initial="hidden"
       animate={inView ? "visible" : "hidden"}
-      className="bg-zinc-900 text-white py-12 sm:py-16 px-4 rounded-3xl relative overflow-hidden"
+      className="bg-forest-green-900 text-white py-12 sm:py-16 px-4 rounded-3xl relative overflow-hidden"
     >
       {/* Animated background elements */}
       <motion.div
-        className="absolute top-0 right-0 w-64 h-64 bg-red-500 rounded-full opacity-10"
+        className="absolute top-0 right-0 w-64 h-64 bg-primary rounded-full opacity-20"
         animate={{
           scale: [1, 1.2, 1],
           x: [0, 20, 0],
@@ -64,7 +64,7 @@ export function ContactSection() {
         }}
       />
       <motion.div
-        className="absolute bottom-0 left-0 w-40 h-40 bg-red-500 rounded-full opacity-10"
+        className="absolute bottom-0 left-0 w-40 h-40 bg-accent rounded-full opacity-20"
         animate={{
           scale: [1, 1.3, 1],
           x: [0, -10, 0],
@@ -81,16 +81,18 @@ export function ContactSection() {
       <div className="container max-w-4xl mx-auto text-center space-y-6 relative z-10">
         <motion.div variants={itemVariants} className="space-y-4">
           <h2 className="text-3xl md:text-4xl font-bold">
-            Ready to <span className="text-red-500">Get Started</span>?
+            Ready to <span className="text-teal-green-400">Get Started</span>?
           </h2>
-          <p className="text-zinc-400 text-lg">
+          <p className="text-forest-green-200 text-lg">
             Find your perfect hostel and start your adventure. Let's make your travel dreams a reality!
           </p>
         </motion.div>
 
         <motion.div variants={itemVariants} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <Button size="lg" className="bg-red-500 hover:bg-red-600 text-white"
-          onClick={() => navigate("/find-hostel")}
+          <Button
+            size="lg"
+            className="bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/30"
+            onClick={() => navigate("/find-hostel")}
           >
             Book Your Stay
           </Button>
@@ -103,7 +105,7 @@ export function ContactSection() {
           <div className="flex items-center gap-4">
             <motion.a
               href="#"
-              className="text-zinc-400 hover:text-white transition-colors"
+              className="text-forest-green-300 hover:text-white transition-colors"
               aria-label="Follow us on Facebook"
               variants={socialIconVariants}
               whileHover="hover"
@@ -113,7 +115,7 @@ export function ContactSection() {
               <Facebook className="w-6 h-6" />
               {isHovered.facebook && (
                 <motion.span
-                  className="absolute bg-zinc-800 text-white text-xs px-2 py-1 rounded -mt-8 ml-[-10px]"
+                  className="absolute bg-forest-green-800 text-white text-xs px-2 py-1 rounded -mt-8 ml-[-10px]"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
@@ -124,7 +126,7 @@ export function ContactSection() {
             </motion.a>
             <motion.a
               href="#"
-              className="text-zinc-400 hover:text-white transition-colors"
+              className="text-forest-green-300 hover:text-white transition-colors"
               aria-label="Follow us on Instagram"
               variants={socialIconVariants}
               whileHover="hover"
@@ -134,7 +136,7 @@ export function ContactSection() {
               <Instagram className="w-6 h-6" />
               {isHovered.instagram && (
                 <motion.span
-                  className="absolute bg-zinc-800 text-white text-xs px-2 py-1 rounded -mt-8 ml-[-15px]"
+                  className="absolute bg-forest-green-800 text-white text-xs px-2 py-1 rounded -mt-8 ml-[-15px]"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
@@ -163,7 +165,7 @@ export function ContactSection() {
             />
           </motion.div>
 
-          <motion.div className="text-zinc-400" whileHover={{ scale: 1.05 }}>
+          <motion.div className="text-forest-green-300" whileHover={{ scale: 1.05 }}>
             <a href="tel:+1234567890" className="hover:text-white transition-colors flex items-center gap-2">
               <Phone className="w-4 h-4" />
               (+233) 54 398 3427
@@ -171,7 +173,7 @@ export function ContactSection() {
           </motion.div>
         </motion.div>
 
-        <motion.div variants={itemVariants} className="pt-8 text-sm text-zinc-500">
+        <motion.div variants={itemVariants} className="pt-8 text-sm text-forest-green-400">
           <p>&copy; {new Date().getFullYear()} Fuse. All rights reserved.</p>
         </motion.div>
       </div>

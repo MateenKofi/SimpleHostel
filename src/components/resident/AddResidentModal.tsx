@@ -6,11 +6,12 @@ import { ResidentDto } from "@/types/dtos";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addResident } from "@/api/residents";
-import { Loader } from "lucide-react";
+import { Loader, User, Mail, Phone, IdCard, GraduationCap, UserCircle, Users } from "lucide-react";
 import { useAddedResidentStore } from "@/stores/useAddedResidentStore";
 import { AdminResidentFormSchema } from "@/schemas/ResidentForm.schema";
 import { z } from "zod";
 import type { ApiError } from "@/types/dtos";
+import { TextInput, SelectInput } from "@/components/form";
 
 type AddResidentModalProps = {
   onClose: () => void;
@@ -86,173 +87,89 @@ const AddResidentModal = ({ onClose }: AddResidentModalProps) => {
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-4 p-6"
       >
-        <div className="flex flex-col gap-1">
-          <label htmlFor="name" className="text-sm font-medium text-gray-400">
-            Full Name*
-          </label>
-          <input
-            {...register("name")}
-            type="text"
-            id="name"
-            placeholder="Enter full name"
-            className="p-2 border rounded-md"
-          />
-          {errors.name && (
-            <span className="text-sm text-red-500">{errors.name.message}</span>
-          )}
-        </div>
+        <TextInput
+          {...register("name")}
+          label="Full Name *"
+          placeholder="Enter full name"
+          leftIcon={User}
+          error={errors.name?.message}
+        />
 
-        <div className="flex flex-col gap-1">
-          <label
-            htmlFor="studentId"
-            className="text-sm font-medium text-gray-400"
-          >
-            Student ID*
-          </label>
-          <input
-            {...register("studentId")}
-            type="text"
-            id="studentId"
-            placeholder="Enter student ID"
-            className="p-2 border rounded-md"
-          />
-          {errors.studentId && (
-            <span className="text-sm text-red-500">
-              {errors.studentId.message}
-            </span>
-          )}
-        </div>
+        <TextInput
+          {...register("studentId")}
+          label="Student ID *"
+          placeholder="Enter student ID"
+          leftIcon={IdCard}
+          error={errors.studentId?.message}
+        />
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="course" className="text-sm font-medium text-gray-400">
-            Course*
-          </label>
-          <input
-            {...register("course")}
-            type="text"
-            id="course"
-            placeholder="Enter course name"
-            className="p-2 border rounded-md"
-          />
-          {errors.course && (
-            <span className="text-sm text-red-500">{errors.course.message}</span>
-          )}
-        </div>
+        <TextInput
+          {...register("course")}
+          label="Course *"
+          placeholder="Enter course name"
+          leftIcon={GraduationCap}
+          error={errors.course?.message}
+        />
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="email" className="text-sm font-medium text-gray-400">
-            Email*
-          </label>
-          <input
-            {...register("email")}
-            type="email"
-            id="email"
-            placeholder="Enter email address"
-            className="p-2 border rounded-md"
-          />
-          {errors.email && (
-            <span className="text-sm text-red-500">{errors.email.message}</span>
-          )}
-        </div>
+        <TextInput
+          {...register("email")}
+          type="email"
+          label="Email *"
+          placeholder="Enter email address"
+          leftIcon={Mail}
+          error={errors.email?.message}
+        />
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="phone" className="text-sm font-medium text-gray-400">
-            Phone Number*
-          </label>
-          <input
-            {...register("phone")}
-            type="tel"
-            id="phone"
-            placeholder="Enter phone number"
-            className="p-2 border rounded-md"
-          />
-          {errors.phone && (
-            <span className="text-sm text-red-500">{errors.phone.message}</span>
-          )}
-        </div>
+        <TextInput
+          {...register("phone")}
+          type="tel"
+          label="Phone Number *"
+          placeholder="Enter phone number"
+          leftIcon={Phone}
+          error={errors.phone?.message}
+        />
 
-        <div className="flex flex-col gap-1">
-          <label htmlFor="gender" className="text-sm font-medium text-gray-400">
-            Gender*
-          </label>
-          <select
-            {...register("gender")}
-            id="gender"
-            className="p-2 border rounded-md"
-          >
-            <option value="">Select gender</option>
-            <option value="Male">Male</option>
-            <option value="Female">Female</option>
-          </select>
-          {errors.gender && (
-            <span className="text-sm text-red-500">{errors.gender.message}</span>
-          )}
-        </div>
+        <SelectInput
+          {...register("gender")}
+          label="Gender *"
+          placeholder="Select gender"
+          options={[
+            { value: "Male", label: "Male" },
+            { value: "Female", label: "Female" },
+          ]}
+          error={errors.gender?.message}
+        />
 
         <div className="pt-4 mt-2 border-t">
           <h2 className="mb-4 text-lg font-semibold">Emergency Contact</h2>
 
-          <div className="flex flex-col gap-1">
-            <label
-              htmlFor="emergencyContactName"
-              className="text-sm font-medium text-gray-400"
-            >
-              Contact Name*
-            </label>
-            <input
-              {...register("emergencyContactName")}
-              type="text"
-              id="emergencyContactName"
-              placeholder="Enter emergency contact name"
-              className="p-2 border rounded-md"
-            />
-            {errors.emergencyContactName && (
-              <span className="text-sm text-red-500">
-                {errors.emergencyContactName.message}
-              </span>
-            )}
-          </div>
+          <TextInput
+            {...register("emergencyContactName")}
+            label="Contact Name *"
+            placeholder="Enter emergency contact name"
+            leftIcon={UserCircle}
+            error={errors.emergencyContactName?.message}
+          />
 
-          <div className="flex flex-col gap-1 mt-4">
-            <label
-              htmlFor="emergencyContactPhone"
-              className="text-sm font-medium text-gray-400"
-            >
-              Contact Phone*
-            </label>
-            <input
+          <div className="mt-4">
+            <TextInput
               {...register("emergencyContactPhone")}
               type="tel"
-              id="emergencyContactPhone"
+              label="Contact Phone *"
               placeholder="Enter emergency contact phone"
-              className="p-2 border rounded-md"
+              leftIcon={Phone}
+              error={errors.emergencyContactPhone?.message}
             />
-            {errors.emergencyContactPhone && (
-              <span className="text-sm text-red-500">
-                {errors.emergencyContactPhone.message}
-              </span>
-            )}
           </div>
 
-          <div className="flex flex-col gap-1 mt-4">
-            <label
-              htmlFor="relationship"
-              className="text-sm font-medium text-gray-400"
-            >
-              Relationship*
-            </label>
-            <input
+          <div className="mt-4">
+            <TextInput
               {...register("relationship")}
-              type="text"
-              id="relationship"
+              label="Relationship *"
               placeholder="Enter relationship (e.g. Parent, Sibling)"
-              className="p-2 border rounded-md"
+              leftIcon={Users}
+              error={errors.relationship?.message}
             />
-            {errors.relationship && (
-              <span className="text-sm text-red-500">
-                {errors.relationship.message}
-              </span>
-            )}
           </div>
         </div>
 

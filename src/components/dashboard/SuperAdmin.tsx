@@ -7,8 +7,8 @@ import PaymentStat from "./charts/PaymentStat";
 import SystemOverviewTable from "./SystemOverviewTable";
 import OccupancyStatus from "./charts/OccupancyStatus";
 import { DashboardLoading } from "../loaders/DashboardLoader";
-
-// Color scheme
+import ModernDashboardBackground from "./ModernDashboardBackground";
+import "./dashboard.css";
 
 const SuperAdmin = () => {
   const { data: analyticsData, isLoading } = useQuery({
@@ -24,25 +24,33 @@ const SuperAdmin = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      <div className="flex flex-1">
-        <main className="flex-1 p-4 md:p-6">
-          <AnalyticsCard analyticsData={analyticsData} />
+    <ModernDashboardBackground>
+      <div className="flex flex-col min-h-screen">
+        <div className="flex flex-1">
+          <main className="flex-1 p-4 md:p-6">
+            {/* Analytics Cards - Modern Bento Grid */}
+            <AnalyticsCard analyticsData={analyticsData} />
 
-          <div className="grid gap-4 mt-6 md:grid-cols-2 lg:grid-cols-7">
-            <RevenueOverView analyticsData={analyticsData} />
-            <OccupancyStatus analyticsData={analyticsData} />
-          </div>
+            {/* Charts Row - Revenue and Occupancy */}
+            <div className="grid gap-4 mt-6 md:grid-cols-2 lg:grid-cols-7">
+              <RevenueOverView analyticsData={analyticsData} />
+              <OccupancyStatus analyticsData={analyticsData} />
+            </div>
 
-          <div className="grid gap-4 mt-6 md:grid-cols-2"></div>
-          <HostelStatus analyticsData={analyticsData} />
-          <PaymentStat analyticsData={analyticsData} />
-          <div className="mt-6">
-            <SystemOverviewTable analyticsData={analyticsData} />
-          </div>
-        </main>
+            {/* Hostel Status and Payment Stats */}
+            <div className="grid gap-4 mt-6 md:grid-cols-2">
+              <HostelStatus analyticsData={analyticsData} />
+              <PaymentStat analyticsData={analyticsData} />
+            </div>
+
+            {/* System Overview Table */}
+            <div className="mt-6 animate-fade-in-up" style={{ animationDelay: '400ms' }}>
+              <SystemOverviewTable analyticsData={analyticsData} />
+            </div>
+          </main>
+        </div>
       </div>
-    </div>
+    </ModernDashboardBackground>
   );
 };
 

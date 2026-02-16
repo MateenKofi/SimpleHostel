@@ -2,8 +2,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { TextInput } from "@/components/form";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { Loader } from "lucide-react";
@@ -63,18 +62,13 @@ const ForgetPassword = () => {
                       Enter your email to reset your password
                     </p>
                   </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="example@gmail.com"
-                      {...register("email", { required: "Email is required" })}
-                    />
-                    {errors.email && (
-                      <p className="text-red-500">{errors.email.message}</p>
-                    )}
-                  </div>
+                  <TextInput
+                    label="Email"
+                    type="email"
+                    placeholder="example@gmail.com"
+                    error={errors.email?.message}
+                    {...register("email", { required: "Email is required" })}
+                  />
                   <Button
                     type="submit"
                     className="w-full"

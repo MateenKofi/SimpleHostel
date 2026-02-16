@@ -1,7 +1,6 @@
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from "zod"
 import { Loader } from "lucide-react"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -13,17 +12,7 @@ import { format } from "date-fns"
 import { toast } from "sonner"
 import type { Announcement } from "@/types/announcement"
 import { getAllCategories, getAllPriorities } from "@/helper/announcementUtils"
-
-const announcementFormSchema = z.object({
-    title: z.string().min(1, "Title is required"),
-    content: z.string().min(1, "Content is required"),
-    category: z.enum(["general", "policy", "event", "emergency"]),
-    priority: z.enum(["low", "high", "urgent"]),
-    startDate: z.string().min(1, "Start date is required"),
-    endDate: z.string().min(1, "End date is required"),
-})
-
-type AnnouncementFormValues = z.infer<typeof announcementFormSchema>
+import { announcementFormSchema, type AnnouncementFormValues } from "@/schemas/announcementSchema"
 
 interface AnnouncementDialogProps {
     open: boolean

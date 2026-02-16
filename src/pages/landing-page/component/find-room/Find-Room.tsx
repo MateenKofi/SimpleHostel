@@ -134,6 +134,21 @@ const FindRoom = () => {
     }
   });
 
+  // Fetch resident data to get gender for filtering
+  const { data: residentData } = useQuery({
+    queryKey: ["resident-profile", user?.id],
+    queryFn: async () => {
+      if (!user?.id || !token) return null;
+      try {
+        const response = await getResidentAnalytics(user.id);
+        return response?.data;
+      } catch {
+        return null;
+      }
+    },
+    enabled: !!user?.id && !!token,
+  });
+
   const {
     data: RoomData,
     isLoading,
@@ -165,11 +180,31 @@ const FindRoom = () => {
   }, [RoomData?.rooms]);
 
   const filteredRooms = useMemo(() => {
+    const residentGender = residentData?.gender; // e.g., "Male", "Female"
+
     return availableRooms.filter((room: Room) => {
+      // AUTOMATIC GENDER FILTERING - Residents can only see rooms matching their gender or Mix rooms
+      if (residentGender) {
+        const isGenderCompatible =
+          room.gender === "Mix" ||
+          room.gender === residentGender;
+
+        if (!isGenderCompatible) {
+          return false; // Skip rooms that don't match resident's gender
+        }
+      } else {
+        // If resident gender is unknown, only show Mix rooms as safe fallback
+        if (room.gender !== "Mix") {
+          return false;
+        }
+      }
+
+      // UI Filter: Gender
       const matchesGender =
         activeFilters.gender.length === 0 ||
         activeFilters.gender.includes(room.gender);
 
+      // UI Filter: Price Range
       const matchesPriceRange =
         activeFilters.priceRange.length === 0 ||
         activeFilters.priceRange.some((range) => {
@@ -177,13 +212,14 @@ const FindRoom = () => {
           return room.price >= min && room.price <= max;
         });
 
+      // UI Filter: Room Type
       const matchesRoomType =
         activeFilters.roomType.length === 0 ||
         activeFilters.roomType.includes(room.type);
 
       return matchesGender && matchesPriceRange && matchesRoomType;
     });
-  }, [availableRooms, activeFilters]);
+  }, [availableRooms, activeFilters, residentData?.gender]);
 
   const handleRoomClick = (room: Room) => {
     if (!token || !user) {
@@ -192,6 +228,14 @@ const FindRoom = () => {
       navigate(`/login?redirect=${encodeURIComponent(currentPath)}`);
       return;
     }
+
+    // VALIDATION: Ensure gender compatibility before booking
+    const residentGender = residentData?.gender;
+    if (residentGender && room.gender !== "Mix" && room.gender !== residentGender) {
+      toast.error(`This room is designated for ${room.gender} residents only. You cannot book it.`);
+      return;
+    }
+
     setRoom(room);
     setSelectedBookingRoom(room);
     setIsBookingModalOpen(true);

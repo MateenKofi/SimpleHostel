@@ -2,7 +2,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Loader2, LucideCircleArrowOutUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,33 +23,7 @@ import UploadMultipleImages from "@/components/UploadMultipleImages";
 import SEOHelmet from "@/components/SEOHelmet";
 import UploadSingleImage from "@/components/UploadSingleImage";
 import type { ApiError } from "@/types/dtos";
-
-const formSchema = z.object({
-  hostelImage: z.string().optional(),
-  description: z.string().optional(),
-  hostelName: z.string().min(2, {
-    message: "Hostel name must be at least 2 characters.",
-  }),
-  location: z.string().nonempty({
-    message: "Please select a location.",
-  }),
-  address: z.string().nonempty({
-    message:
-      "Address must follow the format XX-XXX-XXXX. Adress from Ghana post code",
-  }),
-  managerName: z.string().min(2, {
-    message: "Manager name must be at least 2 characters.",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  phone: z.string().min(10, {
-    message: "Please enter a valid phone number.",
-  }),
-  ghanaCard: z.string().regex(/^GHA-\d{9}-\d$/, {
-    message: "Ghana Card must follow the format GHA-xxxxxxxxx-x.",
-  }),
-});
+import { hostelListingFormSchema, type HostelListingFormValues } from "@/schemas/hostelListingSchema";
 
 const HostelListingForm = () => {
   const [images, setImages] = useState<File[]>([]);
@@ -59,8 +32,8 @@ const HostelListingForm = () => {
   const [logo, setLogo] = useState<string | File | null>(null);
 
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<HostelListingFormValues>({
+    resolver: zodResolver(hostelListingFormSchema),
     defaultValues: {
       hostelImage: "",
       hostelName: "",
@@ -75,7 +48,7 @@ const HostelListingForm = () => {
   });
 
   const AddListingMutation = useMutation({
-    mutationFn: async (data: z.infer<typeof formSchema>) => {
+    mutationFn: async (data: HostelListingFormValues) => {
       const formData = new FormData();
       formData.append("name", data.hostelName.toUpperCase());
       formData.append("description", data.description || "");
@@ -108,7 +81,7 @@ const HostelListingForm = () => {
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+  const onSubmit = async (data: HostelListingFormValues) => {
     AddListingMutation.mutate(data);
   };
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Loader, User, Phone, Briefcase } from "lucide-react";
+import { Loader, User, Phone, Briefcase, Mail, MapPin, Calendar, IdCard, Home, GraduationCap, UserCircle } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { addStaff } from "@/api/staff";
@@ -10,6 +10,7 @@ import UploadSingleImage from "@/components/UploadSingleImage";
 import type { ApiError } from "@/types/dtos";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
+import { TextInput, SelectInput, PasswordInput } from "@/components/form";
 
 const roles = [
   "Manager",
@@ -148,154 +149,90 @@ const AddStaff: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div>
-                <label className="block mb-1 text-sm font-medium text-foreground">
-                  Full Name <span className="text-destructive">*</span>
-                </label>
-                <input
-                  {...register("name", {
-                    required: "Full name is required",
-                  })}
-                  type="text"
-                  className="w-full p-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                  placeholder="Enter full name"
-                />
-                {errors.name && (
-                  <span className="text-xs text-destructive">
-                    {errors.name.message?.toString()}
-                  </span>
-                )}
-              </div>
+              <TextInput
+                {...register("name", {
+                  required: "Full name is required",
+                })}
+                label="Full Name *"
+                placeholder="Enter full name"
+                leftIcon={User}
+                error={errors.name?.message?.toString()}
+              />
 
-              <div>
-                <label className="block mb-1 text-sm font-medium text-foreground">
-                  Middle Name
-                </label>
-                <input
-                  {...register("middleName")}
-                  type="text"
-                  className="w-full p-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                  placeholder="Enter middle name"
-                />
-              </div>
+              <TextInput
+                {...register("middleName")}
+                label="Middle Name"
+                placeholder="Enter middle name"
+                leftIcon={UserCircle}
+              />
 
-              <div>
-                <label className="block mb-1 text-sm font-medium text-foreground">
-                  Date of Birth <span className="text-destructive">*</span>
-                </label>
-                <input
-                  {...register("dateOfBirth", {
-                    required: "Date of birth is required",
-                  })}
-                  type="date"
-                  className="w-full p-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                />
-                {errors.dateOfBirth && (
-                  <span className="text-xs text-destructive">
-                    {errors.dateOfBirth.message?.toString()}
-                  </span>
-                )}
-              </div>
+              <TextInput
+                {...register("dateOfBirth", {
+                  required: "Date of birth is required",
+                })}
+                type="date"
+                label="Date of Birth *"
+                leftIcon={Calendar}
+                error={errors.dateOfBirth?.message?.toString()}
+              />
 
-              <div>
-                <label className="block mb-1 text-sm font-medium text-foreground">
-                  Nationality <span className="text-destructive">*</span>
-                </label>
-                <input
-                  type="text"
-                  {...register("nationality", {
-                    required: "Nationality is required",
-                  })}
-                  className="w-full p-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                  placeholder="e.g. Ghanaian"
-                />
-                {errors.nationality && (
-                  <span className="text-xs text-destructive">
-                    {errors.nationality.message?.toString()}
-                  </span>
-                )}
-              </div>
+              <TextInput
+                {...register("nationality", {
+                  required: "Nationality is required",
+                })}
+                label="Nationality *"
+                placeholder="e.g. Ghanaian"
+                leftIcon={MapPin}
+                error={errors.nationality?.message?.toString()}
+              />
 
-              <div>
-                <label className="block mb-1 text-sm font-medium text-foreground">
-                  Gender <span className="text-destructive">*</span>
-                </label>
-                <select
-                  {...register("gender", { required: "Gender is required" })}
-                  className="w-full p-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                >
-                  <option value="">-- Select Gender --</option>
-                  <option value="MALE">Male</option>
-                  <option value="FEMALE">Female</option>
-                </select>
-                {errors.gender && (
-                  <span className="text-xs text-destructive">
-                    {errors.gender.message?.toString()}
-                  </span>
-                )}
-              </div>
+              <SelectInput
+                {...register("gender", { required: "Gender is required" })}
+                label="Gender *"
+                placeholder="Select Gender"
+                options={[
+                  { value: "MALE", label: "Male" },
+                  { value: "FEMALE", label: "Female" },
+                ]}
+                error={errors.gender?.message?.toString()}
+              />
 
-              <div>
-                <label className="block mb-1 text-sm font-medium text-foreground">
-                  Religion <span className="text-destructive">*</span>
-                </label>
-                <select
-                  {...register("religion", { required: "Religion is required" })}
-                  className="w-full p-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                >
-                  <option value="">-- Select Religion --</option>
-                  <option value="CHRISTIAN">Christian</option>
-                  <option value="MUSLIM">Muslim</option>
-                  <option value="TRADITIONALIST">Traditionalist</option>
-                </select>
-                {errors.religion && (
-                  <span className="text-xs text-destructive">
-                    {errors.religion.message?.toString()}
-                  </span>
-                )}
-              </div>
+              <SelectInput
+                {...register("religion", { required: "Religion is required" })}
+                label="Religion *"
+                placeholder="Select Religion"
+                options={[
+                  { value: "CHRISTIAN", label: "Christian" },
+                  { value: "MUSLIM", label: "Muslim" },
+                  { value: "TRADITIONALIST", label: "Traditionalist" },
+                ]}
+                error={errors.religion?.message?.toString()}
+              />
 
-              <div>
-                <label className="block mb-1 text-sm font-medium text-foreground">
-                  Marital Status <span className="text-destructive">*</span>
-                </label>
-                <select
-                  {...register("maritalStatus", {
-                    required: "Marital status is required",
-                  })}
-                  className="w-full p-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                >
-                  <option value="">-- Select Marital Status --</option>
-                  <option value="SINGLE">Single</option>
-                  <option value="MARRIED">Married</option>
-                  <option value="DIVORCED">Divorced</option>
-                  <option value="WIDOWED">Widowed</option>
-                </select>
-                {errors.maritalStatus && (
-                  <span className="text-xs text-destructive">
-                    {errors.maritalStatus.message?.toString()}
-                  </span>
-                )}
-              </div>
+              <SelectInput
+                {...register("maritalStatus", {
+                  required: "Marital status is required",
+                })}
+                label="Marital Status *"
+                placeholder="Select Marital Status"
+                options={[
+                  { value: "SINGLE", label: "Single" },
+                  { value: "MARRIED", label: "Married" },
+                  { value: "DIVORCED", label: "Divorced" },
+                  { value: "WIDOWED", label: "Widowed" },
+                ]}
+                error={errors.maritalStatus?.message?.toString()}
+              />
 
-              <div>
-                <label className="block mb-1 text-sm font-medium text-foreground">
-                  Ghana Card Number <span className="text-destructive">*</span>
-                </label>
-                <input
-                  type="text"
-                  {...register("ghanaCardNumber", {
-                    required: "Ghana card number is required",
-                  })}
-                  className="w-full p-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                  placeholder="GHA-XXXX-XXXX-XXXX"
-                />
-                {errors.ghanaCardNumber && (
-                  <span className="text-xs text-destructive">
-                    {errors.ghanaCardNumber.message?.toString()}
-                  </span>
-                )}
-              </div>
+              <TextInput
+                {...register("ghanaCardNumber", {
+                  required: "Ghana card number is required",
+                })}
+                label="Ghana Card Number *"
+                placeholder="GHA-XXXX-XXXX-XXXX"
+                leftIcon={IdCard}
+                error={errors.ghanaCardNumber?.message?.toString()}
+              />
             </div>
           </div>
 
@@ -307,66 +244,41 @@ const AddStaff: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div>
-                <label className="block mb-1 text-sm font-medium text-foreground">
-                  Phone Number <span className="text-destructive">*</span>
-                </label>
-                <input
-                  {...register("phone", {
-                    required: "Phone number is required",
-                  })}
-                  type="tel"
-                  className="w-full p-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                  placeholder="024 123 4567"
-                />
-                {errors.phone && (
-                  <span className="text-xs text-destructive">
-                    {errors.phone.message?.toString()}
-                  </span>
-                )}
-              </div>
+              <TextInput
+                {...register("phone", {
+                  required: "Phone number is required",
+                })}
+                type="tel"
+                label="Phone Number *"
+                placeholder="024 123 4567"
+                leftIcon={Phone}
+                error={errors.phone?.message?.toString()}
+              />
 
-              <div>
-                <label className="block mb-1 text-sm font-medium text-foreground">
-                  Email <span className="text-destructive">*</span>
-                </label>
-                <input
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: {
-                      value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                      message: "Invalid email address",
-                    },
-                  })}
-                  type="email"
-                  className="w-full p-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                  placeholder="someone@example.com"
-                />
-                {errors.email && (
-                  <span className="text-xs text-destructive">
-                    {errors.email.message?.toString()}
-                  </span>
-                )}
-              </div>
+              <TextInput
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Invalid email address",
+                  },
+                })}
+                type="email"
+                label="Email *"
+                placeholder="someone@example.com"
+                leftIcon={Mail}
+                error={errors.email?.message?.toString()}
+              />
 
-              <div>
-                <label className="block mb-1 text-sm font-medium text-foreground">
-                  Residence <span className="text-destructive">*</span>
-                </label>
-                <input
-                  {...register("residence", {
-                    required: "Residence is required",
-                  })}
-                  type="text"
-                  className="w-full p-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                  placeholder="City, Region"
-                />
-                {errors.residence && (
-                  <span className="text-xs text-destructive">
-                    {errors.residence.message?.toString()}
-                  </span>
-                )}
-              </div>
+              <TextInput
+                {...register("residence", {
+                  required: "Residence is required",
+                })}
+                label="Residence *"
+                placeholder="City, Region"
+                leftIcon={Home}
+                error={errors.residence?.message?.toString()}
+              />
             </div>
           </div>
 
@@ -378,116 +290,62 @@ const AddStaff: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div>
-                <label className="block mb-1 text-sm font-medium text-foreground">
-                  Role/Position <span className="text-destructive">*</span>
-                </label>
-                <select
-                  {...register("role", {
-                    required: "Role is required",
-                  })}
-                  className="w-full p-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                >
-                  <option value="">-- Select Role --</option>
-                  {roles.map((role) => (
-                    <option key={role} value={role}>
-                      {role}
-                    </option>
-                  ))}
-                </select>
-                {errors.role && (
-                  <span className="text-xs text-destructive">
-                    {errors.role.message?.toString()}
-                  </span>
-                )}
-              </div>
+              <SelectInput
+                {...register("role", {
+                  required: "Role is required",
+                })}
+                label="Role/Position *"
+                placeholder="Select Role"
+                leftIcon={Briefcase}
+                options={roles.map((role) => ({ value: role, label: role }))}
+                error={errors.role?.message?.toString()}
+              />
 
-              <div>
-                <label className="block mb-1 text-sm font-medium text-foreground">
-                  Staff Type <span className="text-destructive">*</span>
-                </label>
-                <select
-                  {...register("staffType", {
-                    required: "Staff type is required",
-                  })}
-                  className="w-full p-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                >
-                  <option value="">-- Select Staff Type --</option>
-                  <option value="ADMIN">Admin</option>
-                  <option value="OTHERS">Others</option>
-                </select>
-                {errors.staffType && (
-                  <span className="text-xs text-destructive">
-                    {errors.staffType.message?.toString()}
-                  </span>
-                )}
-              </div>
+              <SelectInput
+                {...register("staffType", {
+                  required: "Staff type is required",
+                })}
+                label="Staff Type *"
+                placeholder="Select Staff Type"
+                options={[
+                  { value: "ADMIN", label: "Admin" },
+                  { value: "OTHERS", label: "Others" },
+                ]}
+                error={errors.staffType?.message?.toString()}
+              />
 
-              <div>
-                <label className="block mb-1 text-sm font-medium text-foreground">
-                  Qualification <span className="text-destructive">*</span>
-                </label>
-                <input
-                  {...register("qualification", {
-                    required: "Qualification is required",
-                  })}
-                  type="text"
-                  className="w-full p-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                  placeholder="Degree, Certificate, etc."
-                />
-                {errors.qualification && (
-                  <span className="text-xs text-destructive">
-                    {errors.qualification.message?.toString()}
-                  </span>
-                )}
-              </div>
+              <TextInput
+                {...register("qualification", {
+                  required: "Qualification is required",
+                })}
+                label="Qualification *"
+                placeholder="Degree, Certificate, etc."
+                leftIcon={GraduationCap}
+                error={errors.qualification?.message?.toString()}
+              />
 
-              <div>
-                <label className="block mb-1 text-sm font-medium text-foreground">
-                  Block (Optional)
-                </label>
-                <input
-                  {...register("block")}
-                  type="text"
-                  className="w-full p-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                  placeholder="e.g. A, B, C"
-                />
-              </div>
+              <TextInput
+                {...register("block")}
+                label="Block (Optional)"
+                placeholder="e.g. A, B, C"
+              />
 
-              <div>
-                <label className="block mb-1 text-sm font-medium text-foreground">
-                  Date of Appointment <span className="text-destructive">*</span>
-                </label>
-                <input
-                  {...register("dateOfAppointment", {
-                    required: "Date of appointment is required",
-                  })}
-                  type="date"
-                  className="w-full p-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                />
-                {errors.dateOfAppointment && (
-                  <span className="text-xs text-destructive">
-                    {errors.dateOfAppointment.message?.toString()}
-                  </span>
-                )}
-              </div>
+              <TextInput
+                {...register("dateOfAppointment", {
+                  required: "Date of appointment is required",
+                })}
+                type="date"
+                label="Date of Appointment *"
+                leftIcon={Calendar}
+                error={errors.dateOfAppointment?.message?.toString()}
+              />
 
-              <div>
-                <label className="block mb-1 text-sm font-medium text-foreground">
-                  Password (Optional)
-                </label>
-                <input
-                  {...register("password")}
-                  type="password"
-                  className="w-full p-2 border border-input rounded-md bg-background focus:outline-none focus:ring-2 focus:ring-ring"
-                  placeholder="Leave blank for auto-generated"
-                />
-                {errors.password && (
-                  <span className="text-xs text-destructive">
-                    {errors.password.message?.toString()}
-                  </span>
-                )}
-              </div>
+              <PasswordInput
+                {...register("password")}
+                label="Password (Optional)"
+                placeholder="Leave blank for auto-generated"
+                error={errors.password?.message?.toString()}
+              />
             </div>
           </div>
 

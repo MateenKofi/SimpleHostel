@@ -1,4 +1,3 @@
-import { z } from "zod"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -39,11 +38,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/componen
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 import type { ResidentDto, UserDto, ApiError } from "@/types/dtos"
-
-const paymentFormSchema = z.object({
-  paymentAmount: z.number().min(1, "Payment amount must be greater than 0"),
-})
-type PaymentInputs = z.infer<typeof paymentFormSchema>
+import { paymentFormSchema, type PaymentInputs } from "@/schemas/paymentSchema"
 
 // Helper function to get resident properties
 const getResidentName = (resident: UserDto | ResidentDto): string =>

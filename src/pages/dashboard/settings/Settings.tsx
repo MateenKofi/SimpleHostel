@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import {
   Loader,
   LucideCircleArrowOutUpRight,
@@ -42,20 +41,7 @@ import UploadSingleImage from "@/components/UploadSingleImage";
 import SEOHelmet from "@/components/SEOHelmet";
 import SettingsSkeleton from "@/components/loaders/SettingsLoader";
 import { TextField } from "@/components/TextField";
-
-// Validation schema
-const formSchema = z.object({
-  name: z.string().min(2),
-  description: z.string().min(10),
-  address: z.string().min(5),
-  location: z.string().min(2),
-  manager: z.string().min(2),
-  email: z.string().email(),
-  phone: z.string().min(10),
-  ghCard: z.string().min(5),
-  allowPartialPayment: z.boolean().default(false),
-  partialPaymentPercentage: z.coerce.number().min(0).max(100).default(50),
-});
+import { settingsFormSchema, type SettingsFormValues } from "@/schemas/settingsSchema";
 
 const Settings = () => {
   const [images, setImages] = useState<File[]>([]);
@@ -83,8 +69,8 @@ const Settings = () => {
     },
   });
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<SettingsFormValues>({
+    resolver: zodResolver(settingsFormSchema),
     defaultValues: {
       name: "",
       description: "",
@@ -124,7 +110,7 @@ const Settings = () => {
   };
 
   const updateMutation = useMutation({
-    mutationFn: async (data: z.infer<typeof formSchema>) => {
+    mutationFn: async (data: SettingsFormValues) => {
       const formData = new FormData();
       formData.append("name", data.name.toUpperCase());
       formData.append("description", data.description || "");
@@ -155,7 +141,7 @@ const Settings = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values: SettingsFormValues) => {
     updateMutation.mutate(values);
   };
 
@@ -212,7 +198,7 @@ const Settings = () => {
     }
   });
 
-  const onPaymentSettingsSubmit = (values: z.infer<typeof formSchema>) => {
+  const onPaymentSettingsSubmit = (values: SettingsFormValues) => {
     paymentSettingsMutation.mutate({
       allowPartialPayment: values.allowPartialPayment,
       partialPaymentPercentage: values.partialPaymentPercentage,

@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import UploadSingleImage from "./UploadSingleImage";
 import { TextField } from "./TextField";
 import type { ApiError } from "@/types/dtos";
+import { SelectInput } from "@/components/form";
 
 type AddUserProps = {
   onClose: () => void;
@@ -86,15 +87,15 @@ const AddUser = ({ onClose }: AddUserProps) => {
           <Label htmlFor="role" className="text-gray-500">
             Role
           </Label>
-          <select
-            id="role"
+          <SelectInput
             {...register("role", { required: "Role is required" })}
-            className="p-2 border border-gray-300 rounded-md"
-          >
-            <option value=""> -- select option --</option>
-            <option value="ADMIN">Admin</option>
-            <option value="super_admin">Super Admin</option>
-          </select>
+            placeholder="Select role"
+            options={[
+              { value: "ADMIN", label: "Admin" },
+              { value: "super_admin", label: "Super Admin" },
+            ]}
+            error={errors.role?.message}
+          />
         </div>
         <div className="flex items-center justify-end gap-2">
           <Button

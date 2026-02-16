@@ -6,8 +6,9 @@ import { Label } from "@/components/ui/label";
 import { useForm } from 'react-hook-form';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from "@/stores/useAuthStore";
-import { Loader, Eye, EyeOff } from 'lucide-react';
+import { Loader, Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useState } from 'react';
+import { TextInput, PasswordInput } from "@/components/form";
 interface SignInFormData {
   email: string;
   password: string;
@@ -18,7 +19,6 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   const login = useAuthStore((state) => state.login);
   const data = useAuthStore((state) => state);
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
 
   const [searchParams] = useSearchParams();
   const redirectPath = searchParams.get('redirect');
@@ -55,16 +55,14 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                       Login to your Fuse account
                     </p>
                   </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="email">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="example@gmail.com"
-                      {...register('email', { required: 'Email is required' })}
-                    />
-                    {errors.email && <p className="text-red-500">{errors.email.message}</p>}
-                  </div>
+                  <TextInput
+                    {...register('email', { required: 'Email is required' })}
+                    type="email"
+                    label="Email"
+                    placeholder="example@gmail.com"
+                    leftIcon={Mail}
+                    error={errors.email?.message}
+                  />
                   <div className="grid gap-2">
                     <div className="flex items-center">
                       <Label htmlFor="password">Password</Label>
@@ -75,22 +73,11 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                         Forgot your password?
                       </a>
                     </div>
-                    <div className="relative">
-                      <Input
-                        id="password"
-                        type={showPassword ? 'text' : 'password'}
-                        placeholder="********"
-                        {...register('password', { required: 'Password is required' })}
-                      />
-                      <button
-                        type="button"
-                        className="absolute inset-y-0 right-0 flex items-center pr-3"
-                        onClick={() => setShowPassword(!showPassword)}
-                      >
-                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                      </button>
-                    </div>
-                    {errors.password && <p className="text-red-500">{errors.password.message}</p>}
+                    <PasswordInput
+                      {...register('password', { required: 'Password is required' })}
+                      placeholder="********"
+                      error={errors.password?.message}
+                    />
                   </div>
                   <Button type="submit" className="w-full" disabled={data.isProcessing}>
                     {data.isProcessing ? <Loader className='animate-spin' /> : 'Log In'}

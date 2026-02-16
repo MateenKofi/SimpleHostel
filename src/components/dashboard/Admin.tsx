@@ -5,6 +5,8 @@ import RevenueOverView from "./charts/RevenueOverView";
 import PaymentStat from "./charts/PaymentStat";
 import OccupancyStatus from "./charts/OccupancyStatus";
 import AnalyticsCard from "./AnalyticsCard";
+import ModernDashboardBackground from "./ModernDashboardBackground";
+import "./dashboard.css";
 
 const Admin = () => {
   const hostel_id = localStorage.getItem('hostelId')
@@ -22,22 +24,27 @@ const Admin = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-white">
-      <div className="flex flex-1">
-        <main className="flex-1 p-4 md:p-2">
-          <AnalyticsCard analyticsData={analyticsData} />
+    <ModernDashboardBackground>
+      <div className="flex flex-col min-h-screen">
+        <div className="flex flex-1">
+          <main className="flex-1 p-4 md:p-2">
+            {/* Analytics Cards - Modern Bento Grid */}
+            <AnalyticsCard analyticsData={analyticsData} />
 
-          <div className="grid gap-4 mt-6 md:grid-cols-2 lg:grid-cols-7">
-            <RevenueOverView analyticsData={analyticsData} />
-            <OccupancyStatus analyticsData={analyticsData} />
-          </div>
+            {/* Charts Row - Revenue and Occupancy */}
+            <div className="grid gap-4 mt-6 md:grid-cols-2 lg:grid-cols-7">
+              <RevenueOverView analyticsData={analyticsData} />
+              <OccupancyStatus analyticsData={analyticsData} />
+            </div>
 
-          <div className="grid gap-4 mt-6">
-            <PaymentStat analyticsData={analyticsData} />
-          </div>
-        </main>
+            {/* Payment Statistics */}
+            <div className="grid gap-4 mt-6">
+              <PaymentStat analyticsData={analyticsData} />
+            </div>
+          </main>
+        </div>
       </div>
-    </div>
+    </ModernDashboardBackground>
   )
 }
 

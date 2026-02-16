@@ -1,62 +1,72 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { Suspense } from "react";
+import { Suspense, lazy } from "react";
 import { Loader } from "lucide-react";
 
 import Layout from "@components/layout/Layout";
 import LandingPageLayout from "./components/layout/LandingPageLayout";
 import PrivateRoute from "./components/routes/PrivateRoute";
-import Home from './pages/landing-page/page'
-import About from './pages/landing-page/About'
-import Contact from './pages/landing-page/Contact'
-import Services from './pages/landing-page/Services'
-import FindHostel from './pages/landing-page/component/findHostel/page'
-import LoginForm from "./pages/Authentication/login/login-form";
-import RegisterForm from "./pages/Authentication/register/register-form";
-import Settings from "./pages/dashboard/settings/Settings"
-import ResidentLookup from "./pages/dashboard/resident-management/Resident-lookup";
-import ChangePassword from "./components/changepassword/ChangePassword";
-import ForgetPassword from "./pages/Authentication/forget-password/ForgetPassword";
-import TermsAndCondition from "./components/TermsAndConditions";
+import ProtectedBookingRoute from "./components/routes/ProtectedBookingRoute";
 
+// Landing page routes - lazy loaded
+const Home = lazy(() => import('./pages/landing-page/page'));
+const About = lazy(() => import('./pages/landing-page/About'));
+const Contact = lazy(() => import('./pages/landing-page/Contact'));
+const Services = lazy(() => import('./pages/landing-page/Services'));
+const FindHostel = lazy(() => import('./pages/landing-page/component/findHostel/page'));
+const FindRoom = lazy(() => import('./pages/landing-page/component/find-room/Find-Room'));
+const ResidentForm = lazy(() => import('./pages/landing-page/component/resident-forms/ResidentForm'));
+const HostelListingForm = lazy(() => import('./pages/landing-page/component/hostel-listing/Hostel-Listing-Form'));
 
+// Authentication routes - lazy loaded
+const LoginForm = lazy(() => import("./pages/Authentication/login/login-form"));
+const RegisterForm = lazy(() => import("./pages/Authentication/register/register-form"));
+const ForgetPassword = lazy(() => import("./pages/Authentication/forget-password/ForgetPassword"));
+const ChangePassword = lazy(() => import("./components/changepassword/ChangePassword"));
 
-import Dashboard from "@pages/dashboard/Dashboard";
-import RoomManagementTab from "@pages/dashboard/room-management/RoomManagementTab";
-import RoomAssignmentAndPayment from "@/components/rooms/room-assignment/RoomAssignmentAndPayment";
-import ResidentManagement from "@pages/dashboard/resident-management/ResidentManagement";
-import VisitorManagement from "@pages/dashboard/visitor-management/VisitorManagement";
-import StaffManagement from "@pages/dashboard/staff-management/StaffManagement";
-import AddStaff from "@/components/staff/AddStaff";
-import DeptorsList from "./pages/dashboard/deptors-list/DeptorsList";
-import HostelListingForm from "./pages/landing-page/component/hostel-listing/Hostel-Listing-Form";
-import PaymentSummaryForm from "./components/payment/PaymentSummaryForm";
-import TopUpPaymentForm from "./components/payment/TopUpPaymentForm";
-import ResidentForm from "./pages/landing-page/component/resident-forms/ResidentForm";
-import AddResident from "./components/resident/AddResident";
-import ApproveHostel from "./pages/dashboard/approvals/Approve-Hostel";
-import ProfileForm from "./pages/dashboard/profile/Profile";
-import EditStaff from "./components/staff/EditStaff";
-import ViewStaff from "./components/staff/ViewStaff";
-import CalendarYear from "./pages/dashboard/calendarYear/CalendarYear";
-import Transactions from "./pages/dashboard/transactions/Transactions";
-import Users from "./pages/dashboard/users/Users";
-import ViewRoom from "./components/rooms/ViewRoom";
-import FindRoom from "./pages/landing-page/component/find-room/Find-Room";
-import HostelManagement from "./pages/dashboard/hostelManagement/HostelManagement";
-import EditResident from "./components/resident/EditResident";
-import Report from './pages/dashboard/report/Report';
-import PaymentSuccess from '@components/payment-success';
-import ResidentRoomDetails from "./pages/dashboard/resident-management/ResidentRoomDetails";
-import ViewResident from "./pages/dashboard/resident-management/ViewResident";
-import MakeRequest from "./pages/dashboard/resident-management/MakeRequest";
-import PaymentBilling from "./pages/dashboard/resident-management/PaymentBilling";
-import Announcements from "./pages/dashboard/resident-management/Announcements";
-import Documents from "./pages/dashboard/resident-management/Documents";
-import Feedback from "./pages/dashboard/resident-management/Feedback";
-import AnnouncementDashboard from "./pages/dashboard/admin/AnnouncementDashboard";
-import AllocationDetails from "./pages/dashboard/resident-management/AllocationDetails";
-import ReceiptPage from "./pages/dashboard/resident-management/ReceiptPage";
-import MaintenanceManagement from "./pages/dashboard/admin/MaintenanceManagement";
+// Dashboard routes - lazy loaded
+const Dashboard = lazy(() => import("@pages/dashboard/Dashboard"));
+const RoomManagementTab = lazy(() => import("@pages/dashboard/room-management/RoomManagementTab"));
+const RoomAssignmentAndPayment = lazy(() => import("@/components/rooms/room-assignment/RoomAssignmentAndPayment"));
+const ResidentManagement = lazy(() => import("@pages/dashboard/resident-management/ResidentManagement"));
+const VisitorManagement = lazy(() => import("@pages/dashboard/visitor-management/VisitorManagement"));
+const StaffManagement = lazy(() => import("@pages/dashboard/staff-management/StaffManagement"));
+const AddStaff = lazy(() => import("@/components/staff/AddStaff"));
+const EditStaff = lazy(() => import("@/components/staff/EditStaff"));
+const ViewStaff = lazy(() => import("@/components/staff/ViewStaff"));
+const DeptorsList = lazy(() => import("./pages/dashboard/deptors-list/DeptorsList"));
+const ApproveHostel = lazy(() => import("./pages/dashboard/approvals/Approve-Hostel"));
+const ProfileForm = lazy(() => import("./pages/dashboard/profile/Profile"));
+const CalendarYear = lazy(() => import("./pages/dashboard/calendarYear/CalendarYear"));
+const Transactions = lazy(() => import("./pages/dashboard/transactions/Transactions"));
+const Users = lazy(() => import("./pages/dashboard/users/Users"));
+const HostelManagement = lazy(() => import("./pages/dashboard/hostelManagement/HostelManagement"));
+const Settings = lazy(() => import("./pages/dashboard/settings/Settings"));
+const ResidentLookup = lazy(() => import("./pages/dashboard/resident-management/Resident-lookup"));
+const EditResident = lazy(() => import("./components/resident/EditResident"));
+const Report = lazy(() => import('./pages/dashboard/report/Report'));
+
+// Component routes - lazy loaded
+const PaymentSummaryForm = lazy(() => import("./components/payment/PaymentSummaryForm"));
+const TopUpPaymentForm = lazy(() => import("./components/payment/TopUpPaymentForm"));
+const AddResident = lazy(() => import("./components/resident/AddResident"));
+const ViewRoom = lazy(() => import("./components/rooms/ViewRoom"));
+const PaymentSuccess = lazy(() => import('@components/payment-success'));
+const TermsAndCondition = lazy(() => import("./components/TermsAndConditions"));
+
+// Resident portal routes - lazy loaded
+const ResidentRoomDetails = lazy(() => import("./pages/dashboard/resident-management/ResidentRoomDetails"));
+const ViewResident = lazy(() => import("./pages/dashboard/resident-management/ViewResident"));
+const MakeRequest = lazy(() => import("./pages/dashboard/resident-management/MakeRequest"));
+const PaymentBilling = lazy(() => import("./pages/dashboard/resident-management/PaymentBilling"));
+const Announcements = lazy(() => import("./pages/dashboard/resident-management/Announcements"));
+const Documents = lazy(() => import("./pages/dashboard/resident-management/Documents"));
+const Feedback = lazy(() => import("./pages/dashboard/resident-management/Feedback"));
+const AllocationDetails = lazy(() => import("./pages/dashboard/resident-management/AllocationDetails"));
+const ReceiptPage = lazy(() => import("./pages/dashboard/resident-management/ReceiptPage"));
+
+// Admin routes - lazy loaded
+const AnnouncementDashboard = lazy(() => import("./pages/dashboard/admin/AnnouncementDashboard"));
+const MaintenanceManagement = lazy(() => import("./pages/dashboard/admin/MaintenanceManagement"));
 
 function App() {
   return (
@@ -71,11 +81,17 @@ function App() {
         <Route path="login" element={<LoginForm />} />
         <Route path="register" element={<RegisterForm />} />
         <Route path="hostel-listing" element={<HostelListingForm />} />
-        <Route path="payment" element={<PaymentSummaryForm />} />
         <Route path='terms-and-conditions' element={<TermsAndCondition />} />
         <Route path="forget-password" element={<ForgetPassword />} />
         <Route path="change-password" element={<ChangePassword />} />
-        <Route path="payment-success" element={<PaymentSuccess />} />
+
+        {/* Protected Booking Routes - Require Authentication */}
+        <Route element={<ProtectedBookingRoute />}>
+          <Route path="resident-form" element={<ResidentForm />} />
+          <Route path="find/:id/room" element={<FindRoom />} />
+          <Route path="payment" element={<PaymentSummaryForm />} />
+          <Route path="payment-success" element={<PaymentSuccess />} />
+        </Route>
 
         {/* Landing Routes */}
         <Route element={<LandingPageLayout />}>
@@ -84,10 +100,6 @@ function App() {
           <Route path="contact" element={<Contact />} />
           <Route path="services" element={<Services />} />
           <Route path="find-hostel" element={<FindHostel />} />
-
-          <Route path="resident-form" element={<ResidentForm />} />
-          <Route path="find/:id/room" element={<FindRoom />} />
-
         </Route>
 
         {/* Protected Dashboard Routes */}

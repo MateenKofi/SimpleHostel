@@ -12,13 +12,10 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
-  Eye,
-  EyeOff,
   Loader,
   User,
   Phone,
   Mail,
-  Lock,
   Heart,
   ChevronRight,
   ChevronLeft,
@@ -26,25 +23,17 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { registrationSchema, type RegistrationFormValues } from "@/schemas/registrationSchema";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { TextInput, SelectInput, PasswordInput } from "@/components/form";
 
 const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
   const [stepSubmitted, setStepSubmitted] = useState<Set<number>>(new Set());
 
   const {
     register,
     handleSubmit,
-    formState: { errors},
+    formState: { errors },
     trigger,
     setValue,
     watch,
@@ -57,7 +46,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   const registerMutation = useMutation({
     mutationFn: async (values: RegistrationFormValues) => {
       // Omit confirmPassword before sending
-      const {...payload } = values;
+      const { ...payload } = values;
       return await registerResident(payload);
     },
     onSuccess: () => {
@@ -138,64 +127,72 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                     >
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
-                          <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><User size={18} /></span>
-                            <Input id="name" placeholder="John Doe" className="pl-10 h-11" {...register("name")} />
-                          </div>
-                          {errors.name && stepSubmitted.has(step) && <p className="text-xs text-red-500 font-medium">{errors.name.message}</p>}
+                          <TextInput
+                            id="name"
+                            label="Full Name"
+                            placeholder="John Doe"
+                            leftIcon={User}
+                            error={stepSubmitted.has(step) ? errors.name?.message : undefined}
+                            {...register("name")}
+                          />
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
-                          <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Mail size={18} /></span>
-                            <Input id="email" type="email" placeholder="john@example.com" className="pl-10 h-11" {...register("email")} />
-                          </div>
-                          {errors.email && stepSubmitted.has(step) && <p className="text-xs text-red-500 font-medium">{errors.email.message}</p>}
+                          <TextInput
+                            id="email"
+                            type="email"
+                            label="Email Address"
+                            placeholder="john@example.com"
+                            leftIcon={Mail}
+                            error={stepSubmitted.has(step) ? errors.email?.message : undefined}
+                            {...register("email")}
+                          />
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="phone" className="text-sm font-medium">Phone Number</Label>
-                          <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Phone size={18} /></span>
-                            <Input id="phone" placeholder="024XXXXXXX" className="pl-10 h-11" {...register("phone")} />
-                          </div>
-                          {errors.phone && stepSubmitted.has(step) && <p className="text-xs text-red-500 font-medium">{errors.phone.message}</p>}
+                          <TextInput
+                            id="phone"
+                            label="Phone Number"
+                            placeholder="024XXXXXXX"
+                            leftIcon={Phone}
+                            error={stepSubmitted.has(step) ? errors.phone?.message : undefined}
+                            {...register("phone")}
+                          />
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="gender" className="text-sm font-medium">Gender</Label>
-                          <Select
+                          <SelectInput
+                            label="Gender"
+                            placeholder="Select gender"
+                            options={[
+                              { label: "Male", value: "male" },
+                              { label: "Female", value: "female" },
+                              { label: "Other", value: "other" },
+                            ]}
                             value={watch("gender")}
                             onValueChange={(val) => setValue("gender", val as "male" | "female" | "other", { shouldValidate: true })}
-                          >
-                            <SelectTrigger className="h-11">
-                              <SelectValue placeholder="Select gender" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="male">Male</SelectItem>
-                              <SelectItem value="female">Female</SelectItem>
-                              <SelectItem value="other">Other</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          {errors.gender && stepSubmitted.has(step) && <p className="text-xs text-red-500 font-medium">{errors.gender.message}</p>}
+                            error={stepSubmitted.has(step) ? errors.gender?.message : undefined}
+                          />
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="studentId" className="text-sm font-medium text-slate-500">Student ID (Optional)</Label>
-                          <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><User size={18} className="opacity-50" /></span>
-                            <Input id="studentId" placeholder="ID123456" className="pl-10 h-11" {...register("studentId")} />
-                          </div>
+                          <TextInput
+                            id="studentId"
+                            label="Student ID (Optional)"
+                            placeholder="ID123456"
+                            leftIcon={User}
+                            {...register("studentId")}
+                          />
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="course" className="text-sm font-medium text-slate-500">Course (Optional)</Label>
-                          <div className="relative">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><GraduationCap size={18} className="opacity-50" /></span>
-                            <Input id="course" placeholder="Computer Science" className="pl-10 h-11" {...register("course")} />
-                          </div>
+                          <TextInput
+                            id="course"
+                            label="Course (Optional)"
+                            placeholder="Computer Science"
+                            leftIcon={GraduationCap}
+                            {...register("course")}
+                          />
                         </div>
                       </div>
                     </motion.div>
@@ -211,26 +208,34 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                       className="space-y-4"
                     >
                       <div className="space-y-2">
-                        <Label htmlFor="emergencyContactName" className="text-sm font-medium">Emergency Contact Name</Label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Heart size={18} /></span>
-                          <Input id="emergencyContactName" placeholder="Emergency contact full name" className="pl-10 h-11" {...register("emergencyContactName")} />
-                        </div>
-                        {errors.emergencyContactName && stepSubmitted.has(step) && <p className="text-xs text-red-500 font-medium">{errors.emergencyContactName.message}</p>}
+                        <TextInput
+                          id="emergencyContactName"
+                          label="Emergency Contact Name"
+                          placeholder="Emergency contact full name"
+                          leftIcon={Heart}
+                          error={stepSubmitted.has(step) ? errors.emergencyContactName?.message : undefined}
+                          {...register("emergencyContactName")}
+                        />
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="emergencyContactPhone" className="text-sm font-medium">Emergency Contact Phone</Label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Phone size={18} /></span>
-                          <Input id="emergencyContactPhone" placeholder="Emergency Contact Number" className="pl-10 h-11" {...register("emergencyContactPhone")} />
-                        </div>
-                        {errors.emergencyContactPhone && stepSubmitted.has(step) && <p className="text-xs text-red-500 font-medium">{errors.emergencyContactPhone.message}</p>}
+                        <TextInput
+                          id="emergencyContactPhone"
+                          label="Emergency Contact Phone"
+                          placeholder="Emergency Contact Number"
+                          leftIcon={Phone}
+                          error={stepSubmitted.has(step) ? errors.emergencyContactPhone?.message : undefined}
+                          {...register("emergencyContactPhone")}
+                        />
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="emergencyContactRelationship" className="text-sm font-medium text-slate-500">Relationship (Optional)</Label>
-                        <Input id="emergencyContactRelationship" placeholder="e.g. Parent, Guardian" className="h-11" {...register("emergencyContactRelationship")} />
+                        <TextInput
+                          id="emergencyContactRelationship"
+                          label="Relationship (Optional)"
+                          placeholder="e.g. Parent, Guardian"
+                          {...register("emergencyContactRelationship")}
+                        />
                       </div>
                     </motion.div>
                   )}
@@ -245,47 +250,23 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                       className="space-y-4"
                     >
                       <div className="space-y-2">
-                        <Label htmlFor="password">Password</Label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Lock size={18} /></span>
-                          <Input
-                            id="password"
-                            type={isPasswordVisible ? "text" : "password"}
-                            placeholder="********"
-                            className="pl-10 h-11 pr-10"
-                            {...register("password")}
-                          />
-                          <button
-                            type="button"
-                            className="absolute inset-y-0 right-3 flex items-center"
-                            onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-                          >
-                            {isPasswordVisible ? <EyeOff className="w-5 h-5 text-slate-400" /> : <Eye className="w-5 h-5 text-slate-400" />}
-                          </button>
-                        </div>
-                        {errors.password && stepSubmitted.has(step) && <p className="text-xs text-red-500 font-medium">{errors.password.message}</p>}
+                        <PasswordInput
+                          id="password"
+                          label="Password"
+                          placeholder="********"
+                          error={stepSubmitted.has(step) ? errors.password?.message : undefined}
+                          {...register("password")}
+                        />
                       </div>
 
                       <div className="space-y-2">
-                        <Label htmlFor="confirmPassword">Confirm Password</Label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Lock size={18} /></span>
-                          <Input
-                            id="confirmPassword"
-                            type={isConfirmPasswordVisible ? "text" : "password"}
-                            placeholder="********"
-                            className="pl-10 h-11 pr-10"
-                            {...register("confirmPassword")}
-                          />
-                          <button
-                            type="button"
-                            className="absolute inset-y-0 right-3 flex items-center"
-                            onClick={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}
-                          >
-                            {isConfirmPasswordVisible ? <EyeOff className="w-5 h-5 text-slate-400" /> : <Eye className="w-5 h-5 text-slate-400" />}
-                          </button>
-                        </div>
-                        {errors.confirmPassword && stepSubmitted.has(step) && <p className="text-xs text-red-500 font-medium">{errors.confirmPassword.message}</p>}
+                        <PasswordInput
+                          id="confirmPassword"
+                          label="Confirm Password"
+                          placeholder="********"
+                          error={stepSubmitted.has(step) ? errors.confirmPassword?.message : undefined}
+                          {...register("confirmPassword")}
+                        />
                       </div>
                     </motion.div>
                   )}

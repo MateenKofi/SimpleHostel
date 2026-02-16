@@ -3,7 +3,7 @@ import {
   Search,
   MapPin,
   Clock,
-  DollarSign,
+  BadgeCent,
   Star,
   Headphones,
   type LucideIcon,
@@ -22,7 +22,7 @@ const iconMap: Record<string, LucideIcon> = {
   Search,
   MapPin,
   Clock,
-  DollarSign,
+  BadgeCent,
   Star,
   Headphones,
 }
@@ -42,20 +42,19 @@ export function FeatureCard({ icon, title, description, delay }: FeatureCardProp
       animate={inView ? { y: 0, opacity: 1 } : { y: 50, opacity: 0 }}
       transition={{ duration: 0.5, delay }}
       whileHover={{ y: -4, transition: { duration: 0.2 } }}
-      className="h-full"
     >
-      <Card className="h-full border-border bg-card shadow-sm hover:shadow-xl transition-all duration-300 rounded-xl">
-        <CardContent className="p-6 flex flex-col items-center text-center gap-5">
+      <Card className="border-border bg-card shadow-sm hover:shadow-xl transition-all duration-300 rounded-xl">
+        <CardContent className="p-5 sm:p-6 flex flex-col items-center text-center gap-4 sm:gap-5">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={inView ? { scale: 1, opacity: 1 } : { scale: 0.8, opacity: 0 }}
             transition={{ duration: 0.3, delay: delay + 0.2 }}
-            className="bg-primary/15 p-4 rounded-2xl"
+            className="bg-primary/15 p-3 sm:p-4 rounded-2xl"
           >
-            <IconComponent className="w-7 h-7 text-primary" strokeWidth={2} />
+            <IconComponent className="w-6 h-6 sm:w-7 sm:h-7 text-primary" strokeWidth={2} />
           </motion.div>
           <div className="flex flex-col gap-1.5">
-            <h3 className="text-lg font-semibold text-foreground">{title}</h3>
+            <h3 className="text-base sm:text-lg font-semibold text-foreground">{title}</h3>
             <p className="text-muted-foreground text-sm leading-snug">{description}</p>
           </div>
         </CardContent>

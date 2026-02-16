@@ -1,11 +1,9 @@
-
-import  React from "react"
-
+import React from "react"
 import { useState } from "react"
 import { motion } from "framer-motion"
 import { useInView } from "react-intersection-observer"
-import { Button } from "@components/ui/button"
-import { Input } from "@components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { Send, CheckCircle } from "lucide-react"
 
 export function NewsletterSection() {
@@ -44,9 +42,9 @@ export function NewsletterSection() {
   }
 
   return (
-    <section ref={ref} className="py-16 md:py-24 bg-white dark:bg-zinc-900">
+    <section ref={ref} className="py-16 md:py-24 bg-background">
       <div className="container">
-        <div className="max-w-4xl mx-auto bg-gradient-to-r from-red-500 to-red-600 rounded-2xl overflow-hidden shadow-xl">
+        <div className="max-w-4xl mx-auto bg-gradient-to-r from-primary to-teal-green-600 rounded-2xl overflow-hidden shadow-xl">
           <div className="grid md:grid-cols-5">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
@@ -86,7 +84,7 @@ export function NewsletterSection() {
                       <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className="rounded-l-none bg-white hover:bg-white/90 text-red-600"
+                        className="rounded-l-none bg-white hover:bg-white/90 text-primary"
                       >
                         {isSubmitting ? (
                           <motion.div
@@ -113,7 +111,7 @@ export function NewsletterSection() {
               className="hidden md:block md:col-span-2 relative"
             >
               <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1528127269322-539801943592?auto=format&fit=crop&w=500&q=80')] bg-cover bg-center">
-                <div className="absolute inset-0 bg-gradient-to-l from-transparent to-red-600/50"></div>
+                <div className="absolute inset-0 bg-gradient-to-l from-transparent to-primary/50"></div>
               </div>
             </motion.div>
           </div>
