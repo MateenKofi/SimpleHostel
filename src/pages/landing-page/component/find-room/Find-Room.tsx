@@ -51,6 +51,9 @@ const FindRoom = () => {
   const [selectedBookingRoom, setSelectedBookingRoom] = useState<Room | null>(null);
   const calendarYear = useSelectedCalendarYearStore((state) => state.calendarYear);
 
+  // Get user's gender for filtering - use user.gender directly from auth store
+  const userGender = user?.gender?.toLowerCase();
+
   const BookingMutation = useMutation({
     mutationFn: async (): Promise<{ data: UserDto | ResidentDto }> => {
       if (!user || !selectedBookingRoom) {
@@ -102,11 +105,13 @@ const FindRoom = () => {
       }
 
       // If no existing profile, we must register.
+      // Use user's gender for registration, not the room's gender (room may be "mix")
+      const genderForRegistration = userGender || selectedBookingRoom.gender.toLowerCase();
       const payload = {
         name: user.name,
         email: user.email,
         phone: user.phoneNumber || "0240000000",
-        gender: selectedBookingRoom.gender.toLowerCase(),
+        gender: genderForRegistration,
         studentId: "PENDING",
         course: "PENDING",
         emergencyContactName: "PENDING",
@@ -132,21 +137,6 @@ const FindRoom = () => {
       const msg = error.response?.data?.message || error.response?.data?.error || "Failed to process booking";
       toast.error(msg);
     }
-  });
-
-  // Fetch resident data to get gender for filtering
-  const { data: residentData } = useQuery({
-    queryKey: ["resident-profile", user?.id],
-    queryFn: async () => {
-      if (!user?.id || !token) return null;
-      try {
-        const response = await getResidentAnalytics(user.id);
-        return response?.data;
-      } catch {
-        return null;
-      }
-    },
-    enabled: !!user?.id && !!token,
   });
 
   const {
@@ -180,21 +170,22 @@ const FindRoom = () => {
   }, [RoomData?.rooms]);
 
   const filteredRooms = useMemo(() => {
-    const residentGender = residentData?.gender; // e.g., "Male", "Female"
-
     return availableRooms.filter((room: Room) => {
       // AUTOMATIC GENDER FILTERING - Residents can only see rooms matching their gender or Mix rooms
-      if (residentGender) {
+      // Room gender values from API are lowercase: "male", "female", "mix"
+      // User gender from API is also lowercase: "male", "female"
+      if (userGender) {
+        const roomGender = room.gender.toLowerCase();
         const isGenderCompatible =
-          room.gender === "Mix" ||
-          room.gender === residentGender;
+          roomGender === "mix" ||
+          roomGender === userGender;
 
         if (!isGenderCompatible) {
           return false; // Skip rooms that don't match resident's gender
         }
       } else {
         // If resident gender is unknown, only show Mix rooms as safe fallback
-        if (room.gender !== "Mix") {
+        if (room.gender.toLowerCase() !== "mix") {
           return false;
         }
       }
@@ -219,7 +210,7 @@ const FindRoom = () => {
 
       return matchesGender && matchesPriceRange && matchesRoomType;
     });
-  }, [availableRooms, activeFilters, residentData?.gender]);
+  }, [availableRooms, activeFilters, userGender]);
 
   const handleRoomClick = (room: Room) => {
     if (!token || !user) {
@@ -230,10 +221,12 @@ const FindRoom = () => {
     }
 
     // VALIDATION: Ensure gender compatibility before booking
-    const residentGender = residentData?.gender;
-    if (residentGender && room.gender !== "Mix" && room.gender !== residentGender) {
-      toast.error(`This room is designated for ${room.gender} residents only. You cannot book it.`);
-      return;
+    if (userGender) {
+      const roomGender = room.gender.toLowerCase();
+      if (roomGender !== "mix" && roomGender !== userGender) {
+        toast.error(`This room is designated for ${room.gender} residents only. You cannot book it.`);
+        return;
+      }
     }
 
     setRoom(room);

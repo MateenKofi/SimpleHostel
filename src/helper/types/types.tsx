@@ -204,6 +204,9 @@ export type Users = {
   hostel: Hostel;
   changedPassword: boolean;
   lastLoginAt: string | null;
+  gender: string | null;
+  avatar: string | null;
+  accountStatus: string;
 };
 
 export type Hostel = {
