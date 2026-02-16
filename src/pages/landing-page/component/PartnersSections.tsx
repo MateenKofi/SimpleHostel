@@ -16,11 +16,6 @@ export function PartnersSection() {
         "/airbnb.png",
     },
     {
-      id: 3,
-      name: "ChippyCode",
-      image: "/chippycode.png",
-    },
-    {
       id: 4,
       name: "Expedia",
       image:

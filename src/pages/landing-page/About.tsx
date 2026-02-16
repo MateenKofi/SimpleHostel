@@ -50,9 +50,6 @@ export default function AboutPage() {
         {/* Timeline */}
         <TimelineSection />
 
-        {/* Team Section */}
-        <TeamSection />
-
         {/* Contact Section */}
         <section className="container pt-16 pb-16">
           <ContactSection />
@@ -256,83 +253,6 @@ function TimelineSection() {
               </motion.div>
             ))}
           </div>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-function TeamSection() {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.2,
-  })
-
-  const team = [
-    {
-      name: "Abdul Mateen Kofi Yeboah",
-      role: "Chief Executive Officer & Developer",
-      image: "/mateen2.jpg",
-      bio: "Former backpacker with a passion for connecting travelers. Tech enthusiast focused on creating seamless user experiences.",
-    },
-    {
-      name: "Amponsah Danquah Junior",
-      role: "Head of Partnerships",
-      image: "/junior.jpg",
-      bio: "Building relationships with hostels all round you.",
-    },
-    {
-      name: "Amponsah Danquah Senior",
-      role: "Customer Experience",
-      image: "/senior.jpg",
-      bio: "Dedicated to ensuring travelers have the best experience possible.",
-    },
-  ]
-
-  return (
-    <section ref={ref} className="py-16 md:py-24 bg-zinc-50 dark:bg-zinc-800">
-      <SEOHelmet
-        title="About Us - Fuse"
-        description="Learn more about Fuse and our mission to connect travelers with the best hostels."
-        keywords="about, Fuse, hostels, travel"
-      />
-      <div className="container">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-          transition={{ duration: 0.9 }}
-          className="max-w-3xl mx-auto mb-16 text-center"
-        >
-          <h2 className="mb-6 text-3xl font-bold md:text-4xl">Meet Our Team</h2>
-          <p className="text-lg text-zinc-700 dark:text-zinc-300">
-            The passionate people behind Fuse who are dedicated to making your travel experiences unforgettable.
-          </p>
-        </motion.div>
-
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {team.map((member, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{ y: -2 }}
-              className="overflow-hidden transition-all duration-300 bg-white rounded-lg shadow-md dark:bg-zinc-900 hover:shadow-lg"
-            >
-              <div className="h-64 overflow-hidden">
-                <img
-                  src={member.image || "/placeholder.svg"}
-                  alt={member.name}
-                  className="object-cover w-full h-full transition-transform duration-300 "
-                />
-              </div>
-              <div className="p-6">
-                <h3 className="mb-1 text-xl font-semibold">{member.name}</h3>
-                <p className="mb-3 font-medium text-primary">{member.role}</p>
-                <p className="mb-4 text-zinc-600 dark:text-zinc-400">{member.bio}</p>
-              </div>
-            </motion.div>
-          ))}
         </div>
       </div>
     </section>

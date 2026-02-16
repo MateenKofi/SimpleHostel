@@ -4,6 +4,7 @@ import { Outlet } from "react-router-dom";
 import { Header } from "@/pages/landing-page/component/header";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import Footer from "@/components/layout/Footer";
 
 const LandingPageLayout = () => {
   const { hash } = useLocation();
@@ -21,9 +22,14 @@ const LandingPageLayout = () => {
 
   return (
     <ThemeProvider attribute="class" defaultTheme="light">
-      <Header />
-      <Outlet />
-      <ScrollToTop />
+      <div className="flex min-h-screen flex-col">
+        <Header />
+        <main className="flex-1">
+          <Outlet />
+        </main>
+        <Footer />
+        <ScrollToTop />
+      </div>
     </ThemeProvider>
   );
 };
