@@ -40,7 +40,7 @@ const Footer = () => {
     ],
     contact: [
       { icon: Mail, text: "support@fuse.com", href: "mailto:support@fuse.com" },
-      { icon: Phone, text: "+233 (0) 20 123 4567", href: "tel:+233201234567" },
+      { icon: Phone, text: "+233 54 3983427", href: "tel:+233201234567" },
       { icon: MapPin, text: "Accra, Ghana", href: "#" },
     ],
   };
