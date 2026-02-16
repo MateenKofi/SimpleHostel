@@ -187,9 +187,9 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
 
   return (
     <Modal modalId="editroom_modal" onClose={handleClose} size="large">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 sm:gap-6">
         <div className="space-y-1">
-          <h2 className="text-2xl font-bold text-foreground">Update Room</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground">Update Room</h2>
           <p className="text-sm text-muted-foreground">
             Update the details below to modify the room information
           </p>
@@ -209,7 +209,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           {/* Room Number */}
           <div className="flex flex-col gap-2">
             <Label htmlFor="roomNumber">Room Number</Label>
@@ -404,18 +404,20 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex justify-end gap-3 mt-4">
+        <div className="flex flex-col sm:flex-row justify-end gap-3 mt-4">
           <Button
             type="button"
             variant="outline"
             onClick={handleClose}
             disabled={mutation.isPending}
+            className="w-full sm:w-auto"
           >
             Cancel
           </Button>
           <Button
             type="submit"
             disabled={mutation.isPending}
+            className="w-full sm:w-auto"
           >
             {mutation.isPending && <Loader className="w-4 h-4 mr-2 animate-spin" />}
             {mutation.isPending ? "Saving..." : "Update Room"}

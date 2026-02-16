@@ -36,9 +36,9 @@ export function useModal(modalId: string) {
 }
 
 const sizeClasses: Record<ModalSize, string> = {
-  small: 'max-w-md',   // 28rem / 448px
-  medium: 'max-w-xl',  // 36rem / 576px
-  large: 'max-w-3xl'   // 48rem / 768px
+  small: 'max-w-md w-full',   // 28rem / 448px
+  medium: 'max-w-xl w-full',  // 36rem / 576px
+  large: 'max-w-3xl w-full'   // 48rem / 768px
 }
 
 const variants = {
@@ -104,7 +104,7 @@ export default function Modal({ children, modalId, onClose, size = 'medium' }: M
     <AnimatePresence>
       {shouldShow && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-3 sm:p-4"
           onClick={handleBackdropClick}
         >
           <motion.div
@@ -113,17 +113,19 @@ export default function Modal({ children, modalId, onClose, size = 'medium' }: M
             animate="visible"
             exit="exit"
             variants={variants}
-            className={`relative w-full ${sizeClasses[size]} max-h-[90vh] overflow-y-auto rounded-lg bg-card p-6 shadow-lg`}
+            className={`relative ${sizeClasses[size]} max-h-[90vh] overflow-y-auto rounded-lg bg-card shadow-lg`}
             onClick={(e) => e.stopPropagation()}
           >
             <button
               onClick={handleClose}
-              className="absolute right-4 top-4 rounded-sm text-muted-foreground hover:text-foreground"
+              className="absolute right-3 top-3 z-10 rounded-full p-1 text-muted-foreground hover:bg-muted hover:text-foreground sm:right-4 sm:top-4"
               aria-label="Close modal"
             >
-              <X className="h-4 w-4" />
+              <X className="h-5 w-5 sm:h-4 sm:w-4" />
             </button>
-            {children}
+            <div className="p-4 pt-6 sm:p-6">
+              {children}
+            </div>
           </motion.div>
         </div>
       )}

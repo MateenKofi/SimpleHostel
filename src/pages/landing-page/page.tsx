@@ -24,7 +24,7 @@ export default function LandingPage() {
         <div className="grid w-full place-items-center">
           <section id="about" className="container py-16 md:py-24">
             <h2 className="mb-12 text-3xl font-bold text-center md:text-4xl">
-              Why Choose <span className="text-red-500">Fuse</span>?
+              Why Choose <span className="text-primary">Fuse</span>?
             </h2>
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
               <FeatureCard

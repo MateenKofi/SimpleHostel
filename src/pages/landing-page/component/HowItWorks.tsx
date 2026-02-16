@@ -31,17 +31,17 @@ function Step({ icon, title, description, step, delay }: StepProps) {
           initial={{ scale: 0.8, opacity: 0 }}
           animate={inView ? { scale: 1, opacity: 1 } : { scale: 0.8, opacity: 0 }}
           transition={{ duration: 0.4, delay: delay + 0.2 }}
-          className="w-12 h-12 rounded-full bg-red-500 text-white flex items-center justify-center font-bold text-lg z-50"
+          className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg z-50"
         >
           {step}
         </motion.div>
       </div>
       <div className="flex-1">
         <div className="flex items-center mb-2">
-          <div className="mr-3 text-red-500">{icon}</div>
+          <div className="mr-3 text-primary">{icon}</div>
           <h3 className="text-xl font-semibold">{title}</h3>
         </div>
-        <p className="text-zinc-600 dark:text-zinc-400">{description}</p>
+        <p className="text-muted-foreground">{description}</p>
       </div>
     </motion.div>
   )
@@ -57,33 +57,31 @@ export function HowItWorksSection() {
     {
       icon: <Search className="h-5 w-5" />,
       title: "Search for Hostels",
-      description:
-        "Enter your destination, travel dates, and preferences to find the perfect hostel for your adventure.",
+      description: "Enter your destination and dates to find available hostels.",
       step: 1,
     },
     {
       icon: <MapPin className="h-5 w-5" />,
       title: "Compare Options",
-      description:
-        "Browse through our curated selection of hostels, read reviews, check amenities, and find the best location.",
+      description: "Browse hostels, read reviews, and check amenities.",
       step: 2,
     },
     {
       icon: <Calendar className="h-5 w-5" />,
       title: "Book Your Stay",
-      description: "Select your room type and dates, then secure your reservation with our simple booking process.",
+      description: "Select your room and secure your reservation.",
       step: 3,
     },
     {
       icon: <CreditCard className="h-5 w-5" />,
       title: "Enjoy Your Trip",
-      description: "Receive instant confirmation, pack your bags, and get ready for an amazing hostel experience!",
+      description: "Get instant confirmation and start your adventure.",
       step: 4,
     },
   ]
 
   return (
-    <section ref={ref} className="py-16 md:py-24 bg-zinc-50 dark:bg-zinc-800 -z-20">
+    <section ref={ref} className="py-16 md:py-24 bg-muted/30">
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -92,15 +90,15 @@ export function HowItWorksSection() {
           className="text-center max-w-3xl mx-auto mb-12"
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">How Fuse Works</h2>
-          <p className="text-lg text-zinc-600 dark:text-zinc-300">
-            Finding and booking your perfect hostel is quick and easy with our simple process
+          <p className="text-lg text-muted-foreground">
+            Book your hostel in 4 simple steps
           </p>
         </motion.div>
 
         <div className="max-w-4xl mx-auto">
           <div className="relative">
             {/* Vertical line connecting steps */}
-            <div className="absolute left-6 top-6 bottom-6 w-0.5 bg-red-200 dark:bg-red-900/50 hidden md:block -z-10"></div>
+            <div className="absolute left-6 top-6 bottom-6 w-0.5 bg-primary/20 hidden md:block -z-10"></div>
 
             <div className="space-y-12">
               {steps.map((step, index) => (

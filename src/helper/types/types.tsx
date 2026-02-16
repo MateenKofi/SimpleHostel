@@ -135,24 +135,42 @@ export type Amenity = {
 
 export type Staff = {
   id: string;
-  firstName: string;
-  middleName?: string;
-  lastName: string;
-  dateOfBirth: string;
-  nationality: string;
-  gender: string;
-  religion: string;
-  maritalStatus: string;
-  ghanaCardNumber: string;
-  phoneNumber: string;
-  email: string;
-  residence: string;
-  qualification: string;
-  staffType: string;
-  block: string;
-  dateOfAppointment: string;
-  staffStatus: "Active" | "Inactive";
-  role: string;
+  userId: string;
+  hostelId: string | null;
+  role: string | null;
+  title: string | null;
+  department: string | null;
+  middleName: string | null;
+  dateOfBirth: string | null;
+  nationality: string | null;
+  religion: string | null;
+  maritalStatus: string | null;
+  ghanaCardNumber: string | null;
+  phoneNumber: string | null;
+  residence: string | null;
+  qualification: string | null;
+  block: string | null;
+  dateOfAppointment: string | null;
+  passportUrl: string | null;
+  passportKey: string | null;
+  deletedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  // Nested user object
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+    phone: string | null;
+    gender: string | null;
+    avatar: string | null;
+    imageUrl: string | null;
+    role: string;
+  };
+  hostel?: {
+    id: string;
+    name: string;
+  } | null;
 };
 
 export type CalendarYearT = {

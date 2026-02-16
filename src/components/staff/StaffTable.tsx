@@ -1,12 +1,22 @@
 import { Staff } from "@/helper/types/types";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getHostelStaff, deleteStaff } from "@/api/staff";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Trash2, Eye, MoreHorizontal } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import CustomDataTable from "../CustomDataTable";
-import { handleSwalMutation } from "../swal/SwalMutationHelper";
+import { Button } from "@/components/ui/button";
+import CustomDataTable from "@/components/CustomDataTable";
+import { handleSwalMutation } from "@/components/swal/SwalMutationHelper";
 import { toast } from "sonner";
 import type { ApiError } from "@/types/dtos";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { TableColumn } from "react-data-table-component";
 
 const StaffTable = () => {
   const navigate = useNavigate();
@@ -32,7 +42,7 @@ const StaffTable = () => {
         refetchStaff();
       } catch (error: unknown) {
         const err = error as ApiError;
-        const errorMessage = err.response?.data?.message || "Failed to delete user";
+        const errorMessage = err.response?.data?.message || "Failed to delete staff";
         toast.error(errorMessage);
         throw error;
       }
@@ -45,67 +55,76 @@ const StaffTable = () => {
       title: "delete staff",
     });
   };
-  const columns = [
+
+  const columns: TableColumn<Staff>[] = [
     {
       name: "Name",
-
       selector: (row: Staff) =>
-        `${row.firstName} ${row.middleName} ${row.lastName}`,
+        `${row?.user?.name}`,
       sortable: true,
     },
     {
       name: "Gender",
-      width: "100px",
-      selector: (row: Staff) => row.gender,
+      selector: (row: Staff) => row?.user?.gender || "N/A",
       sortable: true,
     },
     {
       name: "Phone",
-
-      selector: (row: Staff) => row.phoneNumber,
+      selector: (row: Staff) => row?.user?.phone || "N/A",
       sortable: true,
     },
-    {
+    { 
       name: "Role",
-
-      selector: (row: Staff) => row.role,
+      selector: (row: Staff) => row.role || "N/A",
       sortable: true,
     },
     {
       name: "Qualification",
-      selector: (row: Staff) => row.qualification,
+      selector: (row: Staff) => row.qualification || "N/A",
       sortable: true,
     },
     {
       name: "Block",
-      selector: (row: Staff) => row.block,
+      selector: (row: Staff) => row.block || "N/A",
       sortable: true,
     },
     {
       name: "Actions",
-      width: "100px",
-
+      width: "80px",
+      right: true,
       cell: (row: Staff) => (
-        <div className="flex flex-col items-center justify-center my-1 space-y-1 text-nowrap">
-          <button
-            className="flex items-center w-full gap-2 px-2 py-1 text-white bg-black rounded-md"
-            onClick={() =>
-              navigate(`/dashboard/staff-management/edit/${row.id}`)
-            }
-          >
-            <Edit size={14} />
-            <span>Edit</span>
-          </button>
-          <button
-            className="flex items-center w-full gap-2 px-2 py-1 text-white bg-red-500 rounded-md"
-            onClick={() => handleDelete(row.id)}
-          >
-            <>
-              <Trash2 size={14} />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => navigate(`/dashboard/staff-management/view/${row.id}`)}
+            >
+              <Eye className="mr-2 h-4 w-4" />
+              <span>View</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => navigate(`/dashboard/staff-management/edit/${row.id}`)}
+            >
+              <Edit className="mr-2 h-4 w-4" />
+              <span>Edit</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => handleDelete(row.id)}
+              className="text-destructive focus:text-destructive"
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
               <span>Delete</span>
-            </>
-          </button>
-        </div>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       ),
     },
   ];

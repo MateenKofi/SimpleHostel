@@ -40,7 +40,7 @@ const Layout = () => {
       <AppSidebar />
       <div className="w-full min-h-[100dvh] bg-white overflow-scroll">
         <SidebarInset>
-          <header className="flex h-10 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+          <header className="sticky top-0 bg-white z-20 flex h-10 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
             <div className="flex items-center w-full h-full gap-2 px-4 border-b-2 border-gray-200">
               <SidebarTrigger className="-ml-1" />
               <Separator orientation="vertical" className="h-4 mr-2" />

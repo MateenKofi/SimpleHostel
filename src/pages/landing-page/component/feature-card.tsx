@@ -19,15 +19,15 @@ export function FeatureCard({ icon, title, description, delay }: FeatureCardProp
   const getIcon = () => {
     switch (icon) {
       case "Search":
-        return <Search className="w-12 h-12 mb-4 text-red-500" />
+        return <Search className="w-12 h-12 mb-4 text-primary" />
       case "MapPin":
-        return <MapPin className="w-12 h-12 mb-4 text-red-500" />
+        return <MapPin className="w-12 h-12 mb-4 text-primary" />
       case "Users":
-        return <Users className="w-12 h-12 mb-4 text-red-500" />
+        return <Users className="w-12 h-12 mb-4 text-primary" />
       case "Star":
-        return <Star className="w-12 h-12 mb-4 text-red-500" />
+        return <Star className="w-12 h-12 mb-4 text-primary" />
       default:
-        return <Search className="w-12 h-12 mb-4 text-red-500" />
+        return <Search className="w-12 h-12 mb-4 text-primary" />
     }
   }
 
@@ -37,9 +37,9 @@ export function FeatureCard({ icon, title, description, delay }: FeatureCardProp
       initial={{ y: 50, opacity: 0 }}
       animate={inView ? { y: 0, opacity: 1 } : { y: 50, opacity: 0 }}
       transition={{ duration: 0.5, delay }}
-      whileHover={{ y: -10, transition: { duration: 0.2 } }}
+      whileHover={{ y: -5, transition: { duration: 0.2 } }}
     >
-      <Card className="h-full border-none shadow-lg hover:shadow-xl transition-shadow duration-300">
+      <Card className="h-full border-border shadow-sm hover:shadow-md transition-shadow duration-300">
         <CardContent className="pt-6 flex flex-col items-center text-center">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
@@ -49,7 +49,7 @@ export function FeatureCard({ icon, title, description, delay }: FeatureCardProp
             {getIcon()}
           </motion.div>
           <h3 className="text-xl font-semibold mb-2">{title}</h3>
-          <p className="text-muted-foreground">{description}</p>
+          <p className="text-muted-foreground text-sm">{description}</p>
         </CardContent>
       </Card>
     </motion.div>

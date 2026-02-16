@@ -151,9 +151,9 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
 
   return (
     <Modal modalId="add_room_modal" onClose={handleClose} size="large">
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 sm:gap-6">
         <div className="space-y-1">
-          <h2 className="text-2xl font-bold text-foreground">Add New Room</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-foreground">Add New Room</h2>
           <p className="text-sm text-muted-foreground">
             Fill in the details below to add a new room
           </p>
@@ -177,7 +177,7 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
         </div>
 
         {/* Rest of the form fields */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           {/* Room Number */}
           <div className="flex flex-col gap-2">
             <Label htmlFor="roomNumber">Room Number</Label>
@@ -370,18 +370,20 @@ const AddRoomModal = ({ onClose }: { onClose: () => void }) => {
           />
         </div>
 
-        <div className="flex justify-end gap-3 mt-4">
+        <div className="flex flex-col sm:flex-row justify-end gap-3 mt-4">
           <Button
             type="button"
             variant="outline"
             onClick={handleClose}
             disabled={mutation.isPending}
+            className="w-full sm:w-auto"
           >
             Cancel
           </Button>
           <Button
             type="submit"
             disabled={mutation.isPending}
+            className="w-full sm:w-auto"
           >
             {mutation.isPending && <Loader className="w-4 h-4 mr-2 animate-spin" />}
             {mutation.isPending ? "Adding..." : "Add Room"}

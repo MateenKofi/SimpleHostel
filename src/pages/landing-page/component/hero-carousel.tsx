@@ -1,167 +1,91 @@
-import { useState, useEffect, useRef } from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { useNavigate } from "react-router-dom"
-
-const slides = [
-  {
-    image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=1920&q=80",
-    title: "Find Your Perfect Hostel",
-    description: "Discover affordable accommodation worldwide with our curated selection of hostels",
-  },
-  {
-    image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1920&q=80",
-    title: "Meet Fellow Hostelers",
-    description: "Connect with like-minded hostel finders and make lifelong friendships",
-  },
-  {
-    image: "https://images.unsplash.com/photo-1520277739336-7bf67edfa768?auto=format&fit=crop&w=1920&q=80",
-    title: "Explore Local Culture",
-    description: "Experience authentic local culture with our community-focused hostels",
-  },
-]
 
 export function HeroCarousel() {
   const navigate = useNavigate()
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [direction, setDirection] = useState(0)
-  const intervalRef = useRef<NodeJS.Timeout | null>(null)
-
-  const startAutoplay = () => {
-    if (intervalRef.current) clearInterval(intervalRef.current)
-    intervalRef.current = setInterval(() => {
-      setDirection(1)
-      setCurrentSlide((prev) => (prev + 1) % slides.length)
-    }, 10000)
-  }
-
-  useEffect(() => {
-    startAutoplay()
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current)
-    }
-  }, [])
-
-  const nextSlide = () => {
-    if (intervalRef.current) clearInterval(intervalRef.current)
-    setDirection(1)
-    setCurrentSlide((prev) => (prev + 1) % slides.length)
-    startAutoplay()
-  }
-
-  const prevSlide = () => {
-    if (intervalRef.current) clearInterval(intervalRef.current)
-    setDirection(-1)
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)
-    startAutoplay()
-  }
-
-  const variants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 1000 : -1000,
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction: number) => ({
-      x: direction < 0 ? 1000 : -1000,
-      opacity: 0,
-    }),
-  }
 
   return (
-    <div className="relative w-full h-[400px] sm:h-[500px] md:h-[550px] overflow-hidden">
-      <AnimatePresence initial={false} custom={direction} mode="wait">
-        <motion.div
-          key={currentSlide}
-          custom={direction}
-          variants={variants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{
-            x: { type: "spring", stiffness: 300, damping: 30 },
-            opacity: { duration: 0.2 },
-          }}
-          className="absolute inset-0"
-        >
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${slides[currentSlide].image})` }}
+    <div className="relative w-full h-[500px] sm:h-[550px] md:h-[600px] overflow-hidden">
+      {/* Static Background Image */}
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage: "url(https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=1920&q=80)"
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60" />
+      </div>
+
+      {/* Hero Content */}
+      <div className="relative h-full flex items-center justify-center">
+        <div className="text-center text-white space-y-4 sm:space-y-6 px-4 max-w-[90%] sm:max-w-[80%] md:max-w-[70%]">
+          <motion.h1
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight"
           >
-            <div className="absolute inset-0 bg-black/40" />
-          </div>
-          <div className="relative h-full flex items-center justify-center">
-            <div className="text-center text-white space-y-2 sm:space-y-4 px-4 max-w-[90%] sm:max-w-[80%] md:max-w-[70%]">
-              <motion.h1
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-                className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-tight"
-              >
-                {slides[currentSlide].title}
-              </motion.h1>
-              <motion.p
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.4, duration: 0.5 }}
-                className="text-sm sm:text-base md:text-lg lg:text-xl max-w-[600px] mx-auto"
-              >
-                {slides[currentSlide].description}
-              </motion.p>
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.6, duration: 0.5 }}
-              >
-                <Button
-                  size="lg"
-                  className="mt-4 bg-red-500 hover:bg-red-600 transition-all duration-300 transform hover:scale-105"
-                  onClick={() => navigate("/find-hostel")}
-                >
-                  Start Exploring
-                </Button>
-              </motion.div>
+            Book Affordable Hostels in Ghana
+          </motion.h1>
+          <motion.p
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="text-base sm:text-lg md:text-xl max-w-[600px] mx-auto text-white/90"
+          >
+            Safe, verified hostels in prime locations. Book your stay in seconds.
+          </motion.p>
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+            className="flex flex-col sm:flex-row gap-3 justify-center"
+          >
+            <Button
+              size="lg"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground transition-all duration-300 px-8 py-6 text-lg"
+              onClick={() => navigate("/find-hostel")}
+            >
+              Find a Hostel Now
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              className="bg-white/10 hover:bg-white/20 text-white border-white/30 backdrop-blur-sm transition-all duration-300 px-8 py-6 text-lg"
+              onClick={() => navigate("/register")}
+            >
+              Create Account
+            </Button>
+          </motion.div>
+
+          {/* Trust Badge */}
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.8, duration: 0.5 }}
+            className="pt-6 flex items-center justify-center gap-6 text-sm text-white/80"
+          >
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span>Verified Hostels</span>
             </div>
-          </div>
-        </motion.div>
-      </AnimatePresence>
-
-      <Button
-        variant="ghost"
-        size="icon"
-        className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 z-10"
-        onClick={prevSlide}
-      >
-        <ChevronLeft className="h-6 w-6 sm:h-8 sm:w-8" />
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 text-white hover:bg-white/20 z-10"
-        onClick={nextSlide}
-      >
-        <ChevronRight className="h-6 w-6 sm:h-8 sm:w-8" />
-      </Button>
-
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-10">
-        {slides.map((_, index) => (
-          <motion.button
-            key={index}
-            className={`w-3 h-3 rounded-full transition-colors ${currentSlide === index ? "bg-white" : "bg-white/50"}`}
-            onClick={() => {
-              setDirection(index > currentSlide ? 1 : -1)
-              setCurrentSlide(index)
-              if (intervalRef.current) clearInterval(intervalRef.current)
-              startAutoplay()
-            }}
-            whileHover={{ scale: 1.2 }}
-            whileTap={{ scale: 0.9 }}
-          />
-        ))}
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span>Instant Booking</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span>Best Prices</span>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </div>
   )

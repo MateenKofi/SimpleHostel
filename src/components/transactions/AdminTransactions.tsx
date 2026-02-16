@@ -532,65 +532,59 @@ const AdminTransactions = () => {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col gap-4 sm:flex-row">
+      <div className="flex flex-col gap-3 sm:gap-4">
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search by reference or ID..."
-            className="pl-8"
+            className="pl-8 h-10"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
 
-        <div className="flex gap-2">
-          <div className="flex w-40 gap-2">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+          <div className="flex gap-2 w-full sm:w-auto">
             {/* date picker */}
             {selectedDate && (
               <button
                 onClick={() => setSelectedDate(null)}
-                className="grid w-10 h-8 my-auto text-white bg-red-300 rounded-md place-items-center hover:bg-red-300 focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="shrink-0 grid w-10 h-10 text-white bg-red-400 hover:bg-red-500 rounded-md place-items-center focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
               >
-                <X className="w-4 h-4 text-gray-500" />
+                <X className="w-4 h-4 text-white" />
               </button>
             )}
             <DatePicker
               selected={selectedDate}
               onChange={(date) => setSelectedDate(date)}
               placeholderText="Filter by date"
-              className="w-full p-1 border rounded-md shadow-sm"
+              className="flex-1 sm:w-auto w-full h-10 px-3 border rounded-md shadow-sm text-sm"
             />
-
-
           </div>
-          <div className="w-40">
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger>
-                <Filter className="w-4 h-4 mr-2" />
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="success">Success</SelectItem>
-                <SelectItem value="confirmed">Confirmed</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="h-10 w-full sm:w-40">
+              <Filter className="w-4 h-4 mr-2 shrink-0" />
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="success">Success</SelectItem>
+              <SelectItem value="confirmed">Confirmed</SelectItem>
+            </SelectContent>
+          </Select>
 
-          <div className="w-40">
-            <Select value={methodFilter} onValueChange={setMethodFilter}>
-              <SelectTrigger>
-                <CreditCard className="w-4 h-4 mr-2" />
-                <SelectValue placeholder="Payment Method" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Methods</SelectItem>
-                <SelectItem value="mobile_money">Mobile Money</SelectItem>
-                <SelectItem value="none">No Method</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <Select value={methodFilter} onValueChange={setMethodFilter}>
+            <SelectTrigger className="h-10 w-full sm:w-40">
+              <CreditCard className="w-4 h-4 mr-2 shrink-0" />
+              <SelectValue placeholder="Payment Method" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Methods</SelectItem>
+              <SelectItem value="mobile_money">Mobile Money</SelectItem>
+              <SelectItem value="none">No Method</SelectItem>
+            </SelectContent>
+          </Select>
 
         </div>
       </div>

@@ -47,7 +47,7 @@ const AmenitiesModal = ({ onClose }: AmenitiesModalProps) => {
     <Modal modalId='amenities_modal' onClose={onClose}>
       <h1 className="mb-4 text-2xl font-bold text-gray-500">Add Amenity</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="p-4 mb-4">
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2">
           <input
             {...register('name', { required: 'Amenity name is required' })}
             type="text"
@@ -59,7 +59,7 @@ const AmenitiesModal = ({ onClose }: AmenitiesModalProps) => {
             {...register('price', { required: 'Price is required', min: { value: 0, message: 'Price cannot be negative' } })}
             type="number"
             placeholder="Price"
-            className="w-32 px-3 py-2 border rounded-md"
+            className="px-3 py-2 border rounded-md "
             min="0"
             step="0.01"
           />

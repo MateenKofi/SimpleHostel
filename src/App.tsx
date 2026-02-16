@@ -36,6 +36,7 @@ import AddResident from "./components/resident/AddResident";
 import ApproveHostel from "./pages/dashboard/approvals/Approve-Hostel";
 import ProfileForm from "./pages/dashboard/profile/Profile";
 import EditStaff from "./components/staff/EditStaff";
+import ViewStaff from "./components/staff/ViewStaff";
 import CalendarYear from "./pages/dashboard/calendarYear/CalendarYear";
 import Transactions from "./pages/dashboard/transactions/Transactions";
 import Users from "./pages/dashboard/users/Users";
@@ -105,6 +106,7 @@ function App() {
             <Route path="visitor-management" element={<VisitorManagement />} />
             <Route path="staff-management" element={<StaffManagement />} />
             <Route path="staff-management/add" element={<AddStaff />} />
+            <Route path="staff-management/view/:id" element={<ViewStaff />} />
             <Route path="staff-management/edit/:id" element={<EditStaff />} />
             <Route path="approve-hostel" element={<ApproveHostel />} />
             <Route path="profile" element={<ProfileForm />} />
