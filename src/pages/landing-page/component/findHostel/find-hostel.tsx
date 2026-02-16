@@ -14,6 +14,8 @@ import { HostetFilterConfig } from "@/helper/hostel_filter_config";
 import { useSelectedCalendarYearStore } from "@/stores/useSelectedCalendarYearStore";
 import { useNavigate } from "react-router-dom";
 import { FilterBar } from "@/components/filters/FilterBar";
+import { LogIn } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ActiveFilters {
   [key: string]: string[];
@@ -40,6 +42,7 @@ export function FindHostel() {
   const {
     data: rooms,
     isError,
+    error,
     refetch,
     isLoading,
   } = useQuery({
@@ -48,6 +51,7 @@ export function FindHostel() {
       const responseData = await getHostels();
       return responseData?.data;
     },
+    retry: false,
   });
 
   const handleFilterChange = (category: string, value: string) => {
@@ -98,7 +102,34 @@ export function FindHostel() {
     return Object.values(activeFilters).filter((arr) => arr.length > 0).length;
   }, [activeFilters]);
 
-  if (isLoading) return <FindHostelSkeleton />;
+
+  // Check if error is 401 (unauthorized)
+  const isUnauthorized = isError && (error as any)?.response?.status === 401;
+
+  if (isUnauthorized) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] px-4">
+        <div className="text-center space-y-4 max-w-md">
+          <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto">
+            <LogIn className="w-8 h-8 text-muted-foreground" />
+          </div>
+          <h2 className="text-2xl font-bold text-foreground">Login Required</h2>
+          <p className="text-muted-foreground">
+            Please log in to view available hostels and make bookings.
+          </p>
+          <Button
+            onClick={() => navigate("/login")}
+            className="w-full sm:w-auto"
+            size="lg"
+          >
+            <LogIn className="w-4 h-4 mr-2" />
+            Go to Login
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   if (isError) return <CustomeRefetch refetch={refetch} />;
 
   const roomsArray = Array.isArray(rooms) ? rooms : [];
@@ -203,7 +234,37 @@ export function FindHostel() {
             </div>
           )}
 
-          {filteredHostels?.length === 0 ? (
+          {isLoading ? (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
+              {[...Array(6)].map((_, idx) => (
+                <div
+                  key={idx}
+                  className="aspect-[3/4] rounded-xl overflow-hidden animate-pulse bg-muted relative"
+                >
+                  <div className="absolute inset-0 bg-muted" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-muted-foreground/10 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4 space-y-2">
+                    <div className="flex justify-between gap-2">
+                      <div className="h-5 bg-muted-foreground/20 rounded w-2/3" />
+                      <div className="h-6 bg-muted-foreground/20 rounded-full w-10 shrink-0" />
+                    </div>
+                    <div className="h-4 bg-muted-foreground/20 rounded w-1/2" />
+                    <div className="flex gap-2">
+                      <div className="h-8 bg-muted-foreground/20 rounded-lg flex-1" />
+                      <div className="h-8 bg-muted-foreground/20 rounded-lg flex-[2]" />
+                    </div>
+                    <div className="flex justify-between items-center gap-3">
+                      <div className="space-y-1">
+                        <div className="h-3 bg-muted-foreground/20 rounded w-16" />
+                        <div className="h-5 bg-muted-foreground/20 rounded w-20" />
+                      </div>
+                      <div className="h-9 bg-muted-foreground/20 rounded-lg w-24" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : filteredHostels?.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-lg font-medium text-foreground mb-2">
                 No hostels match your search
