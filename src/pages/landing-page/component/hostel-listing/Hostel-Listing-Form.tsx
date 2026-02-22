@@ -129,30 +129,36 @@ const HostelListingForm = () => {
 
   const nextStep = async () => {
     let fieldsToValidate: (keyof HostelListingFormValues)[] = [];
+
     if (currentStep === 1) {
+      // Step 1: Validate basic info fields
       fieldsToValidate = ["hostelName", "location", "address"];
+    } else if (currentStep === 2) {
+      // Step 2: No form fields to validate, just check uploads
+      if (!logo) {
+        toast.error("Hostel logo is required");
+        return;
+      }
+      if (images.length === 0) {
+        toast.error("At least one hostel image is required");
+        return;
+      }
     } else if (currentStep === 3) {
+      // Step 3: Validate management details fields
       fieldsToValidate = ["managerName", "ghanaCard", "email", "phone"];
     }
 
-    const isValid = await form.trigger(fieldsToValidate);
-    if (isValid) {
-      if (currentStep === 2) {
-        if (!logo) {
-          toast.error("Hostel logo is required");
-          return;
-        }
-        if (images.length === 0) {
-          toast.error("At least one hostel image is required");
-          return;
-        }
+    // Only validate form fields if there are fields to check for the current step
+    if (fieldsToValidate.length > 0) {
+      const isValid = await form.trigger(fieldsToValidate);
+      if (!isValid) {
+        toast.error("Please fill in all required fields");
+        return;
       }
-      setDirection('forward');
-      setCurrentStep((prev) => Math.min(prev + 1, steps.length));
-    } else {
-      // Shake animation for invalid form
-      toast.error("Please fill in all required fields");
     }
+
+    setDirection('forward');
+    setCurrentStep((prev) => Math.min(prev + 1, steps.length));
   };
 
   const prevStep = () => {
@@ -160,10 +166,17 @@ const HostelListingForm = () => {
     setCurrentStep((prev) => Math.max(prev - 1, 1));
   };
 
-  const goToStep = (step: number) => {
-    if (step < currentStep || form.formState.isValid) {
-      setDirection(step > currentStep ? 'forward' : 'backward');
+  const goToStep = async (step: number) => {
+    // Allow going back to any previous step
+    if (step < currentStep) {
+      setDirection('backward');
       setCurrentStep(step);
+      return;
+    }
+
+    // Allow going to the next step only if current step is valid
+    if (step === currentStep + 1) {
+      await nextStep();
     }
   };
 
