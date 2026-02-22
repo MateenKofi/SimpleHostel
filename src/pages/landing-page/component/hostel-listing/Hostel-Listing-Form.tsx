@@ -1,8 +1,27 @@
+/**
+ * Enhanced Hostel Listing Form
+ * Improved UI/UX with better visual design, smooth transitions, and validation feedback
+ */
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, LucideCircleArrowOutUpRight, ArrowLeft, ArrowRight, Check } from "lucide-react";
+import {
+  Loader2,
+  LucideCircleArrowOutUpRight,
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  ChevronLeft,
+  Info,
+  Upload,
+  Building2,
+  User,
+  Image as ImageIcon,
+  ShieldCheck,
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -29,9 +48,21 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
 const steps = [
-  { title: "Basic Info" },
-  { title: "Media" },
-  { title: "Manager Details" },
+  {
+    title: "Basic Info",
+    description: "Tell us about your hostel",
+    icon: <Building2 className="w-5 h-5" />,
+  },
+  {
+    title: "Media",
+    description: "Showcase your hostel",
+    icon: <ImageIcon className="w-5 h-5" />,
+  },
+  {
+    title: "Management",
+    description: "Contact details",
+    icon: <User className="w-5 h-5" />,
+  },
 ];
 
 const HostelListingForm = () => {
@@ -40,6 +71,7 @@ const HostelListingForm = () => {
   const [region, setRegion] = useState("");
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [logo, setLogo] = useState<string | File | null>(null);
+  const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
 
   const form = useForm<HostelListingFormValues>({
     resolver: zodResolver(hostelListingFormSchema),
@@ -54,6 +86,7 @@ const HostelListingForm = () => {
       phone: "",
       ghanaCard: "",
     },
+    mode: "onTouched", // Validate on blur for better UX
   });
 
   const AddListingMutation = useMutation({
@@ -66,7 +99,7 @@ const HostelListingForm = () => {
       formData.append("manager", data.managerName.toUpperCase());
       formData.append("email", data.email);
       formData.append("phone", data.phone);
-      formData.append("ghCard", data.ghanaCard);
+      formData.append("ghanaCard", data.ghanaCard);
       images.forEach((image: File) => {
         formData.append("photos", image);
       });
@@ -74,22 +107,15 @@ const HostelListingForm = () => {
         formData.append("logo", logo);
       }
 
-      try {
-        const responseData = await addHostel(formData);
-        toast.success("Hostel Listed successfully");
-        setSubmitted(true);
-        return responseData;
-      } catch (error: unknown) {
-        setSubmitted(false);
-        const err = error as ApiError;
-        const errorMessage = err.response?.data?.error || err.response?.data?.message || "Failed to List Hostel";
-        toast.error(errorMessage);
-        throw error;
-      }
+      const responseData = await addHostel(formData);
+      toast.success("Hostel Listed successfully");
+      setSubmitted(true);
+      return responseData;
     },
-  });
+    });
 
   const onSubmit = async (data: HostelListingFormValues) => {
+    // Custom validations
     if (images.length === 0) {
       toast.error("Please upload at least one hostel image");
       return;
@@ -121,16 +147,45 @@ const HostelListingForm = () => {
           return;
         }
       }
+      setDirection('forward');
       setCurrentStep((prev) => Math.min(prev + 1, steps.length));
+    } else {
+      // Shake animation for invalid form
+      toast.error("Please fill in all required fields");
     }
   };
 
   const prevStep = () => {
+    setDirection('backward');
     setCurrentStep((prev) => Math.max(prev - 1, 1));
   };
 
+  const goToStep = (step: number) => {
+    if (step < currentStep || form.formState.isValid) {
+      setDirection(step > currentStep ? 'forward' : 'backward');
+      setCurrentStep(step);
+    }
+  };
+
+  // Variants for step transitions
+  const variants = {
+    enter: (direction: 'forward' | 'backward') => ({
+      x: direction === 'forward' ? 50 : -50,
+      opacity: 0,
+    }),
+    center: {
+      zIndex: 0,
+      x: 0,
+      opacity: 1,
+    },
+    exit: (direction: 'forward' | 'backward') => ({
+      x: direction === 'forward' ? -50 : 50,
+      opacity: 0,
+    }),
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center w-full min-h-screen p-4 md:p-8 bg-slate-50/50">
+    <div className="flex flex-col items-center justify-center w-full min-h-screen p-4 md:p-8 bg-gradient-to-br from-slate-50 via-forest-green-50/20 to-slate-100/50">
       <SEOHelmet
         title="List Your Hostel - Fuse"
         description="List your hostel on Fuse and reach more students."
@@ -138,263 +193,426 @@ const HostelListingForm = () => {
       />
 
       <div className="w-full max-w-4xl space-y-6">
-        <div className="text-center space-y-2 mb-4">
-          <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl text-slate-900 font-foreground">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="text-center space-y-2"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-forest-green-100 text-forest-green-700 rounded-full text-sm font-semibold mb-2">
+            <Building2 className="w-4 h-4" />
+            <span>Hostel Partner Program</span>
+          </div>
+          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-slate-900 font-foreground">
             List Your Hostel
           </h1>
-          <p className="text-slate-500 max-w-lg mx-auto">
+          <p className="text-slate-600 max-w-lg mx-auto text-sm md:text-base">
             Join Ghana's largest student accommodation network and reach thousands of students today.
           </p>
-        </div>
+        </motion.div>
 
         {submitted ? (
-          <Card className="border-none shadow-xl bg-white overflow-hidden">
-            <CardContent className="p-0">
-              <SuccessfulListing />
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            <Card className="border-none shadow-2xl bg-white overflow-hidden">
+              <CardContent className="p-0">
+                <SuccessfulListing />
+              </CardContent>
+            </Card>
+          </motion.div>
         ) : (
           <>
-            <StepIndicator currentStep={currentStep} steps={steps} />
+            {/* Enhanced Step Indicator */}
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4 }}
+            >
+              <StepIndicator
+                currentStep={currentStep}
+                steps={steps}
+                onStepClick={goToStep}
+              />
+            </motion.div>
 
-            <Card className="border-none shadow-xl bg-white overflow-hidden mt-8">
+            {/* Form Card */}
+            <Card className="border-none shadow-2xl bg-white overflow-hidden">
               <CardContent className="p-6 md:p-10">
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                    {currentStep === 1 && (
-                      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <div className="border-l-4 border-primary pl-4 mb-6">
-                          <h2 className="text-xl font-bold text-slate-900">Basic Information</h2>
-                          <p className="text-sm text-slate-500 italic">Tell us the key details about your hostel</p>
-                        </div>
-
-                        <FormField
-                          control={form.control}
-                          name="hostelName"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-slate-700 font-semibold">Hostel Name*</FormLabel>
-                              <FormControl>
-                                <Input
-                                  placeholder="Enter the official name of your hostel"
-                                  {...field}
-                                  className="h-12 border-slate-200 focus:border-primary focus:ring-primary transition-all rounded-lg"
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <FormField
-                            control={form.control}
-                            name="location"
-                            render={({ field }) => (
-                              <FormItem className="flex flex-col">
-                                <FormLabel className="text-slate-700 font-semibold mb-1">Region/Location*</FormLabel>
-                                <FormControl>
-                                  <div className="relative">
-                                    <RegionDropdown
-                                      country={"Ghana"}
-                                      onChange={(val) => {
-                                        setRegion(val);
-                                        field.onChange(val);
-                                      }}
-                                      value={region}
-                                      className="w-full h-12 px-4 py-2 bg-white border border-slate-200 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-900"
-                                      name="region-field"
-                                    />
-                                    <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400">
-                                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                                      </svg>
-                                    </div>
-                                  </div>
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          <FormField
-                            control={form.control}
-                            name="address"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-slate-700 font-semibold">Address*</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    placeholder="GC-123-4567 or Street Name"
-                                    {...field}
-                                    className="h-12 border-slate-200 focus:border-primary focus:ring-primary transition-all rounded-lg"
-                                  />
-                                </FormControl>
-                                <FormDescription className="text-[10px] text-slate-400">
-                                  Use Ghana Post GPS address if available.
-                                </FormDescription>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-
-                        <FormField
-                          control={form.control}
-                          name="description"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel className="text-slate-700 font-semibold">Description (Optional)</FormLabel>
-                              <FormControl>
-                                <Textarea
-                                  placeholder="What makes your hostel unique? Mention amenities like WiFi, shuttle, security etc."
-                                  className="min-h-[120px] border-slate-200 focus:border-primary focus:ring-primary transition-all rounded-lg resize-none"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-
-                        <a
-                          href="https://www.google.com/maps"
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors group"
+                    <AnimatePresence mode="wait" custom={direction}>
+                      {/* Step 1: Basic Info */}
+                      {currentStep === 1 && (
+                        <motion.div
+                          key="step1"
+                          variants={variants}
+                          initial="enter"
+                          animate="center"
+                          exit="exit"
+                          transition={{ duration: 0.3 }}
+                          className="space-y-6"
                         >
-                          Find your coordinates on Google Maps
-                          <LucideCircleArrowOutUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                        </a>
-                      </div>
-                    )}
+                          {/* Step Header */}
+                          <div className="flex items-center gap-3 mb-6">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-forest-green-500 to-forest-green-600 flex items-center justify-center text-white shadow-lg shadow-forest-green-200">
+                              <Building2 className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <h2 className="text-xl font-bold text-slate-900">Basic Information</h2>
+                              <p className="text-sm text-slate-500">Tell us about your hostel</p>
+                            </div>
+                          </div>
 
-                    {currentStep === 2 && (
-                      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <div className="border-l-4 border-primary pl-4 mb-6">
-                          <h2 className="text-xl font-bold text-slate-900">Visual Media</h2>
-                          <p className="text-sm text-slate-500 italic">High quality photos attract more students</p>
-                        </div>
+                          {/* Hostel Name */}
+                          <FormField
+                            control={form.control}
+                            name="hostelName"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-slate-700 font-semibold flex items-center gap-2">
+                                  Hostel Name
+                                  <span className="text-forest-green-600">*</span>
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    placeholder="Enter the official name of your hostel"
+                                    {...field}
+                                    className="h-12 border-slate-200 focus:border-forest-green-500 focus:ring-forest-green-500/20 transition-all rounded-lg"
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
 
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                          <div className="space-y-4">
+                          {/* Region and Address */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <FormField
+                              control={form.control}
+                              name="location"
+                              render={({ field }) => (
+                                <FormItem className="flex flex-col">
+                                  <FormLabel className="text-slate-700 font-semibold flex items-center gap-2">
+                                    Region/Location
+                                    <span className="text-forest-green-600">*</span>
+                                  </FormLabel>
+                                  <FormControl>
+                                    <div className="relative">
+                                      <RegionDropdown
+                                        country={"Ghana"}
+                                        onChange={(val) => {
+                                          setRegion(val);
+                                          field.onChange(val);
+                                        }}
+                                        value={region}
+                                        className="w-full h-12 px-4 py-2 bg-white border border-slate-200 rounded-lg appearance-none focus:outline-none focus:ring-2 focus:ring-forest-green-500/20 focus:border-forest-green-500 transition-all text-slate-900"
+                                        name="region-field"
+                                      />
+                                      <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-slate-400">
+                                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                          <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                      </div>
+                                    </div>
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name="address"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-slate-700 font-semibold flex items-center gap-2">
+                                    Address
+                                    <span className="text-forest-green-600">*</span>
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      placeholder="GC-123-4567 or Street Name"
+                                      {...field}
+                                      className="h-12 border-slate-200 focus:border-forest-green-500 focus:ring-forest-green-500/20 transition-all rounded-lg"
+                                    />
+                                  </FormControl>
+                                  <FormDescription className="text-xs text-slate-400">
+                                    Ghana Post GPS address recommended
+                                  </FormDescription>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          {/* Description */}
+                          <FormField
+                            control={form.control}
+                            name="description"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel className="text-slate-700 font-semibold">Description</FormLabel>
+                                <FormControl>
+                                  <Textarea
+                                    placeholder="What makes your hostel unique? Mention amenities like WiFi, shuttle, security, study areas, etc."
+                                    className="min-h-[100px] border-slate-200 focus:border-forest-green-500 focus:ring-forest-green-500/20 transition-all rounded-lg resize-none"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+
+                          {/* Helpful Tip */}
+                          <div className="flex items-start gap-3 p-4 bg-forest-green-50 rounded-xl border border-forest-green-100">
+                            <div className="w-6 h-6 rounded-full bg-forest-green-100 text-forest-green-600 flex items-center justify-center flex-shrink-0">
+                              <Info className="w-3.5 h-3.5" />
+                            </div>
                             <div className="space-y-1">
-                              <h3 className="font-bold text-slate-800">Hostel Logo*</h3>
-                              <p className="text-xs text-slate-400 italic">Square or transparent PNG recommended</p>
+                              <p className="text-sm font-medium text-forest-green-800">
+                                Pro Tip
+                              </p>
+                              <p className="text-xs text-forest-green-600 leading-relaxed">
+                                Detailed descriptions help students understand what makes your hostel special. Mention unique features like 24/7 security, study rooms, or proximity to campus.
+                              </p>
                             </div>
-                            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex justify-center">
-                              <UploadSingleImage image={logo} setImage={setLogo} />
+                          </div>
+                        </motion.div>
+                      )}
+
+                      {/* Step 2: Media */}
+                      {currentStep === 2 && (
+                        <motion.div
+                          key="step2"
+                          variants={variants}
+                          initial="enter"
+                          animate="center"
+                          exit="exit"
+                          transition={{ duration: 0.3 }}
+                          className="space-y-6"
+                        >
+                          {/* Step Header */}
+                          <div className="flex items-center gap-3 mb-6">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-forest-green-500 to-forest-green-600 flex items-center justify-center text-white shadow-lg shadow-forest-green-200">
+                              <ImageIcon className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <h2 className="text-xl font-bold text-slate-900">Visual Media</h2>
+                              <p className="text-sm text-slate-500">Showcase your hostel</p>
                             </div>
                           </div>
 
-                          <div className="space-y-4">
-                            <div className="space-y-1">
-                              <h3 className="font-bold text-slate-800">Hostel Gallery*</h3>
-                              <p className="text-xs text-slate-400 italic">Upload at least 3 photos (max 5)</p>
+                          {/* Upload Areas */}
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            {/* Logo Upload */}
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <h3 className="font-bold text-slate-800">Hostel Logo</h3>
+                                <span className="px-2 py-0.5 bg-forest-green-100 text-forest-green-700 text-xs font-semibold rounded-full">
+                                  Required
+                                </span>
+                              </div>
+                              <p className="text-xs text-slate-500">Square or transparent PNG recommended (min 200x200px)</p>
+                              <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-6 rounded-2xl border border-slate-200 shadow-sm">
+                                <UploadSingleImage image={logo} setImage={setLogo} />
+                              </div>
                             </div>
-                            <div className="bg-slate-50 rounded-2xl border border-slate-100 min-h-[150px]">
-                              <UploadMultipleImages images={images} setImages={setImages} />
+
+                            {/* Gallery Upload */}
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <h3 className="font-bold text-slate-800">Hostel Gallery</h3>
+                                <span className="px-2 py-0.5 bg-forest-green-100 text-forest-green-700 text-xs font-semibold rounded-full">
+                                  Required
+                                </span>
+                              </div>
+                              <p className="text-xs text-slate-500">Upload 3-5 high-quality photos (max 5MB each)</p>
+                              <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl border border-slate-200 shadow-sm min-h-[200px]">
+                                <UploadMultipleImages images={images} setImages={setImages} />
+                              </div>
+
+                              {/* Image Count Indicator */}
+                              {images.length > 0 && (
+                                <div className="flex items-center justify-between px-2 py-2 bg-slate-50 rounded-lg">
+                                  <div className="flex items-center gap-2">
+                                    <Upload className="w-4 h-4 text-slate-400" />
+                                    <span className="text-xs text-slate-600 font-medium">
+                                      {images.length} / 5 uploaded
+                                    </span>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => setImages([])}
+                                    className="text-xs text-forest-green-600 hover:text-forest-green-700 font-medium"
+                                  >
+                                    Clear all
+                                  </button>
+                                </div>
+                              )}
                             </div>
                           </div>
-                        </div>
-                      </div>
-                    )}
 
-                    {currentStep === 3 && (
-                      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                        <div className="border-l-4 border-primary pl-4 mb-6">
-                          <h2 className="text-xl font-bold text-slate-900">Management Details</h2>
-                          <p className="text-sm text-slate-500 italic">Required for verification and communication</p>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <FormField
-                            control={form.control}
-                            name="managerName"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-slate-700 font-semibold">Manager's Full Name*</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    placeholder="John Doe"
-                                    {...field}
-                                    className="h-12 border-slate-200 focus:border-primary focus:ring-primary transition-all rounded-lg"
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          <FormField
-                            control={form.control}
-                            name="ghanaCard"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-slate-700 font-semibold">Ghana Card Number*</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    placeholder="GHA-123456789-0"
-                                    {...field}
-                                    className="h-12 border-slate-200 focus:border-primary focus:ring-primary transition-all rounded-lg"
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-slate-700 font-semibold">Contact Email*</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    type="email"
-                                    placeholder="manager@hostel.com"
-                                    {...field}
-                                    className="h-12 border-slate-200 focus:border-primary focus:ring-primary transition-all rounded-lg"
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-
-                          <FormField
-                            control={form.control}
-                            name="phone"
-                            render={({ field }) => (
-                              <FormItem>
-                                <FormLabel className="text-slate-700 font-semibold">Phone Number*</FormLabel>
-                                <FormControl>
-                                  <Input
-                                    placeholder="024 123 4567"
-                                    {...field}
-                                    className="h-12 border-slate-200 focus:border-primary focus:ring-primary transition-all rounded-lg"
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-
-                        <div className="bg-blue-50/50 rounded-xl p-4 border border-blue-100/50 mt-4 flex items-start gap-3">
-                          <div className="w-5 h-5 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
-                            <span className="text-xs font-bold">!</span>
+                          {/* Upload Guidelines */}
+                          <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                            <div className="flex items-start gap-3">
+                              <ShieldCheck className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+                              <div className="space-y-1">
+                                <p className="text-sm font-semibold text-blue-800">Upload Guidelines</p>
+                                <ul className="text-xs text-blue-700 space-y-1">
+                                  <li>• Use bright, well-lit photos</li>
+                                  <li>• Show rooms, common areas, and amenities</li>
+                                  <li>• Avoid blurry or dark images</li>
+                                  <li>• First image will be the cover photo</li>
+                                </ul>
+                              </div>
+                            </div>
                           </div>
-                          <p className="text-xs text-blue-700 leading-relaxed">
-                            Your credentials will be handled securely. Verification typically takes 24-48 hours after submission.
-                          </p>
-                        </div>
-                      </div>
-                    )}
+                        </motion.div>
+                      )}
 
+                      {/* Step 3: Management Details */}
+                      {currentStep === 3 && (
+                        <motion.div
+                          key="step3"
+                          variants={variants}
+                          initial="enter"
+                          animate="center"
+                          exit="exit"
+                          transition={{ duration: 0.3 }}
+                          className="space-y-6"
+                        >
+                          {/* Step Header */}
+                          <div className="flex items-center gap-3 mb-6">
+                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-forest-green-500 to-forest-green-600 flex items-center justify-center text-white shadow-lg shadow-forest-green-200">
+                              <User className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <h2 className="text-xl font-bold text-slate-900">Management Details</h2>
+                              <p className="text-sm text-slate-500">Contact for verification</p>
+                            </div>
+                          </div>
+
+                          {/* Name and Ghana Card */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <FormField
+                              control={form.control}
+                              name="managerName"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-slate-700 font-semibold flex items-center gap-2">
+                                    Manager's Full Name
+                                    <span className="text-forest-green-600">*</span>
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      placeholder="John Doe"
+                                      {...field}
+                                      className="h-12 border-slate-200 focus:border-forest-green-500 focus:ring-forest-green-500/20 transition-all rounded-lg"
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name="ghanaCard"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-slate-700 font-semibold flex items-center gap-2">
+                                    Ghana Card Number
+                                    <span className="text-forest-green-600">*</span>
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      placeholder="GHA-123456789-0"
+                                      {...field}
+                                      className="h-12 border-slate-200 focus:border-forest-green-500 focus:ring-forest-green-500/20 transition-all rounded-lg uppercase"
+                                    />
+                                  </FormControl>
+                                  <FormDescription className="text-xs text-slate-400">
+                                    Format: GHA-123456789-0
+                                  </FormDescription>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          {/* Email and Phone */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <FormField
+                              control={form.control}
+                              name="email"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-slate-700 font-semibold flex items-center gap-2">
+                                    Contact Email
+                                    <span className="text-forest-green-600">*</span>
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      type="email"
+                                      placeholder="manager@hostel.com"
+                                      {...field}
+                                      className="h-12 border-slate-200 focus:border-forest-green-500 focus:ring-forest-green-500/20 transition-all rounded-lg"
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+
+                            <FormField
+                              control={form.control}
+                              name="phone"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel className="text-slate-700 font-semibold flex items-center gap-2">
+                                    Phone Number
+                                    <span className="text-forest-green-600">*</span>
+                                  </FormLabel>
+                                  <FormControl>
+                                    <Input
+                                      placeholder="024 123 4567"
+                                      {...field}
+                                      className="h-12 border-slate-200 focus:border-forest-green-500 focus:ring-forest-green-500/20 transition-all rounded-lg"
+                                    />
+                                  </FormControl>
+                                  <FormMessage />
+                                </FormItem>
+                              )}
+                            />
+                          </div>
+
+                          {/* Security Notice */}
+                          <div className="bg-gradient-to-r from-forest-green-50 to-teal-green-50 rounded-xl p-4 border border-forest-green-100">
+                            <div className="flex items-start gap-3">
+                              <div className="w-6 h-6 rounded-full bg-forest-green-100 text-forest-green-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <ShieldCheck className="w-3.5 h-3.5" />
+                              </div>
+                              <div className="space-y-1">
+                                <p className="text-sm font-semibold text-forest-green-800">
+                                  Secure & Confidential
+                                </p>
+                                <p className="text-xs text-forest-green-700 leading-relaxed">
+                                  Your information is encrypted and will only be used for verification purposes.
+                                  We'll contact you within 24-48 hours after submission.
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+
+                    {/* Navigation Buttons */}
                     <div className="flex items-center justify-between pt-6 border-t border-slate-100">
                       <Button
                         type="button"
@@ -402,11 +620,11 @@ const HostelListingForm = () => {
                         onClick={prevStep}
                         disabled={currentStep === 1 || AddListingMutation.isPending}
                         className={cn(
-                          "h-12 px-6 font-semibold text-slate-600 hover:bg-slate-50 rounded-xl transition-all",
-                          currentStep === 1 && "opacity-0 pointer-events-none"
+                          "h-12 px-6 font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-all",
+                          currentStep === 1 && "invisible"
                         )}
                       >
-                        <ArrowLeft className="w-5 h-5 mr-2" />
+                        <ChevronLeft className="w-5 h-5 mr-1" />
                         Previous
                       </Button>
 
@@ -414,7 +632,8 @@ const HostelListingForm = () => {
                         <Button
                           type="button"
                           onClick={nextStep}
-                          className="h-12 px-8 font-bold bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl shadow-lg shadow-primary/20 transition-all hover:scale-[1.02]"
+                          disabled={AddListingMutation.isPending}
+                          className="h-12 px-8 font-bold bg-gradient-to-r from-forest-green-600 to-forest-green-500 hover:from-forest-green-700 hover:to-forest-green-600 text-white rounded-xl shadow-lg shadow-forest-green-200 transition-all hover:shadow-xl hover:scale-[1.02]"
                         >
                           Next Step
                           <ArrowRight className="w-5 h-5 ml-2" />
@@ -423,35 +642,60 @@ const HostelListingForm = () => {
                         <Button
                           type="submit"
                           disabled={AddListingMutation.isPending}
-                          className="h-12 px-10 font-bold bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl shadow-lg shadow-primary/20 transition-all hover:scale-[1.02]"
+                          className="h-12 px-10 font-bold bg-gradient-to-r from-forest-green-600 to-forest-green-500 hover:from-forest-green-700 hover:to-forest-green-600 text-white rounded-xl shadow-lg shadow-forest-green-200 transition-all hover:shadow-xl hover:scale-[1.02]"
                         >
                           {AddListingMutation.isPending ? (
                             <>
                               <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                              Listing Hostel...
+                              Submitting...
                             </>
                           ) : (
                             <>
+                              <Check className="w-5 h-5 mr-2" />
                               Submit Application
-                              <Check className="w-5 h-5 ml-2" />
                             </>
                           )}
                         </Button>
                       )}
+                    </div>
+
+                    {/* Step Progress Bar (Mobile) */}
+                    <div className="md:hidden pt-4">
+                      <div className="flex justify-between text-xs text-slate-500 mb-2">
+                        <span>Step {currentStep} of {steps.length}</span>
+                        <span>{Math.round((currentStep / steps.length) * 100)}% complete</span>
+                      </div>
+                      <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-gradient-to-r from-forest-green-500 to-forest-green-400 transition-all duration-500"
+                          style={{ width: `${(currentStep / steps.length) * 100}%` }}
+                        />
+                      </div>
                     </div>
                   </form>
                 </Form>
               </CardContent>
             </Card>
 
-            <div className="text-center pt-8">
+            {/* Terms */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="text-center pt-6"
+            >
               <p className="text-xs text-slate-400">
                 By submitting your application, you agree to our{" "}
-                <a href="/terms" className="text-primary font-medium hover:underline underline-offset-4">Terms of Service</a>
+                <a href="/terms" className="text-forest-green-600 font-medium hover:underline underline-offset-4">
+                  Terms of Service
+                </a>
                 {" "}and{" "}
-                <a href="/privacy" className="text-primary font-medium hover:underline underline-offset-4">Privacy Policy</a>.
+                <a href="/privacy" className="text-forest-green-600 font-medium hover:underline underline-offset-4">
+                  Privacy Policy
+                </a>
+                .
               </p>
-            </div>
+            </motion.div>
           </>
         )}
       </div>
