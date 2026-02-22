@@ -24,6 +24,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { registrationSchema, type RegistrationFormValues } from "@/schemas/registrationSchema";
 import { TextInput, SelectInput, PasswordInput } from "@/components/form";
+import { PasswordStrengthIndicator } from "@/components/form/PasswordStrengthIndicator";
 
 const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   const navigate = useNavigate();
@@ -257,6 +258,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                           error={stepSubmitted.has(step) ? errors.password?.message : undefined}
                           {...register("password")}
                         />
+                        <PasswordStrengthIndicator password={watch("password") || ""} />
                       </div>
 
                       <div className="space-y-2">

@@ -1,9 +1,24 @@
+/**
+ * SECURE Registration Schema
+ * Updated with strong password requirements
+ */
+
 import { z } from "zod";
 
 /**
- * Strong password validation
- * - Minimum 12 characters (upgraded from 8)
- * - Must contain uppercase and lowercase
+ * Password validation regex patterns
+ */
+const passwordPatterns = {
+    hasLower: /[a-z]/,
+    hasUpper: /[A-Z]/,
+    hasNumber: /\d/,
+    hasSpecial: /[^a-zA-Z0-9]/,
+};
+
+/**
+ * Strong password validation schema
+ * - Minimum 12 characters (up from 8)
+ * - Must contain uppercase and lowercase letters
  * - Must contain at least one number
  * - Must contain at least one special character
  */
@@ -11,19 +26,25 @@ const passwordSchema = z
     .string()
     .min(12, "Password must be at least 12 characters")
     .max(128, "Password must not exceed 128 characters")
-    .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-    .regex(/\d/, "Password must contain at least one number")
-    .regex(/[^a-zA-Z0-9]/, "Password must contain at least one special character")
-    .refine((password) => !/(.)\1{2,}/.test(password), "Password should not contain repeated characters")
-    .refine((password) => !/(password|123456|qwerty)/i.test(password), "Password is too common. Please choose a more secure password.");
+    .regex(passwordPatterns.hasLower, "Password must contain at least one lowercase letter")
+    .regex(passwordPatterns.hasUpper, "Password must contain at least one uppercase letter")
+    .regex(passwordPatterns.hasNumber, "Password must contain at least one number")
+    .regex(passwordPatterns.hasSpecial, "Password must contain at least one special character")
+    .refine(
+        (password) => !/(.)\1{2,}/.test(password),
+        "Password should not contain repeated characters (e.g., 'aaa')"
+    )
+    .refine(
+        (password) => !/(password|123456|qwerty)/i.test(password),
+        "Password is too common. Please choose a more secure password."
+    );
 
 export const registrationSchema = z.object({
     name: z.string().min(2, "Full name must be at least 2 characters"),
     email: z.string().email("Invalid email address"),
     phone: z.string()
         .min(10, "Phone number must be at least 10 characters")
-        .regex(/^[\d\s\-+()]+$/, "Phone number can only contain digits, spaces, and special characters"),
+        .regex(/^[\d\s\-+()]+$/, "Phone number can only contain digits, spaces, and special characters (+, -, (, ))"),
     password: passwordSchema,
     confirmPassword: z.string().min(12, "Please confirm your password"),
     gender: z.enum(["male", "female", "other"], {
@@ -81,10 +102,10 @@ export function getPasswordStrength(password: string): {
     if (password.length >= 16) score++;
 
     // Character variety score
-    const hasLower = /[a-z]/.test(password);
-    const hasUpper = /[A-Z]/.test(password);
-    const hasNumber = /\d/.test(password);
-    const hasSpecial = /[^a-zA-Z0-9]/.test(password);
+    const hasLower = passwordPatterns.hasLower.test(password);
+    const hasUpper = passwordPatterns.hasUpper.test(password);
+    const hasNumber = passwordPatterns.hasNumber.test(password);
+    const hasSpecial = passwordPatterns.hasSpecial.test(password);
     const varietyCount = [hasLower, hasUpper, hasNumber, hasSpecial].filter(Boolean).length;
 
     if (varietyCount >= 2) score++;

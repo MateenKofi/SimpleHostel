@@ -21,6 +21,7 @@ const HostelListingForm = lazy(() => import('./pages/landing-page/component/host
 const LoginForm = lazy(() => import("./pages/Authentication/login/login-form"));
 const RegisterForm = lazy(() => import("./pages/Authentication/register/register-form"));
 const ForgetPassword = lazy(() => import("./pages/Authentication/forget-password/ForgetPassword"));
+const ResetPassword = lazy(() => import("./pages/Authentication/reset-password/ResetPassword"));
 const ChangePassword = lazy(() => import("./components/changepassword/ChangePassword"));
 
 // Dashboard routes - lazy loaded
@@ -83,6 +84,7 @@ function App() {
         <Route path="hostel-listing" element={<HostelListingForm />} />
         <Route path='terms-and-conditions' element={<TermsAndCondition />} />
         <Route path="forget-password" element={<ForgetPassword />} />
+        <Route path="reset-password" element={<ResetPassword />} />
         <Route path="change-password" element={<ChangePassword />} />
 
         {/* Protected Booking Routes - Require Authentication */}

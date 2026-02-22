@@ -19,3 +19,5 @@ export type { FormButtonProps } from "./FormButton"
 
 export { ImageUpload, SingleImageUpload } from "./ImageUpload"
 export type { ImageUploadProps, SingleImageUploadProps, ImageFile } from "./ImageUpload"
+
+export { PasswordStrengthIndicator, PasswordStrengthCompact } from "./PasswordStrengthIndicator"

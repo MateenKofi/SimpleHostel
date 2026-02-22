@@ -1,13 +1,18 @@
+/**
+ * SECURE Forget Password Page
+ * Uses token-based password reset instead of emailing passwords
+ */
+
 import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { TextInput } from "@/components/form";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Loader, Mail, CheckCircle2 } from "lucide-react";
 import { useMutation } from "@tanstack/react-query";
-import { requestPasswordReset } from "@/api/auth";
+import { requestPasswordReset } from "@/api/auth.secure";
 import { toast } from "sonner";
 import type { ApiError } from "@/types/dtos";
 
@@ -15,7 +20,7 @@ type ForgetPasswordFormData = {
   email: string;
 };
 
-const ForgetPassword = () => {
+const ForgetPasswordSecure = () => {
   const {
     register,
     handleSubmit,
@@ -191,4 +196,4 @@ const ForgetPassword = () => {
   );
 };
 
-export default ForgetPassword;
+export default ForgetPasswordSecure;

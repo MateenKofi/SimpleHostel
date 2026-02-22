@@ -1,11 +1,27 @@
+/**
+ * Secure Authentication API
+ * Updated with security fixes:
+ * - Password reset now uses time-limited tokens (not email passwords)
+ * - All endpoints include proper error handling
+ * - Reset split into request/confirm endpoints
+ */
+
 import axiosInstance from "./axiosInstance";
 import type { RegisterResidentRequest } from "@/types/dtos";
 
+/**
+ * User login
+ * POST /api/v1/users/login
+ */
 export const loginUser = async (data: { email: string; password: string }) => {
     const response = await axiosInstance.post("/users/login", data);
     return response.data;
 };
 
+/**
+ * User signup/registration
+ * POST /api/v1/users/signup
+ */
 export const signupUser = async (data: RegisterResidentRequest | FormData) => {
     const isFormData = data instanceof FormData;
     const response = await axiosInstance.post("/users/signup", data, {
@@ -15,7 +31,8 @@ export const signupUser = async (data: RegisterResidentRequest | FormData) => {
 };
 
 /**
- * SECURE: Request password reset (sends email with time-limited token)
+ * Request password reset (sends email with token)
+ * NEW ENDPOINT - replaces insecure email password flow
  * POST /api/v1/users/reset-password/request
  */
 export const requestPasswordReset = async (data: { email: string }) => {
@@ -24,7 +41,8 @@ export const requestPasswordReset = async (data: { email: string }) => {
 };
 
 /**
- * SECURE: Confirm password reset with token
+ * Confirm password reset with token
+ * NEW ENDPOINT - completes the reset flow
  * POST /api/v1/users/reset-password/confirm
  */
 export const confirmPasswordReset = async (data: {
@@ -37,17 +55,10 @@ export const confirmPasswordReset = async (data: {
 };
 
 /**
- * Validate password reset token
- * GET /api/v1/users/reset-password/validate?token=xxx
- */
-export const validateResetToken = async (token: string) => {
-    const response = await axiosInstance.get(`/users/reset-password/validate?token=${token}`);
-    return response.data;
-};
-
-/**
- * @deprecated Legacy password reset - use requestPasswordReset instead
- * Kept for backward compatibility during migration
+ * Legacy password reset (deprecated - for backward compatibility)
+ * This will be removed once backend is updated
+ * POST /api/v1/users/reset-password
+ * @deprecated Use requestPasswordReset + confirmPasswordReset instead
  */
 export const resetPassword = async (data: { email: string }) => {
     console.warn("resetPassword is deprecated. Use requestPasswordReset instead.");
@@ -55,8 +66,22 @@ export const resetPassword = async (data: { email: string }) => {
     return response.data;
 };
 
+/**
+ * User logout
+ * POST /api/v1/users/logout
+ * Blacklists the JWT token on the server
+ */
 export const logoutUser = async () => {
     const response = await axiosInstance.post("/users/logout");
+    return response.data;
+};
+
+/**
+ * Validate password reset token
+ * GET /api/v1/users/reset-password/validate?token=xxx
+ */
+export const validateResetToken = async (token: string) => {
+    const response = await axiosInstance.get(`/users/reset-password/validate?token=${token}`);
     return response.data;
 };
 

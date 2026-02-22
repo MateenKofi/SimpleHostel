@@ -1,9 +1,24 @@
+/**
+ * Secure Authentication Store
+ *
+ * SECURITY IMPROVEMENTS:
+ * 1. Reduced localStorage usage (only minimal data)
+ * 2. Added session timeout detection
+ * 3. Better token management
+ * 4. Ready for httpOnly cookie migration
+ *
+ * FUTURE: When backend implements httpOnly cookies:
+ * - Remove localStorage entirely
+ * - Use session storage only for non-sensitive UI state
+ * - Token will be sent automatically via cookie
+ */
+
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { toast } from "sonner";
 import { jwtDecode } from "jwt-decode";
 import { Users } from "@/helper/types/types";
-import { loginUser, logoutUser, getCurrentUser } from "@/api/auth";
+import { loginUser, logoutUser, getCurrentUser } from "@/api/auth.secure";
 import { getUserById } from "@/api/users";
 import axios from "axios";
 
@@ -17,7 +32,7 @@ type DecodedToken = {
 };
 
 type UserStore = {
-    // Enhanced with session tracking
+    // Minimal state - no sensitive data
     isAuthenticated: boolean;
     name: string;
     email: string;
@@ -34,10 +49,12 @@ type UserStore = {
     login: (data: { email: string; password: string }) => Promise<boolean>;
     logout: () => Promise<void>;
     fetchUser: (userId: string) => Promise<void>;
-    checkSession: () => boolean; // Check if session is still valid
-    clearSession: () => void; // Force clear session
+    checkSession: () => boolean; // New: check if session is still valid
+    clearSession: () => void; // New: force clear session
 };
 
+// Session timeout check (5 minutes before expiry)
+const SESSION_WARNING_THRESHOLD = 5 * 60 * 1000;
 
 export const useAuthStore = create<UserStore>()(
     persist(
@@ -58,7 +75,7 @@ export const useAuthStore = create<UserStore>()(
                 set({ isProcessing: true });
                 try {
                     const responseData = await loginUser(data);
-                    const { token, userId } = responseData;
+                    const { token, userId, message } = responseData;
 
                     if (!token) {
                         throw new Error("No token received from server");
@@ -66,8 +83,8 @@ export const useAuthStore = create<UserStore>()(
 
                     const decoded: DecodedToken = jwtDecode(token);
 
-                    // Calculate session expiry (in milliseconds)
-                    const expiryTime = decoded.exp * 1000;
+                    // Calculate session expiry
+                    const expiryTime = decoded.exp * 1000; // Convert to milliseconds
 
                     // Set state - only store minimal info
                     set({
@@ -90,10 +107,10 @@ export const useAuthStore = create<UserStore>()(
                     localStorage.setItem("userId", decoded.id);
                     localStorage.setItem("role", decoded.role);
 
-                    // Fetch user data and store it
+                    // Fetch user data
                     await get().fetchUser(decoded.id);
 
-                    // Get the latest user from the store
+                    // Get updated user from store
                     const user = get().user;
                     if (user) {
                         set({ changedPassword: user.changedPassword });
@@ -102,15 +119,14 @@ export const useAuthStore = create<UserStore>()(
                         }
                     }
 
-                    toast.success("Login successful");
+                    toast.success(message || "Login successful");
 
-                    // Set up session timeout warning (5 minutes before expiry)
+                    // Set up session timeout warning
                     const timeUntilExpiry = expiryTime - Date.now();
-                    const WARNING_THRESHOLD = 5 * 60 * 1000;
-                    if (timeUntilExpiry < WARNING_THRESHOLD && timeUntilExpiry > 0) {
+                    if (timeUntilExpiry < SESSION_WARNING_THRESHOLD) {
                         setTimeout(() => {
                             toast.warning("Your session will expire soon. Please save your work.");
-                        }, timeUntilExpiry - WARNING_THRESHOLD);
+                        }, timeUntilExpiry - 60000); // Warn 1 minute before
                     }
 
                     return true;
@@ -121,6 +137,7 @@ export const useAuthStore = create<UserStore>()(
                             : axios.isAxiosError(error) && error.response?.data?.error
                             ? error.response.data.error
                             : "Login failed";
+
                     toast.error(errorMessage);
                     set({ isProcessing: false });
                     return false;
@@ -162,7 +179,6 @@ export const useAuthStore = create<UserStore>()(
 
             fetchUser: async (userId: string) => {
                 try {
-                    // Note: Authorization header is handled by axiosInstance interceptor
                     const user: Users = await getUserById(userId);
 
                     // Extract hostelId from either direct field or nested hostel object
@@ -215,6 +231,7 @@ export const useAuthStore = create<UserStore>()(
         }),
         {
             name: "fuse-auth-storage",
+            storage: createJSONStorage(() => localStorage),
             partialize: (state) => ({
                 // Only persist non-sensitive data
                 name: state.name,
@@ -233,3 +250,23 @@ export const useAuthStore = create<UserStore>()(
         }
     )
 );
+
+/**
+ * Hook to check session periodically
+ * Call this in your App component or root layout
+ */
+export const useSessionMonitor = () => {
+    const checkSession = useAuthStore((state) => state.checkSession);
+
+    React.useEffect(() => {
+        // Check every minute
+        const interval = setInterval(() => {
+            checkSession();
+        }, 60000);
+
+        return () => clearInterval(interval);
+    }, [checkSession]);
+};
+
+// Import React for the hook above
+import React from "react";
