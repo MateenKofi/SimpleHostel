@@ -216,6 +216,16 @@ html {
   overflow: hidden;
 }
 
+/* Hide scrollbar but keep scroll functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 /* Prevent text selection during animations */
 .no-select {
   user-select: none;

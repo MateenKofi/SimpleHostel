@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
+import { X, Search, ArrowUpDown } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getHostels } from "@/api/hostels";
 import { Hostel } from "@/helper/types/types";
@@ -16,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { FilterBar } from "@/components/filters/FilterBar";
 import { LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { TextInput, SelectInput, type SelectOption } from "@/components/form";
 
 interface ActiveFilters {
   [key: string]: string[];
@@ -164,10 +164,10 @@ export function FindHostel() {
   });
 
   return (
-    <div className="px-4 py-8 mx-auto">
-      <div className="flex flex-col gap-6 lg:flex-row">
+    <div className="px-3 py-4 md:px-4 md:py-8 mx-auto">
+      <div className="flex flex-col gap-4 lg:gap-6 lg:flex-row">
         {/* Sidebar with FilterBar */}
-        <div className="w-full lg:w-72 space-y-4">
+        <div className="w-full lg:w-72 space-y-3 md:space-y-4">
           <FilterBar
             activeFilterCount={activeFilterCount}
             onToggleFilters={() => setIsFilterOpen(!isFilterOpen)}
@@ -185,30 +185,36 @@ export function FindHostel() {
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 p-4 space-y-6 bg-card border border-border rounded-lg shadow-sm">
-          <div className="flex flex-col gap-4 sm:flex-row">
-            <Input
-              placeholder="Search For Hostel By name"
+        <div className="flex-1 p-3 md:p-4 space-y-4 md:space-y-6 bg-card border border-border rounded-lg shadow-sm">
+          {/* Search and Sort */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+            <TextInput
+              placeholder="Search for hostels..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="flex-1 bg-background border-input text-foreground placeholder:text-muted-foreground"
+              className="flex-1"
+              leftIcon={Search}
+              containerClassName="flex-1"
             />
-            <select
+            <SelectInput
               value={`${sortBy}-${sortOrder}`}
-              onChange={(e) => {
-                const [sort, order] = e.target.value.split("-");
+              onValueChange={(value) => {
+                const [sort, order] = value.split("-");
                 setSortBy(sort as "name" | "price" | "rating");
                 setSortOrder(order as "asc" | "desc");
               }}
-              className="px-4 py-2 bg-background border border-input rounded-md text-foreground focus:ring-2 focus:ring-ring focus:ring-offset-2"
-            >
-              <option value="name-asc">Name (A-Z)</option>
-              <option value="name-desc">Name (Z-A)</option>
-              <option value="price-asc">Price (Low to High)</option>
-              <option value="price-desc">Price (High to Low)</option>
-              <option value="rating-desc">Rating (Highest)</option>
-              <option value="rating-asc">Rating (Lowest)</option>
-            </select>
+              options={[
+                { value: "name-asc", label: "Name (A-Z)" },
+                { value: "name-desc", label: "Name (Z-A)" },
+                { value: "price-asc", label: "Price (Low to High)" },
+                { value: "price-desc", label: "Price (High to Low)" },
+                { value: "rating-desc", label: "Rating (Highest)" },
+                { value: "rating-asc", label: "Rating (Lowest)" },
+              ]}
+              placeholder="Sort by"
+              leftIcon={ArrowUpDown}
+              containerClassName="w-full sm:w-48"
+            />
           </div>
 
           {/* Active filter badges (shown inline, below search) */}
@@ -265,23 +271,24 @@ export function FindHostel() {
               ))}
             </div>
           ) : filteredHostels?.length === 0 ? (
-            <div className="text-center py-12">
-              <p className="text-lg font-medium text-foreground mb-2">
+            <div className="text-center py-8 md:py-12 px-4">
+              <p className="text-base md:text-lg font-medium text-foreground mb-2">
                 No hostels match your search
               </p>
               <p className="text-sm text-muted-foreground mb-4">
                 Try adjusting your filters or search query
               </p>
               {(activeFilterCount > 0 || debouncedQuery) && (
-                <button
+                <Button
                   onClick={() => {
                     clearAllFilters();
                     setSearchQuery("");
                   }}
-                  className="text-primary hover:underline"
+                  variant="outline"
+                  className="mt-2"
                 >
                   Clear all filters
-                </button>
+                </Button>
               )}
             </div>
           ) : (

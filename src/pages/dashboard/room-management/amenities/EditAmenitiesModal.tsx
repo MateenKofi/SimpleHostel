@@ -2,10 +2,11 @@ import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Modal from '@/components/Modal';
-import { Loader, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { updateAmenity } from "@/api/amenities";
 import { toast } from 'sonner';
 import type { ApiError } from "@/types/dtos";
+import { TextInput, FormButton } from "@/components/form";
 
 interface Amenity {
     id: string;
@@ -59,41 +60,35 @@ const EditAmenitiesModal: React.FC<EditAmenitiesModalProps> = ({ onClose, formda
 
     return (
         <Modal modalId='edit_amenities_modal' onClose={handleClose}>
-            <h1 className="mb-4 text-2xl font-bold text-gray-500">Update Amenity</h1>
-            <form onSubmit={handleSubmit(onSubmit)} className="p-4 mb-4">
-                <div className="flex gap-2">
-                    <input
-                        {...register('name', { required: 'Amenity name is required' })}
-                        type="text"
-                        placeholder="Enter amenity name"
-                        className="flex-1 px-3 py-2 border rounded-md"
-                    />
-                    {errors.name && <span className="text-sm text-red-500">{errors.name.message}</span>}
-                    <input
-                        {...register('price', { required: 'Price is required', min: { value: 0, message: 'Price cannot be negative' } })}
-                        type="number"
-                        placeholder="Price"
-                        className="w-32 px-3 py-2 border rounded-md"
-                        min="0"
-                        step="0.01"
-                    />
-                    {errors.price && <span className="text-sm text-red-500">{errors.price.message}</span>}
-                    <button
-                        type="submit"
-                        className="flex items-center gap-2 px-4 py-2 text-white bg-primary rounded-md"
-                    >
-                        {AddAmenitiesMutation.isPending ? <Loader className="w-4 h-4 animate-spin" /> :
-                            (
-                                <div className='flex items-center gap-2'>
-                                    <Plus className="w-4 h-4" />
-                                    <span className="text-nowrap">
-                                        Update Amenity
-                                    </span>
-                                </div>
-                            )
-                        }
-                    </button>
-                </div>
+            <h1 className="mb-4 text-xl md:text-2xl font-bold text-muted-foreground">Update Amenity</h1>
+            <form onSubmit={handleSubmit(onSubmit)} className="p-4 mb-4 space-y-4">
+                <TextInput
+                    {...register('name', { required: 'Amenity name is required' })}
+                    placeholder="Enter amenity name"
+                    error={errors.name?.message}
+                />
+
+                <TextInput
+                    {...register('price', {
+                        required: 'Price is required',
+                        min: { value: 0, message: 'Price cannot be negative' }
+                    })}
+                    type="number"
+                    placeholder="Price"
+                    error={errors.price?.message}
+                    min="0"
+                    step="0.01"
+                />
+
+                <FormButton
+                    type="submit"
+                    className="w-full"
+                    loading={AddAmenitiesMutation.isPending}
+                    loadingText="Updating..."
+                >
+                    <Plus className="w-4 h-4 mr-2" />
+                    Update Amenity
+                </FormButton>
             </form>
         </Modal>
     );

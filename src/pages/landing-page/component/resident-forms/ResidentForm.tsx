@@ -3,11 +3,8 @@
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { ArrowLeft, Loader2, ChevronLeft, ChevronRight, Eye, EyeOff, User, Phone, GraduationCap, Heart, Lock, Mail } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, User, Heart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
   Card,
@@ -27,12 +24,11 @@ import { useAddedResidentStore } from "@/stores/useAddedResidentStore";
 import type { ApiError } from "@/types/dtos";
 import SEOHelmet from "@/components/SEOHelmet";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  TextInput,
+  PasswordInput,
+  SelectInput,
+  FormButton,
+} from "@/components/form";
 
 type ResidentFormInputs = z.infer<typeof PublicResidentFormSchema>;
 
@@ -43,8 +39,6 @@ const ResidentForm = () => {
   const navigate = useNavigate();
 
   const [step, setStep] = useState(0);
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
 
   const {
     register,
@@ -76,22 +70,18 @@ const ResidentForm = () => {
       formData.append("calendarYearId", calendarYear?.id || "");
       formData.append("roomId", room?.id || "");
 
-      try {
-        const responseData = await registerResident(formData);
-        reset();
-        setResident(responseData?.data);
-        setTimeout(() => {
-          if (room?.id) {
-            navigate("/payment");
-          } else {
-            toast.success("Registration successful! Please login to continue.");
-            navigate("/login");
-          }
-        }, 50);
-        return responseData;
-      } catch (error) {
-        throw error;
-      }
+      const responseData = await registerResident(formData);
+      reset();
+      setResident(responseData?.data);
+      setTimeout(() => {
+        if (room?.id) {
+          navigate("/payment");
+        } else {
+          toast.success("Registration successful! Please login to continue.");
+          navigate("/login");
+        }
+      }, 50);
+      return responseData;
     },
     onError: (error: ApiError) => {
       const errorMessage =
@@ -126,7 +116,7 @@ const ResidentForm = () => {
   const progress = ((step + 1) / 3) * 100;
 
   return (
-    <div className="flex flex-col items-center justify-center p-6 min-h-svh bg-slate-50 dark:bg-zinc-950 md:p-10">
+    <div className="flex flex-col items-center justify-center p-4 md:p-6 min-h-svh bg-slate-50 dark:bg-zinc-950">
       <SEOHelmet
         title="Add Resident - Fuse"
         description="Add a new resident to the system."
@@ -135,16 +125,16 @@ const ResidentForm = () => {
 
       <button
         onClick={() => navigate(-1)}
-        className="absolute top-6 left-6 flex items-center px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
+        className="absolute top-4 left-4 md:top-6 md:left-6 flex items-center px-3 py-2 md:px-4 text-muted-foreground hover:text-foreground transition-colors"
       >
         <ArrowLeft className="w-5 h-5 mr-2" />
-        Back
+        <span className="hidden sm:inline">Back</span>
       </button>
 
       <div className="w-full max-w-lg md:max-w-xl">
-        <Card className="w-full overflow-hidden border-none shadow-xl bg-white dark:bg-zinc-900">
+        <Card className="w-full overflow-hidden border-none shadow-xl bg-card">
           {/* Progress Bar */}
-          <div className="h-2 bg-slate-100 dark:bg-zinc-800">
+          <div className="h-2 bg-muted">
             <motion.div
               className="h-full bg-primary"
               initial={{ width: 0 }}
@@ -153,21 +143,21 @@ const ResidentForm = () => {
             />
           </div>
 
-          <CardHeader className="text-center pb-2">
+          <CardHeader className="text-center pb-2 px-4 md:px-8 pt-6">
             <div className="flex justify-center mb-4">
               <div className="p-3 rounded-2xl bg-primary/10 text-primary">
-                <User size={32} />
+                <User size={28} />
               </div>
             </div>
-            <CardTitle className="text-3xl font-bold tracking-tight">Resident Registration</CardTitle>
-            <CardDescription className="text-base text-slate-500">
+            <CardTitle className="text-2xl md:text-3xl font-bold tracking-tight">Resident Registration</CardTitle>
+            <CardDescription className="text-sm md:text-base text-muted-foreground">
               {step === 0 && "Let's start with your basic information"}
               {step === 1 && "Tell us who to contact in case of emergency"}
               {step === 2 && "Review your information before submitting"}
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="px-8 pb-10 pt-4">
+          <CardContent className="px-4 md:px-8 pb-6 md:pb-10 pt-4">
             <form onSubmit={handleSubmit(onSubmit)}>
               <AnimatePresence mode="wait">
                 {/* Step 1: Personal Information */}
@@ -180,113 +170,70 @@ const ResidentForm = () => {
                     transition={{ duration: 0.2 }}
                     className="space-y-4"
                   >
+                    <TextInput
+                      label="Full Name"
+                      placeholder="John Doe"
+                      leftIcon={User}
+                      error={touchedFields.name ? errors.name?.message : undefined}
+                      {...register("name")}
+                    />
+
+                    <TextInput
+                      label="Email Address"
+                      type="email"
+                      placeholder="john@example.com"
+                      error={touchedFields.email ? errors.email?.message : undefined}
+                      {...register("email")}
+                    />
+
+                    <TextInput
+                      label="Phone Number"
+                      placeholder="024XXXXXXX"
+                      error={touchedFields.phone ? errors.phone?.message : undefined}
+                      {...register("phone")}
+                    />
+
+                    <SelectInput
+                      label="Gender"
+                      placeholder="Select gender"
+                      options={[
+                        { value: "MALE", label: "Male" },
+                        { value: "FEMALE", label: "Female" },
+                      ]}
+                      value={watch("gender")}
+                      onValueChange={(val) => setValue("gender", val as "MALE" | "FEMALE", { shouldValidate: true })}
+                      error={touchedFields.gender ? errors.gender?.message : undefined}
+                    />
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="name" className="text-sm font-medium">Full Name</Label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><User size={18} /></span>
-                          <Input id="name" placeholder="John Doe" className="pl-10 h-11" {...register("name")} />
-                        </div>
-                        {errors.name && touchedFields.name && <p className="text-xs text-red-500 font-medium">{errors.name.message}</p>}
-                      </div>
+                      <TextInput
+                        label="Student ID"
+                        placeholder="ID123456"
+                        error={touchedFields.studentId ? errors.studentId?.message : undefined}
+                        {...register("studentId")}
+                      />
 
-                      <div className="space-y-2">
-                        <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Mail size={18} /></span>
-                          <Input id="email" type="email" placeholder="john@example.com" className="pl-10 h-11" {...register("email")} />
-                        </div>
-                        {errors.email && touchedFields.email && <p className="text-xs text-red-500 font-medium">{errors.email.message}</p>}
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="phone" className="text-sm font-medium">Phone Number</Label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Phone size={18} /></span>
-                          <Input id="phone" placeholder="024XXXXXXX" className="pl-10 h-11" {...register("phone")} />
-                        </div>
-                        {errors.phone && touchedFields.phone && <p className="text-xs text-red-500 font-medium">{errors.phone.message}</p>}
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="gender" className="text-sm font-medium">Gender</Label>
-                        <Select
-                          value={watch("gender")}
-                          onValueChange={(val) => setValue("gender", val as "MALE" | "FEMALE", { shouldValidate: true })}
-                        >
-                          <SelectTrigger className="h-11">
-                            <SelectValue placeholder="Select gender" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="MALE">Male</SelectItem>
-                            <SelectItem value="FEMALE">Female</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        {errors.gender && touchedFields.gender && <p className="text-xs text-red-500 font-medium">{errors.gender.message}</p>}
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="studentId" className="text-sm font-medium">Student ID</Label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><User size={18} className="opacity-50" /></span>
-                          <Input id="studentId" placeholder="ID123456" className="pl-10 h-11" {...register("studentId")} />
-                        </div>
-                        {errors.studentId && touchedFields.studentId && <p className="text-xs text-red-500 font-medium">{errors.studentId.message}</p>}
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="course" className="text-sm font-medium">Course</Label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><GraduationCap size={18} className="opacity-50" /></span>
-                          <Input id="course" placeholder="Computer Science" className="pl-10 h-11" {...register("course")} />
-                        </div>
-                        {errors.course && touchedFields.course && <p className="text-xs text-red-500 font-medium">{errors.course.message}</p>}
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="password">Password</Label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Lock size={18} /></span>
-                          <Input
-                            id="password"
-                            type={isPasswordVisible ? "text" : "password"}
-                            placeholder="********"
-                            className="pl-10 h-11 pr-10"
-                            {...register("password")}
-                          />
-                          <button
-                            type="button"
-                            className="absolute inset-y-0 right-3 flex items-center"
-                            onClick={() => setIsPasswordVisible(!isPasswordVisible)}
-                          >
-                            {isPasswordVisible ? <EyeOff className="w-5 h-5 text-slate-400" /> : <Eye className="w-5 h-5 text-slate-400" />}
-                          </button>
-                        </div>
-                        {errors.password && touchedFields.password && <p className="text-xs text-red-500 font-medium">{errors.password.message}</p>}
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="confirmPassword">Confirm Password</Label>
-                        <div className="relative">
-                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Lock size={18} /></span>
-                          <Input
-                            id="confirmPassword"
-                            type={isConfirmPasswordVisible ? "text" : "password"}
-                            placeholder="********"
-                            className="pl-10 h-11 pr-10"
-                            {...register("confirmPassword")}
-                          />
-                          <button
-                            type="button"
-                            className="absolute inset-y-0 right-3 flex items-center"
-                            onClick={() => setIsConfirmPasswordVisible(!isConfirmPasswordVisible)}
-                          >
-                            {isConfirmPasswordVisible ? <EyeOff className="w-5 h-5 text-slate-400" /> : <Eye className="w-5 h-5 text-slate-400" />}
-                          </button>
-                        </div>
-                        {errors.confirmPassword && touchedFields.confirmPassword && <p className="text-xs text-red-500 font-medium">{errors.confirmPassword.message}</p>}
-                      </div>
+                      <TextInput
+                        label="Course"
+                        placeholder="Computer Science"
+                        error={touchedFields.course ? errors.course?.message : undefined}
+                        {...register("course")}
+                      />
                     </div>
+
+                    <PasswordInput
+                      label="Password"
+                      placeholder="********"
+                      error={touchedFields.password ? errors.password?.message : undefined}
+                      {...register("password")}
+                    />
+
+                    <PasswordInput
+                      label="Confirm Password"
+                      placeholder="********"
+                      error={touchedFields.confirmPassword ? errors.confirmPassword?.message : undefined}
+                      {...register("confirmPassword")}
+                    />
                   </motion.div>
                 )}
 
@@ -300,29 +247,27 @@ const ResidentForm = () => {
                     transition={{ duration: 0.2 }}
                     className="space-y-4"
                   >
-                    <div className="space-y-2">
-                      <Label htmlFor="emergencyContactName" className="text-sm font-medium">Emergency Contact Name</Label>
-                      <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Heart size={18} /></span>
-                        <Input id="emergencyContactName" placeholder="Emergency contact full name" className="pl-10 h-11" {...register("emergencyContactName")} />
-                      </div>
-                      {errors.emergencyContactName && touchedFields.emergencyContactName && <p className="text-xs text-red-500 font-medium">{errors.emergencyContactName.message}</p>}
-                    </div>
+                    <TextInput
+                      label="Emergency Contact Name"
+                      placeholder="Emergency contact full name"
+                      leftIcon={Heart}
+                      error={touchedFields.emergencyContactName ? errors.emergencyContactName?.message : undefined}
+                      {...register("emergencyContactName")}
+                    />
 
-                    <div className="space-y-2">
-                      <Label htmlFor="emergencyContactPhone" className="text-sm font-medium">Emergency Contact Phone</Label>
-                      <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"><Phone size={18} /></span>
-                        <Input id="emergencyContactPhone" placeholder="Emergency Contact Number" className="pl-10 h-11" {...register("emergencyContactPhone")} />
-                      </div>
-                      {errors.emergencyContactPhone && touchedFields.emergencyContactPhone && <p className="text-xs text-red-500 font-medium">{errors.emergencyContactPhone.message}</p>}
-                    </div>
+                    <TextInput
+                      label="Emergency Contact Phone"
+                      placeholder="Emergency Contact Number"
+                      error={touchedFields.emergencyContactPhone ? errors.emergencyContactPhone?.message : undefined}
+                      {...register("emergencyContactPhone")}
+                    />
 
-                    <div className="space-y-2">
-                      <Label htmlFor="relationship" className="text-sm font-medium">Relationship</Label>
-                      <Input id="relationship" placeholder="e.g. Parent, Guardian" className="h-11" {...register("relationship")} />
-                      {errors.relationship && touchedFields.relationship && <p className="text-xs text-red-500 font-medium">{errors.relationship.message}</p>}
-                    </div>
+                    <TextInput
+                      label="Relationship"
+                      placeholder="e.g. Parent, Guardian"
+                      error={touchedFields.relationship ? errors.relationship?.message : undefined}
+                      {...register("relationship")}
+                    />
                   </motion.div>
                 )}
 
@@ -337,108 +282,103 @@ const ResidentForm = () => {
                     className="space-y-4"
                   >
                     <div className="space-y-3">
-                      <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Personal Information</h3>
+                      <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Personal Information</h3>
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="p-3 bg-slate-50 dark:bg-zinc-800 rounded-lg">
-                          <p className="text-xs text-slate-500">Full Name</p>
+                        <div className="p-3 bg-muted rounded-lg">
+                          <p className="text-xs text-muted-foreground">Full Name</p>
                           <p className="font-medium text-sm">{watch("name")}</p>
                         </div>
-                        <div className="p-3 bg-slate-50 dark:bg-zinc-800 rounded-lg">
-                          <p className="text-xs text-slate-500">Email</p>
+                        <div className="p-3 bg-muted rounded-lg">
+                          <p className="text-xs text-muted-foreground">Email</p>
                           <p className="font-medium text-sm">{watch("email")}</p>
                         </div>
-                        <div className="p-3 bg-slate-50 dark:bg-zinc-800 rounded-lg">
-                          <p className="text-xs text-slate-500">Phone</p>
+                        <div className="p-3 bg-muted rounded-lg">
+                          <p className="text-xs text-muted-foreground">Phone</p>
                           <p className="font-medium text-sm">{watch("phone")}</p>
                         </div>
-                        <div className="p-3 bg-slate-50 dark:bg-zinc-800 rounded-lg">
-                          <p className="text-xs text-slate-500">Gender</p>
+                        <div className="p-3 bg-muted rounded-lg">
+                          <p className="text-xs text-muted-foreground">Gender</p>
                           <p className="font-medium text-sm">{watch("gender")}</p>
                         </div>
-                        <div className="p-3 bg-slate-50 dark:bg-zinc-800 rounded-lg">
-                          <p className="text-xs text-slate-500">Student ID</p>
+                        <div className="p-3 bg-muted rounded-lg">
+                          <p className="text-xs text-muted-foreground">Student ID</p>
                           <p className="font-medium text-sm">{watch("studentId")}</p>
                         </div>
-                        <div className="p-3 bg-slate-50 dark:bg-zinc-800 rounded-lg">
-                          <p className="text-xs text-slate-500">Course</p>
+                        <div className="p-3 bg-muted rounded-lg">
+                          <p className="text-xs text-muted-foreground">Course</p>
                           <p className="font-medium text-sm">{watch("course")}</p>
                         </div>
                       </div>
                     </div>
 
                     <div className="space-y-3">
-                      <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wide">Emergency Contact</h3>
+                      <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Emergency Contact</h3>
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="p-3 bg-slate-50 dark:bg-zinc-800 rounded-lg">
-                          <p className="text-xs text-slate-500">Contact Name</p>
+                        <div className="p-3 bg-muted rounded-lg">
+                          <p className="text-xs text-muted-foreground">Contact Name</p>
                           <p className="font-medium text-sm">{watch("emergencyContactName")}</p>
                         </div>
-                        <div className="p-3 bg-slate-50 dark:bg-zinc-800 rounded-lg">
-                          <p className="text-xs text-slate-500">Contact Phone</p>
+                        <div className="p-3 bg-muted rounded-lg">
+                          <p className="text-xs text-muted-foreground">Contact Phone</p>
                           <p className="font-medium text-sm">{watch("emergencyContactPhone")}</p>
                         </div>
-                        <div className="p-3 bg-slate-50 dark:bg-zinc-800 rounded-lg col-span-2">
-                          <p className="text-xs text-slate-500">Relationship</p>
+                        <div className="p-3 bg-muted rounded-lg col-span-2">
+                          <p className="text-xs text-muted-foreground">Relationship</p>
                           <p className="font-medium text-sm">{watch("relationship")}</p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex items-start space-x-3 p-4 border border-slate-200 dark:border-zinc-700 rounded-lg bg-slate-50 dark:bg-zinc-800">
+                    <label className="flex items-start space-x-3 p-4 border border-border rounded-lg bg-muted cursor-pointer">
                       <input
                         id="terms"
                         type="checkbox"
                         required
-                        className="mt-0.5 w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary"
+                        className="mt-0.5 w-4 h-4 text-primary border-input rounded focus:ring-primary"
                       />
                       <div className="text-sm">
-                        <label htmlFor="terms" className="font-medium text-gray-700 dark:text-gray-300 cursor-pointer">
+                        <span className="font-medium text-foreground">
                           I agree to the Hostel's Rules & Regulations
-                        </label>
-                        <p className="text-gray-500 dark:text-gray-400">
+                        </span>
+                        <p className="text-muted-foreground">
                           By checking this, you acknowledge that you have read and will abide by the code of conduct.
                         </p>
                       </div>
-                    </div>
+                    </label>
                   </motion.div>
                 )}
               </AnimatePresence>
 
               {/* Navigation Buttons */}
-              <div className="flex gap-4 mt-8">
+              <div className="flex gap-3 md:gap-4 mt-6 md:mt-8">
                 {step > 0 && (
-                  <Button
+                  <FormButton
                     type="button"
                     variant="outline"
-                    className="flex-1 h-12 text-base font-semibold border-2"
+                    className="flex-1 h-11 md:h-12 text-sm md:text-base font-semibold border-2"
                     onClick={prevStep}
                     disabled={AddResidentMutation.isPending}
                   >
-                    <ChevronLeft className="mr-2 h-5 w-5" /> Back
-                  </Button>
+                    <ChevronLeft className="mr-1 md:mr-2 h-4 w-4 md:h-5 md:w-5" /> <span className="hidden sm:inline">Back</span>
+                  </FormButton>
                 )}
                 {step < 2 ? (
-                  <Button
+                  <FormButton
                     type="button"
-                    className="flex-1 h-12 text-base font-semibold shadow-lg shadow-primary/20"
+                    className="flex-1 h-11 md:h-12 text-sm md:text-base font-semibold"
                     onClick={nextStep}
                   >
-                    Continue <ChevronRight className="ml-2 h-5 w-5" />
-                  </Button>
+                    Continue <ChevronRight className="ml-1 md:ml-2 h-4 w-4 md:h-5 md:w-5" />
+                  </FormButton>
                 ) : (
-                  <Button
+                  <FormButton
                     type="submit"
-                    className="flex-1 h-12 text-base font-semibold shadow-lg shadow-primary/20"
-                    disabled={AddResidentMutation.isPending}
+                    className="flex-1 h-11 md:h-12 text-sm md:text-base font-semibold"
+                    loading={AddResidentMutation.isPending}
+                    loadingText="Creating Account..."
                   >
-                    {AddResidentMutation.isPending ? (
-                      <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Creating Account...
-                      </>
-                    ) : (
-                      "Create Account"
-                    )}
-                  </Button>
+                    Create Account
+                  </FormButton>
                 )}
               </div>
             </form>

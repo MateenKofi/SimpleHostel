@@ -1,7 +1,4 @@
 import { useState } from "react";
-import {
-  Loader2,
-} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getHostels } from "@/api/hostels";
 import { getCurrentCalendarYear, getHistoricalCalendarYears } from "@/api/calendar";
@@ -15,6 +12,7 @@ import PaymentMethodBreakDown from "./PaymentMethodBreakDown";
 import HistoricalComparison from "./HistoricalComparison";
 import StatusCards from "./StatusCards";
 import KeyMetrics from "./KeyMetrics";
+import { SelectInput, type SelectOption } from "@/components/form";
 
 const SuperAdminReport = () => {
   const [selectedYear, setSelectedYear] = useState(null as string | null);
@@ -101,81 +99,55 @@ const SuperAdminReport = () => {
     );
   }
 
+  const hostelOptions: SelectOption[] = ((Hostels || []) as Hostel[]).map((hostel) => ({
+    value: hostel?.id || "",
+    label: hostel?.name || "",
+  }));
+
+  const yearOptions: SelectOption[] = AcademicYears.map((year) => ({
+    value: year?.id || "",
+    label: year?.name || "",
+  }));
+
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+    <div className="min-h-screen bg-muted p-4 md:p-6">
+      <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
         {/* Header with Filters */}
-        <div className="bg-white rounded-lg shadow-sm p-6">
+        <div className="bg-card rounded-lg shadow-sm p-4 md:p-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground">
                 Calendar Year Report
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-muted-foreground mt-1">
                 Comprehensive overview of hostel performance
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <div className="flex flex-col">
-                <label
-                  htmlFor="hostel"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Select Hostel
-                </label>
-                <select
-                  id="hostel"
-                  value={selectedHostel || ""}
-                  onChange={(e) => setSelectedHostel(e.target.value)}
-                  className="mt-1 block w-[180px] pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                >
-                  {isHostelsLoading ? (
-                    <option value="" disabled>
-                      Loading hostels...
-                    </option>
-                  ) : (
-                    <>
-                      <option value="">-- Select Hostel --</option>
-                      {Hostels?.map((hostel: Hostel) => (
-                        <option key={hostel?.id} value={hostel?.id}>
-                          {hostel?.name}
-                        </option>
-                      ))}
-                    </>
-                  )}
-                </select>
-              </div>
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <SelectInput
+                label="Select Hostel"
+                placeholder="-- Select Hostel --"
+                options={hostelOptions}
+                value={selectedHostel || undefined}
+                onValueChange={(val) => {
+                  setSelectedHostel(val);
+                  setSelectedYear(null); // Reset year when hostel changes
+                }}
+                loading={isHostelsLoading}
+                disabled={!Hostels || Hostels.length === 0}
+                containerClassName="w-full sm:w-[180px]"
+              />
               {selectedHostel && (
-                <div className="flex flex-col">
-                  <label
-                    htmlFor="year"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Select Academic Year
-                  </label>
-                  {isHistoricalYearsLoading || isCurrentYearLoading ? (
-                    <span className="text-gray-500 w-[200px] flex flex-row items-center gap-2">
-                      {" "}
-                      <Loader2 className="animate-spin text-blue-600" />{" "}
-                      <span className="">Loading years...</span>
-                    </span>
-                  ) : (
-                    <select
-                      disabled={AcademicYears.length === 0}
-                      id="year"
-                      value={selectedYear || ""}
-                      onChange={(e) => setSelectedYear(e.target.value)}
-                      className="mt-1 block w-[200px] pl-3 pr-10 py-2 text-base border border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
-                    >
-                      <option value="">-- Select Academic Year --</option>
-                      {AcademicYears.map((year) => (
-                        <option key={year?.id} value={year?.id}>
-                          {year?.name}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                </div>
+                <SelectInput
+                  label="Select Academic Year"
+                  placeholder="-- Select Academic Year --"
+                  options={yearOptions}
+                  value={selectedYear || undefined}
+                  onValueChange={setSelectedYear}
+                  loading={isHistoricalYearsLoading || isCurrentYearLoading}
+                  disabled={AcademicYears.length === 0}
+                  containerClassName="w-full sm:w-[200px]"
+                />
               )}
             </div>
           </div>
