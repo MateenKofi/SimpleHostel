@@ -110,8 +110,8 @@ const ResetPassword = () => {
 
     validateResetToken(token)
       .then((response) => {
-        setTokenValid(response.data.valid);
-        if (!response.data.valid) {
+        setTokenValid(response.valid);
+        if (!response.valid) {
           toast.error("This reset link has expired or is invalid.");
         }
       })
