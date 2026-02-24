@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { TextInput } from "@/components/form";
+import { EmailInput } from "@/components/form";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { Loader, Mail, CheckCircle2 } from "lucide-react";
@@ -130,10 +130,8 @@ const ForgetPassword = () => {
                     </p>
                   </div>
 
-                  <TextInput
+                  <EmailInput
                     label="Email Address"
-                    type="email"
-                    placeholder="example@gmail.com"
                     leftIcon={Mail}
                     error={errors.email?.message}
                     {...register("email", {

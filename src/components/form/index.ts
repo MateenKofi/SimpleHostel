@@ -21,3 +21,6 @@ export { ImageUpload, SingleImageUpload } from "./ImageUpload"
 export type { ImageUploadProps, SingleImageUploadProps, ImageFile } from "./ImageUpload"
 
 export { PasswordStrengthIndicator, PasswordStrengthCompact } from "./PasswordStrengthIndicator"
+
+export { EmailInput } from "./EmailInput"
+export type { EmailInputProps } from "./EmailInput"

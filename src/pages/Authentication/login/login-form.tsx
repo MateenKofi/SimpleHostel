@@ -8,7 +8,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from "@/stores/useAuthStore";
 import { Loader, Eye, EyeOff, Mail, Lock } from 'lucide-react';
 import { useState } from 'react';
-import { TextInput, PasswordInput } from "@/components/form";
+import { EmailInput, PasswordInput } from "@/components/form";
 interface SignInFormData {
   email: string;
   password: string;
@@ -55,11 +55,9 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                       Login to your Fuse account
                     </p>
                   </div>
-                  <TextInput
+                  <EmailInput
                     {...register('email', { required: 'Email is required' })}
-                    type="email"
                     label="Email"
-                    placeholder="example@gmail.com"
                     leftIcon={Mail}
                     error={errors.email?.message}
                   />

@@ -23,7 +23,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { registrationSchema, type RegistrationFormValues } from "@/schemas/registrationSchema";
-import { TextInput, SelectInput, PasswordInput } from "@/components/form";
+import { TextInput, SelectInput, PasswordInput, EmailInput } from "@/components/form";
 import { PasswordStrengthIndicator } from "@/components/form/PasswordStrengthIndicator";
 
 const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
@@ -139,11 +139,9 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                         </div>
 
                         <div className="space-y-2">
-                          <TextInput
+                          <EmailInput
                             id="email"
-                            type="email"
                             label="Email Address"
-                            placeholder="john@example.com"
                             leftIcon={Mail}
                             error={stepSubmitted.has(step) ? errors.email?.message : undefined}
                             {...register("email")}
