@@ -1,10 +1,8 @@
 import { Progress } from '@/components/ui/progress'
-import { Banknote, Percent, Users, House, DoorOpen, Building2, TrendingUp, TrendingDown } from 'lucide-react'
-import { Card, CardHeader, CardTitle, CardContent } from '../ui/card'
+import { Banknote, Percent, Users, House, DoorOpen, Building2 } from 'lucide-react'
 import { Analytics } from '@/helper/types/types'
 import BentoCard from './BentoCard'
 import AnimatedValue from './AnimatedValue'
-import TrendIndicator from './TrendIndicator'
 
 type analyticsData = Analytics
 
@@ -127,7 +125,6 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
 
   // Admin/SuperAdmin cards with modern bento grid layout
   const hasDebtCard = analyticsData?.totalHostels > -1
-  const hasStaffCard = analyticsData?.totalStaff > -1
 
   return (
     <div className="grid gap-3 sm:gap-4 grid-cols-1 lg:grid-cols-3 w-full">
@@ -145,7 +142,7 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
                 GH₵<AnimatedValue value={analyticsData?.totalRevenue || 0} format="currency" decimals={2} duration={1000} />
               </p>
               <p className="text-xs text-muted-foreground mt-2">
-                of GH₵{(analyticsData?.expectedIncome || 0).toFixed(2)} expected
+                of GH₵{(analyticsData?.expectedIncome || 0).toFixed(2)} potential revenue
               </p>
               {/* Progress bar with gradient */}
               <div className="mt-4 w-full max-w-[200px]">
@@ -153,9 +150,6 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
                   value={analyticsData?.expectedIncome > 0 ? (analyticsData?.totalRevenue / analyticsData?.expectedIncome) * 100 : 0}
                   className="bg-muted/50 h-2"
                 />
-              </div>
-              <div className="mt-3">
-                <TrendIndicator value={12.5} label="vs last month" direction="up" />
               </div>
             </div>
 
@@ -177,9 +171,6 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
                   className="bg-muted/50 h-2"
                 />
               </div>
-              <div className="mt-3">
-                <TrendIndicator value={5.2} label="vs last month" direction="up" />
-              </div>
             </div>
           </div>
         </div>
@@ -195,9 +186,6 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
               <p className={`${valueClass} mt-3 text-teal-700 dark:text-teal-400`}>
                 <AnimatedValue value={analyticsData?.totalStaff || 0} format="number" duration={600} />
               </p>
-              <div className="mt-3">
-                <TrendIndicator value={2} label="new this month" direction="up" />
-              </div>
             </div>
             <div className={iconContainers.staff + " shrink-0"}>
               <Users className={`h-6 w-6 ${iconClasses.staff}`} />
@@ -213,9 +201,6 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
               <p className={`${valueClass} mt-3 text-sage-green-700 dark:text-sage-green-400`}>
                 <AnimatedValue value={analyticsData?.totalResidents || 0} format="number" duration={700} />
               </p>
-              <div className="mt-3">
-                <TrendIndicator value={8.1} label="vs last month" direction="up" />
-              </div>
             </div>
             <div className={iconContainers.residents + " shrink-0"}>
               <Users className={`h-6 w-6 ${iconClasses.residents}`} />
@@ -232,9 +217,6 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
                 <p className={`${valueClass} mt-3 text-amber-600 dark:text-amber-400`}>
                   GH₵<AnimatedValue value={analyticsData?.totalDebt || 0} format="currency" decimals={2} duration={800} />
                 </p>
-                <div className="mt-3">
-                  <TrendIndicator value={-3.8} label="vs last month" direction="down" />
-                </div>
               </div>
               <div className={iconContainers.debt + " shrink-0"}>
                 <Banknote className={`h-6 w-6 ${iconClasses.debt}`} />

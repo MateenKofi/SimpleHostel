@@ -363,7 +363,8 @@ export type ReportData = {
     payments: number
     newResidents: number
   }>
-  revenueGrowth: number
+  revenueGrowth?: number
+  occupancyGrowth?: number
 }
 
 export type AllocationDetails = {

@@ -2,7 +2,6 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/com
 import { Progress } from '@radix-ui/react-progress'
 import { Analytics } from '@/helper/types/types'
 import AnimatedValue from '../AnimatedValue'
-import TrendIndicator from '../TrendIndicator'
 
 type analyticsData = Analytics
 
@@ -33,17 +32,11 @@ const PaymentStat = ({ analyticsData }: { analyticsData?: analyticsData }) => {
               <div className="text-2xl md:text-3xl font-bold text-emerald-700 dark:text-emerald-400">
                 <AnimatedValue value={totalPayments} format="number" duration={600} />
               </div>
-              <div className="mt-2">
-                <TrendIndicator value={8.2} label="vs last month" direction="up" showIcon={false} className="text-[10px]" />
-              </div>
             </div>
             <div className="p-4 rounded-xl bg-teal-50/50 dark:bg-teal-950/20 border border-teal-100/50 dark:border-teal-900/30">
               <div className="text-sm font-medium text-muted-foreground mb-2">Average Payment</div>
               <div className="text-lg md:text-xl font-bold text-teal-700 dark:text-teal-400">
                 GH₵<AnimatedValue value={averagePaymentAmount} format="currency" decimals={2} duration={600} />
-              </div>
-              <div className="mt-2">
-                <TrendIndicator value={3.5} label="vs last month" direction="up" showIcon={false} className="text-[10px]" />
               </div>
             </div>
           </div>
@@ -55,17 +48,11 @@ const PaymentStat = ({ analyticsData }: { analyticsData?: analyticsData }) => {
               <div className="text-lg md:text-xl font-bold text-amber-700 dark:text-amber-400">
                 GH₵<AnimatedValue value={totalDebt} format="currency" decimals={2} duration={600} />
               </div>
-              <div className="mt-2">
-                <TrendIndicator value={-5.2} label="vs last month" direction="down" showIcon={false} className="text-[10px]" />
-              </div>
             </div>
             <div className="p-4 rounded-xl bg-warm-red-50/50 dark:bg-warm-red-950/20 border border-warm-red-100/50 dark:border-warm-red-900/30">
               <div className="text-sm font-medium text-muted-foreground mb-2">Debt Percentage</div>
               <div className="text-lg md:text-xl font-bold text-warm-red-700 dark:text-warm-red-400">
                 <AnimatedValue value={debtPercentage} format="number" decimals={2} duration={600} />%
-              </div>
-              <div className="mt-2">
-                <TrendIndicator value={-2.1} label="vs last month" direction="down" showIcon={false} className="text-[10px]" />
               </div>
             </div>
           </div>
@@ -84,7 +71,6 @@ const PaymentStat = ({ analyticsData }: { analyticsData?: analyticsData }) => {
             />
             <div className="flex justify-between mt-2 text-xs text-muted-foreground">
               <span>{debtFreePercentage.toFixed(1)}% debt-free</span>
-              <TrendIndicator value={debtFreePercentage} label="healthy" direction="up" showIcon={false} className="text-[10px]" />
             </div>
           </div>
         </div>

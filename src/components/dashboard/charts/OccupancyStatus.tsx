@@ -10,7 +10,8 @@ const OccupancyStatus = ({ analyticsData }: { analyticsData: analyticsData }) =>
   const occupiedRooms = analyticsData?.occupiedRooms || 0
   const activeRooms = analyticsData?.activeRooms || 0
   const vacantRooms = Math.max(0, activeRooms - occupiedRooms)
-  const occupancyPercentage = activeRooms > 0 ? (occupiedRooms / activeRooms) * 100 : 0
+  // Use backend's occupancyRate directly for accuracy
+  const occupancyPercentage = analyticsData?.occupancyRate ?? 0
 
   const occupancyData = [
     { name: "Occupied", value: occupiedRooms },

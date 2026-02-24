@@ -3,9 +3,7 @@ import { ResponsiveContainer, XAxis, YAxis, Tooltip, Bar, BarChart } from 'recha
 import { CustomTooltip } from '@/helper/CutomToolTip'
 import { CHART_COLORS } from '@/helper/chartColors'
 import { Analytics } from '@/helper/types/types'
-import BentoCard from '../BentoCard'
 import AnimatedValue from '../AnimatedValue'
-import TrendIndicator from '../TrendIndicator'
 
 type analyticsData = Analytics
 
@@ -14,7 +12,7 @@ const RevenueOverView = ({ analyticsData }: { analyticsData: analyticsData }) =>
     {
       name: "Revenue",
       Collected: analyticsData?.currentYearStats?.collectedRevenue,
-      Expected: analyticsData?.currentYearStats?.expectedRevenue,
+      Potential: analyticsData?.currentYearStats?.expectedRevenue,
       Outstanding: analyticsData?.currentYearStats?.outstandingAmount,
     },
   ]
@@ -39,7 +37,7 @@ const RevenueOverView = ({ analyticsData }: { analyticsData: analyticsData }) =>
               <YAxis axisLine={false} tickLine={false} tick={{ fill: 'hsl(var(--muted-foreground))' }} />
               <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted) / 0.2)' }} />
               <Bar dataKey="Collected" fill={CHART_COLORS.forest_light} radius={[4, 4, 0, 0]} />
-              <Bar dataKey="Expected" fill={CHART_COLORS.sage} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Potential" fill={CHART_COLORS.sage} radius={[4, 4, 0, 0]} />
               <Bar dataKey="Outstanding" fill={CHART_COLORS.forest_dark} radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -52,7 +50,7 @@ const RevenueOverView = ({ analyticsData }: { analyticsData: analyticsData }) =>
             </div>
           </div>
           <div className="text-center p-3 rounded-xl bg-sage-green-50/50 dark:bg-sage-green-950/20">
-            <div className="text-sm font-medium text-muted-foreground mb-1">Expected</div>
+            <div className="text-sm font-medium text-muted-foreground mb-1">Potential</div>
             <div className="text-lg font-bold text-sage-green-700 dark:text-sage-green-400">
               GH₵<AnimatedValue value={analyticsData?.currentYearStats?.expectedRevenue ?? 0} format="currency" decimals={2} duration={600} />
             </div>
