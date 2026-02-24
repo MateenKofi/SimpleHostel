@@ -12,9 +12,17 @@ const axiosInstance = axios.create({
 // Add a request interceptor to attach the token
 axiosInstance.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+        // Skip token attachment for auth endpoints (login, signup, password reset)
+        // These endpoints authenticate via credentials, not existing tokens
+        const isAuthEndpoint = config?.url?.includes('/login') ||
+            config?.url?.includes('/signup') ||
+            config?.url?.includes('/reset-password');
+
+        if (!isAuthEndpoint) {
+            const token = localStorage.getItem('token');
+            if (token) {
+                config.headers.Authorization = `Bearer ${token}`;
+            }
         }
         return config;
     },
