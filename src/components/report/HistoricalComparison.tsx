@@ -10,8 +10,13 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import { TrendingUp, TrendingDown, Calendar, Users } from "lucide-react";
 
 const HistoricalComparison = ({ reportData }: { reportData: ReportData }) => {
-  const revenueGrowth = reportData?.revenueGrowth || 0;
+  // Calculate revenue growth since API doesn't return it
+  const revenueGrowth = reportData?.historicalRevenue && reportData?.historicalRevenue > 0
+    ? ((reportData?.totalRevenue - reportData?.historicalRevenue) / reportData?.historicalRevenue) * 100
+    : 0;
+
   const isPositiveGrowth = revenueGrowth >= 0;
+  const hasHistoricalData = reportData?.historicalRevenue > 0 || reportData?.historicalResidents > 0;
   const residentGrowth = reportData?.historicalResidents > 0
     ? (((reportData?.totalResidents || 0) - reportData?.historicalResidents) / reportData?.historicalResidents) * 100
     : 0;
@@ -49,7 +54,7 @@ const HistoricalComparison = ({ reportData }: { reportData: ReportData }) => {
               <div className="flex items-center gap-2 pt-2 border-t border-emerald-200/50 dark:border-emerald-800/30">
                 <Users className="h-4 w-4 text-muted-foreground" />
                 <p className="text-sm text-muted-foreground">
-                  {reportData?.totalResidents} residents
+                  {reportData?.totalResidents} resident{reportData?.totalResidents !== 1 ? "s" : ""}
                 </p>
               </div>
             </div>
@@ -61,19 +66,24 @@ const HistoricalComparison = ({ reportData }: { reportData: ReportData }) => {
               <div className="p-1.5 rounded-lg bg-sage-green-100 dark:bg-sage-green-900/30">
                 <Calendar className="h-4 w-4 text-sage-green-600 dark:text-sage-green-400" />
               </div>
-              <p className="text-sm font-semibold text-sage-green-700 dark:text-sage-green-400">Historical</p>
+              <p className="text-sm font-semibold text-sage-green-700 dark:text-sage-green-400">
+                {hasHistoricalData ? "Historical" : "N/A"}
+              </p>
             </div>
             <div className="space-y-3">
               <div>
                 <p className="text-3xl font-bold text-foreground">
-                  {formatCurrency(reportData?.historicalRevenue)}
+                  {hasHistoricalData ? formatCurrency(reportData?.historicalRevenue) : "—"}
                 </p>
                 <p className="text-sm text-muted-foreground">Previous Revenue</p>
               </div>
               <div className="flex items-center gap-2 pt-2 border-t border-sage-green-200/50 dark:border-sage-green-800/30">
                 <Users className="h-4 w-4 text-muted-foreground" />
                 <p className="text-sm text-muted-foreground">
-                  {reportData?.historicalResidents} residents
+                  {hasHistoricalData
+                    ? `${reportData?.historicalResidents} resident${reportData?.historicalResidents !== 1 ? "s" : ""}`
+                    : "No previous data"
+                  }
                 </p>
               </div>
             </div>
@@ -82,35 +92,54 @@ const HistoricalComparison = ({ reportData }: { reportData: ReportData }) => {
 
         {/* Growth Summary */}
         <div className={`mt-6 p-4 rounded-xl flex items-center justify-between ${
-          isPositiveGrowth
-            ? "bg-emerald-50/80 dark:bg-emerald-950/20 border border-emerald-200/50 dark:border-emerald-800/30"
-            : "bg-amber-50/80 dark:bg-amber-950/20 border border-amber-200/50 dark:border-amber-800/30"
+          hasHistoricalData
+            ? isPositiveGrowth
+              ? "bg-emerald-50/80 dark:bg-emerald-950/20 border border-emerald-200/50 dark:border-emerald-800/30"
+              : "bg-amber-50/80 dark:bg-amber-950/20 border border-amber-200/50 dark:border-amber-800/30"
+            : "bg-muted/30 border border-border/50"
         }`}>
           <div className="flex items-center gap-3">
-            {isPositiveGrowth ? (
-              <TrendingUp className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+            {hasHistoricalData ? (
+              isPositiveGrowth ? (
+                <TrendingUp className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              ) : (
+                <TrendingDown className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              )
             ) : (
-              <TrendingDown className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+              <Calendar className="h-5 w-5 text-muted-foreground" />
             )}
             <div>
               <p className={`text-sm font-semibold ${
-                isPositiveGrowth
-                  ? "text-emerald-700 dark:text-emerald-400"
-                  : "text-amber-700 dark:text-amber-400"
+                hasHistoricalData
+                  ? isPositiveGrowth
+                    ? "text-emerald-700 dark:text-emerald-400"
+                    : "text-amber-700 dark:text-amber-400"
+                  : "text-muted-foreground"
               }`}>
-                {isPositiveGrowth ? "Revenue Growth" : "Revenue Decline"}
+                {hasHistoricalData
+                  ? (isPositiveGrowth ? "Revenue Growth" : "Revenue Decline")
+                  : "No Historical Data"
+                }
               </p>
               <p className="text-xs text-muted-foreground">
-                Compared to previous period
+                {hasHistoricalData
+                  ? "Compared to previous period"
+                  : "Historical comparison not available"
+                }
               </p>
             </div>
           </div>
           <p className={`text-2xl font-bold ${
-            isPositiveGrowth
-              ? "text-emerald-700 dark:text-emerald-400"
-              : "text-amber-700 dark:text-amber-400"
+            hasHistoricalData
+              ? isPositiveGrowth
+                ? "text-emerald-700 dark:text-emerald-400"
+                : "text-amber-700 dark:text-amber-400"
+              : "text-muted-foreground"
           }`}>
-            {isPositiveGrowth ? "+" : ""}{revenueGrowth.toFixed(1)}%
+            {hasHistoricalData
+              ? `${isPositiveGrowth ? "+" : ""}${revenueGrowth.toFixed(1)}%`
+              : "—"
+            }
           </p>
         </div>
       </CardContent>

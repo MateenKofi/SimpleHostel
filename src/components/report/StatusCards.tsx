@@ -7,7 +7,12 @@ import { formatCurrency } from "@/utils/formatCurrency";
 import BentoCard from "../dashboard/BentoCard";
 
 const StatusCards = ({reportData}: {reportData: ReportData}) => {
-  const isGrowthPositive = reportData?.revenueGrowth >= 0;
+  // Calculate revenue growth since API doesn't return it
+  const revenueGrowth = reportData?.historicalRevenue && reportData?.historicalRevenue > 0
+    ? ((reportData?.totalRevenue - reportData?.historicalRevenue) / reportData?.historicalRevenue) * 100
+    : 0;
+
+  const isGrowthPositive = revenueGrowth >= 0;
 
   return (
      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -56,31 +61,45 @@ const StatusCards = ({reportData}: {reportData: ReportData}) => {
                 }`}
               >
                 {isGrowthPositive ? "+" : ""}
-                {reportData?.revenueGrowth?.toFixed(2)}%
+                {revenueGrowth.toFixed(1)}%
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Compared to previous period
+                {reportData?.historicalRevenue > 0
+                  ? "Compared to previous period"
+                  : "No historical data"
+                }
               </p>
               <div className={`flex items-center gap-1 mt-3 ${isGrowthPositive ? "text-emerald-600" : "text-amber-600"}`}>
-                {isGrowthPositive ? (
-                  <TrendingUp className="h-4 w-4" />
+                {reportData?.historicalRevenue > 0 ? (
+                  isGrowthPositive ? (
+                    <TrendingUp className="h-4 w-4" />
+                  ) : (
+                    <TrendingDown className="h-4 w-4" />
+                  )
                 ) : (
-                  <TrendingDown className="h-4 w-4" />
+                  <CalendarDays className="h-4 w-4 text-muted-foreground" />
                 )}
                 <span className="text-xs font-medium">
-                  {isGrowthPositive ? "Growth" : "Decline"}
+                  {reportData?.historicalRevenue > 0
+                    ? (isGrowthPositive ? "Growth" : "Decline")
+                    : "First period"
+                  }
                 </span>
               </div>
             </div>
             <div className={`p-2.5 rounded-xl ${
-              isGrowthPositive
+              isGrowthPositive && reportData?.historicalRevenue > 0
                 ? "bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/20"
-                : "bg-gradient-to-br from-amber-50 to-warm-red-50 dark:from-amber-950/30 dark:to-warm-red-950/20"
+                : "bg-gradient-to-br from-sage-green-50 to-teal-green-50 dark:from-sage-green-950/30 dark:to-teal-green-950/20"
             }`}>
-              {isGrowthPositive ? (
-                <TrendingUp className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+              {reportData?.historicalRevenue > 0 ? (
+                isGrowthPositive ? (
+                  <TrendingUp className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                ) : (
+                  <TrendingDown className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                )
               ) : (
-                <TrendingDown className="h-5 w-5 text-amber-600 dark:text-amber-400" />
+                <TrendingUp className="h-5 w-5 text-sage-green-600 dark:text-sage-green-400" />
               )}
             </div>
           </div>
