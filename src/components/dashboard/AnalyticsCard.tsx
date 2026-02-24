@@ -130,95 +130,65 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
   const hasStaffCard = analyticsData?.totalStaff > -1
 
   return (
-    <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 bento-grid">
-      {/* Total Revenue Card - Large, spans 2 columns on desktop */}
-      <BentoCard variant="revenue" colSpan={hasDebtCard ? 1 : 2} delay={0} className="card-glow">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex-1 min-w-0">
-            <p className={labelClass}>Total Revenue</p>
-            <p className={`${valueClass} mt-3 text-emerald-700 dark:text-emerald-400`}>
-              GH₵<AnimatedValue value={analyticsData?.totalRevenue || 0} format="currency" decimals={2} duration={1000} />
-            </p>
-            <p className="text-xs text-muted-foreground mt-2 truncate">
-              of GH₵{(analyticsData?.expectedIncome || 0).toFixed(2)} expected
-            </p>
-            {/* Progress bar with gradient */}
-            <div className="mt-4">
-              <Progress
-                value={analyticsData?.expectedIncome > 0 ? (analyticsData?.totalRevenue / analyticsData?.expectedIncome) * 100 : 0}
-                className="bg-muted/50 h-2"
-              />
-            </div>
-            {/* Trend indicator placeholder */}
-            <div className="mt-3">
-              <TrendIndicator value={12.5} label="vs last month" direction="up" />
-            </div>
-          </div>
-          <div className={iconContainers.revenue + " shrink-0"}>
-            <Banknote className={`h-6 w-6 ${iconClasses.revenue}`} />
-          </div>
-        </div>
-      </BentoCard>
-
-      {/* Occupancy Rate Card */}
-      <BentoCard variant="occupancy" delay={75} className="card-glow">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex-1 min-w-0">
-            <p className={labelClass}>Occupancy Rate</p>
-            <p className={`${valueClass} mt-3 text-forest-green-700 dark:text-forest-green-400`}>
-              <AnimatedValue value={analyticsData?.occupancyRate || 0} format="number" decimals={1} duration={800} />%
-            </p>
-            <p className="text-xs text-muted-foreground mt-2 truncate">
-              {analyticsData?.occupiedRooms || 0} of {analyticsData?.activeRooms || 0} rooms occupied
-            </p>
-            <div className="mt-4">
-              <Progress
-                value={analyticsData?.occupancyRate || 0}
-                className="bg-muted/50 h-2"
-              />
-            </div>
-            <div className="mt-3">
-              <TrendIndicator value={5.2} label="vs last month" direction="up" />
-            </div>
-          </div>
-          <div className={iconContainers.occupancy + " shrink-0"}>
-            <Percent className={`h-6 w-6 ${iconClasses.occupancy}`} />
-          </div>
-        </div>
-      </BentoCard>
-
-      {/* Total Debt Card - Only show if hostels data exists */}
-      {hasDebtCard && (
-        <BentoCard variant="debt" delay={150} className="card-glow">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex-1 min-w-0">
-              <p className={labelClass}>Total Debt</p>
-              <p className={`${valueClass} mt-3 text-amber-600 dark:text-amber-400`}>
-                GH₵<AnimatedValue value={analyticsData?.totalDebt || 0} format="currency" decimals={2} duration={800} />
+    <div className="grid gap-3 sm:gap-4 grid-cols-1 lg:grid-cols-3 w-full">
+      {/* Combined Revenue & Occupancy Card - Spans 2 columns */}
+      <BentoCard variant="revenue" colSpan={2} delay={0} className="card-glow lg:col-span-2 w-full">
+        <div className="flex flex-col items-center justify-center py-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full">
+            {/* Total Revenue Section */}
+            <div className="flex flex-col items-center text-center">
+              <div className={iconContainers.revenue + " mb-3"}>
+                <Banknote className={`h-6 w-6 ${iconClasses.revenue}`} />
+              </div>
+              <p className={labelClass}>Total Revenue</p>
+              <p className={`${valueClass} mt-3 text-emerald-700 dark:text-emerald-400`}>
+                GH₵<AnimatedValue value={analyticsData?.totalRevenue || 0} format="currency" decimals={2} duration={1000} />
               </p>
-              <p className="text-xs text-muted-foreground mt-2 truncate">
-                of GH₵{(analyticsData?.currentYearStats?.expectedRevenue || 0).toFixed(2)} expected
+              <p className="text-xs text-muted-foreground mt-2">
+                of GH₵{(analyticsData?.expectedIncome || 0).toFixed(2)} expected
               </p>
-              <div className="mt-4">
+              {/* Progress bar with gradient */}
+              <div className="mt-4 w-full max-w-[200px]">
                 <Progress
-                  value={analyticsData?.currentYearStats?.expectedRevenue > 0 ? ((analyticsData?.totalDebt || 0) / analyticsData?.currentYearStats?.expectedRevenue) * 100 : 0}
+                  value={analyticsData?.expectedIncome > 0 ? (analyticsData?.totalRevenue / analyticsData?.expectedIncome) * 100 : 0}
                   className="bg-muted/50 h-2"
                 />
               </div>
               <div className="mt-3">
-                <TrendIndicator value={-3.8} label="vs last month" direction="down" />
+                <TrendIndicator value={12.5} label="vs last month" direction="up" />
               </div>
             </div>
-            <div className={iconContainers.debt + " shrink-0"}>
-              <Banknote className={`h-6 w-6 ${iconClasses.debt}`} />
+
+            {/* Occupancy Rate Section */}
+            <div className="flex flex-col items-center text-center">
+              <div className={iconContainers.occupancy + " mb-3"}>
+                <Percent className={`h-6 w-6 ${iconClasses.occupancy}`} />
+              </div>
+              <p className={labelClass}>Occupancy Rate</p>
+              <p className={`${valueClass} mt-3 text-forest-green-700 dark:text-forest-green-400`}>
+                <AnimatedValue value={analyticsData?.occupancyRate || 0} format="number" decimals={1} duration={800} />%
+              </p>
+              <p className="text-xs text-muted-foreground mt-2">
+                {analyticsData?.occupiedRooms || 0} of {analyticsData?.activeRooms || 0} rooms occupied
+              </p>
+              <div className="mt-4 w-full max-w-[200px]">
+                <Progress
+                  value={analyticsData?.occupancyRate || 0}
+                  className="bg-muted/50 h-2"
+                />
+              </div>
+              <div className="mt-3">
+                <TrendIndicator value={5.2} label="vs last month" direction="up" />
+              </div>
             </div>
           </div>
-        </BentoCard>
-      )}
+        </div>
+      </BentoCard>
 
-      {/* Total Staff Card - Only show if staff data exists */}
-      {hasStaffCard && (
-        <BentoCard variant="staff" delay={hasDebtCard ? 225 : 150} className="card-glow">
+      {/* Right Column - Staff & Residents stacked */}
+      <div className="flex flex-col gap-3 sm:gap-4 w-full">
+        {/* Total Staff Card */}
+        <BentoCard variant="staff" delay={150} className="card-glow flex-1">
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
               <p className={labelClass}>Total Staff</p>
@@ -234,25 +204,45 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
             </div>
           </div>
         </BentoCard>
-      )}
 
-      {/* Total Residents Card - Always show for admins */}
-      <BentoCard variant="residents" delay={hasDebtCard ? 300 : 225} className="card-glow">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex-1 min-w-0">
-            <p className={labelClass}>Total Residents</p>
-            <p className={`${valueClass} mt-3 text-sage-green-700 dark:text-sage-green-400`}>
-              <AnimatedValue value={analyticsData?.totalResidents || 0} format="number" duration={700} />
-            </p>
-            <div className="mt-3">
-              <TrendIndicator value={8.1} label="vs last month" direction="up" />
+        {/* Total Residents Card */}
+        <BentoCard variant="residents" delay={225} className="card-glow flex-1">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <p className={labelClass}>Total Residents</p>
+              <p className={`${valueClass} mt-3 text-sage-green-700 dark:text-sage-green-400`}>
+                <AnimatedValue value={analyticsData?.totalResidents || 0} format="number" duration={700} />
+              </p>
+              <div className="mt-3">
+                <TrendIndicator value={8.1} label="vs last month" direction="up" />
+              </div>
+            </div>
+            <div className={iconContainers.residents + " shrink-0"}>
+              <Users className={`h-6 w-6 ${iconClasses.residents}`} />
             </div>
           </div>
-          <div className={iconContainers.residents + " shrink-0"}>
-            <Users className={`h-6 w-6 ${iconClasses.residents}`} />
-          </div>
-        </div>
-      </BentoCard>
+        </BentoCard>
+
+        {/* Total Debt Card - Only show if hostels data exists */}
+        {hasDebtCard && (
+          <BentoCard variant="debt" delay={300} className="card-glow flex-1">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <p className={labelClass}>Total Debt</p>
+                <p className={`${valueClass} mt-3 text-amber-600 dark:text-amber-400`}>
+                  GH₵<AnimatedValue value={analyticsData?.totalDebt || 0} format="currency" decimals={2} duration={800} />
+                </p>
+                <div className="mt-3">
+                  <TrendIndicator value={-3.8} label="vs last month" direction="down" />
+                </div>
+              </div>
+              <div className={iconContainers.debt + " shrink-0"}>
+                <Banknote className={`h-6 w-6 ${iconClasses.debt}`} />
+              </div>
+            </div>
+          </BentoCard>
+        )}
+      </div>
     </div>
   )
 }
