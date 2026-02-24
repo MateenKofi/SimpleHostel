@@ -40,7 +40,7 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
     return (
       <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
         {/* Total Paid Card - Revenue theme */}
-        <BentoCard variant="revenue" delay={0} className="card-glow">
+        <BentoCard variant="revenue" delay={0}>
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
               <p className={labelClass}>Total Paid</p>
@@ -58,7 +58,7 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
         </BentoCard>
 
         {/* Outstanding Balance Card - Debt theme */}
-        <BentoCard variant="debt" delay={75} className="card-glow">
+        <BentoCard variant="debt" delay={75}>
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
               <p className={labelClass}>Outstanding Balance</p>
@@ -78,7 +78,7 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
         </BentoCard>
 
         {/* Room Details Card - Occupancy theme */}
-        <BentoCard variant="occupancy" delay={150} className="card-glow">
+        <BentoCard variant="occupancy" delay={150}>
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
               <p className={labelClass}>Room Details</p>
@@ -103,7 +103,7 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
         </BentoCard>
 
         {/* Current Hostel Card - Staff theme */}
-        <BentoCard variant="staff" delay={225} className="card-glow">
+        <BentoCard variant="staff" delay={225}>
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
               <p className={labelClass}>Current Hostel</p>
@@ -129,7 +129,7 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
   return (
     <div className="grid gap-3 sm:gap-4 grid-cols-1 lg:grid-cols-3 w-full">
       {/* Combined Revenue & Occupancy Card - Spans 2 columns */}
-      <BentoCard variant="revenue" colSpan={2} delay={0} className="card-glow lg:col-span-2 w-full">
+      <BentoCard variant="revenue" colSpan={2} delay={0} className="lg:col-span-2 w-full">
         <div className="flex flex-col items-center justify-center py-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 w-full">
             {/* Total Revenue Section */}
@@ -179,7 +179,7 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
       {/* Right Column - Staff & Residents stacked */}
       <div className="flex flex-col gap-3 sm:gap-4 w-full">
         {/* Total Staff Card */}
-        <BentoCard variant="staff" delay={150} className="card-glow flex-1">
+        <BentoCard variant="staff" delay={150} className="flex-1">
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
               <p className={labelClass}>Total Staff</p>
@@ -194,7 +194,7 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
         </BentoCard>
 
         {/* Total Residents Card */}
-        <BentoCard variant="residents" delay={225} className="card-glow flex-1">
+        <BentoCard variant="residents" delay={225} className="flex-1">
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
               <p className={labelClass}>Total Residents</p>
@@ -210,7 +210,7 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
 
         {/* Total Debt Card - Only show if hostels data exists */}
         {hasDebtCard && (
-          <BentoCard variant="debt" delay={300} className="card-glow flex-1">
+          <BentoCard variant="debt" delay={300} className="flex-1">
             <div className="flex items-start justify-between gap-3">
               <div className="flex-1 min-w-0">
                 <p className={labelClass}>Total Debt</p>

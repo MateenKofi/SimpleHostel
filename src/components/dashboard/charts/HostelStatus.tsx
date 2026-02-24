@@ -15,16 +15,16 @@ type analyticsData = Analytics
 const HostelStatus = ({ analyticsData }: { analyticsData: analyticsData }) => {
   const published = analyticsData?.publishedHostels || 0
   const verified = analyticsData?.verifiedHostels || 0
-  const unpublished = Math.max(0, verified - published)
+  const verifiedButNotPublished = Math.max(0, verified - published)
   const unverified = analyticsData?.unverifiedHostels || 0
 
   const hostelStatusData = [
     { name: "Published", value: published },
-    { name: "Verified", value: unpublished },
+    { name: "Verified (Unpublished)", value: verifiedButNotPublished },
     { name: "Unverified", value: unverified },
   ]
 
-  const totalHostels = published + unpublished + unverified
+  const totalHostels = published + verifiedButNotPublished + unverified
 
   return (
     <Card className="border-border/80 shadow-sm hover:shadow-md transition-shadow duration-300 animate-fade-in-up" style={{ animationDelay: '350ms' }}>
@@ -49,9 +49,10 @@ const HostelStatus = ({ analyticsData }: { analyticsData: analyticsData }) => {
                 dataKey="value"
                 animationBegin={0}
                 animationDuration={800}
-                label={({ name, percent }) =>
-                  `${name}: ${(percent * 100).toFixed(0)}%`
-                }
+                label={({ name, percent }) => {
+                  const shortName = name === "Verified (Unpublished)" ? "Verified" : name;
+                  return `${shortName}: ${(percent * 100).toFixed(0)}%`;
+                }}
               >
                 {hostelStatusData.map((_, index) => (
                   <Cell
@@ -62,7 +63,10 @@ const HostelStatus = ({ analyticsData }: { analyticsData: analyticsData }) => {
                   />
                 ))}
               </Pie>
-              <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+              <Tooltip
+                contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                formatter={(value: number, name: string) => [value, name === "Verified (Unpublished)" ? "Verified" : name]}
+              />
             </PieChart>
           </ResponsiveContainer>
         </div>
@@ -96,10 +100,12 @@ const HostelStatus = ({ analyticsData }: { analyticsData: analyticsData }) => {
                 className="h-3 w-3 rounded-full shadow-sm"
                 style={{ backgroundColor: COLORS[1] }}
               ></div>
-              <span className="text-xs font-medium text-muted-foreground">Verified</span>
+              <span className="text-xs font-medium text-muted-foreground text-center leading-tight">
+                Verified<br/>(Unpublished)
+              </span>
             </div>
             <div className="text-xl font-bold text-sage-green-700 dark:text-sage-green-400">
-              <AnimatedValue value={verified} format="number" duration={400} />
+              <AnimatedValue value={verifiedButNotPublished} format="number" duration={400} />
             </div>
           </div>
 

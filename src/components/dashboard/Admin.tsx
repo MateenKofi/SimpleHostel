@@ -14,7 +14,7 @@ const Admin = () => {
     queryKey: ["analytics_admin"],
     queryFn: async () => {
       const responseData = await getHostelAnalytics(hostel_id!);
-      return responseData?.json || responseData?.data || responseData;
+      return responseData?.data || responseData;
     },
     enabled: !!hostel_id,
   });
