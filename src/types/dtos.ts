@@ -83,6 +83,23 @@ export interface Amenity {
     name: string;
 }
 
+// Lightweight DTO for list views (prevents over-fetching)
+export interface ResidentListItemDto {
+    id: string;
+    userId: string;
+    name: string;
+    email: string;
+    phone: string;
+    studentId: string | null;
+    roomNumber: string | null;
+    status: string;
+    checkInDate: string | null;
+    checkOutDate: string | null;
+    balanceOwed: number;
+    imageUrl: string | null;
+}
+
+// Full DTO for detail views
 export interface ResidentDto {
     id: string;
     userId: string;
@@ -99,20 +116,45 @@ export interface ResidentDto {
     emergencyContactName?: string | null;
     emergencyContactPhone?: string | null;
     emergencyContactRelationship?: string | null;
-    name?: string; // Legacy compatibility
-    email?: string; // Legacy compatibility
-    phone?: string; // Legacy compatibility
-    gender?: string | null; // Legacy compatibility
-    relationship?: string | null; // Legacy compatibility
-    roomPrice?: number; // Legacy compatibility
-    amountPaid?: number | null; // Legacy compatibility
-    balanceOwed?: number | null; // Legacy compatibility
-    calendarYearId?: string; // Legacy compatibility
-    deletedAt?: string | null; // Soft delete timestamp
+
+    // Flattened user fields (for convenience)
+    name?: string;
+    email?: string;
+    phone?: string;
+    gender?: string | null;
+    avatar?: string | null;
+    imageUrl?: string | null;
+
+    // Payment info (when requested)
+    roomPrice?: number;
+    amountPaid?: number | null;
+    balanceOwed?: number | null;
+
+    // Relations (included in detail views)
     user?: UserDto;
-    room?: RoomDto; // API returns lowercase "room"
+    room?: RoomDto;
     Room?: RoomDto; // Legacy compatibility
-    roommates?: ResidentDto[]; // Added
+    roommates?: ResidentDto[];
+
+    // Legacy compatibility fields
+    relationship?: string | null; // Alias for emergencyContactRelationship
+    calendarYearId?: string;
+
+    // Soft delete
+    deletedAt?: string | null;
+}
+
+// Paginated response wrapper
+export interface PaginatedResponse<T> {
+    data: T[];
+    meta: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+        hasNext: boolean;
+        hasPrev: boolean;
+    };
 }
 
 export interface PaymentDto {

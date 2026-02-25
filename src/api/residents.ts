@@ -1,5 +1,5 @@
 import axiosInstance from "./axiosInstance";
-import { AddResidentRequest, CreateResidentRequestRequest, FeedbackRequest, MaintenanceRequestDto, RegisterResidentRequest, ResidentDto, UserDto } from "@/types/dtos";
+import { AddResidentRequest, CreateResidentRequestRequest, FeedbackRequest, MaintenanceRequestDto, PaginatedResponse, RegisterResidentRequest, ResidentDto, ResidentListItemDto, UserDto } from "@/types/dtos";
 
 export const registerResident = async (payload: RegisterResidentRequest | FormData): Promise<{ data: UserDto }> => {
     const isFormData = payload instanceof FormData;
@@ -57,6 +57,17 @@ export const getResidentAllocationDetails = async () => {
 
 export const getHostelResidents = async (hostelId: string) => {
     const response = await axiosInstance.get(`/residents/hostel/${hostelId}`);
+    return response.data;
+};
+
+// NEW: Paginated residents list - more efficient
+export const getResidentsPaginated = async (params?: {
+    hostelId?: string;
+    page?: number;
+    limit?: number;
+    search?: string;
+}): Promise<PaginatedResponse<ResidentListItemDto>> => {
+    const response = await axiosInstance.get("/residents/list", { params });
     return response.data;
 };
 
