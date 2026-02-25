@@ -2,7 +2,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { topupPayment } from "@/api/payments";
 import { getResidentBilling } from "@/api/residents";
 import { toast } from "sonner";
-import type { ApiError } from "@/types/dtos";
+import type { ApiError, TopupPaymentRequest } from "@/types/dtos";
 
 import {
   Loader2,
@@ -60,14 +60,34 @@ const TopUpPaymentForm = () => {
   const summary = billingData?.summary;
   const payments = billingData?.payments || [];
 
+  // Get residentId from user's resident profile or from most recent payment
+  const residentId = user?.residentProfile?.id || payments?.[0]?.residentProfileId;
+  const roomId = user?.residentProfile?.roomId || payments?.[0]?.roomId;
+
   const mutation = useMutation({
     mutationFn: async () => {
       console.log('Payment mutation triggered');
       console.log('Summary data:', summary);
+      console.log('User:', user);
       console.log('Payments:', payments);
 
-      if (!summary || !user) {
-        const errorMsg = "Resident data not available";
+      if (!summary) {
+        const errorMsg = "Unable to load billing information";
+        console.error(errorMsg);
+        toast.error(errorMsg);
+        throw new Error(errorMsg);
+      }
+
+      // Validate residentId
+      if (!residentId) {
+        const errorMsg = "Resident profile not found. Please contact support.";
+        console.error(errorMsg);
+        toast.error(errorMsg);
+        throw new Error(errorMsg);
+      }
+
+      if (!roomId) {
+        const errorMsg = "Room assignment not found. Please contact support.";
         console.error(errorMsg);
         toast.error(errorMsg);
         throw new Error(errorMsg);
@@ -81,12 +101,9 @@ const TopUpPaymentForm = () => {
       }
 
       try {
-        // Get the most recent payment to extract residentId and roomId
-        const recentPayment = payments[0];
-
-        const payload = {
-          residentId: recentPayment?.residentProfileId || user.id,
-          roomId: recentPayment?.roomId,
+        const payload: TopupPaymentRequest = {
+          residentId,
+          roomId,
           initialPayment: summary.balanceOwed,
         };
 
@@ -94,14 +111,14 @@ const TopUpPaymentForm = () => {
         const resData = await topupPayment(payload);
         console.log('Payment response:', resData);
 
-        if (resData?.authorizationUrl) {
+        // Handle different response formats
+        const authUrl = resData?.authorizationUrl ||
+                       (typeof resData?.paymentUrl === 'string' ? resData.paymentUrl : null) ||
+                       resData?.paymentUrl?.authorizationUrl;
+
+        if (authUrl) {
           toast(resData.message || "Redirecting to payment...");
-          window.location.href = resData.authorizationUrl;
-        } else if (resData?.paymentUrl) {
-          toast(resData.message || "Redirecting to payment...");
-          window.location.href = typeof resData.paymentUrl === 'string'
-            ? resData.paymentUrl
-            : resData.paymentUrl?.authorizationUrl;
+          window.location.href = authUrl;
         } else {
           toast.error("No payment URL received from server");
         }
@@ -143,7 +160,9 @@ const TopUpPaymentForm = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
         <AlertCircle className="w-12 h-12 text-destructive" />
-        <p className="text-muted-foreground">Failed to load payment information.</p>
+        <p className="text-muted-foreground">
+          {!residentId ? "Resident profile not found. Please contact support." : "Failed to load payment information."}
+        </p>
         <Button onClick={() => navigate("/dashboard/payment-billing")}>
           <ChevronLeft className="w-4 h-4 mr-2" />
           Back to Billing

@@ -64,6 +64,7 @@ const Documents = lazy(() => import("./pages/dashboard/resident-management/Docum
 const Feedback = lazy(() => import("./pages/dashboard/resident-management/Feedback"));
 const AllocationDetails = lazy(() => import("./pages/dashboard/resident-management/AllocationDetails"));
 const ReceiptPage = lazy(() => import("./pages/dashboard/resident-management/ReceiptPage"));
+const PaymentResult = lazy(() => import("./pages/dashboard/payment-result/PaymentResult"));
 
 // Admin routes - lazy loaded
 const AnnouncementDashboard = lazy(() => import("./pages/dashboard/admin/AnnouncementDashboard"));
@@ -134,6 +135,7 @@ function App() {
             <Route path="view-announcements" element={<Announcements />} />
             <Route path="documents" element={<Documents />} />
             <Route path="receipt/:reference" element={<ReceiptPage />} />
+            <Route path="payment-result" element={<PaymentResult />} />
             <Route path="feedback" element={<Feedback />} />
             <Route path="hostel-management" element={<HostelManagement />} />
             <Route path="maintenance" element={<MaintenanceManagement />} />

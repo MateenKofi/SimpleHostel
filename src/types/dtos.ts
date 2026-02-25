@@ -306,10 +306,9 @@ export interface UpdateUserRequest {
 }
 
 export interface TopupPaymentRequest {
-    residentId?: string;
-    roomId?: string | null;
-    amount?: number;
-    initialPayment?: number;
+    residentId: string;
+    roomId: string | null;
+    initialPayment: number;
     paymentMethod?: string | null;
 }
 
