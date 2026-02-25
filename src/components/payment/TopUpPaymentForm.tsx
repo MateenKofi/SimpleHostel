@@ -60,16 +60,16 @@ const TopUpPaymentForm = () => {
   const summary = billingData?.summary;
   const payments = billingData?.payments || [];
 
-  // Get residentId from user's resident profile or from most recent payment
-  const residentId = user?.residentProfile?.id || payments?.[0]?.residentProfileId;
-  const roomId = user?.residentProfile?.roomId || payments?.[0]?.roomId;
+  // Get residentId and roomId from the most recent payment
+  const recentPayment = payments && payments.length > 0 ? payments[0] : null;
+  const residentId = recentPayment?.residentProfileId || summary?.residentId;
+  const roomId = recentPayment?.roomId || summary?.roomId;
 
   const mutation = useMutation({
     mutationFn: async () => {
       console.log('Payment mutation triggered');
       console.log('Summary data:', summary);
-      console.log('User:', user);
-      console.log('Payments:', payments);
+      console.log('Recent payment:', recentPayment);
 
       if (!summary) {
         const errorMsg = "Unable to load billing information";
