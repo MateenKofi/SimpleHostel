@@ -36,17 +36,19 @@ const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
       loading,
       disabled,
       type = "text",
+      id,
       ...props
     },
     ref
   ) => {
-    const id = React.useId()
+    const generatedId = React.useId()
+    const inputId = id || generatedId
 
     return (
       <div className={cn("space-y-1.5", containerClassName)}>
         {label && (
           <label
-            htmlFor={id}
+            htmlFor={inputId}
             className={cn(
               "text-sm font-medium leading-none",
               error ? "text-destructive" : "text-foreground"
@@ -65,7 +67,7 @@ const TextInput = React.forwardRef<HTMLInputElement, TextInputProps>(
 
           <input
             ref={ref}
-            id={id}
+            id={inputId}
             type={type}
             disabled={disabled || loading}
             className={cn(

@@ -47,12 +47,12 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   const registerMutation = useMutation({
     mutationFn: async (values: RegistrationFormValues) => {
       // Omit confirmPassword before sending
-      const { ...payload } = values;
+      const { confirmPassword, ...payload } = values;
       return await registerResident(payload);
     },
     onSuccess: () => {
       toast.success("Registration successful! Please log in.");
-      reset();
+      // Navigate first, don't reset to avoid flicker
       navigate("/login");
     },
     onError: (error: ApiError) => {
@@ -80,9 +80,16 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
 
   const prevStep = () => setStep((s) => s - 1);
 
-  const onSubmit = (values: RegistrationFormValues) => {
+  const onSubmit = async (values: RegistrationFormValues) => {
     // Mark step 2 as submitted so errors show if validation fails
     setStepSubmitted((prev) => new Set(prev).add(2));
+
+    // Validate password fields specifically
+    const isPasswordValid = await trigger(["password", "confirmPassword"]);
+    if (!isPasswordValid) {
+      return; // Stop if password validation fails
+    }
+
     registerMutation.mutate(values);
   };
 

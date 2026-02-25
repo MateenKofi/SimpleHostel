@@ -83,7 +83,7 @@ function getPasswordRequirements(password: string): {
   return { valid, requirements };
 }
 
-export const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps> = ({
+export const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps> = React.memo(({
   password,
   showRequirements = true,
 }) => {
@@ -146,7 +146,9 @@ export const PasswordStrengthIndicator: React.FC<PasswordStrengthIndicatorProps>
       )}
     </div>
   );
-};
+});
+
+PasswordStrengthIndicator.displayName = "PasswordStrengthIndicator";
 
 /**
  * Compact version for smaller spaces
