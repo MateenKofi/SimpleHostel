@@ -38,10 +38,17 @@ export const registrationSchema = z.object({
     course: z.string().optional().nullable(),
     roomId: z.string().optional().nullable(),
     hostelId: z.string().optional().nullable(),
-}).refine((data) => data.password === data.confirmPassword, {
+}).refine((data) => {
+    // Only validate if both are provided
+    if (!data.password || !data.confirmPassword) return true;
+    return data.password === data.confirmPassword;
+}, {
     message: "Passwords don't match",
     path: ["confirmPassword"],
 }).refine((data) => {
+    // Only validate if all relevant fields are provided
+    if (!data.password || !data.email || !data.name) return true;
+
     // Ensure password doesn't contain email or name (common pattern)
     const emailPart = data.email.split("@")[0].toLowerCase();
     const namePart = data.name.toLowerCase().split(" ")[0];

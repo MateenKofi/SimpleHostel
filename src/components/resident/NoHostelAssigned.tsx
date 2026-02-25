@@ -26,7 +26,7 @@ const NoHostelAssigned = () => {
                     <p className="text-sm text-muted-foreground">
                         It looks like you haven't booked a room yet. Browse our available hostels and find your perfect space today.
                     </p>
-                    <Button onClick={() => navigate('/')} className="w-full">
+                    <Button onClick={() => navigate('/find-hostel')} className="w-full">
                         Find & Book a Room <ArrowRight className="w-4 h-4 ml-2" />
                     </Button>
                 </CardContent>

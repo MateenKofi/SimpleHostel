@@ -34,14 +34,13 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitted },
     trigger,
     setValue,
     watch,
-    reset,
   } = useForm<RegistrationFormValues>({
     resolver: zodResolver(registrationSchema),
-    mode: "onChange",
+    mode: "onBlur",
   });
 
   const registerMutation = useMutation({
@@ -80,16 +79,36 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
 
   const prevStep = () => setStep((s) => s - 1);
 
-  const onSubmit = async (values: RegistrationFormValues) => {
-    // Mark step 2 as submitted so errors show if validation fails
-    setStepSubmitted((prev) => new Set(prev).add(2));
+  const onFormError = (errors: any) => {
+    // Determine which step has the first error and switch to it
+    const errorFields = Object.keys(errors);
 
-    // Validate password fields specifically
-    const isPasswordValid = await trigger(["password", "confirmPassword"]);
-    if (!isPasswordValid) {
-      return; // Stop if password validation fails
+    const step0Fields = ["name", "email", "phone", "gender", "studentId", "course"];
+    const step1Fields = ["emergencyContactName", "emergencyContactPhone", "emergencyContactRelationship"];
+    const step2Fields = ["password", "confirmPassword"];
+
+    if (errorFields.some(f => step0Fields.includes(f))) {
+      setStep(0);
+    } else if (errorFields.some(f => step1Fields.includes(f))) {
+      setStep(1);
+    } else if (errorFields.some(f => step2Fields.includes(f))) {
+      setStep(2);
     }
 
+    toast.error("Please fix the errors in the form.");
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Prevent form submission on Enter unless we are on the final step
+    if (e.key === "Enter") {
+      if (step < 2) {
+        e.preventDefault();
+        nextStep();
+      }
+    }
+  };
+
+  const onSubmit = (values: RegistrationFormValues) => {
     registerMutation.mutate(values);
   };
 
@@ -122,7 +141,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
               </CardDescription>
             </CardHeader>
             <CardContent className="px-8 pb-10 pt-4">
-              <form onSubmit={handleSubmit(onSubmit)}>
+              <form onSubmit={handleSubmit(onSubmit, onFormError)} onKeyDown={handleKeyDown}>
                 <AnimatePresence mode="wait">
                   {step === 0 && (
                     <motion.div
@@ -140,7 +159,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                             label="Full Name"
                             placeholder="John Doe"
                             leftIcon={User}
-                            error={stepSubmitted.has(step) ? errors.name?.message : undefined}
+                            error={(stepSubmitted.has(step) || isSubmitted) ? errors.name?.message : undefined}
                             {...register("name")}
                           />
                         </div>
@@ -149,8 +168,9 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                           <EmailInput
                             id="email"
                             label="Email Address"
+                            placeholder="example@email.com"
                             leftIcon={Mail}
-                            error={stepSubmitted.has(step) ? errors.email?.message : undefined}
+                            error={(stepSubmitted.has(step) || isSubmitted) ? errors.email?.message : undefined}
                             {...register("email")}
                           />
                         </div>
@@ -161,7 +181,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                             label="Phone Number"
                             placeholder="024XXXXXXX"
                             leftIcon={Phone}
-                            error={stepSubmitted.has(step) ? errors.phone?.message : undefined}
+                            error={(stepSubmitted.has(step) || isSubmitted) ? errors.phone?.message : undefined}
                             {...register("phone")}
                           />
                         </div>
@@ -177,7 +197,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                             ]}
                             value={watch("gender")}
                             onValueChange={(val) => setValue("gender", val as "male" | "female" | "other", { shouldValidate: true })}
-                            error={stepSubmitted.has(step) ? errors.gender?.message : undefined}
+                            error={(stepSubmitted.has(step) || isSubmitted) ? errors.gender?.message : undefined}
                           />
                         </div>
 
@@ -219,7 +239,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                           label="Emergency Contact Name"
                           placeholder="Emergency contact full name"
                           leftIcon={Heart}
-                          error={stepSubmitted.has(step) ? errors.emergencyContactName?.message : undefined}
+                          error={(stepSubmitted.has(step) || isSubmitted) ? errors.emergencyContactName?.message : undefined}
                           {...register("emergencyContactName")}
                         />
                       </div>
@@ -230,7 +250,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                           label="Emergency Contact Phone"
                           placeholder="Emergency Contact Number"
                           leftIcon={Phone}
-                          error={stepSubmitted.has(step) ? errors.emergencyContactPhone?.message : undefined}
+                          error={(stepSubmitted.has(step) || isSubmitted) ? errors.emergencyContactPhone?.message : undefined}
                           {...register("emergencyContactPhone")}
                         />
                       </div>
@@ -260,7 +280,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                           id="password"
                           label="Password"
                           placeholder="********"
-                          error={stepSubmitted.has(step) ? errors.password?.message : undefined}
+                          error={(stepSubmitted.has(step) || isSubmitted) ? errors.password?.message : undefined}
                           {...register("password")}
                         />
                         <PasswordStrengthIndicator password={watch("password") || ""} />
@@ -271,7 +291,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                           id="confirmPassword"
                           label="Confirm Password"
                           placeholder="********"
-                          error={stepSubmitted.has(step) ? errors.confirmPassword?.message : undefined}
+                          error={(stepSubmitted.has(step) || isSubmitted) ? errors.confirmPassword?.message : undefined}
                           {...register("confirmPassword")}
                         />
                       </div>
