@@ -1,5 +1,5 @@
 import axiosInstance from "./axiosInstance";
-import { AddResidentRequest, CreateResidentRequestRequest, FeedbackRequest, MaintenanceRequestDto, PaginatedResponse, RegisterResidentRequest, ResidentDto, ResidentListItemDto, UserDto } from "@/types/dtos";
+import { AddResidentRequest, CreateResidentRequestRequest, DebtorDto, FeedbackRequest, MaintenanceRequestDto, PaginatedResponse, RegisterResidentRequest, ResidentDto, ResidentListItemDto, UserDto } from "@/types/dtos";
 
 export const registerResident = async (payload: RegisterResidentRequest | FormData): Promise<{ data: UserDto }> => {
     const isFormData = payload instanceof FormData;
@@ -68,6 +68,17 @@ export const getResidentsPaginated = async (params?: {
     search?: string;
 }): Promise<PaginatedResponse<ResidentListItemDto>> => {
     const response = await axiosInstance.get("/residents/list", { params });
+    return response.data;
+};
+
+// NEW: Paginated debtors list - efficient API for debtor views
+export const getDebtorsPaginated = async (params?: {
+    hostelId?: string;
+    page?: number;
+    limit?: number;
+    search?: string;
+}): Promise<PaginatedResponse<DebtorDto>> => {
+    const response = await axiosInstance.get("/residents/debtors/list", { params });
     return response.data;
 };
 

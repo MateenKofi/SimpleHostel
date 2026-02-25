@@ -157,6 +157,23 @@ export interface PaginatedResponse<T> {
     };
 }
 
+// Lightweight DTO for debtor list views
+export interface DebtorDto {
+    id: string;
+    userId: string;
+    name: string | null;
+    email: string | null;
+    phone: string | null;
+    studentId: string | null;
+    roomNumber: string | null;
+    roomType: string | null;
+    roomPrice: number;
+    amountPaid: number;
+    balanceOwed: number;
+    status: string;
+    imageUrl: string | null;
+}
+
 export interface PaymentDto {
     id: string;
     amount: number;

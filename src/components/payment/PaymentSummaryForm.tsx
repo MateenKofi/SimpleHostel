@@ -37,21 +37,21 @@ import { useNavigate } from "react-router-dom"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
-import type { ResidentDto, UserDto, ApiError } from "@/types/dtos"
+import type { DebtorDto, ResidentDto, UserDto, ApiError } from "@/types/dtos"
 import { paymentFormSchema, type PaymentInputs } from "@/schemas/paymentSchema"
 
 // Helper function to get resident properties
-const getResidentName = (resident: UserDto | ResidentDto): string =>
+const getResidentName = (resident: UserDto | ResidentDto | DebtorDto): string =>
   (resident as any)?.user?.name || (resident as any)?.name || "";
-const getResidentEmail = (resident: UserDto | ResidentDto): string =>
+const getResidentEmail = (resident: UserDto | ResidentDto | DebtorDto): string =>
   (resident as any)?.user?.email || (resident as any)?.email || "";
-const getResidentPhone = (resident: UserDto | ResidentDto): string =>
+const getResidentPhone = (resident: UserDto | ResidentDto | DebtorDto): string =>
   (resident as any)?.user?.phone || (resident as any)?.phone || "";
-const getResidentStudentId = (resident: UserDto | ResidentDto): string | null =>
+const getResidentStudentId = (resident: UserDto | ResidentDto | DebtorDto): string | null =>
   (resident as any)?.studentId || (resident as any)?.residentProfile?.studentId || null;
-const getResidentCourse = (resident: UserDto | ResidentDto): string | null =>
+const getResidentCourse = (resident: UserDto | ResidentDto | DebtorDto): string | null =>
   (resident as any)?.course || (resident as any)?.residentProfile?.course || null;
-const getResidentGender = (resident: UserDto | ResidentDto): string | null =>
+const getResidentGender = (resident: UserDto | ResidentDto | DebtorDto): string | null =>
   (resident as any)?.user?.gender || (resident as any)?.gender || null;
 
 const PaymentSummaryForm = () => {
