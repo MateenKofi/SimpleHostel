@@ -4,11 +4,13 @@ export interface UserDto {
     name: string;
     role: "resident" | "staff" | "admin" | "super_admin";
     phone: string | null;
+    phoneNumber?: string | null; // Alias for phone (legacy compatibility)
     gender: string | null;
     avatar: string | null;
     imageUrl: string | null;
     accountStatus: string;
     hostelId: string | null;
+    changedPassword?: boolean; // Whether user has changed their password
     hostel?: HostelDto | null;
     adminProfile?: {
         id: string;
@@ -187,6 +189,7 @@ export interface PaymentDto {
     calendarYearId: string;
     roomNumber?: string;
     period?: string; // Academic Year Name
+    authorizationUrl?: string | null; // Paystack authorization URL for retry
     createdAt: string;
 }
 

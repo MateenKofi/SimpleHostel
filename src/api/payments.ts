@@ -41,7 +41,7 @@ export const adminInitiateResidentPayment = async (
  */
 export const verifyTopUpPayment = async (
   reference: string
-): Promise<{ message: string; data: any }> => {
+): Promise<{ message: string; data: unknown }> => {
   const response = await axiosInstance.get("/payments/verify-topup", {
     params: { reference },
   });
@@ -65,5 +65,30 @@ export const verifyPayment = async (reference: string) => {
 
 export const getPaymentByRef = async (reference: string) => {
     const response = await axiosInstance.get(`/payments/get/ref/${reference}`);
+    return response.data;
+};
+
+/**
+ * Retry a pending payment
+ * POST /api/v1/payments/retry/:reference
+ */
+export const retryPayment = async (reference: string): Promise<{
+    message: string;
+    authorizationUrl: string;
+    reference: string;
+}> => {
+    const response = await axiosInstance.post(`/payments/retry/${reference}`);
+    return response.data;
+};
+
+/**
+ * Cancel a pending payment
+ * POST /api/v1/payments/cancel/:reference
+ */
+export const cancelPayment = async (reference: string): Promise<{
+    message: string;
+    data: unknown;
+}> => {
+    const response = await axiosInstance.post(`/payments/cancel/${reference}`);
     return response.data;
 };

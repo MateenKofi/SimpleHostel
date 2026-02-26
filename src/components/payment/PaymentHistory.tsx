@@ -9,14 +9,63 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Receipt } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Receipt, RefreshCw, X } from "lucide-react";
+import { retryPayment, cancelPayment } from "@/api/payments";
+import { toast } from "sonner";
+import { useState } from "react";
 
 interface PaymentHistoryProps {
   payments: PaymentDto[];
   onViewReceipt?: (reference: string) => void;
+  onRefresh?: () => void;
 }
 
-const PaymentHistory: React.FC<PaymentHistoryProps> = ({ payments, onViewReceipt }) => {
+const PaymentHistory: React.FC<PaymentHistoryProps> = ({ payments, onViewReceipt, onRefresh }) => {
+  const [processingPayment, setProcessingPayment] = useState<string | null>(null);
+
+  const handleRetry = async (reference: string) => {
+    if (processingPayment) return;
+    setProcessingPayment(reference);
+
+    try {
+      const result = await retryPayment(reference);
+      toast.success("Redirecting to payment...", {
+        description: "Your payment session has been reinitialized.",
+      });
+      // Redirect to Paystack authorization URL
+      window.location.href = result.authorizationUrl;
+    } catch (error: unknown) {
+      console.error("Retry payment error:", error);
+      const errorMessage = (error as { response?: { data?: { message?: string } }; message?: string })?.response?.data?.message || (error as { message?: string })?.message || "Failed to retry payment";
+      toast.error("Retry Failed", { description: errorMessage });
+    } finally {
+      setProcessingPayment(null);
+    }
+  };
+
+  const handleCancel = async (reference: string) => {
+    if (processingPayment) return;
+    setProcessingPayment(reference);
+
+    try {
+      await cancelPayment(reference);
+      toast.success("Payment cancelled", {
+        description: "Your pending payment has been cancelled.",
+      });
+      // Refresh the payment list
+      onRefresh?.();
+    } catch (error: unknown) {
+      console.error("Cancel payment error:", error);
+      const errorMessage = (error as { response?: { data?: { message?: string } }; message?: string })?.response?.data?.message || (error as { message?: string })?.message || "Failed to cancel payment";
+      toast.error("Cancel Failed", { description: errorMessage });
+    } finally {
+      setProcessingPayment(null);
+    }
+  };
+
+  const isPending = (status: string) => status.toLowerCase() === "pending";
+  const isProcessing = (reference: string) => processingPayment === reference;
   const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
     switch (status.toLowerCase()) {
       case "confirmed":
@@ -93,7 +142,7 @@ const PaymentHistory: React.FC<PaymentHistoryProps> = ({ payments, onViewReceipt
                 <TableHead className="text-right">Total Paid</TableHead>
                 <TableHead className="text-right">Balance</TableHead>
                 <TableHead>Status</TableHead>
-                {onViewReceipt && <TableHead className="text-right">Action</TableHead>}
+                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -121,19 +170,47 @@ const PaymentHistory: React.FC<PaymentHistoryProps> = ({ payments, onViewReceipt
                       {getStatusLabel(payment.status)}
                     </Badge>
                   </TableCell>
-                  {onViewReceipt && payment.status === "confirmed" && (
-                    <TableCell className="text-right">
-                      <button
-                        onClick={() => onViewReceipt(payment.reference)}
-                        className="text-primary hover:underline text-sm"
-                      >
-                        View
-                      </button>
-                    </TableCell>
-                  )}
-                  {onViewReceipt && payment.status !== "confirmed" && (
-                    <TableCell />
-                  )}
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      {/* View receipt for confirmed payments */}
+                      {onViewReceipt && payment.status === "confirmed" && (
+                        <button
+                          onClick={() => onViewReceipt(payment.reference)}
+                          className="text-primary hover:underline text-sm"
+                        >
+                          View
+                        </button>
+                      )}
+                      {/* Retry and Cancel buttons for pending payments */}
+                      {isPending(payment.status) && (
+                        <>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleRetry(payment.reference)}
+                            disabled={isProcessing(payment.reference)}
+                            className="h-7 px-2 text-xs"
+                          >
+                            <RefreshCw className={`w-3 h-3 mr-1 ${isProcessing(payment.reference) ? "animate-spin" : ""}`} />
+                            Retry
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleCancel(payment.reference)}
+                            disabled={isProcessing(payment.reference)}
+                            className="h-7 px-2 text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
+                          >
+                            <X className="w-3 h-3 mr-1" />
+                            Cancel
+                          </Button>
+                        </>
+                      )}
+                      {/* Empty cell for other statuses */}
+                      {!onViewReceipt && payment.status === "confirmed" && <span className="text-muted-foreground text-xs">-</span>}
+                      {!isPending(payment.status) && payment.status !== "confirmed" && <span className="text-muted-foreground text-xs">-</span>}
+                    </div>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

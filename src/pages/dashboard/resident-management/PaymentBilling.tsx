@@ -1,8 +1,9 @@
 "use client"
 
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { getResidentBilling, getPaymentReceipt, downloadAllocationLetterPDF, downloadPaymentReceiptPDF } from "@/api/residents"
-import { Loader, Download, CreditCard, History, Wallet, AlertCircle, FileText, Printer } from "lucide-react"
+import { retryPayment, cancelPayment } from "@/api/payments"
+import { Loader, Download, CreditCard, History, Wallet, AlertCircle, FileText, Printer, RefreshCw, X } from "lucide-react"
 import { toast } from "sonner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import {
@@ -65,6 +66,9 @@ const PaymentBilling = () => {
     const { user, hostelId: storeHostelId } = useAuthStore()
     const userId = user?.id
     const hostelId = storeHostelId || localStorage.getItem("hostelId")
+    const queryClient = useQueryClient()
+
+    const [processingPayment, setProcessingPayment] = useState<string | null>(null)
 
     const { data: billingData, isLoading, isError, refetch } = useQuery<BillingSummary>({
         queryKey: ['resident-billing', userId],
@@ -200,6 +204,49 @@ const PaymentBilling = () => {
         setViewReceiptId(transactionId)
     }
 
+    const handleRetryPayment = async (reference: string) => {
+        if (processingPayment) return
+        setProcessingPayment(reference)
+
+        try {
+            const result = await retryPayment(reference)
+            toast.success("Redirecting to payment...", {
+                description: "Your payment session has been reinitialized.",
+            })
+            // Redirect to Paystack authorization URL
+            window.location.href = result.authorizationUrl
+        } catch (error: any) {
+            console.error("Retry payment error:", error)
+            const errorMessage = error?.response?.data?.message || error?.message || "Failed to retry payment"
+            toast.error("Retry Failed", { description: errorMessage })
+        } finally {
+            setProcessingPayment(null)
+        }
+    }
+
+    const handleCancelPayment = async (reference: string) => {
+        if (processingPayment) return
+        setProcessingPayment(reference)
+
+        try {
+            await cancelPayment(reference)
+            toast.success("Payment cancelled", {
+                description: "Your pending payment has been cancelled.",
+            })
+            // Refresh the payment list
+            queryClient.invalidateQueries({ queryKey: ['resident-billing', userId] })
+        } catch (error: any) {
+            console.error("Cancel payment error:", error)
+            const errorMessage = error?.response?.data?.message || error?.message || "Failed to cancel payment"
+            toast.error("Cancel Failed", { description: errorMessage })
+        } finally {
+            setProcessingPayment(null)
+        }
+    }
+
+    const isPending = (status: string) => status.toLowerCase() === "pending"
+    const isProcessing = (reference: string) => processingPayment === reference
+
     if (isLoading) {
         return (
             <div className="flex items-center justify-center h-[50vh]">
@@ -308,7 +355,7 @@ const PaymentBilling = () => {
                                         <th className="px-4 py-3 text-left font-medium">Method</th>
                                         <th className="px-4 py-3 text-left font-medium">Amount</th>
                                         <th className="px-4 py-3 text-left font-medium">Status</th>
-                                        <th className="px-4 py-3 text-right font-medium">Action</th>
+                                        <th className="px-4 py-3 text-right font-medium">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -317,8 +364,8 @@ const PaymentBilling = () => {
                                             <td className="px-4 py-3 font-medium">
                                                 {format(new Date(tx.createdAt), 'MMM dd, yyyy')}
                                             </td>
-                                            <td className="px-4 py-3 text-muted-foreground font-mono">
-                                                {tx.reference}
+                                            <td className="px-4 py-3 text-muted-foreground font-mono text-xs">
+                                                {tx.reference.slice(0, 12)}...
                                             </td>
                                             <td className="px-4 py-3 capitalize">
                                                 {(tx.method || "").replace('_', ' ')}
@@ -334,13 +381,52 @@ const PaymentBilling = () => {
                                                 </Badge>
                                             </td>
                                             <td className="px-4 py-3 text-right">
-                                                <Button variant="ghost" size="sm"
-                                                    onClick={() => handleViewReceipt(tx.id)}
-                                                    className="h-8 gap-1"
-                                                >
-                                                    <Download className="w-3.5 h-3.5" />
-                                                    <span className="sr-only sm:not-sr-only">Receipt</span>
-                                                </Button>
+                                                <div className="flex items-center justify-end gap-1">
+                                                    {/* Download receipt for confirmed payments */}
+                                                    {(tx.status === 'confirmed' || tx.status === 'success') && (
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="sm"
+                                                            onClick={() => handleViewReceipt(tx.id)}
+                                                            className="h-8 gap-1"
+                                                            title="Download Receipt"
+                                                        >
+                                                            <Download className="w-3.5 h-3.5" />
+                                                            <span className="sr-only sm:not-sr-only">Receipt</span>
+                                                        </Button>
+                                                    )}
+                                                    {/* Retry and Cancel buttons for pending payments */}
+                                                    {isPending(tx.status) && (
+                                                        <>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                onClick={() => handleRetryPayment(tx.reference)}
+                                                                disabled={isProcessing(tx.reference)}
+                                                                className="h-8 gap-1 text-xs"
+                                                                title="Retry Payment"
+                                                            >
+                                                                <RefreshCw className={`w-3.5 h-3.5 ${isProcessing(tx.reference) ? "animate-spin" : ""}`} />
+                                                                <span className="hidden sm:inline">Retry</span>
+                                                            </Button>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                onClick={() => handleCancelPayment(tx.reference)}
+                                                                disabled={isProcessing(tx.reference)}
+                                                                className="h-8 gap-1 text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
+                                                                title="Cancel Payment"
+                                                            >
+                                                                <X className="w-3.5 h-3.5" />
+                                                                <span className="hidden sm:inline">Cancel</span>
+                                                            </Button>
+                                                        </>
+                                                    )}
+                                                    {/* Show dash for other statuses */}
+                                                    {!isPending(tx.status) && tx.status !== 'confirmed' && tx.status !== 'success' && (
+                                                        <span className="text-muted-foreground text-xs">-</span>
+                                                    )}
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}
