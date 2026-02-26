@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { verifyTopUpPayment } from "@/api/payments";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Loader2,
   CheckCircle2,
@@ -36,6 +37,7 @@ interface PaymentVerificationData {
 const PaymentResult = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const reference = searchParams.get("reference");
   const status = searchParams.get("status"); // 'success' or 'failed'
 
@@ -174,7 +176,12 @@ const PaymentResult = () => {
           )}
 
           <div className="flex flex-col gap-2 pt-4">
-            <Button onClick={() => navigate("/dashboard/payment-billing")} className="w-full">
+            <Button onClick={() => {
+              // Invalidate billing queries to fetch fresh data
+              queryClient.invalidateQueries({ queryKey: ['resident-billing'] });
+              queryClient.invalidateQueries({ queryKey: ['receipt'] });
+              navigate("/dashboard/payment-billing");
+            }} className="w-full">
               <Receipt className="w-4 h-4 mr-2" />
               View Billing History
             </Button>
