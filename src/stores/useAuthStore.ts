@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { toast } from "sonner";
 import { jwtDecode } from "jwt-decode";
-import { Users } from "@/helper/types/types";
+import type { UserDto } from "@/types/dtos";
 import { loginUser, logoutUser, getCurrentUser } from "@/api/auth";
 import { getUserById } from "@/api/users";
 import axios from "axios";
@@ -27,7 +27,7 @@ type UserStore = {
     role: string | null;
     hostelId: string | null;
     isProcessing: boolean;
-    user: Users | null;
+    user: UserDto | null;
     changedPassword: boolean | undefined;
 
     // Actions
@@ -163,7 +163,7 @@ export const useAuthStore = create<UserStore>()(
             fetchUser: async (userId: string) => {
                 try {
                     // Note: Authorization header is handled by axiosInstance interceptor
-                    const user: Users = await getUserById(userId);
+                    const user: UserDto = await getUserById(userId);
 
                     // Extract hostelId from either direct field or nested hostel object
                     const userHostelId = user.hostelId || user.hostel?.id || null;
@@ -174,7 +174,7 @@ export const useAuthStore = create<UserStore>()(
                         imageUrl: user.imageUrl || null,
                         hostelId: userHostelId,
                         user,
-                        changedPassword: user.changedPassword,
+                        changedPassword: (user as any).changedPassword,
                     });
 
                     // Update localStorage if hostelId changed

@@ -3,12 +3,9 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { initPayment } from "@/api/payments"
 import { getHostelById } from "@/api/hostels"
-import { getResidentById } from "@/api/residents"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { useState } from "react"
-import { Label } from "@/components/ui/label"
-import { cn } from "@/lib/utils"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
   Loader2,
@@ -16,8 +13,6 @@ import {
   User,
   Home,
   CreditCard,
-  CheckCircle2,
-  AlertCircle,
   Calendar,
   GraduationCap,
   Mail,
@@ -25,42 +20,36 @@ import {
   Users,
   Flag,
   BadgeCent,
-  Receipt,
   BadgeCheck,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Form } from "@/components/ui/form"
-import { useAddedResidentStore } from "@/stores/useAddedResidentStore"
+import { useAuthStore } from "@/stores/useAuthStore"
 import { useSelectedRoomStore } from "@/stores/useSelectedRoomStore"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useNavigate } from "react-router-dom"
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
+import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
-import type { DebtorDto, ResidentDto, UserDto, ApiError } from "@/types/dtos"
+import type { UserDto, ApiError } from "@/types/dtos"
 import { paymentFormSchema, type PaymentInputs } from "@/schemas/paymentSchema"
 
-// Helper function to get resident properties
-const getResidentName = (resident: UserDto | ResidentDto | DebtorDto): string =>
-  (resident as any)?.user?.name || (resident as any)?.name || "";
-const getResidentEmail = (resident: UserDto | ResidentDto | DebtorDto): string =>
-  (resident as any)?.user?.email || (resident as any)?.email || "";
-const getResidentPhone = (resident: UserDto | ResidentDto | DebtorDto): string =>
-  (resident as any)?.user?.phone || (resident as any)?.phone || "";
-const getResidentStudentId = (resident: UserDto | ResidentDto | DebtorDto): string | null =>
-  (resident as any)?.studentId || (resident as any)?.residentProfile?.studentId || null;
-const getResidentCourse = (resident: UserDto | ResidentDto | DebtorDto): string | null =>
-  (resident as any)?.course || (resident as any)?.residentProfile?.course || null;
-const getResidentGender = (resident: UserDto | ResidentDto | DebtorDto): string | null =>
-  (resident as any)?.user?.gender || (resident as any)?.gender || null;
+// Helper functions to get user properties from UserDto (logged-in user)
+const getUserName = (user: UserDto | null): string => user?.name || "";
+const getUserEmail = (user: UserDto | null): string => user?.email || "";
+const getUserPhone = (user: UserDto | null): string => user?.phone || "";
+const getUserStudentId = (user: UserDto | null): string | null =>
+  user?.residentProfile?.studentId || null;
+const getUserCourse = (user: UserDto | null): string | null =>
+  user?.residentProfile?.course || null;
+const getUserGender = (user: UserDto | null): string | null => user?.gender || null;
 
 const PaymentSummaryForm = () => {
   const navigate = useNavigate()
   const room = useSelectedRoomStore((s) => s.room)
-  const resident = useAddedResidentStore((s) => s.resident)
+  const user = useAuthStore((s) => s.user)
 
   // Redirect if required data is missing
-  if (!room || !resident) {
+  if (!room || !user) {
     toast.error("Booking information not found. Please start the booking process again.")
     navigate("/find-hostel")
     return null
@@ -79,18 +68,6 @@ const PaymentSummaryForm = () => {
     },
     enabled: !!room?.hostelId,
   })
-
-  const { data: residentData } = useQuery({
-    queryKey: ["resident", resident?.id],
-    queryFn: async () => {
-      if (!resident?.id) return null
-      const res = await getResidentById(resident.id)
-      return res.data
-    },
-    enabled: !!resident?.id,
-  })
-
-  const activeResident = residentData || resident
 
   const form = useForm<PaymentInputs>({
     resolver: zodResolver(paymentFormSchema),
@@ -118,7 +95,7 @@ const PaymentSummaryForm = () => {
         // Endpoint: /api/v1/payment/init
         const payload = {
           roomId: room.id,
-          residentId: resident.id,
+          residentId: user.residentProfile?.id || user.id,
           initialPayment: data.paymentAmount,
         }
         const resData = await initPayment(payload)
@@ -159,7 +136,7 @@ const PaymentSummaryForm = () => {
   }
 
   return (
-    <div className="min-h-screen px-4 py-8 bg-gray-50/50 sm:px-6 lg:px-8">
+    <div className="min-h-screen px-4 py-8 bg-muted/50 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto">
         <Button
           variant="ghost"
@@ -173,19 +150,19 @@ const PaymentSummaryForm = () => {
 
         <Card className="overflow-hidden border shadow-sm">
           {/* Header Section */}
-          <div className="p-6 border-b bg-white">
+          <div className="p-6 border-b bg-card">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <Avatar className="w-16 h-16 border border-gray-100">
+                <Avatar className="w-16 h-16 border border-border">
                   <AvatarFallback className="text-xl bg-primary/10 text-primary font-bold">
-                    {getInitials(getResidentName(activeResident) || "Resident")}
+                    {getInitials(getUserName(user) || "Resident")}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <h1 className="text-2xl font-bold text-gray-900">{getResidentName(activeResident)}</h1>
+                  <h1 className="text-2xl font-bold text-foreground">{getUserName(user)}</h1>
                   <div className="flex items-center gap-2 text-muted-foreground">
                     <GraduationCap className="w-4 h-4" />
-                    <span className="text-sm">{getResidentStudentId(activeResident) || "Student ID"}</span>
+                    <span className="text-sm">{getUserStudentId(user) || "Student ID"}</span>
                   </div>
                 </div>
               </div>
@@ -201,32 +178,32 @@ const PaymentSummaryForm = () => {
               <div className="space-y-4">
                 <div className="flex items-center gap-2 pb-2 border-b">
                   <User className="w-4 h-4 text-primary" />
-                  <h3 className="font-semibold text-gray-900">Resident Details</h3>
+                  <h3 className="font-semibold text-foreground">Resident Details</h3>
                 </div>
                 <dl className="space-y-3 text-sm">
                   <div className="flex justify-between">
                     <dt className="text-muted-foreground flex items-center gap-2">
                       <GraduationCap className="w-3.5 h-3.5" /> Course
                     </dt>
-                    <dd className="font-medium text-right">{getResidentCourse(activeResident) || "-"}</dd>
+                    <dd className="font-medium text-right">{getUserCourse(user) || "-"}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-muted-foreground flex items-center gap-2">
                       <Mail className="w-3.5 h-3.5" /> Email
                     </dt>
-                    <dd className="font-medium text-right">{getResidentEmail(activeResident) || "-"}</dd>
+                    <dd className="font-medium text-right">{getUserEmail(user) || "-"}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-muted-foreground flex items-center gap-2">
                       <Phone className="w-3.5 h-3.5" /> Phone
                     </dt>
-                    <dd className="font-medium text-right">{getResidentPhone(activeResident) || "-"}</dd>
+                    <dd className="font-medium text-right">{getUserPhone(user) || "-"}</dd>
                   </div>
                   <div className="flex justify-between">
                     <dt className="text-muted-foreground flex items-center gap-2">
                       <Users className="w-3.5 h-3.5" /> Gender
                     </dt>
-                    <dd className="font-medium text-right">{getResidentGender(activeResident) || "-"}</dd>
+                    <dd className="font-medium text-right">{getUserGender(user) || "-"}</dd>
                   </div>
                 </dl>
               </div>
@@ -236,7 +213,7 @@ const PaymentSummaryForm = () => {
                 <div className="space-y-4">
                   <div className="flex items-center gap-2 pb-2 border-b">
                     <Home className="w-4 h-4 text-primary" />
-                    <h3 className="font-semibold text-gray-900">Room Details</h3>
+                    <h3 className="font-semibold text-foreground">Room Details</h3>
                   </div>
                   <dl className="space-y-3 text-sm">
                     <div className="flex justify-between">
@@ -277,7 +254,7 @@ const PaymentSummaryForm = () => {
                     <p className="text-muted-foreground text-sm">Choose your preferred payment method</p>
                   </div>
 
-                  <div className="bg-slate-50 p-6 rounded-xl border space-y-4">
+                  <div className="bg-muted p-6 rounded-xl border space-y-4">
                     <div className="flex justify-between items-end pb-4 border-b">
                       <span className="text-sm font-medium text-muted-foreground">Total Room Fees</span>
                       <span className="text-2xl font-bold">GH₵{totalAmount?.toLocaleString()}</span>
@@ -285,7 +262,7 @@ const PaymentSummaryForm = () => {
 
                     {hostel?.allowPartialPayment && (
                       <div className="py-4">
-                        <div className="flex items-start space-x-3 p-4 border rounded-lg bg-gray-50/50 hover:bg-gray-50 transition-colors">
+                        <div className="flex items-start space-x-3 p-4 border rounded-lg bg-muted/50 hover:bg-muted transition-colors">
                           <Checkbox
                             id="partial-payment"
                             checked={paymentType === "partial"}
@@ -297,7 +274,7 @@ const PaymentSummaryForm = () => {
                           <div className="grid gap-1.5 leading-none">
                             <label
                               htmlFor="partial-payment"
-                              className="text-sm font-semibold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-gray-900"
+                              className="text-sm font-semibold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer text-foreground"
                             >
                               Make a Partial Deposit
                             </label>
@@ -310,29 +287,14 @@ const PaymentSummaryForm = () => {
                     )}
 
                     <div className="flex justify-between items-center pt-2">
-                      <span className="font-bold text-gray-900">Amount Due Now</span>
+                      <span className="font-bold text-foreground">Amount Due Now</span>
                       <span className="text-3xl font-bold text-primary">
                         GH₵{form.watch("paymentAmount")?.toLocaleString()}
                       </span>
                     </div>
                   </div>
 
-                  <Alert className={cn(
-                    "border-l-4",
-                    paymentType === "full" ? "border-l-green-500 bg-green-50/50" : "border-l-yellow-500 bg-yellow-50/50"
-                  )}>
-                    <AlertCircle className={cn(
-                      "h-4 w-4",
-                      paymentType === "full" ? "text-green-600" : "text-yellow-600"
-                    )} />
-                    <AlertTitle>Note</AlertTitle>
-                    <AlertDescription className="text-xs text-muted-foreground mt-1">
-                      {paymentType === "full"
-                        ? "You are clearing all fees for this room."
-                        : `You are paying a deposit. The remaining balance of GH₵${(totalAmount - partialAmount).toLocaleString()} will be recorded against your account.`
-                      }
-                    </AlertDescription>
-                  </Alert>
+                 
 
                   {/* Hidden field so RHF knows about it */}
                   <input type="hidden" {...form.register("paymentAmount", { valueAsNumber: true })} />
@@ -359,7 +321,7 @@ const PaymentSummaryForm = () => {
               </form>
             </Form>
           </CardContent>
-          <CardFooter className="bg-gray-50 border-t p-4 px-8 flex justify-between text-xs text-muted-foreground">
+          <CardFooter className="bg-muted border-t p-4 px-8 flex justify-between text-xs text-muted-foreground">
             <div className="flex items-center gap-2">
               <Calendar className="w-3.5 h-3.5" />
               <span>{new Date().toLocaleDateString()}</span>
