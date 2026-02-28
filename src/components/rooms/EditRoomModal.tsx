@@ -4,7 +4,7 @@ import Modal from "@/components/Modal";
 import { openModals, listeners } from "@/components/Modal";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { roomSchema, ROOM_TYPE_CAPACITY, ROOM_STATUS } from "@/schemas/roomSchema";
+import { roomSchema, ROOM_TYPE_CAPACITY, ROOM_STATUS, GENDER_OPTIONS } from "@/schemas/roomSchema";
 import type { RoomFormData } from "@/schemas/roomSchema";
 import type { Amenity, Room } from "@/helper/types/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -24,6 +24,7 @@ import { SelectInput } from "@/components/form";
 type RoomForm = Omit<Room, "amenities"> & {
   images: File[];
   amenities: string[];
+  gender: string;
 };
 
 type EditRoomModalProps = {
@@ -87,6 +88,7 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
       formData.append("block", data.block || "");
       formData.append("floor", data.floor?.toString() || "");
       formData.append("type", data.type.toUpperCase());
+      formData.append("gender", data.gender.toUpperCase());
       formData.append("maxCap", data.maxOccupancy.toString());
       formData.append("price", data.basePrice.toString());
       formData.append("description", data.description || "");
@@ -279,6 +281,8 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
             />
           </div>
 
+          
+
           {/* Maximum Occupancy (Read-only) */}
           <div className="flex flex-col gap-2">
             <Label htmlFor="maxOccupancy">Maximum Occupancy</Label>
@@ -311,6 +315,21 @@ const EditRoomModal = ({ onClose, formdata }: EditRoomModalProps) => {
           </div>
         </div>
 
+        {/* Gender */}
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="gender">Gender</Label>
+            <SelectInput
+              value={watch("gender")}
+              onValueChange={(value) => setValue("gender", value as RoomFormData["gender"], { shouldValidate: true })}
+              placeholder="Select Gender"
+              options={GENDER_OPTIONS.map((gender) => ({
+                value: gender,
+                label: gender,
+              }))}
+              error={errors.gender?.message}
+            />
+          </div>
+              
         {/* Status */}
         <div className="flex flex-col gap-2">
           <Label htmlFor="status">Status</Label>

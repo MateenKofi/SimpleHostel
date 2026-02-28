@@ -114,18 +114,22 @@ const RoomTable = () => {
       center: true,
 
       grow: 2,
-      cell: (row: Room) => (
-        <span
-          className={`w-full px-1 py-1 rounded text-xs text-center text-nowrap ${row.status === "available"
-            ? "bg-green-200 text-green-800"
-            : row.status === "occupied"
-              ? "bg-red-200 text-red-800"
-              : "bg-yellow-200 text-yellow-800"
-            }`}
-        >
-          {row.status}
-        </span>
-      ),
+      cell: (row: Room) => {
+        // Use effectiveStatus (calculated from actual occupancy) or fall back to status
+        const effectiveStatus = (row as any).effectiveStatus || row.status;
+        return (
+          <span
+            className={`w-full px-1 py-1 rounded text-xs text-center text-nowrap ${effectiveStatus === "available"
+              ? "bg-green-200 text-green-800"
+              : effectiveStatus === "occupied"
+                ? "bg-red-200 text-red-800"
+                : "bg-yellow-200 text-yellow-800"
+              }`}
+          >
+            {effectiveStatus}
+          </span>
+        );
+      },
     },
     {
       name: "Capacity",

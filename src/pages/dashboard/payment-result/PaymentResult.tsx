@@ -56,7 +56,7 @@ const PaymentResult = () => {
       try {
         const result = await verifyTopUpPayment(reference);
         if (result.data) {
-          setPaymentData(result.data);
+          setPaymentData(result.data as PaymentVerificationData);
         }
       } catch (err: unknown) {
         console.error("Payment verification error:", err);

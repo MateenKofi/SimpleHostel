@@ -1,11 +1,12 @@
 import React, { useState, useMemo } from 'react';
 import DataTable, { TableColumn } from 'react-data-table-component';
-import { Download, Search, FileX, SearchX } from 'lucide-react';
+import { Download, Search, FileX, SearchX, X } from 'lucide-react';
 import TableLoader from './loaders/TableLoader';
 import CustomeRefetch from './CustomRefetch';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
+import { cn } from '@/lib/utils';
 
 interface DataTableProps<T> {
   title?: string;
@@ -212,15 +213,34 @@ function CustomDataTable<T>({
         <CardHeader>
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             {title && <CardTitle>{title}</CardTitle>}
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <Search className="h-4 w-4 text-muted-foreground shrink-0" />
+            <div className="relative w-full sm:w-auto max-w-xs">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
               <Input
                 type="text"
                 placeholder="Search..."
                 value={searchText}
                 onChange={handleSearchChange}
-                className="max-w-xs"
+                className={cn(
+                  "pl-9 pr-8 h-10 rounded-lg border-2",
+                  "focus:border-primary focus:ring-primary/20",
+                  "transition-all duration-200",
+                  "bg-background",
+                  searchText && "border-primary/50"
+                )}
               />
+              {searchText && (
+                <button
+                  onClick={() => {
+                    setSearchText('');
+                    if (serverSide && onSearchChange) {
+                      onSearchChange('');
+                    }
+                  }}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              )}
             </div>
           </div>
         </CardHeader>
@@ -267,15 +287,34 @@ function CustomDataTable<T>({
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             {searchable && (
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <Search className="h-4 w-4 text-muted-foreground shrink-0" />
+              <div className="relative w-full sm:w-auto max-w-xs">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                 <Input
                   type="text"
                   placeholder="Search..."
                   value={searchText}
                   onChange={handleSearchChange}
-                  className="max-w-xs"
+                  className={cn(
+                    "pl-9 pr-8 h-10 rounded-lg border-2",
+                    "focus:border-primary focus:ring-primary/20",
+                    "transition-all duration-200",
+                    "bg-background",
+                    searchText && "border-primary/50"
+                  )}
                 />
+                {searchText && (
+                  <button
+                    onClick={() => {
+                      setSearchText('');
+                      if (serverSide && onSearchChange) {
+                        onSearchChange('');
+                      }
+                    }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                )}
               </div>
             )}
 
