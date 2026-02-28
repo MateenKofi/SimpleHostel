@@ -92,3 +92,30 @@ export const cancelPayment = async (reference: string): Promise<{
     const response = await axiosInstance.post(`/payments/cancel/${reference}`);
     return response.data;
 };
+
+/**
+ * Initialize cash payment
+ * POST /api/v1/payments/init-cash
+ * Allows users to initiate cash payment (bypasses Paystack)
+ */
+export const initCashPayment = async (payload: {
+    roomId: string;
+    residentId: string;
+    initialPayment: number;
+}): Promise<{ reference: string; message: string }> => {
+    const response = await axiosInstance.post("/payments/init-cash", payload);
+    return response.data;
+};
+
+/**
+ * Initialize cash top-up payment
+ * POST /api/v1/payments/cash-topup
+ * Allows residents to initiate cash top-up payment
+ */
+export const cashTopupPayment = async (payload: TopupPaymentRequest): Promise<{
+    reference: string;
+    message: string;
+}> => {
+    const response = await axiosInstance.post("/payments/cash-topup", payload);
+    return response.data;
+};

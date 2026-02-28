@@ -14,10 +14,8 @@ import {
   GraduationCap,
   Mail,
   Phone,
-  Users,
   Flag,
   BadgeCent,
-  Receipt,
   BadgeCheck,
   AlertCircle,
 } from "lucide-react";
@@ -28,8 +26,6 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import {
   Card,
-  CardHeader,
-  CardTitle,
   CardContent,
   CardFooter,
 } from "@/components/ui/card";

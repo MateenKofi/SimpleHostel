@@ -49,6 +49,7 @@ const Report = lazy(() => import('./pages/dashboard/report/Report'));
 // Component routes - lazy loaded
 const PaymentSummaryForm = lazy(() => import("./components/payment/PaymentSummaryForm"));
 const TopUpPaymentForm = lazy(() => import("./components/payment/TopUpPaymentForm"));
+const CashPaymentConfirmation = lazy(() => import("./components/payment/CashPaymentConfirmation"));
 const AddResident = lazy(() => import("./components/resident/AddResident"));
 const ViewRoom = lazy(() => import("./components/rooms/ViewRoom"));
 const PaymentSuccess = lazy(() => import('@components/payment-success'));
@@ -94,6 +95,7 @@ function App() {
           <Route path="find/:id/room" element={<FindRoom />} />
           <Route path="payment" element={<PaymentSummaryForm />} />
           <Route path="payment-success" element={<PaymentSuccess />} />
+          <Route path="payment-cash" element={<CashPaymentConfirmation />} />
         </Route>
 
         {/* Landing Routes */}

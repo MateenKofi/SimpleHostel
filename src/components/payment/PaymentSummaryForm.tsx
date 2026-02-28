@@ -1,11 +1,10 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { initPayment } from "@/api/payments"
 import { getHostelById } from "@/api/hostels"
 import { useMutation, useQuery } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { useState } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
   Loader2,
@@ -48,17 +47,11 @@ const PaymentSummaryForm = () => {
   const room = useSelectedRoomStore((s) => s.room)
   const user = useAuthStore((s) => s.user)
 
-  // Redirect if required data is missing
-  if (!room || !user) {
-    toast.error("Booking information not found. Please start the booking process again.")
-    navigate("/find-hostel")
-    return null
-  }
-
-  const totalAmount = room.price
+  const totalAmount = room?.price || 0
 
   const [paymentType, setPaymentType] = useState<"full" | "partial">("full")
 
+  // All hooks must be called before any early returns
   const { data: hostel } = useQuery({
     queryKey: ["hostel", room?.hostelId],
     queryFn: async () => {
@@ -80,6 +73,14 @@ const PaymentSummaryForm = () => {
     ? (totalAmount * (hostel.partialPaymentPercentage || 50)) / 100
     : totalAmount
 
+  // Redirect effect - must be before early return
+  useEffect(() => {
+    if (!room || !user) {
+      toast.error("Booking information not found. Please start the booking process again.")
+      navigate("/find-hostel")
+    }
+  }, [room, user, navigate])
+
   useEffect(() => {
     if (paymentType === "full") {
       form.setValue("paymentAmount", totalAmount, { shouldValidate: true })
@@ -91,25 +92,24 @@ const PaymentSummaryForm = () => {
   const mutation = useMutation({
     mutationFn: async (data: PaymentInputs) => {
       try {
-        // Payload strictly following "Resident Booking and Payment Guide"
-        // Endpoint: /api/v1/payment/init
         const payload = {
-          roomId: room.id,
-          residentId: user.residentProfile?.id || user.id,
+          roomId: room?.id || "",
+          residentId: user?.residentProfile?.id || user?.id || "",
           initialPayment: data.paymentAmount,
         }
+
         const resData = await initPayment(payload)
 
         // Guide says: Returns a authorizationUrl (Paystack checkout page) and a reference.
         if (resData?.authorizationUrl) {
-          toast(resData.message || "Redirecting to payment...");
+          toast(resData.message || "Redirecting to payment...")
           window.location.href = resData.authorizationUrl;
         } else if (resData?.paymentUrl?.authorizationUrl) {
           // Fallback for previous structure if backend hasn't fully switched but we are pushing for v1
-          toast(resData.message || "Redirecting to payment...");
+          toast(resData.message || "Redirecting to payment...")
           window.location.href = resData.paymentUrl.authorizationUrl;
         } else {
-          toast.error("Payment initiation failed: No authorization URL received");
+          toast.error("Payment initiation failed: No authorization URL received")
         }
 
         return resData
@@ -121,6 +121,11 @@ const PaymentSummaryForm = () => {
       }
     },
   })
+
+  // Early return after all hooks
+  if (!room || !user) {
+    return null
+  }
 
   const onSubmit = (values: PaymentInputs) => {
     mutation.mutate(values)
@@ -251,7 +256,7 @@ const PaymentSummaryForm = () => {
                 <div className="space-y-6 max-w-xl mx-auto">
                   <div className="text-center space-y-2">
                     <h2 className="text-xl font-bold">Payment Summary</h2>
-                    <p className="text-muted-foreground text-sm">Choose your preferred payment method</p>
+                    <p className="text-muted-foreground text-sm">Complete your booking payment</p>
                   </div>
 
                   <div className="bg-muted p-6 rounded-xl border space-y-4">
