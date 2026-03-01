@@ -85,7 +85,7 @@ const HostelListingForm = () => {
       formData.append("manager", data.managerName.toUpperCase());
       formData.append("email", data.email);
       formData.append("phone", data.phone);
-      formData.append("ghanaCard", data.ghanaCard);
+      formData.append("ghCard", data.ghanaCard);
 
       images.forEach((img: ImageFile) => {
         if (img.file) {
