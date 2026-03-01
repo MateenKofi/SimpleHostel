@@ -21,19 +21,28 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
-import { HousePlus, Edit, Trash2, MoreHorizontal, User, MapPin, Eye, RotateCcw } from "lucide-react"
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs"
+import { HousePlus, Edit, Trash2, MoreHorizontal, User, MapPin, Eye, RotateCcw, CheckCircle2, Clock } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import { useAddedResidentStore } from "@/stores/useAddedResidentStore"
 import type { ResidentDto } from "@/types/dtos"
 import type { ApiError } from "@/types/dtos"
-import { useState } from "react"
+import { useState, useMemo } from "react"
+import { isResidentVerified, getVerificationBadge } from "@/helper/residentUtils"
+
+type VerificationTab = "all" | "verified" | "unverified"
 
 const ResidentTable = () => {
   const navigate = useNavigate()
   const setResident = useAddedResidentStore((state) => state.setResident)
   const hostelId = localStorage.getItem("hostelId")
 
-  // State for dialogs
+  // State for verification tabs and dialogs
+  const [activeTab, setActiveTab] = useState<VerificationTab>("all")
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [restoreDialogOpen, setRestoreDialogOpen] = useState(false)
   const [residentToDelete, setResidentToDelete] = useState<ResidentDto | null>(null)
@@ -216,6 +225,25 @@ const ResidentTable = () => {
       cell: (row: ResidentDto) => getStatusBadge(row.status),
     },
     {
+      name: "Verification",
+      sortable: true,
+      grow: 0,
+      selector: (row: ResidentDto) => (isResidentVerified(row) ? "verified" : "unverified"),
+      cell: (row: ResidentDto) => {
+        const { variant, label } = getVerificationBadge(row)
+        return (
+          <div className="flex items-center gap-1.5">
+            {isResidentVerified(row) ? (
+              <CheckCircle2 className="w-4 h-4 text-primary" />
+            ) : (
+              <Clock className="w-4 h-4 text-muted-foreground" />
+            )}
+            <Badge variant={variant as any}>{label}</Badge>
+          </div>
+        )
+      },
+    },
+    {
       name: "Actions",
       width: "80px",
       cell: (row: ResidentDto) => (
@@ -287,18 +315,75 @@ const ResidentTable = () => {
   ]
 
   console.log("Rendering ResidentTable with residents:", residents, "length:", residents?.length)
+
+  // Filter residents based on verification status
+  const filteredResidents = useMemo(() => {
+    if (!residents) return []
+
+    return residents.filter((resident: any) => {
+      if (activeTab === "all") return true
+      if (activeTab === "verified") return isResidentVerified(resident)
+      if (activeTab === "unverified") return !isResidentVerified(resident)
+      return true
+    })
+  }, [residents, activeTab])
+
+  // Get counts for each tab
+  const tabCounts = useMemo(() => {
+    if (!residents) return { all: 0, verified: 0, unverified: 0 }
+    return {
+      all: residents.length,
+      verified: residents.filter((r: any) => isResidentVerified(r)).length,
+      unverified: residents.filter((r: any) => !isResidentVerified(r)).length,
+    }
+  }, [residents])
+
   return (
     <>
+      {/* Verification Tabs */}
+      <div className="mb-4">
+        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as VerificationTab)}>
+          <TabsList className="grid w-full max-w-md grid-cols-3">
+            <TabsTrigger value="all" className="flex items-center gap-2">
+              All Residents
+              <Badge variant="secondary" className="text-xs">
+                {tabCounts.all}
+              </Badge>
+            </TabsTrigger>
+            <TabsTrigger value="verified" className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4" />
+              Verified
+              <Badge variant="secondary" className="text-xs">
+                {tabCounts.verified}
+              </Badge>
+            </TabsTrigger>
+            <TabsTrigger value="unverified" className="flex items-center gap-2">
+              <Clock className="w-4 h-4" />
+              Unverified
+              <Badge variant="secondary" className="text-xs">
+                {tabCounts.unverified}
+              </Badge>
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+
       <CustomDataTable
-        title="Resident Table"
+        title={`Resident Table - ${activeTab === "all" ? "All Residents" : activeTab === "verified" ? "Verified" : "Unverified"}`}
         columns={columns}
-        data={residents || []}
+        data={filteredResidents}
         isLoading={isLoading}
         isError={isError}
         refetch={refetch}
         searchable
-        emptyStateMessage="No residents found. Add residents to get started."
-        exportFilename="residents.csv"
+        emptyStateMessage={
+          activeTab === "all"
+            ? "No residents found. Add residents to get started."
+            : activeTab === "verified"
+              ? "No verified residents found."
+              : "No unverified residents found."
+        }
+        exportFilename={`residents-${activeTab}.csv`}
       />
 
       {/* Delete Dialog */}

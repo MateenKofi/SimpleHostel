@@ -26,13 +26,25 @@ const FeaturedHostels = () => {
 
   // Get 2 random hostels
   const randomHostels = React.useMemo(() => {
-    if (!hostels || hostels.length < 1) return [];
+    if (!hostels || hostels.length === 0) return [];
+
     const published = hostels.filter(
-      (h: Hostel) => h?.state === "published" && h?.rooms?.length > 1
+      (h: Hostel) => h?.state === "published" && h?.rooms?.length > 0
     );
-    return [...published].sort(() => Math.random() - 0.5).slice(0, 2);
+
+    if (published.length <= 4) return published;
+
+    const randomIndexes = new Set<number>();
+
+    while (randomIndexes.size < 4) {
+      const randomIndex = Math.floor(Math.random() * published.length);
+      randomIndexes.add(randomIndex);
+    }
+
+    return Array.from(randomIndexes).map((index) => published[index]);
   }, [hostels]);
 
+  console.log('randomHostels', randomHostels)
   const handleViewAll = () => {
     navigate("/find-hostel");
   };
@@ -63,7 +75,7 @@ const FeaturedHostels = () => {
         {/* Hostels Grid */}
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {[...Array(2)].map((_, idx) => (
+            {[...Array(4)].map((_, idx) => (
               <div
                 key={idx}
                 className="aspect-[3/4] rounded-xl overflow-hidden animate-pulse bg-muted relative"
@@ -94,7 +106,7 @@ const FeaturedHostels = () => {
         ) : randomHostels.length > 0 ? (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-              {randomHostels.map((hostel, index) => (
+              {randomHostels.map((hostel: Hostel, index: number) => (
                 <div key={hostel.id || index} className="w-full">
                   <FeaturedHostelCard hostel={hostel} index={index} />
                 </div>
