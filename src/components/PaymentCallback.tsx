@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { verifyPayment } from "@/api/payments";
 import { toast } from "sonner";
 import { useAuthStore } from "@/stores/useAuthStore";
@@ -7,6 +8,7 @@ import { useAuthStore } from "@/stores/useAuthStore";
 const PaymentCallback = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(true);
   const { user, fetchUser } = useAuthStore();
 
@@ -21,6 +23,8 @@ const PaymentCallback = () => {
         .then((res) => {
           if (res.verified) {
             toast.success("Payment verified successfully!");
+            // Invalidate current-user query to trigger refetch
+            queryClient.invalidateQueries({ queryKey: ["current-user"] });
             // Refresh user data to get updated hostelId after payment
             if (user?.id) {
               fetchUser(user.id).catch((err) => {

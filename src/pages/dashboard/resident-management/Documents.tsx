@@ -1,6 +1,6 @@
 "use client"
 
-import { FileText, Download, ShieldCheck, FileCheck } from "lucide-react"
+import { FileText, Download, ShieldCheck, FileCheck, Loader, AlertCircle } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import SEOHelmet from "@/components/SEOHelmet"
@@ -8,13 +8,39 @@ import { useQuery } from "@tanstack/react-query"
 import { getResidentAllocationDetails } from "@/api/residents"
 import { useNavigate } from "react-router-dom"
 
+import { useCurrentUser } from "@/hooks/useCurrentUser"
 import NoHostelAssigned from "@/components/resident/NoHostelAssigned"
 import { PageHeader } from "@/components/layout/PageHeader"
 
 const Documents = () => {
     const userId = localStorage.getItem("userId")
-    const hostelId = localStorage.getItem("hostelId")
+    const { user, isLoading: isUserLoading, isError: isUserError } = useCurrentUser()
+    const hostel = user?.hostel
     const navigate = useNavigate();
+
+    // Show loading state while fetching user data
+    if (isUserLoading) {
+        return (
+            <div className="flex items-center justify-center h-[50vh]">
+                <Loader className="w-8 h-8 animate-spin text-primary" />
+            </div>
+        )
+    }
+
+    // Show error state if user data fetch fails
+    if (isUserError) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[50vh] space-y-4">
+                <AlertCircle className="w-12 h-12 text-destructive" />
+                <p className="text-muted-foreground">Failed to load user data.</p>
+            </div>
+        )
+    }
+
+    // Show NoHostelAssigned if user has no hostel assigned
+    if (!hostel) {
+        return <NoHostelAssigned />
+    }
 
     // Fetch allocation details which contains rulesUrl
     const { data: allocation, isLoading: isAllocationLoading } = useQuery({
@@ -23,12 +49,8 @@ const Documents = () => {
             const responseData = await getResidentAllocationDetails();
             return responseData?.data;
         },
-        enabled: !!hostelId && hostelId !== 'undefined'
+        enabled: !!hostel?.id
     })
-
-    if (!hostelId || hostelId === 'undefined' || hostelId === 'null') {
-        return <NoHostelAssigned />
-    }
 
     const documents = [
         {

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { Loader, Bell } from "lucide-react"
+import { Loader, Bell, AlertCircle } from "lucide-react"
 import { getAnnouncements } from "@/api/announcements"
 import { AnnouncementCard, AnnouncementFilters } from "@/components/announcement"
 import SEOHelmet from "@/components/SEOHelmet"
@@ -10,10 +10,35 @@ import NoHostelAssigned from "@/components/resident/NoHostelAssigned"
 import type { Announcement, AnnouncementCategory, AnnouncementPriority, AnnouncementStatus } from "@/types/announcement"
 import { filterAnnouncements } from "@/helper/announcementUtils"
 import { PageHeader } from "@/components/layout/PageHeader"
+import { useCurrentUser } from "@/hooks/useCurrentUser"
 
 const Announcements = () => {
-    const hostelId = localStorage.getItem("hostelId")
-    const isInvalidHostelId = !hostelId || hostelId === "undefined" || hostelId === "null"
+    const { user, isLoading: isUserLoading, isError: isUserError } = useCurrentUser()
+    const hostel = user?.hostel
+
+    // Show loading state while fetching user data
+    if (isUserLoading) {
+        return (
+            <div className="flex items-center justify-center h-[50vh]">
+                <Loader className="w-8 h-8 animate-spin text-primary" />
+            </div>
+        )
+    }
+
+    // Show error state if user data fetch fails
+    if (isUserError) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[50vh] space-y-4">
+                <AlertCircle className="w-12 h-12 text-destructive" />
+                <p className="text-muted-foreground">Failed to load user data.</p>
+            </div>
+        )
+    }
+
+    // Show NoHostelAssigned if user has no hostel assigned
+    if (!hostel) {
+        return <NoHostelAssigned />
+    }
 
     // Filters state
     const [filters, setFilters] = useState<{
@@ -35,17 +60,12 @@ const Announcements = () => {
             const responseData = await getAnnouncements()
             return responseData?.data || []
         },
-        enabled: !isInvalidHostelId,
     })
 
     // Filter announcements
     const filteredAnnouncements = announcements
         ? filterAnnouncements(announcements, filters)
         : []
-
-    if (isInvalidHostelId) {
-        return <NoHostelAssigned />
-    }
 
     return (
         <div className="container max-w-7xl py-6 mx-auto">

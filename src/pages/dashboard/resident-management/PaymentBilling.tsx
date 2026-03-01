@@ -27,6 +27,7 @@ import jsPDF from "jspdf"
 import html2canvas from "html2canvas"
 import ReceiptTemplate from "@/components/payment/ReceiptTemplate"
 import { useAuthStore } from "@/stores/useAuthStore"
+import { useCurrentUser } from "@/hooks/useCurrentUser"
 import NoHostelAssigned from "@/components/resident/NoHostelAssigned"
 import { PageHeader } from "@/components/layout/PageHeader"
 
@@ -63,12 +64,37 @@ interface BillingSummary {
 
 const PaymentBilling = () => {
     const navigate = useNavigate()
-    const { user, hostelId: storeHostelId } = useAuthStore()
-    const userId = user?.id
-    const hostelId = storeHostelId || localStorage.getItem("hostelId")
+    const { user: authUser, hostelId: storeHostelId } = useAuthStore()
+    const { user, isLoading: isUserLoading, isError: isUserError } = useCurrentUser()
+    const userId = user?.id || authUser?.id
+    const hostel = user?.hostel
     const queryClient = useQueryClient()
 
     const [processingPayment, setProcessingPayment] = useState<string | null>(null)
+
+    // Show loading state while fetching user data
+    if (isUserLoading) {
+        return (
+            <div className="flex items-center justify-center h-[50vh]">
+                <Loader className="w-8 h-8 animate-spin text-primary" />
+            </div>
+        )
+    }
+
+    // Show error state if user data fetch fails
+    if (isUserError) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[50vh] space-y-4">
+                <AlertCircle className="w-12 h-12 text-destructive" />
+                <p className="text-muted-foreground">Failed to load user data.</p>
+            </div>
+        )
+    }
+
+    // Show NoHostelAssigned if user has no hostel assigned
+    if (!hostel) {
+        return <NoHostelAssigned />
+    }
 
     const { data: billingData, isLoading, isError, refetch } = useQuery<BillingSummary>({
         queryKey: ['resident-billing', userId],
@@ -83,13 +109,9 @@ const PaymentBilling = () => {
 
             return data
         },
-        enabled: !!userId && !!hostelId && hostelId !== 'undefined' && hostelId !== 'null',
+        enabled: !!userId && !!hostel?.id,
         retry: 1
     })
-
-    if (!hostelId || hostelId === 'undefined' || hostelId === 'null') {
-        return <NoHostelAssigned />
-    }
 
     const [viewReceiptId, setViewReceiptId] = useState<string | null>(null);
     const [downloadingReceipt, setDownloadingReceipt] = useState<string | null>(null);

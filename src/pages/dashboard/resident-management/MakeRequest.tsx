@@ -49,6 +49,7 @@ interface CreateMaintenanceRequestDto {
 import { MaintenanceRequestDto as MaintenanceRequest } from "@/types/dtos"
 import type { ApiError } from "@/types/dtos"
 
+import { useCurrentUser } from "@/hooks/useCurrentUser"
 import NoHostelAssigned from "@/components/resident/NoHostelAssigned"
 
 const MakeRequest = () => {
@@ -62,6 +63,7 @@ const MakeRequest = () => {
     const [images, setImages] = useState<File[]>([])
     const [editMode, setEditMode] = useState(false)
     const [selectedRequest, setSelectedRequest] = useState<MaintenanceRequest | null>(null)
+    const { user, isLoading: isUserLoading, isError: isUserError } = useCurrentUser()
 
     // Pre-fill form when editing
     useEffect(() => {
@@ -74,14 +76,27 @@ const MakeRequest = () => {
     }, [editMode, selectedRequest, setValue])
     const queryClient = useQueryClient()
 
-    // Check for hostel assignment
-    const hostelId = localStorage.getItem("hostelId")
-    // Alternatively can fetch user profile if localStorage is unreliable, but assuming it's set on login
+    // Show loading state while fetching user data
+    if (isUserLoading) {
+        return (
+            <div className="flex items-center justify-center h-[50vh]">
+                <Loader className="w-8 h-8 animate-spin text-primary" />
+            </div>
+        )
+    }
 
-    // Check if hostelId is valid (not null, undefined, "undefined", or "null")
-    const isInvalidHostelId = !hostelId || hostelId === 'undefined' || hostelId === 'null'
+    // Show error state if user data fetch fails
+    if (isUserError) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[50vh] space-y-4">
+                <AlertCircle className="w-12 h-12 text-destructive" />
+                <p className="text-muted-foreground">Failed to load user data.</p>
+            </div>
+        )
+    }
 
-    if (isInvalidHostelId) {
+    // Show NoHostelAssigned if user has no hostel assigned
+    if (!user?.hostel) {
         return <NoHostelAssigned />
     }
 

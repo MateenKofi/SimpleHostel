@@ -1,0 +1,6 @@
+src/components/resident/ResidentTable.tsx(241,20): error TS2322: Type 'string' is not assignable to type '"default" | "destructive" | "outline" | "secondary" | null | undefined'.
+src/components/resident/ResidentTable.tsx(323,30): error TS7006: Parameter 'resident' implicitly has an 'any' type.
+src/components/resident/ResidentTable.tsx(336,35): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/components/resident/ResidentTable.tsx(337,37): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/pages/landing-page/component/FeaturedHostels.tsx(109,35): error TS7006: Parameter 'hostel' implicitly has an 'any' type.
+src/pages/landing-page/component/FeaturedHostels.tsx(109,43): error TS7006: Parameter 'index' implicitly has an 'any' type.

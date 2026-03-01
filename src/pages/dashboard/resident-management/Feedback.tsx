@@ -3,7 +3,7 @@
 import { useForm, SubmitHandler } from "react-hook-form"
 import { useMutation } from "@tanstack/react-query"
 import { submitFeedback } from "@/api/residents"
-import { Loader, Star, Send, MessageSquare } from "lucide-react"
+import { Loader, Star, Send, MessageSquare, AlertCircle } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
@@ -26,16 +26,35 @@ interface CreateFeedbackDto {
     category: string
 }
 
+import { useCurrentUser } from "@/hooks/useCurrentUser"
 import NoHostelAssigned from "@/components/resident/NoHostelAssigned"
 import { PageHeader } from "@/components/layout/PageHeader"
 
 const Feedback = () => {
     const [rating, setRating] = useState(0)
-    // Check for hostel assignment
-    const hostelId = localStorage.getItem("hostelId")
-    const isInvalidHostelId = !hostelId || hostelId === 'undefined' || hostelId === 'null'
+    const { user, isLoading: isUserLoading, isError: isUserError } = useCurrentUser()
 
-    if (isInvalidHostelId) {
+    // Show loading state while fetching user data
+    if (isUserLoading) {
+        return (
+            <div className="flex items-center justify-center h-[50vh]">
+                <Loader className="w-8 h-8 animate-spin text-primary" />
+            </div>
+        )
+    }
+
+    // Show error state if user data fetch fails
+    if (isUserError) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[50vh] space-y-4">
+                <AlertCircle className="w-12 h-12 text-destructive" />
+                <p className="text-muted-foreground">Failed to load user data.</p>
+            </div>
+        )
+    }
+
+    // Show NoHostelAssigned if user has no hostel assigned
+    if (!user?.hostel) {
         return <NoHostelAssigned />
     }
 

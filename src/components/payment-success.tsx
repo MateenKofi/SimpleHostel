@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
+import { useQueryClient } from "@tanstack/react-query"
 import { getPaymentByRef } from "@/api/payments"
 import { toast } from "sonner"
 import {
@@ -83,6 +84,7 @@ const iconContainerInfo = "p-2.5 rounded-xl bg-gradient-to-br from-forest-green-
 const PaymentSuccess = () => {
   const location = useLocation()
   const navigate = useNavigate()
+  const queryClient = useQueryClient()
   const [payment, setPayment] = useState<PaymentData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [copied, setCopied] = useState(false)
@@ -114,6 +116,8 @@ const PaymentSuccess = () => {
         if (paymentData) {
           setPayment(paymentData)
           toast.success("Payment verified successfully!")
+          // Invalidate current-user query to trigger refetch
+          queryClient.invalidateQueries({ queryKey: ["current-user"] })
           // Refresh user data to get updated hostelId after payment
           if (user?.id) {
             fetchUser(user.id).catch((err) => {
