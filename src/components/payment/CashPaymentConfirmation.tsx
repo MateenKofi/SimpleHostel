@@ -1,5 +1,4 @@
 import { useNavigate, useSearchParams } from "react-router-dom"
-import { useNavigate, useSearchParams } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
 import { getPaymentByRef } from "@/api/payments"
 import { Card, CardContent } from "@/components/ui/card"
