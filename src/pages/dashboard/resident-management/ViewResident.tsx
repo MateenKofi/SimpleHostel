@@ -437,30 +437,46 @@ const ViewResident = () => {
                       <p className="font-semibold text-lg">
                         {resident.roomPrice
                           ? `GH₵ ${Number(resident.roomPrice).toLocaleString()}`
-                          : "N/A"}
+                          : resident.room?.price
+                            ? `GH₵ ${Number(resident.room.price).toLocaleString()}`
+                            : "N/A"}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground mb-1">Amount Paid</p>
                       <p className="font-semibold text-lg text-emerald-600">
-                        {resident.amountPaid
+                        {resident.amountPaid !== null && resident.amountPaid !== undefined
                           ? `GH₵ ${Number(resident.amountPaid).toLocaleString()}`
                           : "GH₵ 0"}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground mb-1">Balance Owed</p>
-                      <p className={`font-semibold text-lg ${resident.balanceOwed && resident.balanceOwed > 0 ? "text-destructive" : "text-emerald-600"}`}>
+                      <p className={`font-semibold text-lg ${((resident.balanceOwed !== null && resident.balanceOwed !== undefined && resident.balanceOwed > 0) ||
+                        (resident.balanceOwed === undefined && (resident.roomPrice || resident.room?.price) && (Number(resident.roomPrice || resident.room?.price) - Number(resident.amountPaid || 0) > 0)))
+                        ? "text-destructive" : "text-emerald-600"}`}>
                         {resident.balanceOwed !== undefined && resident.balanceOwed !== null
                           ? `GH₵ ${Number(resident.balanceOwed).toLocaleString()}`
-                          : "N/A"}
+                          : (resident.roomPrice || resident.room?.price) !== undefined
+                            ? `GH₵ ${(Number(resident.roomPrice || resident.room?.price) - Number(resident.amountPaid || 0)).toLocaleString()}`
+                            : "N/A"}
                       </p>
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground mb-1">Payment Status</p>
-                      <Badge variant={resident.balanceOwed === 0 ? "default" : "destructive"}>
-                        {resident.balanceOwed === 0 ? "Fully Paid" : "Payment Due"}
-                      </Badge>
+                      {(() => {
+                        const balance = resident.balanceOwed !== undefined && resident.balanceOwed !== null
+                          ? Number(resident.balanceOwed)
+                          : (resident.roomPrice || resident.room?.price) !== undefined
+                            ? Number(resident.roomPrice || resident.room?.price) - Number(resident.amountPaid || 0)
+                            : null;
+
+                        return (
+                          <Badge variant={balance === 0 ? "default" : "destructive"}>
+                            {balance === 0 ? "Fully Paid" : balance === null ? "Unknown" : "Payment Due"}
+                          </Badge>
+                        );
+                      })()}
                     </div>
                   </div>
                 </CardContent>

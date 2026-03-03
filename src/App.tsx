@@ -38,6 +38,7 @@ const DeptorsList = lazy(() => import("./pages/dashboard/deptors-list/DeptorsLis
 const ApproveHostel = lazy(() => import("./pages/dashboard/approvals/Approve-Hostel"));
 const ProfileForm = lazy(() => import("./pages/dashboard/profile/Profile"));
 const CalendarYear = lazy(() => import("./pages/dashboard/calendarYear/CalendarYear"));
+const CalendarYearDetail = lazy(() => import("./pages/dashboard/calendarYear/CalendarYearDetail"));
 const Transactions = lazy(() => import("./pages/dashboard/transactions/Transactions"));
 const Users = lazy(() => import("./pages/dashboard/users/Users"));
 const HostelManagement = lazy(() => import("./pages/dashboard/hostelManagement/HostelManagement"));
@@ -113,6 +114,7 @@ function App() {
             <Route index element={<Dashboard />} />
             <Route path="room-management" element={<RoomManagementTab />} />
             <Route path="calendar-year-management" element={<CalendarYear />} />
+            <Route path="calendar-year/:id" element={<CalendarYearDetail />} />
             <Route path="room-assignment" element={<RoomAssignmentAndPayment />} />
             <Route path="resident-management" element={<ResidentManagement />} />
             <Route path="resident-management/add-resident" element={<AddResident />} />

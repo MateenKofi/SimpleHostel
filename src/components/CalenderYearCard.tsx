@@ -36,8 +36,8 @@ const CurrentYearCard = ({ currentYear }: { currentYear: CalendarYearT | undefin
                 <span className="flex gap-2 items-center">
                   <Users/>
                  <h3> Residents</h3>
-                  </span> 
-                <span>{currentYear?.Residents?.length}</span>
+                  </span>
+                <span>{currentYear?.residents?.length}</span>
                 </span>
             </div>
           </div>

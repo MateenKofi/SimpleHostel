@@ -1,3 +1,58 @@
+export type ResidentProfile = {
+  id: string;
+  userId: string;
+  hostelId: string | null;
+  roomId: string | null;
+  studentId: string | null;
+  course: string | null;
+  roomNumber: string | null;
+  status: string;
+  checkInDate: Date | null;
+  checkOutDate: Date | null;
+  emergencyContactName: string | null;
+  emergencyContactPhone: string | null;
+  emergencyContactRelationship: string | null;
+  delFlag: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+    phone: string | null;
+    gender: string | null;
+    avatar: string | null;
+    imageUrl: string | null;
+  };
+  room?: {
+    id: string;
+    name: string;
+    roomNumber: string;
+    type: string;
+    price: number;
+  };
+  payments?: any[];
+};
+
+export type HistoricalResident = {
+  id: string;
+  residentId: string;
+  roomId: string;
+  calendarYearId: string;
+  amountPaid: number;
+  roomPrice: number;
+  createdAt: Date;
+  updatedAt: Date;
+  resident?: ResidentProfile;
+  room?: {
+    id: string;
+    name: string;
+    roomNumber: string;
+    type: string;
+    price: number;
+  };
+};
+
 export type Resident = {
   id?: string | null;
   name: string;
@@ -184,8 +239,8 @@ export type CalendarYearT = {
     totalRevenue: number;
     totalExpenses: number;
   };
-  HistoricalResident?: Resident[];
-  Residents?: Resident[];
+  historicalResidents?: HistoricalResident[];
+  residents?: ResidentProfile[];
 };
 
 export type Users = {

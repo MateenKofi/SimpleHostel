@@ -63,13 +63,8 @@ const TopUpPaymentForm = () => {
 
   const mutation = useMutation({
     mutationFn: async () => {
-      console.log('Payment mutation triggered');
-      console.log('Summary data:', summary);
-      console.log('Recent payment:', recentPayment);
-
       if (!summary) {
         const errorMsg = "Unable to load billing information";
-        console.error(errorMsg);
         toast.error(errorMsg);
         throw new Error(errorMsg);
       }
@@ -77,21 +72,18 @@ const TopUpPaymentForm = () => {
       // Validate residentId
       if (!residentId) {
         const errorMsg = "Resident profile not found. Please contact support.";
-        console.error(errorMsg);
         toast.error(errorMsg);
         throw new Error(errorMsg);
       }
 
       if (!roomId) {
         const errorMsg = "Room assignment not found. Please contact support.";
-        console.error(errorMsg);
         toast.error(errorMsg);
         throw new Error(errorMsg);
       }
 
       if (!summary.balanceOwed || summary.balanceOwed <= 0) {
         const errorMsg = "No outstanding balance to pay";
-        console.error(errorMsg);
         toast.error(errorMsg);
         throw new Error(errorMsg);
       }
@@ -102,15 +94,13 @@ const TopUpPaymentForm = () => {
           roomId,
           initialPayment: summary.balanceOwed,
         };
-
-        console.log('Payment payload:', payload);
         const resData = await topupPayment(payload);
-        console.log('Payment response:', resData);
+
 
         // Handle different response formats
         const authUrl = resData?.authorizationUrl ||
-                       (typeof resData?.paymentUrl === 'string' ? resData.paymentUrl : null) ||
-                       resData?.paymentUrl?.authorizationUrl;
+          (typeof resData?.paymentUrl === 'string' ? resData.paymentUrl : null) ||
+          resData?.paymentUrl?.authorizationUrl;
 
         if (authUrl) {
           toast(resData.message || "Redirecting to payment...");
@@ -121,7 +111,7 @@ const TopUpPaymentForm = () => {
 
         return resData;
       } catch (error: unknown) {
-        console.error('Payment error:', error);
+
         const err = error as ApiError;
         const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || "An unexpected error occurred";
         toast.error(errorMessage);
@@ -131,7 +121,6 @@ const TopUpPaymentForm = () => {
   });
 
   const handlPayment = () => {
-    console.log('Pay Now button clicked');
     mutation.mutate();
   };
 

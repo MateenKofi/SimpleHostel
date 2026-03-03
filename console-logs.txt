@@ -1,0 +1,18 @@
+components\form\example.tsx:      console.log("Form data:", data)
+components\ImageSlider.tsx:  // Remove the console.log that was logging each image
+components\payment\TopUpPaymentForm.tsx:      console.log('Payment mutation triggered');
+components\payment\TopUpPaymentForm.tsx:      console.log('Summary data:', summary);
+components\payment\TopUpPaymentForm.tsx:      console.log('Recent payment:', recentPayment);
+components\payment\TopUpPaymentForm.tsx:        console.log('Payment payload:', payload);
+components\payment\TopUpPaymentForm.tsx:        console.log('Payment response:', resData);
+components\payment\TopUpPaymentForm.tsx:    console.log('Pay Now button clicked');
+components\payment-success.tsx:    console.log("Payment Success URL params:", {
+components\payment-success.tsx:        console.log("Payment API response:", response)
+components\resident\ResidentTable.tsx:      console.log("Fetching residents for hostelId:", hostelId)
+components\resident\ResidentTable.tsx:      console.log("API Response:", responseData)
+components\resident\ResidentTable.tsx:      console.log("Residents data:", responseData?.data)
+components\resident\ResidentTable.tsx:      console.log("Final residents array:", residentsData)
+components\resident\ResidentTable.tsx:      console.log("Residents array length:", residentsData.length)
+components\visitor\ActiveVisitor.tsx:  console.log("data from active visitor component: ", ActiveVisitors)
+index.ts:    console.log(`Server running on port ${PORT}`);
+pages\landing-page\component\find-room\Find-Room.tsx:        console.log("No existing resident profile found or error fetching analytics.");

@@ -30,8 +30,6 @@ const ActiveVisitor = () => {
     return active.status === 'active';
   }) : [];
 
-  console.log("data from active visitor component: ", ActiveVisitors)
-
   const CheckOutVisitor = useMutation({
     mutationFn: async (id: string) => {
       try {

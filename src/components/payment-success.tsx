@@ -95,14 +95,7 @@ const PaymentSuccess = () => {
     // Check both reference and trxref (Paystack uses both)
     const reference = queryParams.get("reference") || queryParams.get("trxref")
 
-    console.log("Payment Success URL params:", {
-      reference: queryParams.get("reference"),
-      trxref: queryParams.get("trxref"),
-      finalRef: reference,
-    })
-
     if (!reference) {
-      console.error("No payment reference found in URL")
       toast.error("No payment reference found.")
       setIsLoading(false)
       return
@@ -111,7 +104,6 @@ const PaymentSuccess = () => {
     // Fetch full payment details
     getPaymentByRef(reference)
       .then((response) => {
-        console.log("Payment API response:", response)
         const paymentData = response?.data
         if (paymentData) {
           setPayment(paymentData)
@@ -120,16 +112,14 @@ const PaymentSuccess = () => {
           queryClient.invalidateQueries({ queryKey: ["current-user"] })
           // Refresh user data to get updated hostelId after payment
           if (user?.id) {
-            fetchUser(user.id).catch((err) => {
-              console.error("Failed to refresh user data:", err)
+            fetchUser(user.id).catch((_err) => {
             })
           }
         } else {
           throw new Error("No payment data received")
         }
       })
-      .catch((err) => {
-        console.error("Payment verification error:", err)
+      .catch((_err) => {
         toast.error("Failed to verify payment. Please contact support if the issue persists.")
       })
       .finally(() => {

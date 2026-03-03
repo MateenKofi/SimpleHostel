@@ -30,8 +30,8 @@ const HistoricalYearsList = ({ historicalYears }: { historicalYears: CalendarYea
                 <span className="flex gap-2 items-center">
                   <Users/>
                  <h3> Residents</h3>
-                  </span> 
-                <span>{year?.HistoricalResident?.length}</span>
+                  </span>
+                <span>{year?.historicalResidents?.length}</span>
                 </span>
               </div>
             </div>

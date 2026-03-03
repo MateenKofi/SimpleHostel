@@ -1,13 +1,12 @@
 import { CalendarYearT } from "@/helper/types/types";
 import { useMutation } from "@tanstack/react-query";
 import { deleteCalendarYear, endCalendarYear } from "@/api/calendar";
-import { Edit, Eye, Ellipsis, Trash2, Power } from "lucide-react";
+import { Edit, Ellipsis, Trash2, Power } from "lucide-react";
 import React, { useState } from "react";
 import CustomDataTable from "../CustomDataTable";
 import { toast } from "sonner";
 import EditCalendarYearModal from "./EditCalendarYearModal";
 import { useModal } from "../Modal";
-import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,7 +35,6 @@ const CalendarYearTable = ({
   isError,
   refetch,
 }: CalendarYearTableProps) => {
-  const navigate = useNavigate();
   const { open: openEditModal, close: closeEditModal } = useModal("edit-calendar-year-modal");
   const [selectedYear, setSelectedYear] = useState<CalendarYearT>({} as CalendarYearT);
   const hostelId = localStorage.getItem("hostelId") || "";
@@ -81,11 +79,6 @@ const CalendarYearTable = ({
   const handleEditYear = (year: CalendarYearT) => {
     setSelectedYear(year);
     openEditModal();
-  };
-
-  // Navigate to year details
-  const handleViewYear = (year: CalendarYearT) => {
-    navigate(`/dashboard/calendar-year/${year.id}`);
   };
 
   // End an active calendar year
@@ -143,8 +136,8 @@ const CalendarYearTable = ({
       name: "Residents",
       selector: (row: CalendarYearRow) => {
         const count = row.isActive
-          ? row.Residents?.length || 0
-          : row.HistoricalResident?.length || 0;
+          ? row.residents?.length || 0
+          : row.historicalResidents?.length || 0;
         return count;
       },
       sortable: true,
@@ -161,15 +154,6 @@ const CalendarYearTable = ({
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <button
-                className="flex items-center justify-center w-full gap-2 p-2 text-xs text-white bg-black rounded hover:bg-gray-800"
-                onClick={() => handleViewYear(row)}
-              >
-                <Eye className="w-4 h-4" />
-                <span>View</span>
-              </button>
-            </DropdownMenuItem>
             <DropdownMenuItem>
               <button
                 className="flex items-center justify-center w-full gap-2 p-2 text-xs text-white bg-blue-600 rounded hover:bg-blue-700"

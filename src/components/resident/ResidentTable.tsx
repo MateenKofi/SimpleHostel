@@ -75,13 +75,8 @@ const ResidentTable = () => {
   } = useQuery({
     queryKey: ["residents", hostelId],
     queryFn: async () => {
-      console.log("Fetching residents for hostelId:", hostelId)
       const responseData = await getHostelResidents(hostelId!)
-      console.log("API Response:", responseData)
-      console.log("Residents data:", responseData?.data)
       const residentsData = responseData?.data ?? []
-      console.log("Final residents array:", residentsData)
-      console.log("Residents array length:", residentsData.length)
       return residentsData
     },
     enabled: !!hostelId,
@@ -188,21 +183,13 @@ const ResidentTable = () => {
       ),
     },
     {
-      name: "Student ID",
-      selector: (row: ResidentDto) => row.studentId || "N/A",
-      sortable: true,
-      grow: 0,
-    },
-    {
       name: "Phone",
       selector: (row: ResidentDto) => row.user?.phone || row.phone || "N/A",
       sortable: true,
-      grow: 0,
     },
     {
       name: "Room",
       sortable: true,
-      grow: 0,
       selector: (row: ResidentDto) => row.room?.roomNumber || row.room?.number || row.roomNumber || "N/A",
       cell: (row: ResidentDto) =>
         row.room ? (
@@ -220,14 +207,12 @@ const ResidentTable = () => {
     {
       name: "Status",
       sortable: true,
-      grow: 0,
       selector: (row: ResidentDto) => row.status,
       cell: (row: ResidentDto) => getStatusBadge(row.status),
     },
     {
       name: "Verification",
       sortable: true,
-      grow: 0,
       selector: (row: ResidentDto) => (isResidentVerified(row) ? "verified" : "unverified"),
       cell: (row: ResidentDto) => {
         const { variant, label } = getVerificationBadge(row)
@@ -314,7 +299,6 @@ const ResidentTable = () => {
     },
   ]
 
-  console.log("Rendering ResidentTable with residents:", residents, "length:", residents?.length)
 
   // Filter residents based on verification status
   const filteredResidents = useMemo(() => {

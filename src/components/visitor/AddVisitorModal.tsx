@@ -48,13 +48,15 @@ const AddVisitorModal = ({ open, onOpenChange }: AddVisitorModalProps) => {
     resolver: zodResolver(VisitorFormSchema),
   });
 
-  // Fetch residents for dropdown
+  // Fetch residents for dropdown (only active residents)
   const { data: residents, isLoading: isLoadingResidents } = useQuery({
     queryKey: ["residents", hostelId],
     queryFn: async () => {
       if (!hostelId) return [];
       const responseData = await getHostelResidents(hostelId);
-      return responseData?.data ?? [];
+      // Filter to only show active residents
+      const allResidents = responseData?.data ?? [];
+      return allResidents.filter((resident: ResidentDto) => resident.checkInDate !== null && resident.status === "active");
     },
     enabled: !!hostelId && open,
   });

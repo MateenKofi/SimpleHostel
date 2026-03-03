@@ -44,7 +44,6 @@ const FeaturedHostels = () => {
     return Array.from(randomIndexes).map((index) => published[index]);
   }, [hostels]);
 
-  console.log('randomHostels', randomHostels)
   const handleViewAll = () => {
     navigate("/find-hostel");
   };

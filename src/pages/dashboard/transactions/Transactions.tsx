@@ -3,7 +3,7 @@ import AdminTransactions from "@/components/transactions/AdminTransactions";
 import SuperAdminTransaction from "@/components/transactions/SuperAdminTransaction";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { Receipt } from "lucide-react";
+import { BadgeCent } from "lucide-react";
 
 const Transactions = () => {
   const { user } = useAuthStore();
@@ -17,7 +17,7 @@ const Transactions = () => {
       <PageHeader
         title="Transactions"
         subtitle="View and manage all payment transactions"
-        icon={Receipt}
+        icon={BadgeCent}
         sticky={true}
       />
       <main className="flex-1 p-4 md:p-8">

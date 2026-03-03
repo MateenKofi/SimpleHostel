@@ -95,18 +95,18 @@ const AdminReport = () => {
   if (!isReportDataLoading && !selectedYear && AcademicYears.length > 0) {
     return (
       <div className="w-full min-h-[60vh] flex items-center justify-center">
-        <div className="text-center p-8 max-w-md">
+        <div className="text-center p-8 max-w-md border-2 border-dashed border-border/60 hover:border-primary/60 bg-muted/20 rounded-2xl transition-all duration-300">
           <div className="inline-flex p-4 rounded-2xl bg-gradient-to-br from-forest-green-50 to-sage-green-50 dark:from-forest-green-950/20 dark:to-sage-green-950/10 mb-6">
             <BarChart3 className="h-10 w-10 text-forest-green-600 dark:text-forest-green-400" />
           </div>
           <h2 className="text-2xl font-bold text-foreground mb-2">
-            Select Academic Year
+            Select Calendar Year
           </h2>
-          <p className="text-muted-foreground mb-6">
+          <p className="text-muted-foreground mb-6 max-w-xs mx-auto">
             Choose an academic year to view comprehensive performance reports
           </p>
           <SelectInput
-            placeholder="Select Academic Year"
+            placeholder="Select Calendar Year"
             options={yearOptions}
             value={undefined}
             onValueChange={setSelectedYear}
