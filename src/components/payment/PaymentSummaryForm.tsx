@@ -29,6 +29,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useNavigate } from "react-router-dom"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { backendRoomTypeToDisplay } from "@/helper/roomTypeHelper"
 import type { UserDto, ApiError } from "@/types/dtos"
 import { paymentFormSchema, type PaymentInputs } from "@/schemas/paymentSchema"
 
@@ -237,7 +238,7 @@ const PaymentSummaryForm = () => {
                       <dt className="text-muted-foreground flex items-center gap-2">
                         <Users className="w-3.5 h-3.5" /> Type
                       </dt>
-                      <dd className="font-medium capitalize">{room.type}</dd>
+                      <dd className="font-medium">{backendRoomTypeToDisplay(room.type)}</dd>
                     </div>
                     <div className="flex justify-between">
                       <dt className="text-muted-foreground flex items-center gap-2">

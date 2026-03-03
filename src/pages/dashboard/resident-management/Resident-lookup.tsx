@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { toast } from "sonner"
 import { ResidentDto } from "@/types/dtos"
 import { verifyResidentAccessCode, checkInResident } from "@/api/residents"
+import { backendRoomTypeToDisplay } from "@/helper/roomTypeHelper"
 import { useNavigate } from "react-router-dom"
 import {
   AlertDialog,
@@ -311,8 +312,8 @@ const ResidentLookup = () => {
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <p className="text-xs text-muted-foreground mb-1">Type</p>
-                            <Badge variant="secondary" className="capitalize">
-                              {foundResident.room?.type}
+                            <Badge variant="secondary">
+                              {backendRoomTypeToDisplay(foundResident.room?.type)}
                             </Badge>
                           </div>
                           <div>

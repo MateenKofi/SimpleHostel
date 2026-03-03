@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { getCurrentCalendarYear, getHistoricalCalendarYears } from "@/api/calendar";
 import { CalendarYearT } from "@/helper/types/types";
 import SEOHelmet from "@/components/SEOHelmet";
+import { backendRoomTypeToDisplay } from "@/helper/roomTypeHelper";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Calendar, CalendarClock, Users, BadgeCent, ArrowLeft, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -133,7 +134,7 @@ const CalendarYearDetail = () => {
     },
     {
       name: "Room Type",
-      selector: (row: any) => row.roomType,
+      selector: (row: any) => backendRoomTypeToDisplay(row.roomType),
       sortable: true,
     },
     {

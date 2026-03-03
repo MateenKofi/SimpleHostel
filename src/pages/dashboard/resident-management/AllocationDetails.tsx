@@ -13,6 +13,7 @@ import html2canvas from "html2canvas";
 import { toast } from "sonner";
 import { AllocationDetails } from "@/helper/types/types";
 import { PageHeader } from "@/components/layout/PageHeader";
+import { backendRoomTypeToDisplay } from "@/helper/roomTypeHelper";
 
 const AllocationDetailsPage = () => {
     const navigate = useNavigate();
@@ -196,7 +197,7 @@ const AllocationDetailsPage = () => {
                                 </div>
                                 <div className="flex justify-between border-b pb-2">
                                     <span className="text-gray-500">Accommodation Type</span>
-                                    <span className="font-bold capitalize">{details.roomType}</span>
+                                    <span className="font-bold">{backendRoomTypeToDisplay(details.roomType)}</span>
                                 </div>
                                 <div className="flex justify-between border-b pb-2">
                                     <span className="text-gray-500">Allocation Period</span>

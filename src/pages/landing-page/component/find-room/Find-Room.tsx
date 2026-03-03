@@ -23,6 +23,7 @@ import {
   Dialog,
   DialogContent,
 } from "@/components/ui/dialog";
+import { backendRoomTypeToDisplay } from "@/helper/roomTypeHelper";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import RoomCard from "@/components/rooms/RoomCard";
@@ -391,7 +392,7 @@ const FindRoom = () => {
                   <BedDouble className="w-4 h-4 sm:w-5 sm:h-5 text-primary flex-shrink-0" />
                   <div>
                     <p className="text-xs text-muted-foreground">Room Type</p>
-                    <p className="font-medium text-sm capitalize">{selectedBookingRoom?.type}</p>
+                    <p className="font-medium text-sm">{backendRoomTypeToDisplay(selectedBookingRoom?.type)}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">

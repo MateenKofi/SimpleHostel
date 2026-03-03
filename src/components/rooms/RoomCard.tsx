@@ -1,6 +1,7 @@
 import { Room } from "@/helper/types/types";
 import { Users, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
+import { backendRoomTypeToDisplay } from "@/helper/roomTypeHelper";
 
 type RoomCardProps = {
   room: Room;
@@ -133,7 +134,7 @@ const RoomCard = ({ room, onBookRoom }: RoomCardProps) => {
         <div className="flex gap-2 mb-3 flex-wrap">
           <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-lg">
             <span className="text-xs">Type</span>
-            <span className="text-xs font-semibold">{room.type || "N/A"}</span>
+            <span className="text-xs font-semibold">{backendRoomTypeToDisplay(room.type)}</span>
           </div>
           <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-lg">
             <span className="text-xs">Gender</span>

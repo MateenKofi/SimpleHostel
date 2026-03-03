@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { handleSwalMutation } from "../swal/SwalMutationHelper";
 import type { ApiError } from "@/types/dtos";
+import { backendRoomTypeToDisplay } from "@/helper/roomTypeHelper";
 
 const RoomTable = () => {
   const navigate = useNavigate()
@@ -93,7 +94,7 @@ const RoomTable = () => {
     {
       name: "Type",
 
-      selector: (row: Room) => row.type || "",
+      selector: (row: Room) => backendRoomTypeToDisplay(row.type),
       sortable: true,
     },
     {

@@ -14,6 +14,7 @@ import SEOHelmet from "@/components/SEOHelmet"
 import { useAddedResidentStore } from "@/stores/useAddedResidentStore"
 import type { ResidentDto } from "@/types/dtos"
 import { getResidentById } from "@/api/residents"
+import { backendRoomTypeToDisplay } from "@/helper/roomTypeHelper"
 
 const ViewResident = () => {
   const navigate = useNavigate()
@@ -356,7 +357,7 @@ const ViewResident = () => {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <p className="text-sm text-muted-foreground mb-1">Room Type</p>
-                          <p className="font-medium capitalize">{resident.room.type || "N/A"}</p>
+                          <p className="font-medium">{backendRoomTypeToDisplay(resident.room.type)}</p>
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground mb-1">Capacity</p>

@@ -28,6 +28,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { format } from "date-fns"
 import { useAuthStore } from "@/stores/useAuthStore"
+import { backendRoomTypeToDisplay } from "@/helper/roomTypeHelper"
 
 interface PaymentData {
   id: string
@@ -289,7 +290,7 @@ const PaymentSuccess = () => {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Type</p>
-                    <p className="text-lg font-semibold capitalize text-gray-700">{room.type}</p>
+                    <p className="text-lg font-semibold text-gray-700">{backendRoomTypeToDisplay(room.type)}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 p-3 bg-muted/30 rounded-xl">

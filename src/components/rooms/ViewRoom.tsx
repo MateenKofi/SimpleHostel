@@ -1,15 +1,5 @@
 "use client"
 
-import { RoomFilterConfig } from '@/helper/room_filter_config'
-
-// Helper function to format room type for display
-const formatRoomType = (roomType: string | null | undefined): string => {
-  if (!roomType) return 'Not specified'
-  const roomTypeConfig = RoomFilterConfig.find(c => c.category === 'roomType')
-  const value = roomTypeConfig?.options.find(opt => opt === roomType.toUpperCase())
-  return value || roomType.charAt(0).toUpperCase() + roomType.slice(1).toLowerCase()
-}
-
 import { Badge } from "@/components/ui/badge"
 import { backendRoomTypeToDisplay } from '@/helper/roomTypeHelper'
 import { Button } from "@/components/ui/button"

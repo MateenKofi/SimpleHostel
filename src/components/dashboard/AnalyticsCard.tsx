@@ -3,6 +3,7 @@ import { Banknote, Percent, Users, House, DoorOpen, Building2 } from 'lucide-rea
 import { Analytics } from '@/helper/types/types'
 import BentoCard from './BentoCard'
 import AnimatedValue from './AnimatedValue'
+import { backendRoomTypeToDisplay } from '@/helper/roomTypeHelper'
 
 type analyticsData = Analytics
 
@@ -85,7 +86,7 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
               <div className="mt-3 space-y-2">
                 <div className="flex items-center gap-2">
                   <House className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <p className="text-base sm:text-lg font-semibold text-foreground truncate">{roomType}</p>
+                  <p className="text-base sm:text-lg font-semibold text-foreground truncate">{backendRoomTypeToDisplay(roomType)}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <DoorOpen className="h-4 w-4 text-muted-foreground shrink-0" />
