@@ -60,22 +60,6 @@ const PaymentStat = ({ analyticsData }: { analyticsData?: analyticsData }) => {
             </div>
           </div>
 
-          {/* Debt Status Progress */}
-          <div className="pt-2">
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-sm font-medium text-foreground">Debt-free Residents</div>
-              <div className="text-sm text-muted-foreground">
-                <AnimatedValue value={debtFreeResidents} format="number" decimals={0} duration={400} /> / <AnimatedValue value={totalResidents} format="number" decimals={0} duration={400} />
-              </div>
-            </div>
-            <Progress
-              value={debtFreePercentage}
-              className="h-3 bg-muted/50"
-            />
-            <div className="flex justify-between mt-2 text-xs text-muted-foreground">
-              <span>{debtFreePercentage.toFixed(1)}% debt-free</span>
-            </div>
-          </div>
         </div>
       </CardContent>
     </Card>

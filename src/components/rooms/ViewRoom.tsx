@@ -1,6 +1,17 @@
 "use client"
 
+import { RoomFilterConfig } from '@/helper/room_filter_config'
+
+// Helper function to format room type for display
+const formatRoomType = (roomType: string | null | undefined): string => {
+  if (!roomType) return 'Not specified'
+  const roomTypeConfig = RoomFilterConfig.find(c => c.category === 'roomType')
+  const value = roomTypeConfig?.options.find(opt => opt === roomType.toUpperCase())
+  return value || roomType.charAt(0).toUpperCase() + roomType.slice(1).toLowerCase()
+}
+
 import { Badge } from "@/components/ui/badge"
+import { backendRoomTypeToDisplay } from '@/helper/roomTypeHelper'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -291,7 +302,7 @@ const ViewRoom = () => {
               <div className="grid grid-cols-1 gap-4 mt-2 sm:grid-cols-2">
                 <div>
                   <h4 className="text-sm font-medium">Room Type</h4>
-                  <p className="text-sm text-muted-foreground capitalize">{room?.type || "Not specified"}</p>
+                  <p className="text-sm text-muted-foreground">{backendRoomTypeToDisplay(room?.type)}</p>
                 </div>
                 <div>
                   <h4 className="text-sm font-medium">Created On</h4>

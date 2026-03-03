@@ -47,12 +47,6 @@ const RoomCard = ({ room, onBookRoom }: RoomCardProps) => {
     }
   };
 
-  // Room type label
-  const getRoomTypeLabel = () => {
-    return room.type
-      ? room.type.charAt(0).toUpperCase() + room.type.slice(1).toLowerCase()
-      : "N/A";
-  };
 
   // Gender label
   const getGenderLabel = () => {
@@ -139,7 +133,7 @@ const RoomCard = ({ room, onBookRoom }: RoomCardProps) => {
         <div className="flex gap-2 mb-3 flex-wrap">
           <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-lg">
             <span className="text-xs">Type</span>
-            <span className="text-xs font-semibold">{getRoomTypeLabel()}</span>
+            <span className="text-xs font-semibold">{room.type || "N/A"}</span>
           </div>
           <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-lg">
             <span className="text-xs">Gender</span>
