@@ -12,8 +12,11 @@ const PaymentStat = ({ analyticsData }: { analyticsData?: analyticsData }) => {
   const debtPercentage = analyticsData?.debtPercentage ?? 0
   const totalResidents = analyticsData?.totalResidents ?? 0
   const totalDebtors = analyticsData?.totalDebtors ?? 0
-  const debtFreeResidents = totalResidents - totalDebtors
-  const debtFreePercentage = totalResidents > 0 ? (debtFreeResidents / totalResidents) * 100 : 0
+  const debtFreeResidents = Math.max(0, totalResidents - totalDebtors)
+  // Clamp percentage to valid range (0-100)
+  const debtFreePercentage = totalResidents > 0
+    ? Math.max(0, Math.min(100, (debtFreeResidents / totalResidents) * 100))
+    : 0
 
   return (
     <Card className="border-border/80 shadow-sm hover:shadow-md transition-shadow duration-300 animate-fade-in-up" style={{ animationDelay: '300ms' }}>
@@ -62,7 +65,7 @@ const PaymentStat = ({ analyticsData }: { analyticsData?: analyticsData }) => {
             <div className="flex items-center justify-between mb-2">
               <div className="text-sm font-medium text-foreground">Debt-free Residents</div>
               <div className="text-sm text-muted-foreground">
-                <AnimatedValue value={debtFreeResidents} format="number" duration={400} /> of {totalResidents}
+                <AnimatedValue value={debtFreeResidents} format="number" decimals={0} duration={400} /> / <AnimatedValue value={totalResidents} format="number" decimals={0} duration={400} />
               </div>
             </div>
             <Progress

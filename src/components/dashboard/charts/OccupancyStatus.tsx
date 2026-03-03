@@ -66,7 +66,7 @@ const OccupancyStatus = ({ analyticsData }: { analyticsData: analyticsData }) =>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-3 gap-4 mt-16">
+        <div className="grid grid-cols-3 gap-4 mt-24">
           <div className="text-center p-3 rounded-xl bg-forest-green-50/50 dark:bg-forest-green-950/20">
             <div className="text-sm font-medium text-muted-foreground mb-1">Occupied</div>
             <div className="text-lg font-bold text-forest-green-700 dark:text-forest-green-400">
