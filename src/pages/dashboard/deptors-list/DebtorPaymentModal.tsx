@@ -1,9 +1,10 @@
 import { useState } from "react";
 import Modal from "@/components/Modal";
-import { TextInput, FormButton } from "@/components/form";
+import { FormButton } from "@/components/form";
 import { DebtorDto } from "@/types/dtos";
 import { adminInitiateResidentPayment, cashTopupPayment, confirmCashPayment } from "@/api/payments";
-import { Wallet, CreditCard, DollarSign } from "lucide-react";
+import { getResidentById } from "@/api/residents";
+import { Wallet, CreditCard, BadgeCent } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -17,11 +18,10 @@ type PaymentMethod = "online" | "cash";
 
 const PAYMENT_METHODS: { value: PaymentMethod; label: string; icon: React.ElementType }[] = [
   { value: "online", label: "Online (Paystack)", icon: CreditCard },
-  { value: "cash", label: "Cash", icon: DollarSign },
+  { value: "cash", label: "Cash", icon: BadgeCent },
 ];
 
 export default function DebtorPaymentModal({ debtor, onClose, onSuccess }: DebtorPaymentModalProps) {
-  const [paymentAmount, setPaymentAmount] = useState<string>(debtor?.balanceOwed?.toString() || "0");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("online");
   const [isProcessing, setIsProcessing] = useState(false);
   const [showCashConfirm, setShowCashConfirm] = useState(false);
@@ -29,7 +29,7 @@ export default function DebtorPaymentModal({ debtor, onClose, onSuccess }: Debto
 
   if (!debtor) return null;
 
-  const amount = parseFloat(paymentAmount) || 0;
+  const amount = debtor.balanceOwed || 0;
   const isValidAmount = amount > 0;
 
   const handleClose = () => {
@@ -40,7 +40,7 @@ export default function DebtorPaymentModal({ debtor, onClose, onSuccess }: Debto
 
   const handleOnlinePayment = async () => {
     if (!isValidAmount) {
-      toast.error("Please enter a valid payment amount");
+      toast.error("This resident has no outstanding balance to pay.");
       return;
     }
 
@@ -68,16 +68,20 @@ export default function DebtorPaymentModal({ debtor, onClose, onSuccess }: Debto
 
   const handleCashPaymentInit = async () => {
     if (!isValidAmount) {
-      toast.error("Please enter a valid payment amount");
+      toast.error("This resident has no outstanding balance to pay.");
       return;
     }
 
     setIsProcessing(true);
 
     try {
+      // Fetch full resident details to get the roomId
+      const residentData = await getResidentById(debtor.id);
+      const roomId = residentData.data.roomId;
+
       const result = await cashTopupPayment({
         residentId: debtor.id,
-        roomId: null,
+        roomId: roomId,
         initialPayment: amount,
         paymentMethod: "cash",
       });
@@ -172,16 +176,16 @@ export default function DebtorPaymentModal({ debtor, onClose, onSuccess }: Debto
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Room Price</span>
-              <span className="font-medium text-foreground">₦{debtor.roomPrice?.toLocaleString() || "0"}</span>
+              <span className="font-medium text-foreground">GH₵{debtor.roomPrice?.toLocaleString() || "0"}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Amount Paid</span>
-              <span className="font-medium text-foreground">₦{debtor.amountPaid?.toLocaleString() || "0"}</span>
+              <span className="font-medium text-foreground">GH₵{debtor.amountPaid?.toLocaleString() || "0"}</span>
             </div>
             <div className="h-px bg-border my-2" />
             <div className="flex justify-between text-base">
               <span className="text-muted-foreground">Balance Owed</span>
-              <span className="font-bold text-destructive">₦{debtor.balanceOwed?.toLocaleString() || "0"}</span>
+              <span className="font-bold text-destructive">GH₵{debtor.balanceOwed?.toLocaleString() || "0"}</span>
             </div>
           </div>
         </div>
@@ -189,19 +193,23 @@ export default function DebtorPaymentModal({ debtor, onClose, onSuccess }: Debto
         {/* Payment Form */}
         {!showCashConfirm ? (
           <div className="space-y-4">
-            {/* Payment Amount */}
-            <TextInput
-              label="Payment Amount"
-              type="number"
-              step="0.01"
-              min="0.01"
-              placeholder="Enter amount"
-              value={paymentAmount}
-              onChange={(e) => setPaymentAmount(e.target.value)}
-              helperText="Enter the amount to be paid. You can enter partial payment or full balance."
-              error={amount <= 0 ? "Amount must be greater than 0" : undefined}
-              disabled={isProcessing}
-            />
+            {/* Payment Amount - Read Only Display */}
+            <div className="rounded-lg border border-primary/50 bg-primary/5 p-4 space-y-2">
+              <label className="text-sm font-medium leading-none text-foreground">
+                Payment Amount (Balance Owed)
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={`GH₵ ${amount.toLocaleString()}`}
+                  readOnly
+                  className="flex h-12 w-full rounded-md border border-input bg-muted px-4 py-3 text-lg font-bold text-foreground cursor-not-allowed"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                The payment amount is set to the full balance owed. This value cannot be changed.
+              </p>
+            </div>
 
             {/* Payment Method Selector */}
             <div className="space-y-2">
@@ -259,7 +267,7 @@ export default function DebtorPaymentModal({ debtor, onClose, onSuccess }: Debto
           <div className="space-y-4">
             <div className="rounded-lg border border-primary/50 bg-primary/5 p-4 space-y-3">
               <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                <DollarSign className="w-4 h-4" />
+                <BadgeCent className="w-4 h-4" />
                 Cash Payment Initiated
               </h3>
               <div className="space-y-2 text-sm">
@@ -269,13 +277,13 @@ export default function DebtorPaymentModal({ debtor, onClose, onSuccess }: Debto
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Amount</span>
-                  <span className="font-medium text-foreground">₦{amount.toLocaleString()}</span>
+                  <span className="font-medium text-foreground">GH₵{amount.toLocaleString()}</span>
                 </div>
               </div>
             </div>
 
             <p className="text-sm text-muted-foreground">
-              Have you received the cash payment of <strong>₦{amount.toLocaleString()}</strong> from this resident?
+              Have you received the cash payment of <strong>GH₵{amount.toLocaleString()}</strong> from this resident?
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 pt-2">

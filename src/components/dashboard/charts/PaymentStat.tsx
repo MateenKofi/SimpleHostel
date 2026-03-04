@@ -54,8 +54,15 @@ const PaymentStat = ({ analyticsData }: { analyticsData?: analyticsData }) => {
             </div>
             <div className="p-4 rounded-xl bg-warm-red-50/50 dark:bg-warm-red-950/20 border border-warm-red-100/50 dark:border-warm-red-900/30">
               <div className="text-sm font-medium text-muted-foreground mb-2">Debt Percentage</div>
-              <div className="text-lg md:text-xl font-bold text-warm-red-700 dark:text-warm-red-400">
-                <AnimatedValue value={debtPercentage} format="number" decimals={2} duration={600} />%
+              <div className="flex items-baseline gap-2">
+                <div className="text-lg md:text-xl font-bold text-warm-red-700 dark:text-warm-red-400">
+                  <AnimatedValue value={debtPercentage} format="number" decimals={2} duration={600} />%
+                </div>
+                {totalDebtors > 0 && (
+                  <span className="text-xs text-muted-foreground">
+                    ({totalDebtors} debtor{totalDebtors !== 1 ? 's' : ''})
+                  </span>
+                )}
               </div>
             </div>
           </div>
