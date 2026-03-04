@@ -1,4 +1,9 @@
-import type { ResidentDto } from "@/types/dtos"
+import type { ResidentDto } from "@/types/dtos";
+
+/**
+ * Validators utility module
+ * Contains functions for validating data and getting display values based on validation state
+ */
 
 /**
  * Determines if a resident is verified based on their status and check-in date.
@@ -10,9 +15,9 @@ import type { ResidentDto } from "@/types/dtos"
  * @returns true if the resident is verified, false otherwise
  */
 export const isResidentVerified = (resident: ResidentDto | null | undefined): boolean => {
-  if (!resident) return false
-  return resident.status === "active" && resident.checkInDate !== null
-}
+  if (!resident) return false;
+  return resident.status === "active" && resident.checkInDate !== null;
+};
 
 /**
  * Gets the verification badge variant for a resident
@@ -23,13 +28,13 @@ export const isResidentVerified = (resident: ResidentDto | null | undefined): bo
 export const getVerificationBadge = (
   resident: ResidentDto | null | undefined,
 ): {
-  variant: "default" | "secondary" | "destructive" | "outline"
-  label: string
+  variant: "default" | "secondary" | "destructive" | "outline";
+  label: string;
 } => {
-  const verified = isResidentVerified(resident)
+  const verified = isResidentVerified(resident);
 
   return {
     variant: verified ? ("default" as const) : ("secondary" as const),
     label: verified ? "Verified" : "Unverified",
-  }
-}
+  };
+};

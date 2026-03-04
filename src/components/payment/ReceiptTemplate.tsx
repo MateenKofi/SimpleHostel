@@ -4,19 +4,13 @@ import { Building2, MapPin, Phone, Mail, CheckCircle2, User, CreditCard } from "
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { PaymentReceipt } from "@/helper/types/types";
+import { formatCurrency } from "@/utils";
 
 interface ReceiptTemplateProps {
     data: PaymentReceipt;
 }
 
 const ReceiptTemplate = forwardRef<HTMLDivElement, ReceiptTemplateProps>(({ data }, ref) => {
-    // Formatting currency
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('en-GH', {
-            style: 'currency',
-            currency: 'GHS'
-        }).format(amount);
-    };
 
     return (
         <div ref={ref} className="bg-white p-8 sm:p-12 text-black min-h-[800px] flex flex-col font-sans">

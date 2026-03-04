@@ -1,8 +1,5 @@
-"use client";
-
 import { useState, useMemo } from "react";
 import {
-  ArrowUpDown,
   BadgeCent,
   CheckCircle2,
   Clock,
@@ -16,6 +13,7 @@ import {
   FileText,
   MoreHorizontal,
 } from "lucide-react";
+import { getStatusBadge, getMethodIcon } from "@/utils";
 import { format } from "date-fns";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
@@ -52,6 +50,7 @@ import { Resident, Transaction } from "@/helper/types/types";
 import { useQuery } from "@tanstack/react-query";
 import { getHostelTransactions } from "@/api/payments";
 import { getHostelResidents } from "@/api/residents";
+import { getHostelTransactionMetrics } from "@/api/analytics";
 import TransactionsSkeleton from "../loaders/TransactionLoader";
 import CustomeRefetch from "../CustomRefetch";
 import DatePicker from "react-datepicker";
@@ -70,14 +69,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRef } from "react";
+import { safeFormat } from "@/utils";
 
-
-const safeFormat = (dateValue: any, formatStr: string) => {
-  if (!dateValue) return "N/A";
-  const date = new Date(dateValue);
-  if (isNaN(date.getTime())) return "N/A";
-  return format(date, formatStr);
-};
 
 const AdminTransactions = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -169,39 +162,26 @@ const AdminTransactions = () => {
     },
   })
 
-  // Calculate total amount
-  const totalAmount = useMemo(() => {
-    return transactions
-      ?.reduce(
-        (sum: number, transaction: Transaction) => sum + transaction.amount,
-        0
-      )
-      .toFixed(2);
-  }, [transactions]);
+  // Fetch transaction metrics from backend
+  const { data: metricsData } = useQuery({
+    queryKey: ['transaction_metrics', hostel_id],
+    queryFn: async () => {
+      const responseData = await getHostelTransactionMetrics(hostel_id);
+      return responseData?.data;
+    },
+    enabled: !!hostel_id,
+  });
 
-  // Calculate successful transactions amount
-  const successfulAmount = useMemo(() => {
-    return transactions
-      ?.filter(
-        (t: Transaction) => t.status?.toUpperCase() === "SUCCESS" || t.status?.toUpperCase() === "CONFIRMED"
-      )
-      .reduce(
-        (sum: number, transaction: Transaction) => sum + transaction.amount,
-        0
-      )
-      .toFixed(2);
-  }, [transactions]);
-
-  // Calculate pending transactions amount
-  const pendingAmount = useMemo(() => {
-    return transactions
-      ?.filter((t: Transaction) => t.status?.toUpperCase() === "PENDING")
-      .reduce(
-        (sum: number, transaction: Transaction) => sum + transaction.amount,
-        0
-      )
-      .toFixed(2);
-  }, [transactions]);
+  const metrics = metricsData || {
+    totalAmount: 0,
+    totalTransactions: 0,
+    successfulAmount: 0,
+    successfulTransactions: 0,
+    pendingAmount: 0,
+    pendingTransactions: 0,
+    cancelledAmount: 0,
+    cancelledTransactions: 0,
+  };
 
   // Fetch specific receipt data for the modal
   const { data: receiptData, isLoading: isReceiptLoading } = useQuery<PaymentReceipt>({
@@ -395,8 +375,8 @@ const AdminTransactions = () => {
             <DropdownMenuItem onClick={() => handleViewReceipt(row.id)}>
               <FileText className="w-4 h-4 mr-2" /> View Receipt
             </DropdownMenuItem>
-            {(row.status?.toUpperCase() === "SUCCESS" ||
-              row.status?.toUpperCase() === "CONFIRMED") && (
+            {(row.status === "success" ||
+              row.status === "confirmed") && (
                 <DropdownMenuItem
                   onClick={() => {
                     setViewReceiptId(row.id);
@@ -411,46 +391,6 @@ const AdminTransactions = () => {
       ),
     },
   ];
-
-  // Get status badge
-  const getStatusBadge = (status: string) => {
-    switch (status.toUpperCase()) {
-      case "PENDING":
-        return (
-          <Badge
-            variant="outline"
-            className="text-yellow-700 border-yellow-200 bg-yellow-50"
-          >
-            <Clock className="w-3 h-3 mr-1" /> Pending
-          </Badge>
-        );
-      case "SUCCESS":
-      case "CONFIRMED":
-        return (
-          <Badge
-            variant="outline"
-            className="text-green-700 border-green-200 bg-green-50"
-          >
-            <CheckCircle2 className="w-3 h-3 mr-1" />{" "}
-            {status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()}
-          </Badge>
-        );
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
-  };
-
-  // Get payment method icon
-  const getMethodIcon = (method: string | null) => {
-    if (!method) return <CreditCard className="w-4 h-4 text-gray-400" />;
-
-    switch (method.toLowerCase()) {
-      case "mobile_money":
-        return <Smartphone className="w-4 h-4 text-purple-500" />;
-      default:
-        return <CreditCard className="w-4 h-4 text-blue-500" />;
-    }
-  };
 
   if (isLoading) {
     return <TransactionsSkeleton />;
@@ -473,10 +413,10 @@ const AdminTransactions = () => {
           <CardContent>
             <div className="flex items-center">
               <BadgeCent className="w-5 h-5 mr-2 text-muted-foreground" />
-              <div className="text-2xl font-bold">GH¢{totalAmount || "0.00"}</div>
+              <div className="text-2xl font-bold">GH¢{metrics.totalAmount.toFixed(2)}</div>
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              {transactions.length} transactions
+              {metrics.totalTransactions} transactions
             </p>
           </CardContent>
         </Card>
@@ -491,17 +431,11 @@ const AdminTransactions = () => {
             <div className="flex items-center">
               <CheckCircle2 className="w-5 h-5 mr-2 text-green-500" />
               <div className="text-2xl font-bold text-green-600">
-                GH¢{successfulAmount || "0.00"}
+                GH¢{metrics.successfulAmount.toFixed(2)}
               </div>
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              {
-                transactions.filter(
-                  (t: Transaction) =>
-                    t.status === "success" || t.status === "CONFIRMED"
-                ).length
-              }{" "}
-              transactions
+              {metrics.successfulTransactions} transactions
             </p>
           </CardContent>
         </Card>
@@ -516,16 +450,11 @@ const AdminTransactions = () => {
             <div className="flex items-center">
               <Clock className="w-5 h-5 mr-2 text-yellow-500" />
               <div className="text-2xl font-bold text-yellow-600">
-                GH¢{pendingAmount || "0.00"}
+                GH¢{metrics.pendingAmount.toFixed(2)}
               </div>
             </div>
             <p className="mt-1 text-xs text-muted-foreground">
-              {
-                transactions.filter(
-                  (t: Transaction) => t.status === "PENDING"
-                ).length
-              }{" "}
-              transactions
+              {metrics.pendingTransactions} transactions
             </p>
           </CardContent>
         </Card>

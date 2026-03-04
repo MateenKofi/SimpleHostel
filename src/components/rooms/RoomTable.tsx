@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { handleSwalMutation } from "../swal/SwalMutationHelper";
 import type { ApiError } from "@/types/dtos";
-import { backendRoomTypeToDisplay } from "@/helper/roomTypeHelper";
+import { backendRoomTypeToDisplay } from "@/utils";
 
 const RoomTable = () => {
   const navigate = useNavigate()

@@ -1,7 +1,7 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
-import { backendRoomTypeToDisplay } from '@/helper/roomTypeHelper'
+import { backendRoomTypeToDisplay, formatDate } from '@/utils'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -38,14 +38,6 @@ const ViewRoom = () => {
   // Residents are now included in the room response
   const roomResidents: RoomResident[] = room?.residents || []
 
-  // Format date to a readable format
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
-  }
 
   // Get status badge variant based on room status
   const getStatusVariant = (status: string): BadgeVariant => {

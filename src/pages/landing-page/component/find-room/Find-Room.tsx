@@ -7,7 +7,7 @@ import { Room } from "@/helper/types/types";
 import { useSelectedRoomStore } from "@/stores/useSelectedRoomStore";
 import FilterPanel from "@/components/FilterPanel";
 import { RoomFilterConfig } from "@/helper/room_filter_config";
-import { parseRange } from "@/utils/parseRange";
+import { backendRoomTypeToDisplay, parseRange } from "@/utils";
 import FindHostelSkeleton from "@/components/loaders/HostelCardSkeleton";
 import CustomeRefetch from "@/components/CustomRefetch";
 import SEOHelmet from "@/components/SEOHelmet";
@@ -23,7 +23,6 @@ import {
   Dialog,
   DialogContent,
 } from "@/components/ui/dialog";
-import { backendRoomTypeToDisplay } from "@/helper/roomTypeHelper";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import RoomCard from "@/components/rooms/RoomCard";

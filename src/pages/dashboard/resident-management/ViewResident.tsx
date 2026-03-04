@@ -14,7 +14,7 @@ import SEOHelmet from "@/components/SEOHelmet"
 import { useAddedResidentStore } from "@/stores/useAddedResidentStore"
 import type { ResidentDto } from "@/types/dtos"
 import { getResidentById } from "@/api/residents"
-import { backendRoomTypeToDisplay } from "@/helper/roomTypeHelper"
+import { backendRoomTypeToDisplay, formatDate } from "@/utils"
 
 const ViewResident = () => {
   const navigate = useNavigate()
@@ -39,15 +39,6 @@ const ViewResident = () => {
       navigate("/dashboard/resident-management")
     }
   }, [storedResident, navigate])
-
-  const formatDate = (dateString: string | null | undefined) => {
-    if (!dateString) return "N/A"
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
-  }
 
   const getStatusVariant = (status: string) => {
     switch (status.toLowerCase()) {

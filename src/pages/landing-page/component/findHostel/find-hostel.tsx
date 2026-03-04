@@ -6,7 +6,7 @@ import { getHostels } from "@/api/hostels";
 import { Hostel } from "@/helper/types/types";
 import CustomeRefetch from "@/components/CustomRefetch";
 import HostelCard from "@/components/hostel/HostelCard";
-import { useDebounce } from "@/helper/useDebounce";
+import { useDebounce } from "@/hooks";
 import FilterPanel from "@components/FilterPanel";
 import FindHostelSkeleton from "@components/loaders/HostelCardSkeleton";
 import { HostetFilterConfig } from "@/helper/hostel_filter_config";

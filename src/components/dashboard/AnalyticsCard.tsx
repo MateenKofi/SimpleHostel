@@ -3,7 +3,7 @@ import { Banknote, Percent, Users, House, DoorOpen, Building2 } from 'lucide-rea
 import { Analytics } from '@/helper/types/types'
 import BentoCard from './BentoCard'
 import AnimatedValue from './AnimatedValue'
-import { backendRoomTypeToDisplay } from '@/helper/roomTypeHelper'
+import { backendRoomTypeToDisplay } from '@/utils'
 
 type analyticsData = Analytics
 

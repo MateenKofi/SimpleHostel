@@ -24,3 +24,13 @@ export const getSystemAnalytics = async () => {
     const response = await axiosInstance.get("/analytics/get/system");
     return response.data;
 };
+
+export const getHostelTransactionMetrics = async (hostelId: string) => {
+    const response = await axiosInstance.get(`/analytics/hostel-transactions/${hostelId}`);
+    return response.data;
+};
+
+export const getSystemTransactionMetrics = async () => {
+    const response = await axiosInstance.get("/analytics/system-transactions");
+    return response.data;
+};

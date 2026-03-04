@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { getCurrentCalendarYear, getHistoricalCalendarYears } from "@/api/calendar";
 import { CalendarYearT } from "@/helper/types/types";
 import SEOHelmet from "@/components/SEOHelmet";
-import { backendRoomTypeToDisplay } from "@/helper/roomTypeHelper";
+import { backendRoomTypeToDisplay } from "@/utils";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Calendar, CalendarClock, Users, BadgeCent, ArrowLeft, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";

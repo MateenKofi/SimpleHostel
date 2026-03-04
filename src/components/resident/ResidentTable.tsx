@@ -32,7 +32,7 @@ import { useAddedResidentStore } from "@/stores/useAddedResidentStore"
 import type { ResidentDto } from "@/types/dtos"
 import type { ApiError } from "@/types/dtos"
 import { useState, useMemo } from "react"
-import { isResidentVerified, getVerificationBadge } from "@/helper/residentUtils"
+import { isResidentVerified, getVerificationBadge } from "@/utils"
 
 type VerificationTab = "all" | "verified" | "unverified"
 

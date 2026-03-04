@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ReportData } from "@/helper/types/types";
-import { formatCurrency } from "@/utils/formatCurrency";
+import { formatCurrency } from "@/utils";
 import { TrendingUp, TrendingDown, Calendar, Users } from "lucide-react";
 
 const HistoricalComparison = ({ reportData }: { reportData: ReportData }) => {

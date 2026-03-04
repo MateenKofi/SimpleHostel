@@ -52,38 +52,11 @@ export function HeroCarousel() {
             <Button
               size="lg"
               variant="outline"
-              className="bg-white/10 hover:bg-white/20 text-white border-white/30 backdrop-blur-sm transition-all duration-300 px-8 py-6 text-lg"
+              className="bg-white/10 hover:bg-white/20 text-white hover:text-primary-foreground border-white/30 backdrop-blur-sm transition-all duration-300 px-8 py-6 text-lg"
               onClick={() => navigate("/register")}
             >
               Create Account
             </Button>
-          </motion.div>
-
-          {/* Trust Badge */}
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.8, duration: 0.5 }}
-            className="pt-6 flex items-center justify-center gap-6 text-sm text-white/80"
-          >
-            <div className="flex items-center gap-2">
-              <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <span>Verified Hostels</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <span>Instant Booking</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <span>Best Prices</span>
-            </div>
           </motion.div>
         </div>
       </div>

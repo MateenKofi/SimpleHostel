@@ -99,10 +99,10 @@ export function HowItWorksSection() {
               {/* Brand/Logo Area */}
               <div className="text-center mb-8">
                 <div className="inline-flex items-center gap-2 mb-2">
-                  <div className="w-10 h-10 bg-gradient-to-br from-primary to-teal-green-500 rounded-full flex items-center justify-center shadow-lg shadow-primary/30">
+                  <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/30">
                     <Home className="w-5 h-5 text-white" />
                   </div>
-                  <span className="text-2xl font-bold text-gradient">Fuse</span>
+                  <span className="text-2xl font-bold text-primary">Fuse</span>
                 </div>
               </div>
 

@@ -1,5 +1,5 @@
 import { ReportData } from "@/helper/types/types";
-import { formatCurrency } from "@/utils/formatCurrency";
+import { formatCurrency } from "@/utils";
 import {
   BadgeCent,
   Users,

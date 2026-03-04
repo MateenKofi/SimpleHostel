@@ -28,7 +28,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { format } from "date-fns"
 import { useAuthStore } from "@/stores/useAuthStore"
-import { backendRoomTypeToDisplay } from "@/helper/roomTypeHelper"
+import { backendRoomTypeToDisplay, formatCurrency } from "@/utils"
 
 interface PaymentData {
   id: string
@@ -147,13 +147,6 @@ const PaymentSuccess = () => {
   const handleContinue = () => {
     const token = localStorage.getItem("token")
     navigate(token ? "/dashboard" : "/")
-  }
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-GH", {
-      style: "currency",
-      currency: "GHS",
-    }).format(amount)
   }
 
   // Loading state

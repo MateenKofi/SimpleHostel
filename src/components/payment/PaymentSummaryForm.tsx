@@ -29,7 +29,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { useNavigate } from "react-router-dom"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { backendRoomTypeToDisplay } from "@/helper/roomTypeHelper"
+import { backendRoomTypeToDisplay } from "@/utils"
 import type { UserDto, ApiError } from "@/types/dtos"
 import { paymentFormSchema, type PaymentInputs } from "@/schemas/paymentSchema"
 

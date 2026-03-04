@@ -13,7 +13,7 @@ import html2canvas from "html2canvas";
 import { toast } from "sonner";
 import { AllocationDetails } from "@/helper/types/types";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { backendRoomTypeToDisplay } from "@/helper/roomTypeHelper";
+import { backendRoomTypeToDisplay, formatCurrency } from "@/utils";
 
 const AllocationDetailsPage = () => {
     const navigate = useNavigate();
@@ -88,13 +88,6 @@ const AllocationDetailsPage = () => {
             </div>
         );
     }
-
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('en-GH', {
-            style: 'currency',
-            currency: 'GHS'
-        }).format(amount);
-    };
 
     const issueDate = details.issueDate ? new Date(details.issueDate) : new Date();
 

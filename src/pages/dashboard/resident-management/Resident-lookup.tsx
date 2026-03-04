@@ -10,7 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { toast } from "sonner"
 import { ResidentDto } from "@/types/dtos"
 import { verifyResidentAccessCode, checkInResident } from "@/api/residents"
-import { backendRoomTypeToDisplay } from "@/helper/roomTypeHelper"
+import { backendRoomTypeToDisplay, formatCurrency } from "@/utils"
 import { useNavigate } from "react-router-dom"
 import {
   AlertDialog,
@@ -80,13 +80,6 @@ const ResidentLookup = () => {
     } finally {
       setIsCheckingIn(false)
     }
-  }
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-GH", {
-      style: "currency",
-      currency: "GHS",
-    }).format(amount)
   }
 
   const isCheckedIn = foundResident?.status === "active" && foundResident?.checkInDate

@@ -1,7 +1,7 @@
 import { Room } from "@/helper/types/types";
 import { Users, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
-import { backendRoomTypeToDisplay } from "@/helper/roomTypeHelper";
+import { backendRoomTypeToDisplay } from "@/utils";
 
 type RoomCardProps = {
   room: Room;

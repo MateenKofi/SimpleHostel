@@ -1,9 +1,9 @@
 import { ReportData } from "@/helper/types/types";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/utils";
 import { CalendarDays, BadgeCent, TrendingDown, TrendingUp } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Progress } from "../ui/progress";
-import { formatCurrency } from "@/utils/formatCurrency";
+import { formatCurrency } from "@/utils";
 import BentoCard from "../dashboard/BentoCard";
 
 const StatusCards = ({reportData}: {reportData: ReportData}) => {

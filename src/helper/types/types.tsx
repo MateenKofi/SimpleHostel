@@ -370,7 +370,7 @@ export type Transaction = {
   amount: number;
   date: string;
   residentId: string;
-  status: "PENDING" | "CONFIRMED" | "FAILED" | "success";
+  status: "pending" | "confirmed" | "failed" | "success";
   roomId: string;
   reference: string;
   method: string | null;

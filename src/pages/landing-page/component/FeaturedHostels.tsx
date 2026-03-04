@@ -59,10 +59,6 @@ const FeaturedHostels = () => {
       <div className="container relative z-10 px-4">
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-12">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary mb-4">
-            <Sparkles className="w-4 h-4" />
-            <span className="text-sm font-semibold">Handpicked for You</span>
-          </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             Featured <span className="text-primary">Hostels</span>
           </h2>

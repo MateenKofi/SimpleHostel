@@ -13,6 +13,7 @@ import { getResidentRoomDetails } from "@/api/residents"
 import ViewRoomSkeleton from "@components/loaders/ViewRoomSkeleton"
 import { ResidentDto } from "@/types/dtos"
 import { PageHeader } from "@/components/layout/PageHeader"
+import { formatDate } from "@/utils"
 
 // Define interface for images if needed for legacy compatibility
 interface ImageObject {
@@ -35,15 +36,6 @@ const ResidentRoomDetails = () => {
 
     const room = roomData?.Room || (roomData as any)?.room
     const roommates = roomData?.roommates || []
-
-    // Format date to a readable format
-    const formatDate = (dateString: string) => {
-        return new Date(dateString).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        })
-    }
 
     // Get status color based on room status
     const getStatusColor = (status: string) => {

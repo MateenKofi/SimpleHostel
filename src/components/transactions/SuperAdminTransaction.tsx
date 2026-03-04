@@ -3,6 +3,9 @@ import {
   ArrowUpDown,
   BadgeCent,
   Search,
+  CheckCircle2,
+  Clock,
+  XCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -24,10 +27,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import TransactionsSkeleton from "../loaders/TransactionLoader";
-import { getDisbursementSummary } from "@/api/analytics";
+import { getDisbursementSummary, getSystemTransactionMetrics } from "@/api/analytics";
 import { useQuery } from "@tanstack/react-query";
 import CustomeRefetch from "../CustomRefetch";
 import { Avatar, AvatarFallback } from "../ui/avatar";
+import { formatCurrency } from "@/utils";
 
 interface Hostel {
   hostelId: string;
@@ -61,6 +65,26 @@ const SuperAdminTransaction = () => {
       return responseData?.data;
     },
   });
+
+  // Fetch system transaction metrics from backend
+  const { data: metricsData } = useQuery({
+    queryKey: ['system_transaction_metrics'],
+    queryFn: async () => {
+      const responseData = await getSystemTransactionMetrics();
+      return responseData?.data;
+    },
+  });
+
+  const metrics = metricsData || {
+    totalAmount: 0,
+    totalTransactions: 0,
+    successfulAmount: 0,
+    successfulTransactions: 0,
+    pendingAmount: 0,
+    pendingTransactions: 0,
+    cancelledAmount: 0,
+    cancelledTransactions: 0,
+  };
 
   // Filter hostels based on search term
   const filteredHostels =
@@ -106,15 +130,6 @@ const SuperAdminTransaction = () => {
     setSortConfig({ key, direction });
   };
 
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "GHS",
-      minimumFractionDigits: 2,
-    }).format(amount);
-  };
-
   if (isLoading) {
     return <TransactionsSkeleton />;
   }
@@ -125,28 +140,117 @@ const SuperAdminTransaction = () => {
   return (
     <Card className="w-full max-w-6xl mx-auto">
       <CardHeader>
-        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-          <div>
-            <CardTitle className="text-2xl">
-              Hostel Disbursement Summary
-            </CardTitle>
-            <CardDescription>
-              Transaction summary for all registered hostels
-            </CardDescription>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 px-4 py-2 text-green-700 rounded-lg bg-green-50 dark:bg-green-950 dark:text-green-300">
-              <BadgeCent className="w-5 h-5" />
-              <div>
-                <p className="text-xs font-medium">Total Collected</p>
-                <p className="text-lg font-bold">
-                  {formatCurrency(transactionData?.totalCollected || 0)}
-                </p>
+        <div>
+          <CardTitle className="text-2xl">
+            System Transaction Overview
+          </CardTitle>
+          <CardDescription>
+            Transaction metrics across all hostels
+          </CardDescription>
+        </div>
+      </CardHeader>
+      <CardContent>
+        {/* Transaction Metrics Cards */}
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4 mb-6">
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Total Transactions
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center">
+                <BadgeCent className="w-5 h-5 mr-2 text-muted-foreground" />
+                <div className="text-2xl font-bold">GH¢{metrics.totalAmount.toFixed(2)}</div>
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {metrics.totalTransactions} transactions
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Successful Payments
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center">
+                <CheckCircle2 className="w-5 h-5 mr-2 text-green-500" />
+                <div className="text-2xl font-bold text-green-600">
+                  GH¢{metrics.successfulAmount.toFixed(2)}
+                </div>
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {metrics.successfulTransactions} transactions
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Pending Payments
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center">
+                <Clock className="w-5 h-5 mr-2 text-yellow-500" />
+                <div className="text-2xl font-bold text-yellow-600">
+                  GH¢{metrics.pendingAmount.toFixed(2)}
+                </div>
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {metrics.pendingTransactions} transactions
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                Cancelled Payments
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center">
+                <XCircle className="w-5 h-5 mr-2 text-red-500" />
+                <div className="text-2xl font-bold text-red-600">
+                  GH¢{metrics.cancelledAmount.toFixed(2)}
+                </div>
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                {metrics.cancelledTransactions} transactions
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="mb-4 border-t pt-4">
+          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+            <div>
+              <CardTitle className="text-xl">
+                Hostel Disbursement Summary
+              </CardTitle>
+              <CardDescription>
+                Disbursement breakdown by hostel
+              </CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 px-4 py-2 text-green-700 rounded-lg bg-green-50 dark:bg-green-950 dark:text-green-300">
+                <BadgeCent className="w-5 h-5" />
+                <div>
+                  <p className="text-xs font-medium">Total Collected</p>
+                  <p className="text-lg font-bold">
+                    {formatCurrency(transactionData?.totalCollected || 0)}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </CardHeader>
+      </CardContent>
       <CardContent>
         <div className="flex items-center mb-4">
           <div className="relative flex-1">

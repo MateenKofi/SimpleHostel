@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Method, ReportData } from "@/helper/types/types";
-import { formatCurrency } from "@/utils/formatCurrency";
+import { formatCurrency, getMethodIcon, getMethodIconSimple } from "@/utils";
 import { CreditCard, Wallet, Landmark } from "lucide-react";
 
 const FOREST_GREEN_COLORS = [
@@ -16,17 +16,6 @@ const FOREST_GREEN_COLORS = [
   "#2d6350", // Even darker
   "#7bc4a8", // Light accent
 ];
-
-const getMethodIcon = (method: string) => {
-  const lowerMethod = method.toLowerCase();
-  if (lowerMethod.includes("mobile") || lowerMethod.includes("momo")) {
-    return <Wallet className="h-5 w-5" />;
-  }
-  if (lowerMethod.includes("bank") || lowerMethod.includes("transfer")) {
-    return <Landmark className="h-5 w-5" />;
-  }
-  return <CreditCard className="h-5 w-5" />;
-};
 
 const PaymentMethodBreakDown = ({ reportData }: { reportData: ReportData }) => {
   return (
