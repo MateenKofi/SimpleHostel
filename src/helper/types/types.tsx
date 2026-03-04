@@ -241,6 +241,13 @@ export type CalendarYearT = {
   };
   historicalResidents?: HistoricalResident[];
   residents?: ResidentProfile[];
+  metrics?: {
+    residentsCount: number;
+    totalRevenue: number;
+    totalYears: number;
+    totalRooms: number;
+    occupancyRate: number;
+  };
 };
 
 export type Users = {
