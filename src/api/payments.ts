@@ -119,3 +119,16 @@ export const cashTopupPayment = async (payload: TopupPaymentRequest): Promise<{
     const response = await axiosInstance.post("/payments/cash-topup", payload);
     return response.data;
 };
+
+/**
+ * Confirm cash payment
+ * POST /api/v1/payments/confirm-cash
+ * Allows admin/staff to manually confirm a cash payment
+ */
+export const confirmCashPayment = async (reference: string): Promise<{
+    payment: unknown;
+    message: string;
+}> => {
+  const response = await axiosInstance.post("/payments/confirm-cash", { reference });
+  return response.data;
+};

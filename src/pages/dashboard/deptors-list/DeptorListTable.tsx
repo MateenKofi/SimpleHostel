@@ -2,19 +2,14 @@ import React, { useState } from 'react';
 import CustomDataTable from '@/components/CustomDataTable';
 import { useQuery } from '@tanstack/react-query';
 import { getDebtorsPaginated } from '@/api/residents';
-import { adminInitiateResidentPayment } from '@/api/payments';
 import { DebtorDto } from '@/types/dtos';
-import { useAddedResidentStore } from '@/stores/useAddedResidentStore';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import { Loader2 } from 'lucide-react';
+import DebtorPaymentModal from './DebtorPaymentModal';
+import { useModal } from '@/components/Modal';
 
 const DebtorListTable: React.FC = () => {
-  const navigate = useNavigate()
-  const setResident = useAddedResidentStore((state) => state.setResident)
   const [selectedDebtor, setSelectedDebtor] = useState<DebtorDto | null>(null);
-  const [processingDebtorId, setProcessingDebtorId] = useState<string | null>(null);
   const hostelId = localStorage.getItem('hostelId')
+  const paymentModal = useModal('debtor_payment_modal')
 
   const {
     data: debtorsResponse,
@@ -31,39 +26,6 @@ const DebtorListTable: React.FC = () => {
   });
 
   const debtors = debtorsResponse?.data ?? [];
-
-  const handlePayment = async (row: DebtorDto) => {
-    // Validate that the debtor has a balance owed
-    if (!row.balanceOwed || row.balanceOwed <= 0) {
-      toast.error("This resident has no outstanding balance to pay.");
-      return;
-    }
-
-    setProcessingDebtorId(row.id);
-
-    try {
-      // Initiate payment for the full balance owed
-      const result = await adminInitiateResidentPayment(
-        row.id,
-        row.balanceOwed
-      );
-
-      if (result?.authorizationUrl) {
-        toast.success("Redirecting to payment...");
-        // Redirect to Paystack
-        window.location.href = result.authorizationUrl;
-      } else {
-        toast.error("Failed to initialize payment. Please try again.");
-      }
-    } catch (error: unknown) {
-      console.error('Payment initiation error:', error);
-      const err = error as { response?: { data?: { message?: string } }; message?: string };
-      const errorMessage = err.response?.data?.message || err.message || "Failed to initiate payment";
-      toast.error(errorMessage);
-    } finally {
-      setProcessingDebtorId(null);
-    }
-  };
 
   const columns = [
     {
@@ -111,17 +73,13 @@ const DebtorListTable: React.FC = () => {
         <div className="flex gap-2">
           <button
             className="px-4 py-2 text-white rounded-md bg-primary disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            onClick={() => handlePayment(row)}
-            disabled={processingDebtorId === row.id || !row.balanceOwed || row.balanceOwed <= 0}
+            onClick={() => {
+              setSelectedDebtor(row);
+              paymentModal.open();
+            }}
+            disabled={!row.balanceOwed || row.balanceOwed <= 0}
           >
-            {processingDebtorId === row.id ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Processing...
-              </>
-            ) : (
-              'Pay'
-            )}
+            Pay
           </button>
         </div>
       ),
@@ -138,6 +96,14 @@ const DebtorListTable: React.FC = () => {
         refetch={refetchDebtors}
         isError={isError}
         isLoading={isLoading}
+      />
+      <DebtorPaymentModal
+        debtor={selectedDebtor}
+        onClose={() => {
+          setSelectedDebtor(null);
+          paymentModal.close();
+        }}
+        onSuccess={refetchDebtors}
       />
     </div>
   );
