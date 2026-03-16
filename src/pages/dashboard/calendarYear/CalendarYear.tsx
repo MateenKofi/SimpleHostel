@@ -48,8 +48,7 @@ const CalendarYear = () => {
   const activeYearsCount = currentYear?.isActive ? 1 : 0;
   const totalYearsCount = activeYearsCount + historicalYears.length;
   const totalResidents =
-    (currentYear?.residents?.length || 0) +
-    historicalYears.reduce((sum, year) => sum + (year.historicalResidents?.length || 0), 0);
+    (currentYear?.residents?.length || 0);
 
   // Combined refetch function
   const refetchAll = () => {

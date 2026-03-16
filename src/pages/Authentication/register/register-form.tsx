@@ -3,14 +3,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 import { registerResident } from "@/api/residents";
+import { verifyReservationCode, claimReservation } from "@/api/reservations";
 import { toast } from "sonner";
 import { Link, useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import type { ApiError } from "@/types/dtos";
+import type { ApiError, ReservationDto } from "@/types/dtos";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Loader,
   User,
@@ -19,7 +21,10 @@ import {
   Heart,
   ChevronRight,
   ChevronLeft,
-  GraduationCap
+  GraduationCap,
+  Ticket,
+  CheckCircle2,
+  AlertCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { registrationSchema, type RegistrationFormValues } from "@/schemas/registrationSchema";
@@ -30,6 +35,11 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [stepSubmitted, setStepSubmitted] = useState<Set<number>>(new Set());
+
+  // Reservation code handling
+  const [reservationCode, setReservationCode] = useState("");
+  const [reservationData, setReservationData] = useState<ReservationDto | null>(null);
+  const [isVerifyingCode, setIsVerifyingCode] = useState(false);
 
   const {
     register,
@@ -47,7 +57,20 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
     mutationFn: async (values: RegistrationFormValues) => {
       // Omit confirmPassword before sending
       const { confirmPassword, ...payload } = values;
-      return await registerResident(payload);
+      const registrationResponse = await registerResident(payload);
+
+      // If reservation code exists, claim it
+      if (reservationCode && reservationData) {
+        try {
+          await claimReservation({ secretCode: reservationCode, residentId: registrationResponse.data.id });
+          toast.success("Reservation claimed successfully!");
+        } catch (error) {
+          console.error("Failed to claim reservation:", error);
+          toast.error("Registration successful but failed to claim reservation. Please contact support.");
+        }
+      }
+
+      return registrationResponse;
     },
     onSuccess: () => {
       toast.success("Registration successful! Please log in.");
@@ -59,6 +82,32 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
       toast.error(errorMessage);
     }
   });
+
+  const handleVerifyReservationCode = async () => {
+    if (!reservationCode.trim()) {
+      toast.error("Please enter a reservation code");
+      return;
+    }
+
+    setIsVerifyingCode(true);
+    try {
+      const response = await verifyReservationCode(reservationCode.trim());
+      setReservationData(response.data);
+
+      // Pre-fill form with reservation data
+      if (response.data.name) setValue("name", response.data.name);
+      if (response.data.email) setValue("email", response.data.email);
+      if (response.data.phone) setValue("phone", response.data.phone);
+
+      toast.success("Reservation verified! Your details have been pre-filled.");
+    } catch (error: unknown) {
+      const errorMessage = (error as ApiError)?.response?.data?.message || "Invalid reservation code";
+      toast.error(errorMessage);
+      setReservationData(null);
+    } finally {
+      setIsVerifyingCode(false);
+    }
+  };
 
   const nextStep = async () => {
     // Mark current step as submitted so errors show if validation fails
@@ -118,6 +167,58 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
     <div className="flex flex-col items-center justify-center p-6 min-h-svh bg-slate-50 dark:bg-zinc-950 md:p-10">
       <div className="w-full max-w-lg md:max-w-xl">
         <div className={cn("w-full flex flex-col items-center gap-6", className)} {...props}>
+          {/* Reservation Code Card */}
+          <Card className="w-full border-2 border-dashed border-primary/30 bg-gradient-to-br from-primary/5 to-transparent">
+            <CardContent className="p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <Ticket className="w-5 h-5 text-primary" />
+                <Label htmlFor="reservation-code" className="text-sm font-semibold">
+                  Have a Reservation Code?
+                </Label>
+              </div>
+              <div className="flex gap-2">
+                <Input
+                  id="reservation-code"
+                  placeholder="e.g., RES-AB12CD34"
+                  value={reservationCode}
+                  onChange={(e) => {
+                    setReservationCode(e.target.value.toUpperCase());
+                    // Clear reservation data if code changes
+                    if (reservationData) setReservationData(null);
+                  }}
+                  onKeyDown={(e) => e.key === "Enter" && e.preventDefault()}
+                  disabled={isVerifyingCode || registerMutation.isPending}
+                  className="flex-1 font-mono tracking-widest"
+                  maxLength={20}
+                />
+                <Button
+                  onClick={handleVerifyReservationCode}
+                  disabled={isVerifyingCode || !reservationCode || registerMutation.isPending}
+                  variant="outline"
+                  size="default"
+                  type="button"
+                >
+                  {isVerifyingCode ? (
+                    <Loader className="w-4 h-4 animate-spin" />
+                  ) : (
+                    "Verify"
+                  )}
+                </Button>
+              </div>
+              {reservationData && (
+                <Alert className="mt-3 bg-emerald-50 border-emerald-200">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                  <AlertDescription className="text-emerald-900 text-sm">
+                    Reservation verified! Room: <strong>{reservationData.room?.number}</strong>
+                    {reservationData.calendarYear?.name && (
+                      <> ({reservationData.calendarYear.name})</>
+                    )}
+                  </AlertDescription>
+                </Alert>
+              )}
+            </CardContent>
+          </Card>
+
           <Card className="w-full overflow-hidden border-none shadow-xl bg-white dark:bg-zinc-900">
             <div className="h-2 bg-slate-100 dark:bg-zinc-800">
               <motion.div

@@ -383,3 +383,48 @@ export interface ChangePasswordRequest {
     oldPassword: string;
     newPassword: string;
 }
+
+// === Reservation Types ===
+
+export interface ReservationDto {
+    id: string;
+    roomId: string;
+    calendarYearId: string;
+    residentId: string | null;
+    name: string | null;
+    email: string | null;
+    phone: string | null;
+    secretCode: string | null;
+    status: "pending" | "confirmed" | "cancelled" | "fulfilled";
+    createdAt: string;
+    updatedAt: string;
+    room: RoomDto;
+    calendarYear: CalendarYearDto;
+    resident?: ResidentDto | null;
+    payments?: PaymentDto[];
+}
+
+export interface CalendarYearDto {
+    id: string;
+    name: string;
+    startDate: string;
+    endDate: string | null;
+    isActive: boolean;
+    hostelId: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface CreateReservationRequest {
+    roomId: string;
+    calendarYearId: string;
+    residentId?: string | null;
+    name?: string | null;
+    email?: string | null;
+    phone?: string | null;
+}
+
+export interface ClaimReservationRequest {
+    secretCode: string;
+    residentId: string;
+}
