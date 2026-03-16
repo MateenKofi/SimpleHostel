@@ -2,10 +2,9 @@ import axiosInstance from "./axiosInstance";
 import { MaintenanceRequestDto } from "@/types/dtos";
 
 /**
- * Fetch all maintenance requests with optional filtering by status, priority, and historical.
- * @param filters - Optional filters including status, priority, and historical flag
+ * Fetch all maintenance requests with optional filtering by status and priority.
  */
-export const getAllMaintenanceRequests = async (filters?: { status?: string; priority?: string; historical?: boolean }): Promise<{ data: MaintenanceRequestDto[] }> => {
+export const getAllMaintenanceRequests = async (filters?: { status?: string; priority?: string }): Promise<{ data: MaintenanceRequestDto[] }> => {
     const response = await axiosInstance.get("/admin/maintenance", {
         params: filters
     });
@@ -22,11 +21,8 @@ export const updateMaintenanceRequest = async (requestId: string, data: { status
 
 /**
  * Get summary statistics for maintenance requests.
- * @param historical - If true, returns historical stats. If false (default), returns current year stats only.
  */
-export const getMaintenanceStats = async (historical?: boolean): Promise<{ data: { pending: number, in_progress: number, resolved: number, rejected: number, critical: number } }> => {
-    const response = await axiosInstance.get("/admin/maintenance/stats", {
-        params: { historical: historical ?? false }
-    });
+export const getMaintenanceStats = async (): Promise<{ data: { pending: number, in_progress: number, resolved: number, rejected: number, critical: number } }> => {
+    const response = await axiosInstance.get("/admin/maintenance/stats");
     return response.data;
 };

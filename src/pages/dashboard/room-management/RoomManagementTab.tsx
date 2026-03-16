@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import RoomManagement from './RoomManagement';
 import Amenities from './amenities/Amenities';
-import ReservationsPage from './ReservationsPage';
 import StatusAlert from '@/components/StatusAlert';
 import { useQuery } from '@tanstack/react-query';
 import { getHostelById } from '@/api/hostels';
@@ -36,11 +35,6 @@ const RoomManagementTab = () => {
       id: 'amenities',
       title: 'Amenities',
       content: <Amenities />,
-    },
-    {
-      id: 'reservations',
-      title: 'Reservations',
-      content: <ReservationsPage />,
     },
   ];
 

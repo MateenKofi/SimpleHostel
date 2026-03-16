@@ -1,13 +1,11 @@
 import { Room } from "@/helper/types/types";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getHostelRooms, deleteRoom } from "@/api/rooms";
-import { getReservationsByHostel } from "@/api/reservations";
-import { Eye, Edit, Trash2, Ellipsis, Ticket } from "lucide-react";
-import React, { useState, useMemo } from "react";
+import { Eye, Edit, Trash2, Ellipsis } from "lucide-react";
+import React, { useState } from "react";
 import CustomDataTable from "../CustomDataTable";
 import { toast } from "sonner";
 import EditRoomModal from "@/components/rooms/EditRoomModal";
-import { ReserveRoomModal } from "@/components/reservations/ReserveRoomModal";
 import { useModal } from "../Modal";
 import { useNavigate } from "react-router-dom";
 import {
@@ -19,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { handleSwalMutation } from "../swal/SwalMutationHelper";
-import type { ApiError, ReservationDto } from "@/types/dtos";
+import type { ApiError } from "@/types/dtos";
 import { backendRoomTypeToDisplay } from "@/utils";
 
 const RoomTable = () => {
@@ -27,8 +25,6 @@ const RoomTable = () => {
   const { open: openEditRoomModal, close: closeEditRoomModal } =
     useModal("editroom_modal");
   const [selectedRoom, setSelectedRoom] = useState<Room>({} as Room);
-  const [openReserveModal, setOpenReserveModal] = useState(false);
-  const [selectedReserveRoom, setSelectedReserveRoom] = useState<Room | null>(null);
 
 
   const hostelId = localStorage.getItem("hostelId") || "";
@@ -46,24 +42,6 @@ const RoomTable = () => {
     },
     enabled: !!hostelId,
   });
-
-  const { data: reservationsData, refetch: refetchReservations } = useQuery({
-    queryKey: ["reservations", hostelId],
-    queryFn: async () => {
-      if (!hostelId) return [];
-      const response = await getReservationsByHostel(hostelId);
-      return response.data || [];
-    },
-    enabled: !!hostelId,
-  });
-
-  // Get reservations for a specific room
-  const getRoomReservations = useMemo(() => {
-    return (roomId: string): ReservationDto[] => {
-      if (!reservationsData) return [];
-      return reservationsData.filter((r: ReservationDto) => r.roomId === roomId);
-    };
-  }, [reservationsData]);
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
@@ -92,17 +70,6 @@ const RoomTable = () => {
       mutation: () => deleteMutation.mutateAsync(id),
       title: "Delete Room",
     });
-  };
-
-  // Open reserve room modal
-  const handleReserveRoom = (room: Room) => {
-    setSelectedReserveRoom(room);
-    setOpenReserveModal(true);
-  };
-
-  // Handle reserve modal success
-  const handleReserveSuccess = () => {
-    refetchReservations();
   };
 
   const columns = [
@@ -172,42 +139,6 @@ const RoomTable = () => {
       sortable: true,
     },
     {
-      name: "Reservations",
-      sortable: true,
-      center: true,
-      cell: (row: Room) => {
-        const roomReservations = getRoomReservations(row.id);
-        const confirmedCount = roomReservations.filter((r) => r.status === "confirmed").length;
-        const pendingCount = roomReservations.filter((r) => r.status === "pending").length;
-        const fulfilledCount = roomReservations.filter((r) => r.status === "fulfilled").length;
-
-        return (
-          <div className="flex flex-col items-center gap-1">
-            <div className="flex gap-2 text-xs">
-              {confirmedCount > 0 && (
-                <span className="px-2 py-1 bg-emerald-100 text-emerald-800 rounded">
-                  {confirmedCount} confirmed
-                </span>
-              )}
-              {pendingCount > 0 && (
-                <span className="px-2 py-1 bg-amber-100 text-amber-800 rounded">
-                  {pendingCount} pending
-                </span>
-              )}
-              {fulfilledCount > 0 && (
-                <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded">
-                  {fulfilledCount} fulfilled
-                </span>
-              )}
-              {roomReservations.length === 0 && (
-                <span className="text-muted-foreground">-</span>
-              )}
-            </div>
-          </div>
-        );
-      },
-    },
-    {
       name: "Action",
       cell: (row: Room) => (
         <DropdownMenu>
@@ -224,15 +155,6 @@ const RoomTable = () => {
               >
                 <Eye className="w-4 h-4" />
                 <span>View</span>
-              </button>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <button
-                className="flex items-center justify-center w-full gap-1 p-2 text-xs text-white bg-emerald-600 rounded"
-                onClick={() => handleReserveRoom(row)}
-              >
-                <Ticket className="w-4 h-4" />
-                <span>Reserve Room</span>
               </button>
             </DropdownMenuItem>
             <DropdownMenuItem>
@@ -272,15 +194,6 @@ const RoomTable = () => {
         refetch={refetchRooms}
       />
       <EditRoomModal onClose={closeEditRoomModal} formdata={selectedRoom} />
-      {openReserveModal && selectedReserveRoom && (
-        <ReserveRoomModal
-          hostelId={hostelId}
-          rooms={rooms?.rooms || []}
-          open={openReserveModal}
-          onOpenChange={setOpenReserveModal}
-          onSuccess={handleReserveSuccess}
-        />
-      )}
     </div>
   );
 };

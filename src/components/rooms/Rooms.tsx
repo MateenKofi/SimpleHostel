@@ -1,28 +1,20 @@
-import React, { useState } from 'react'
+import React from 'react'
+
 import { useQuery } from '@tanstack/react-query';
 import { getHostelRooms } from '@/api/rooms';
-import { BedDouble, Hammer, Home, Plus, Users, Ticket } from 'lucide-react';
+import { BedDouble, Hammer, Home, Plus, Users } from 'lucide-react';
 import { StatCard } from '../stat-card';
 import AmenitiesModal from '@/pages/dashboard/room-management/amenities/AmenitiesModal';
 import AddRoomModal from '@/components/rooms/AddRoomModal';
-import { ReserveRoomModal } from '@/components/reservations/ReserveRoomModal';
 import { useModal } from '../Modal';
 import RoomTable from './RoomTable';
-import { useNavigate } from 'react-router-dom';
-import type { RoomDto } from '@/types/dtos';
 
 const Rooms = () => {
   const { open: openAddRoomModal, close: closeAddRoomModal } =
     useModal("add_room_modal");
   const { open: openAmenitiesModal, close: closeAmenitiesModal } =
     useModal("amenities_modal");
-  const [openReserveModal, setOpenReserveModal] = useState(false);
   const hostelId = localStorage.getItem("hostelId") || "";
-  const navigate = useNavigate();
-
-  const handleOpenReserveModal = () => {
-    setOpenReserveModal(true);
-  };
 
   const { data: rooms, } = useQuery({
     queryKey: ["rooms"],
@@ -91,23 +83,8 @@ const Rooms = () => {
           <Plus />
           <span>Amenities</span>
         </button>
-        <button
-          className="flex gap-2 px-4 py-2 text-white bg-emerald-600 rounded-md shadow-lg"
-          onClick={handleOpenReserveModal}
-        >
-          <Ticket />
-          <span>Create Reservation</span>
-        </button>
         <AddRoomModal onClose={closeAddRoomModal} />
         <AmenitiesModal onClose={closeAmenitiesModal} />
-        {openReserveModal && (
-          <ReserveRoomModal
-            hostelId={hostelId}
-            rooms={rooms?.rooms || []}
-            open={openReserveModal}
-            onOpenChange={setOpenReserveModal}
-          />
-        )}
       </div>
       <div>
         {rooms?.rooms?.length === 0 ? (
