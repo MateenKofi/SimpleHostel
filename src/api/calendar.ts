@@ -29,3 +29,8 @@ export const endCalendarYear = async (id: string) => {
     const response = await axiosInstance.patch(`/calendar/end/${id}`);
     return response.data;
 };
+
+export const activateCalendarYear = async (id: string) => {
+    const response = await axiosInstance.patch(`/calendar/activate/${id}`);
+    return response.data;
+};

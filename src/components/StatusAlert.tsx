@@ -33,7 +33,7 @@ const StatusAlert: React.FC<AwardStatusAlertProps> = ({ status }) => {
         const err = error as ApiError;
         const errorMessage = err.response?.data?.message || 'Failed to publish hostel';
         toast.error(errorMessage);
-        throw error;
+        throw error 
       }
     },
   });

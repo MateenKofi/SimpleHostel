@@ -59,14 +59,18 @@ export const showErrorDialog = ({
 export const handleSwalMutation = async ({
   mutation,
   title,
+  text,
+  icon = "warning",
 }: {
   mutation: () => Promise<unknown>; 
   title: string;
+  text?: string;
+  icon?: SweetAlertIcon;
 }) => {
   const result = await Swal.fire({
     title: `Are you sure?`,
-    text: `Do you want to ${title.toLowerCase()}?`,
-    icon: "warning",
+    text: text || `Do you want to ${title.toLowerCase()}?`,
+    icon: icon,
     showCancelButton: true,
     confirmButtonText: `Yes, ${title.toLowerCase()}!`,
   });

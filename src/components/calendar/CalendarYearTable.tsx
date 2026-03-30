@@ -1,7 +1,7 @@
 import { CalendarYearT } from "@/helper/types/types";
 import { useMutation } from "@tanstack/react-query";
-import { deleteCalendarYear, endCalendarYear } from "@/api/calendar";
-import { Edit, Ellipsis, Trash2, Power } from "lucide-react";
+import { deleteCalendarYear, endCalendarYear, activateCalendarYear } from "@/api/calendar";
+import { Edit, Ellipsis, Trash2, Power, Play } from "lucide-react";
 import React, { useState } from "react";
 import CustomDataTable from "../CustomDataTable";
 import { toast } from "sonner";
@@ -60,6 +60,21 @@ const CalendarYearTable = ({
     },
   });
 
+  // Mutation to activate a calendar year
+  const activateYearMutation = useMutation({
+    mutationFn: async (id: string) => {
+      try {
+        await activateCalendarYear(id);
+        refetch();
+        toast.success("Calendar year activated and migration completed");
+      } catch (error: unknown) {
+        const errorMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message || "Failed to activate calendar year";
+        toast.error(errorMessage);
+        throw error;
+      }
+    },
+  });
+
   // Mutation to delete a calendar year
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
@@ -86,6 +101,16 @@ const CalendarYearTable = ({
     await handleSwalMutation({
       mutation: () => endYearMutation.mutateAsync(id),
       title: "End Year",
+    });
+  };
+
+  // Activate a calendar year
+  const handleActivateYear = async (id: string) => {
+    await handleSwalMutation({
+      mutation: () => activateYearMutation.mutateAsync(id),
+      title: "Activate Year",
+      text: "This will deactivate the currently active year and perform migration of residents to historical records. This action cannot be undone.",
+      icon: "warning",
     });
   };
 
@@ -120,17 +145,22 @@ const CalendarYearTable = ({
       name: "Status",
       sortable: true,
       center: true,
-      cell: (row: CalendarYearRow) => (
-        <span
-          className={`px-3 py-1 rounded-full text-xs font-medium text-center text-nowrap ${
-            row.isActive
-              ? "bg-forest-green-100 text-forest-green-800"
-              : "bg-gray-100 text-gray-600"
-          }`}
-        >
-          {row.isActive ? "Active" : "Ended"}
-        </span>
-      ),
+      cell: (row: CalendarYearRow) => {
+        const isNotStarted = !row.isActive && !row.endDate;
+        return (
+          <span
+            className={`px-3 py-1 rounded-full text-xs font-medium text-center text-nowrap ${
+              row.isActive
+                ? "bg-forest-green-100 text-forest-green-800"
+                : isNotStarted
+                ? "bg-blue-100 text-blue-800"
+                : "bg-gray-100 text-gray-600"
+            }`}
+          >
+            {row.isActive ? "Active" : isNotStarted ? "Not Started" : "Ended"}
+          </span>
+        );
+      },
     },
     {
       name: "Residents",
@@ -172,6 +202,18 @@ const CalendarYearTable = ({
                 >
                   <Power className="w-4 h-4" />
                   <span>End Year</span>
+                </button>
+              </DropdownMenuItem>
+            )}
+            {!row.isActive && (
+              <DropdownMenuItem>
+                <button
+                  className="flex items-center justify-center w-full gap-2 p-2 text-xs text-white bg-emerald-600 rounded hover:bg-emerald-700"
+                  onClick={() => handleActivateYear(row.id)}
+                  disabled={activateYearMutation.isPending}
+                >
+                  <Play className="w-4 h-4" />
+                  <span>Activate</span>
                 </button>
               </DropdownMenuItem>
             )}

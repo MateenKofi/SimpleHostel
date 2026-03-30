@@ -35,7 +35,7 @@ const AddCalendarYearForm = ({ onClose, refectCurrentYear, refectHistoricalYears
         refectCurrentYear();
         refectHistoricalYears();
         onClose();
-        toast.success("Academic Year added successfully");
+        toast.success("Academic Year created successfully. You can activate it from the table.");
         reset();
       } catch (error: unknown) {
         const err = error as ApiError;
@@ -54,9 +54,9 @@ const AddCalendarYearForm = ({ onClose, refectCurrentYear, refectHistoricalYears
     <Modal modalId="add-calendar-year-modal" onClose={onClose} >
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
-          <h1>Start New Calendar Year</h1>
+          <h1>Create New Calendar Year</h1>
           <p className="text-sm text-muted-foreground">
-            Enter a name for the new calendar year. This will create a new active year.
+            Enter a name for the new calendar year. This will create an inactive year that you can activate later.
           </p>
         </div>
         <div className="grid gap-4 py-4">
