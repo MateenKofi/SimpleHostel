@@ -1,17 +1,82 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "react-router-dom";
+import { motion } from "framer-motion";
 import { getCurrentCalendarYear, getHistoricalCalendarYears } from "@/api/calendar";
 import { CalendarYearT } from "@/helper/types/types";
 import SEOHelmet from "@/components/SEOHelmet";
+import { Skeleton } from "@/components/ui/skeleton";
 import { backendRoomTypeToDisplay } from "@/utils";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { Calendar, CalendarClock, Users, BadgeCent, ArrowLeft, Edit } from "lucide-react";
+import { Calendar, CalendarClock, Users, BadgeCent, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatCard } from "@/components/stat-card";
 import CustomDataTable from "@/components/CustomDataTable";
 import moment from "moment";
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.15,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 15, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+    transition: {
+      type: "spring",
+      stiffness: 400,
+      damping: 30,
+    },
+  },
+};
+
+const CalendarYearDetailSkeleton = () => (
+  <div className="min-h-screen bg-white flex flex-col">
+    <div className="sticky top-0 z-10 bg-white border-b px-4 md:px-8 py-4">
+      <div className="max-w-6xl mx-auto flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Skeleton className="h-10 w-10 rounded-lg" />
+          <Skeleton className="h-8 w-48" />
+        </div>
+        <Skeleton className="h-9 w-24" />
+      </div>
+    </div>
+    <main className="flex-1 p-4 md:p-8">
+      <div className="max-w-6xl mx-auto space-y-6">
+        <Card className="p-6">
+          <Skeleton className="h-7 w-32 mb-4" />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Skeleton className="h-16" />
+            <Skeleton className="h-16" />
+            <Skeleton className="h-16" />
+          </div>
+        </Card>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Card key={i} className="p-4">
+              <Skeleton className="h-4 w-20 mb-2" />
+              <Skeleton className="h-8 w-12 mb-1" />
+              <Skeleton className="h-3 w-28" />
+            </Card>
+          ))}
+        </div>
+        <Card className="p-6">
+          <Skeleton className="h-6 w-32 mb-4" />
+          <Skeleton className="h-64 w-full" />
+        </Card>
+      </div>
+    </main>
+  </div>
+);
 
 const CalendarYearDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,6 +93,7 @@ const CalendarYearDetail = () => {
       return await getCurrentCalendarYear(hostelId);
     },
     enabled: !!hostelId,
+    retry: 1,
   });
 
   const {
@@ -41,11 +107,11 @@ const CalendarYearDetail = () => {
       return await getHistoricalCalendarYears(hostelId);
     },
     enabled: !!hostelId,
+    retry: 1,
   });
 
   const historicalYears = historicalYearsResponse?.data || [];
 
-  // Find the calendar year by ID from current and historical years
   const yearData = currentYear?.data?.id === id
     ? currentYear?.data
     : historicalYears.find((year) => year.id === id);
@@ -59,12 +125,10 @@ const CalendarYearDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-4 text-muted-foreground">Loading calendar year details...</p>
-        </div>
-      </div>
+      <>
+        <SEOHelmet title="Loading Calendar Year Details - Fuse" />
+        <CalendarYearDetailSkeleton />
+      </>
     );
   }
 
@@ -183,149 +247,171 @@ const CalendarYearDetail = () => {
         icon={Calendar}
         sticky={true}
         actions={
-          <Button variant="outline" onClick={() => window.history.back()}>
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Button variant="outline" onClick={() => window.history.back()}>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
+          </motion.div>
         }
       />
 
       <main className="flex-1 p-4 md:p-8">
-        <div className="max-w-6xl mx-auto space-y-6">
-          {/* Year Details Card */}
-          <Card className="bg-gradient-to-br from-forest-green-50 to-sage-green-50 dark:from-forest-green-950/20 dark:to-sage-green-950/10 border-forest-green-200/50 dark:border-forest-green-800/30">
-            <CardHeader>
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                <div>
-                  <CardTitle className="text-xl md:text-2xl">Year Information</CardTitle>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {yearData.isActive ? "Currently active academic year" : "Historical academic year"}
-                  </p>
-                </div>
-                <Badge
-                  variant={yearData.isActive ? "default" : "secondary"}
-                  className="px-4 py-1.5 text-sm font-medium"
-                >
-                  {yearData.isActive ? (
-                    <span className="flex items-center gap-1.5">
-                      <CalendarClock className="w-3.5 h-3.5" />
-                      Active
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1.5">
-                      <Calendar className="w-3.5 h-3.5" />
-                      Ended
-                    </span>
-                  )}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">Start Date</p>
-                  <p className="text-base font-semibold text-foreground">
-                    {moment(yearData.startDate).format("MMMM DD, YYYY")}
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">End Date</p>
-                  <p className="text-base font-semibold text-foreground">
-                    {yearData.endDate ? moment(yearData.endDate).format("MMMM DD, YYYY") : "Not Ended"}
-                  </p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium text-muted-foreground">Duration</p>
-                  <p className="text-base font-semibold text-foreground">
-                    {yearData.endDate
-                      ? `${moment(yearData.endDate).diff(moment(yearData.startDate), "days")} days`
-                      : `${moment().diff(moment(yearData.startDate), "days")} days (ongoing)`
-                    }
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Stats Cards */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <StatCard
-              icon={Users}
-              title="Total Residents"
-              content={residentsCount.toString()}
-              description={`${yearData.isActive ? "Currently" : "Historically"} enrolled residents`}
-            />
-            <StatCard
-              icon={Calendar}
-              title="Occupancy Rate"
-              content={`${occupancyRate}%`}
-              description="Residents with assigned rooms"
-            />
-            <StatCard
-              icon={BadgeCent}
-              title="Total Revenue"
-              content={`GHS${(totalRevenue / 1000).toFixed(0)}K`}
-              description="Total revenue collected"
-            />
-            <StatCard
-              icon={BadgeCent}
-              title="Net Income"
-              content={`GHS${(netIncome / 1000).toFixed(0)}K`}
-              description={`Revenue minus expenses`}
-            />
-          </div>
-
-          {/* Financial Summary Card */}
-          {(totalRevenue > 0 || totalExpenses > 0) && (
-            <Card className="bg-card border-border">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="max-w-6xl mx-auto space-y-4 sm:space-y-6"
+        >
+          <motion.div variants={itemVariants}>
+            <Card className="bg-gradient-to-br from-forest-green-50 to-sage-green-50 dark:from-forest-green-950/20 dark:to-sage-green-950/10 border-forest-green-200/50 dark:border-forest-green-800/30">
               <CardHeader>
-                <CardTitle className="text-lg">Financial Summary</CardTitle>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
+                  <div>
+                    <CardTitle className="text-lg sm:text-xl md:text-2xl">Year Information</CardTitle>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {yearData.isActive ? "Currently active academic year" : "Historical academic year"}
+                    </p>
+                  </div>
+                  <Badge
+                    variant={yearData.isActive ? "default" : "secondary"}
+                    className="px-3 py-1.5 text-xs sm:text-sm font-medium shrink-0"
+                  >
+                    {yearData.isActive ? (
+                      <span className="flex items-center gap-1.5">
+                        <CalendarClock className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">Active</span>
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1.5">
+                        <Calendar className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline">Ended</span>
+                      </span>
+                    )}
+                  </Badge>
+                </div>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Total Revenue</span>
-                    <span className="text-lg font-semibold text-forest-green-700">
-                      GHS{totalRevenue.toLocaleString()}
-                    </span>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                  <div className="space-y-1 p-3 bg-white/50 rounded-lg">
+                    <p className="text-xs sm:text-sm font-medium text-muted-foreground">Start Date</p>
+                    <p className="text-sm sm:text-base font-semibold text-foreground">
+                      {moment(yearData.startDate).format("MMM DD, YYYY")}
+                    </p>
                   </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground">Total Expenses</span>
-                    <span className="text-lg font-semibold text-warm-red-600">
-                      GHS{totalExpenses.toLocaleString()}
-                    </span>
+                  <div className="space-y-1 p-3 bg-white/50 rounded-lg">
+                    <p className="text-xs sm:text-sm font-medium text-muted-foreground">End Date</p>
+                    <p className="text-sm sm:text-base font-semibold text-foreground">
+                      {yearData.endDate ? moment(yearData.endDate).format("MMM DD, YYYY") : "Not Ended"}
+                    </p>
                   </div>
-                  <div className="h-px bg-border" />
-                  <div className="flex justify-between items-center">
-                    <span className="text-muted-foreground font-medium">Net Income</span>
-                    <span className={`text-xl font-bold ${netIncome >= 0 ? "text-forest-green-700" : "text-warm-red-600"}`}>
-                      GHS{netIncome.toLocaleString()}
-                    </span>
+                  <div className="space-y-1 p-3 bg-white/50 rounded-lg">
+                    <p className="text-xs sm:text-sm font-medium text-muted-foreground">Duration</p>
+                    <p className="text-sm sm:text-base font-semibold text-foreground">
+                      {yearData.endDate
+                        ? `${moment(yearData.endDate).diff(moment(yearData.startDate), "days")} days`
+                        : `${moment().diff(moment(yearData.startDate), "days")} days`
+                      }
+                    </p>
                   </div>
                 </div>
               </CardContent>
             </Card>
+          </motion.div>
+
+          <motion.div variants={itemVariants}>
+            <div className="grid gap-3 sm:gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <motion.div whileHover={{ scale: 1.02, y: -2 }} transition={{ type: "spring", stiffness: 400 }}>
+                <StatCard
+                  icon={Users}
+                  title="Total Residents"
+                  content={residentsCount.toString()}
+                  description={`${yearData.isActive ? "Currently" : "Historically"} enrolled`}
+                />
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.02, y: -2 }} transition={{ type: "spring", stiffness: 400 }}>
+                <StatCard
+                  icon={Calendar}
+                  title="Occupancy Rate"
+                  content={`${occupancyRate}%`}
+                  description="With assigned rooms"
+                />
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.02, y: -2 }} transition={{ type: "spring", stiffness: 400 }}>
+                <StatCard
+                  icon={BadgeCent}
+                  title="Total Revenue"
+                  content={`GHS${(totalRevenue / 1000).toFixed(0)}K`}
+                  description="Total collected"
+                />
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.02, y: -2 }} transition={{ type: "spring", stiffness: 400 }}>
+                <StatCard
+                  icon={BadgeCent}
+                  title="Net Income"
+                  content={`GHS${(netIncome / 1000).toFixed(0)}K`}
+                  description="Revenue - expenses"
+                />
+              </motion.div>
+            </div>
+          </motion.div>
+
+          {(totalRevenue > 0 || totalExpenses > 0) && (
+            <motion.div variants={itemVariants}>
+              <Card className="bg-card border-border">
+                <CardHeader>
+                  <CardTitle className="text-lg">Financial Summary</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3 sm:space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm sm:text-base text-muted-foreground">Total Revenue</span>
+                      <span className="text-base sm:text-lg font-semibold text-forest-green-700">
+                        GHS{totalRevenue.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm sm:text-base text-muted-foreground">Total Expenses</span>
+                      <span className="text-base sm:text-lg font-semibold text-warm-red-600">
+                        GHS{totalExpenses.toLocaleString()}
+                      </span>
+                    </div>
+                    <div className="h-px bg-border" />
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm sm:text-base text-muted-foreground font-medium">Net Income</span>
+                      <span className={`text-lg sm:text-xl font-bold ${netIncome >= 0 ? "text-forest-green-700" : "text-warm-red-600"}`}>
+                        GHS{netIncome.toLocaleString()}
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
           )}
 
-          {/* Residents Table */}
-          <Card className="bg-card border-border">
-            <CardHeader>
-              <CardTitle className="text-lg">
-                {yearData.isActive ? "Current Residents" : "Historical Residents"}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <CustomDataTable
-                title=""
-                columns={columns}
-                data={residentData}
-                isError={false}
-                isLoading={false}
-                refetch={refetch}
-              />
-            </CardContent>
-          </Card>
-        </div>
+          <motion.div variants={itemVariants}>
+            <Card className="bg-card border-border">
+              <CardHeader>
+                <CardTitle className="text-lg">
+                  {yearData.isActive ? "Current Residents" : "Historical Residents"}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0 overflow-x-auto">
+                <CustomDataTable
+                  title=""
+                  columns={columns}
+                  data={residentData}
+                  isError={false}
+                  isLoading={false}
+                  refetch={refetch}
+                />
+              </CardContent>
+            </Card>
+          </motion.div>
+        </motion.div>
       </main>
     </div>
   );
