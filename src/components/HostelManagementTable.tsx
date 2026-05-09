@@ -4,7 +4,7 @@ import { getHostels, deleteHostel, updateHostelRules } from "@/api/hostels";
 import { Hostel } from "@/helper/types/types";
 import { TableColumn } from "react-data-table-component";
 import CustomDataTable from "./CustomDataTable";
-import { Trash2, FileText, Upload, Loader2 as Loader } from "lucide-react";
+import { Trash2, FileText, Upload, Loader2 as Loader, MapPin } from "lucide-react";
 import { toast } from "sonner";
 import { handleSwalMutation } from "./swal/SwalMutationHelper";
 import {
@@ -19,6 +19,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { ApiError } from "@/types/dtos";
+import { LocationPicker } from "./maps/LocationPicker";
+import { updateHostel } from "@/api/hostels";
 
 const HostelManagementTable = () => {
   const {
@@ -58,6 +60,8 @@ const HostelManagementTable = () => {
 
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [selectedHostelId, setSelectedHostelId] = useState<string | null>(null);
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [selectedHostel, setSelectedHostel] = useState<Hostel | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const UploadRulesMutation = useMutation({
@@ -83,6 +87,29 @@ const HostelManagementTable = () => {
     setSelectedHostelId(id);
     setIsUploadModalOpen(true);
   };
+
+  const handleEditLocationClick = (hostel: Hostel) => {
+    setSelectedHostel(hostel);
+    setIsLocationModalOpen(true);
+  };
+
+  const UpdateLocationMutation = useMutation({
+    mutationFn: async (data: { id: string; lat: number; lng: number; address: string }) => {
+      const formData = new FormData();
+      formData.append("latitude", data.lat.toString());
+      formData.append("longitude", data.lng.toString());
+      formData.append("address", data.address);
+      return await updateHostel(data.id, formData);
+    },
+    onSuccess: () => {
+      toast.success("Hostel location updated successfully");
+      setIsLocationModalOpen(false);
+      refetchAllHostels();
+    },
+    onError: (error: ApiError) => {
+      toast.error(error.response?.data?.error || "Failed to update location");
+    },
+  });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -110,6 +137,15 @@ const HostelManagementTable = () => {
       center: true,
       cell: (row) => (
         <span className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleEditLocationClick(row)}
+            title="Edit Location"
+            className="text-blue-600 border-blue-200 hover:bg-blue-50"
+          >
+            <MapPin className="w-4 h-4" />
+          </Button>
           <Button
             variant="outline"
             size="sm"
@@ -183,7 +219,57 @@ const HostelManagementTable = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div >
+
+      <Dialog open={isLocationModalOpen} onOpenChange={setIsLocationModalOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Update Hostel Location</DialogTitle>
+            <DialogDescription>
+              Drag the pin or search for an address to update <strong>{selectedHostel?.name}</strong>'s coordinates.
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedHostel && (
+            <div className="py-4">
+              <LocationPicker 
+                latitude={selectedHostel.latitude || undefined}
+                longitude={selectedHostel.longitude || undefined}
+                address={selectedHostel.address}
+                onLocationChange={(lat, lng) => {
+                  setSelectedHostel(prev => prev ? { ...prev, latitude: lat, longitude: lng } : null);
+                }}
+                onAddressChange={(addr) => {
+                  setSelectedHostel(prev => prev ? { ...prev, address: addr } : null);
+                }}
+                height="350px"
+              />
+            </div>
+          )}
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsLocationModalOpen(false)}>
+              Cancel
+            </Button>
+            <Button 
+              onClick={() => {
+                if (selectedHostel) {
+                  UpdateLocationMutation.mutate({
+                    id: selectedHostel.id,
+                    lat: selectedHostel.latitude!,
+                    lng: selectedHostel.longitude!,
+                    address: selectedHostel.address,
+                  });
+                }
+              }}
+              disabled={UpdateLocationMutation.isPending || !selectedHostel?.latitude}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              {UpdateLocationMutation.isPending ? <Loader className="w-4 h-4 animate-spin mr-2" /> : "Save Location"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 };
 

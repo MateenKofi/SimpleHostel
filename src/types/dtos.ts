@@ -56,6 +56,8 @@ export interface HostelDto {
     published: boolean;
     images: string[]; // Array of image URLs
     averageRating: number;
+    latitude?: number | null;
+    longitude?: number | null;
 }
 
 export interface RoomDto {
@@ -291,6 +293,8 @@ export interface UpdateHostelRequest {
     email?: string | null;
     phone?: string | null;
     images?: string[] | null;
+    latitude?: number | null;
+    longitude?: number | null;
 }
 
 export interface CreateServiceRequest {

@@ -11,6 +11,8 @@ export const settingsFormSchema = z.object({
   ghCard: z.string().min(5, "Ghana Card must be at least 5 characters"),
   allowPartialPayment: z.boolean().default(false),
   partialPaymentPercentage: z.coerce.number().min(0, "Percentage must be at least 0").max(100, "Percentage must be at most 100").default(50),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
 });
 
 export type SettingsFormValues = z.infer<typeof settingsFormSchema>;

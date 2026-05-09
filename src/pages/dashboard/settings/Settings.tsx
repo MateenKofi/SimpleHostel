@@ -8,6 +8,7 @@ import {
   Settings2,
   FileText,
   Upload,
+  MapPin,
 } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
@@ -42,6 +43,7 @@ import SEOHelmet from "@/components/SEOHelmet";
 import SettingsSkeleton from "@/components/loaders/SettingsLoader";
 import { TextField } from "@/components/TextField";
 import { settingsFormSchema, type SettingsFormValues } from "@/schemas/settingsSchema";
+import { LocationPicker, LocationPickerInput } from "@/components/maps/LocationPicker";
 
 const Settings = () => {
   const [images, setImages] = useState<File[]>([]);
@@ -82,6 +84,8 @@ const Settings = () => {
       ghCard: "",
       allowPartialPayment: false,
       partialPaymentPercentage: 50,
+      latitude: undefined,
+      longitude: undefined,
     },
   });
 
@@ -117,6 +121,8 @@ const Settings = () => {
       formData.append("address", data.address.toUpperCase());
       formData.append("email", data.email);
       formData.append("phone", data.phone);
+      if (data.latitude !== undefined) formData.append("latitude", data.latitude.toString());
+      if (data.longitude !== undefined) formData.append("longitude", data.longitude.toString());
 
       images.forEach((image) => {
         if (image instanceof File) {
@@ -224,7 +230,7 @@ const Settings = () => {
           {/* General Info */}
           <Card>
             <CardHeader>
-              <CardTitle>General Information</CardTitle>
+              <CardTitle>General Information (Updated)</CardTitle>
               <CardDescription>
                 Manage your hostel’s basic details.
               </CardDescription>
@@ -259,18 +265,20 @@ const Settings = () => {
                 )}
               />
 
-              <TextField id="address" label="Address" register={form.register('address')} error={form.formState.errors.address} placeholder="Enter address" />
-              <a
-                href="https://www.google.com/maps"
-                target="_blank"
-                className="mt-4 italic tracking-tighter text-blue-400 underline "
-              >
-                <p className="flex items-center gap-1">
-                  {" "}
-                  Get Google Map Location Here{" "}
-                  <LucideCircleArrowOutUpRight size={12} />
-                </p>
-              </a>
+              <LocationPickerInput
+                label="Hostel Address & Location"
+                latitude={form.watch('latitude')}
+                longitude={form.watch('longitude')}
+                address={form.watch('address')}
+                onLocationChange={(lat, lng) => {
+                  form.setValue('latitude', lat, { shouldDirty: true });
+                  form.setValue('longitude', lng, { shouldDirty: true });
+                }}
+                onAddressChange={(addr) => {
+                  form.setValue('address', addr, { shouldValidate: true, shouldDirty: true });
+                }}
+                error={form.formState.errors.address?.message}
+              />
             </CardContent>
           </Card>
 

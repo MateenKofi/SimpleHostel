@@ -159,6 +159,11 @@ export function LocationPicker({
   const handleClearLocation = () => {
     setMarkerPosition(null);
     setSearchQuery("");
+    setViewport((prev) => ({
+      ...prev,
+      center: GHANA_CENTER,
+      zoom: DEFAULT_ZOOM,
+    }));
     onLocationChange?.(0, 0);
     onAddressChange?.("");
   };
