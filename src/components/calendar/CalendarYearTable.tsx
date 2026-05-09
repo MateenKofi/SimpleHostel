@@ -117,8 +117,6 @@ const CalendarYearTable = ({
         ? `You are about to activate "${yearName}". This will:\n\n• End the current active year\n• Migrate all current residents to historical records\n• Reset all rooms to available\n\nThis action cannot be undone. Are you sure?`
         : `You are about to activate "${yearName}" as the first active year.\n\nThis will:\n• Set this year as the active academic year\n• Allow new reservations and payments\n\nDo you want to continue?`,
       icon: "warning",
-      confirmButtonText: hasActiveYear ? "Yes, Activate & End Current Year" : "Yes, Activate",
-      cancelButtonText: "Cancel",
     });
   };
 
@@ -296,7 +294,7 @@ const CalendarYearTable = ({
                         </DropdownMenuItem>
                       )}
                       {!year.isActive && (
-                        <DropdownMenuItem onClick={() => handleActivateYear(year.id)}>
+                        <DropdownMenuItem onClick={() => handleActivateYear(year.id, year.name)}>
                           <Play className="w-4 h-4 mr-2" />
                           Activate
                         </DropdownMenuItem>
