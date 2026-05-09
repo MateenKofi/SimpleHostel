@@ -1,8 +1,11 @@
-import { PhoneCall, CheckCircle2 } from 'lucide-react';
+import { PhoneCall, CheckCircle2, Home } from 'lucide-react';
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const SuccessfulListing = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="flex items-center justify-center min-h-[60vh] p-6">
       <motion.div
@@ -40,15 +43,24 @@ const SuccessfulListing = () => {
           </p>
         </div>
 
-        <div className="pt-2">
-          <p className="text-sm text-muted-foreground mb-4">Need immediate assistance?</p>
-          <motion.a
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="btn btn-black w-full shadow-lg group"
-            href="tel:+233543983427"
+        <div className="pt-2 space-y-3">
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => navigate('/')}
+            className="inline-flex items-center justify-center gap-2 w-full h-11 px-6 text-sm font-medium text-primary-foreground bg-primary rounded-lg shadow-lg hover:bg-primary/90 hover:shadow-xl transition-all duration-200"
           >
-            <PhoneCall className="mr-2 h-4 w-4 group-hover:rotate-12 transition-transform" />
+            <Home className="w-4 h-4" />
+            Back to Home
+          </motion.button>
+          <p className="text-sm text-muted-foreground">Need immediate assistance?</p>
+          <motion.a
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            href="tel:+233543983427"
+            className="inline-flex items-center justify-center gap-2 w-full h-11 px-6 text-sm font-medium text-foreground bg-secondary rounded-lg shadow-md hover:bg-secondary/80 transition-all duration-200"
+          >
+            <PhoneCall className="w-4 h-4" />
             Contact Admin
           </motion.a>
         </div>

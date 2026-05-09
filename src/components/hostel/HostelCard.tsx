@@ -1,6 +1,8 @@
 import { Hostel } from "@/helper/types/types";
-import { MapPin, Phone, MapPinHouse, Star } from "lucide-react";
+import { MapPin, Phone, Star } from "lucide-react";
 import { useState, useEffect } from "react";
+import { HostelMapCard } from "@/components/maps/HostelMap";
+import { useNavigate } from "react-router-dom";
 
 type HostelCardProps = {
   hostel: Hostel;
@@ -8,6 +10,7 @@ type HostelCardProps = {
 };
 
 const HostelCard = ({ hostel, onFindRoom }: HostelCardProps) => {
+  const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const images = hostel?.hostelImages?.map((i) => i.imageUrl) || [];
 
@@ -35,6 +38,11 @@ const HostelCard = ({ hostel, onFindRoom }: HostelCardProps) => {
   const handlePrevImage = (e: React.MouseEvent) => {
     e.stopPropagation();
     setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  };
+
+  const handleViewOnMap = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    navigate(`/map?hostel=${hostel.id}`);
   };
 
   const currentImage = images[currentImageIndex] || "/logo.png";
@@ -144,19 +152,19 @@ const HostelCard = ({ hostel, onFindRoom }: HostelCardProps) => {
             <Phone className="w-3.5 h-3.5" />
             <span className="text-xs">Call</span>
           </a>
-          <a
-            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-              hostel.address
-            )}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={(e) => e.stopPropagation()}
+          <button
+            onClick={handleViewOnMap}
             className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm hover:bg-white/20 px-2.5 py-1.5 rounded-lg transition-colors flex-1"
             title={hostel.address}
           >
-            <MapPinHouse className="w-3.5 h-3.5 shrink-0" />
+            <MapPin className="w-3.5 h-3.5 shrink-0" />
             <span className="text-xs truncate">View on Map</span>
-          </a>
+          </button>
+        </div>
+
+        {/* Map Preview */}
+        <div className="mb-3" onClick={(e) => e.stopPropagation()}>
+          <HostelMapCard hostel={hostel} onClick={() => onFindRoom(hostel)} />
         </div>
 
         {/* Price and Action */}

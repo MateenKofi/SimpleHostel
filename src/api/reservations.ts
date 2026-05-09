@@ -52,6 +52,17 @@ export const cancelReservation = async (reservationId: string): Promise<{ data: 
 };
 
 /**
+ * Decline a reservation (admin only) - with refund capability
+ * @param reservationId - The reservation ID to decline
+ * @param reason - Reason for declining
+ * @returns Updated reservation data
+ */
+export const declineReservation = async (reservationId: string, reason: string): Promise<{ data: ReservationDto }> => {
+    const response = await axiosInstance.patch(`/reservations/decline/${reservationId}`, { reason });
+    return response.data;
+};
+
+/**
  * Claim a reservation using a secret code (for new residents during registration)
  * @param data - Secret code and resident ID
  * @returns Updated reservation data

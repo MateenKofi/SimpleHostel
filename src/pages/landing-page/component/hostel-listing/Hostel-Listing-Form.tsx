@@ -86,6 +86,8 @@ const HostelListingForm = () => {
       formData.append("email", data.email);
       formData.append("phone", data.phone);
       formData.append("ghCard", data.ghanaCard);
+      if (data.latitude) formData.append("latitude", data.latitude.toString());
+      if (data.longitude) formData.append("longitude", data.longitude.toString());
 
       images.forEach((img: ImageFile) => {
         if (img.file) {
@@ -131,7 +133,7 @@ const HostelListingForm = () => {
 
     if (currentStep === 1) {
       // Step 1: Validate basic info fields
-      fieldsToValidate = ["hostelName", "location", "address"];
+      fieldsToValidate = ["hostelName", "location", "address", "latitude", "longitude"];
     } else if (currentStep === 2) {
       // Step 2: Custom validation for uploads
       if (!logo) {

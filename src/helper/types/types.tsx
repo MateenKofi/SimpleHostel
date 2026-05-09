@@ -292,9 +292,11 @@ export type Hostel = {
   deletedAt: string | null;
   allowPartialPayment: boolean;
   partialPaymentPercentage: number;
+  latitude?: number;
+  longitude?: number;
   rooms: Room[];
   staffProfiles: Staff[];
-  adminProfiles: Users[]; // Using Users type for admins based on response
+  adminProfiles: Users[];
   residentProfiles: Resident[];
   amenities: Amenity[];
   hostelImages: images[];

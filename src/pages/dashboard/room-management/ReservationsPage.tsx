@@ -42,6 +42,7 @@ const statusColors: Record<string, string> = {
   pending: "bg-amber-100 text-amber-800 border-amber-300",
   confirmed: "bg-emerald-100 text-emerald-800 border-emerald-300",
   cancelled: "bg-red-100 text-red-800 border-red-300",
+  declined: "bg-orange-100 text-orange-800 border-orange-300",
   fulfilled: "bg-gray-100 text-gray-700 border-gray-300",
 };
 
@@ -49,6 +50,7 @@ const statusBadgeColors: Record<string, string> = {
   pending: "bg-amber-200 text-amber-900",
   confirmed: "bg-emerald-200 text-emerald-900",
   cancelled: "bg-red-200 text-red-900",
+  declined: "bg-orange-200 text-orange-900",
   fulfilled: "bg-gray-200 text-gray-700",
 };
 
@@ -549,6 +551,15 @@ export const ReservationsPage = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* TODO: Decline Reservation Dialog - needs state and handlers */}
+      {/* 
+      <AlertDialog open={showDeclineDialog} onOpenChange={setShowDeclineDialog}>
+        <AlertDialogContent>
+          ...
+        </AlertDialogContent>
+      </AlertDialog>
+      */}
     </div>
   );
 };

@@ -1,9 +1,22 @@
 import axiosInstance from "./axiosInstance";
 import type { UpdateHostelRequest } from "@/types/dtos";
 
-export const getHostels = async () => {
-    const response = await axiosInstance.get("/hostels/get");
-    return response.data;
+export const getHostels = async (bounds?: {
+  minLat?: number;
+  maxLat?: number;
+  minLng?: number;
+  maxLng?: number;
+}) => {
+  const params = new URLSearchParams();
+  if (bounds) {
+    if (bounds.minLat !== undefined) params.append("minLat", bounds.minLat.toString());
+    if (bounds.maxLat !== undefined) params.append("maxLat", bounds.maxLat.toString());
+    if (bounds.minLng !== undefined) params.append("minLng", bounds.minLng.toString());
+    if (bounds.maxLng !== undefined) params.append("maxLng", bounds.maxLng.toString());
+  }
+  const queryString = params.toString();
+  const response = await axiosInstance.get(`/hostels/get${queryString ? `?${queryString}` : ""}`);
+  return response.data;
 };
 
 export const getHostelById = async (hostelId: string) => {

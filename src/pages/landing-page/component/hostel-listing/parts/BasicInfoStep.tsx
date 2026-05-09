@@ -4,6 +4,8 @@ import { RegionDropdown } from "react-country-region-selector";
 import { TextInput, CustomTextarea } from "@/components/form";
 import { HostelListingFormValues } from "@/schemas/hostelListingSchema";
 import { cn } from "@/lib/utils";
+import { LocationPicker } from "@/components/maps/LocationPicker";
+import { ReverseGeocodeResult } from "@/components/maps/map-utils";
 
 interface BasicInfoStepProps {
     form: UseFormReturn<HostelListingFormValues>;
@@ -101,6 +103,31 @@ export const BasicInfoStep = ({ form, region, onRegionChange }: BasicInfoStepPro
                         Detailed descriptions help students understand what makes your hostel special. Mention unique features like 24/7 security, study rooms, or proximity to campus.
                     </p>
                 </div>
+            </div>
+
+            {/* Location Picker */}
+            <div className="space-y-1.5">
+                <label className="text-sm font-medium leading-none">
+                    Pinpoint Location on Map <span className="text-forest-green-600">*</span>
+                </label>
+                <LocationPicker
+                    latitude={form.watch("latitude")}
+                    longitude={form.watch("longitude")}
+                    onLocationChange={(lat: number, lng: number) => {
+                        form.setValue("latitude", lat, { shouldValidate: true });
+                        form.setValue("longitude", lng, { shouldValidate: true });
+                    }}
+                    onAddressChange={(address: string) => {
+                        if (!form.getValues("address")) {
+                            form.setValue("address", address, { shouldValidate: true });
+                        }
+                    }}
+                />
+                {(form.formState.errors.latitude || form.formState.errors.longitude) && (
+                    <p className="text-xs font-medium text-destructive">
+                        {form.formState.errors.latitude?.message || form.formState.errors.longitude?.message}
+                    </p>
+                )}
             </div>
         </div>
     );

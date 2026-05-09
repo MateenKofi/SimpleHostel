@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Badge } from "@/components/ui/badge";
-import { X, Search, ArrowUpDown } from "lucide-react";
+import { X, Search, ArrowUpDown, Map } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getHostels } from "@/api/hostels";
 import { Hostel } from "@/helper/types/types";
@@ -16,6 +16,7 @@ import { FilterBar } from "@/components/filters/FilterBar";
 import { LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { TextInput, SelectInput, type SelectOption } from "@/components/form";
+import { HostelMap } from '@/components/maps/HostelMap';
 
 interface ActiveFilters {
   [key: string]: string[];
@@ -186,6 +187,32 @@ export function FindHostel() {
 
         {/* Main Content */}
         <div className="flex-1 p-3 md:p-4 space-y-4 md:space-y-6 bg-card border border-border rounded-lg shadow-sm">
+          {/* Map Section */}
+          {filteredHostels && filteredHostels.length > 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                  <Map className="w-4 h-4" />
+                  <span>Location Map</span>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => navigate("/map")}
+                  className="text-xs"
+                >
+                  <Map className="w-3 h-3 mr-1" />
+                  View Full Map
+                </Button>
+              </div>
+              <HostelMap
+                hostels={filteredHostels}
+                height="250px"
+                onMarkerClick={(hostel) => handleFindRoom(hostel)}
+              />
+            </div>
+          )}
+          
           {/* Search and Sort */}
           <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
             <TextInput

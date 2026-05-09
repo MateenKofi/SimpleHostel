@@ -1,4 +1,5 @@
 import HostelManagementTable from '@/components/HostelManagementTable'
+import { HostelMap } from '@/components/HostelMap'
 import SEOHelmet from '@/components/SEOHelmet'
 import { PageHeader } from "@/components/layout/PageHeader"
 import { Building2 } from "lucide-react"
@@ -18,7 +19,8 @@ const HostelManagement = () => {
         sticky={true}
       />
       <main className="flex-1 p-4 md:p-8">
-        <div className="max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto space-y-8">
+          <HostelMap />
           <HostelManagementTable />
         </div>
       </main>

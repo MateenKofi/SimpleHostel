@@ -1,160 +1,152 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import { Suspense, lazy } from "react";
-import { Loader } from "lucide-react";
 
 import Layout from "@components/layout/Layout";
 import LandingPageLayout from "./components/layout/LandingPageLayout";
 import PrivateRoute from "./components/routes/PrivateRoute";
 import ProtectedBookingRoute from "./components/routes/ProtectedBookingRoute";
 
-// Landing page routes - lazy loaded
-const Home = lazy(() => import('./pages/landing-page/page'));
-const About = lazy(() => import('./pages/landing-page/About'));
-const Contact = lazy(() => import('./pages/landing-page/Contact'));
-const Services = lazy(() => import('./pages/landing-page/Services'));
-const FindHostel = lazy(() => import('./pages/landing-page/component/findHostel/page'));
-const FindRoom = lazy(() => import('./pages/landing-page/component/find-room/Find-Room'));
-const ResidentForm = lazy(() => import('./pages/landing-page/component/resident-forms/ResidentForm'));
-const HostelListingForm = lazy(() => import('./pages/landing-page/component/hostel-listing/Hostel-Listing-Form'));
+// Landing page routes
+import Home from './pages/landing-page/page';
+import About from './pages/landing-page/About';
+import Contact from './pages/landing-page/Contact';
+import Services from './pages/landing-page/Services';
+import FindHostel from './pages/landing-page/component/findHostel/page';
+import FindRoom from './pages/landing-page/component/find-room/Find-Room';
+import ResidentForm from './pages/landing-page/component/resident-forms/ResidentForm';
+import HostelListingForm from './pages/landing-page/component/hostel-listing/Hostel-Listing-Form';
 
-// Authentication routes - lazy loaded
-const LoginForm = lazy(() => import("./pages/Authentication/login/login-form"));
-const RegisterForm = lazy(() => import("./pages/Authentication/register/register-form"));
-const ForgetPassword = lazy(() => import("./pages/Authentication/forget-password/ForgetPassword"));
-const ResetPassword = lazy(() => import("./pages/Authentication/reset-password/ResetPassword"));
-const ChangePassword = lazy(() => import("./components/changepassword/ChangePassword"));
+// Authentication routes
+import LoginForm from "./pages/Authentication/login/login-form";
+import RegisterForm from "./pages/Authentication/register/register-form";
+import ForgetPassword from "./pages/Authentication/forget-password/ForgetPassword";
+import ResetPassword from "./pages/Authentication/reset-password/ResetPassword";
+import ChangePassword from "./components/changepassword/ChangePassword";
 
-// Dashboard routes - lazy loaded
-const Dashboard = lazy(() => import("@pages/dashboard/Dashboard"));
-const RoomManagementTab = lazy(() => import("@pages/dashboard/room-management/RoomManagementTab"));
-const RoomAssignmentAndPayment = lazy(() => import("@/components/rooms/room-assignment/RoomAssignmentAndPayment"));
-const ResidentManagement = lazy(() => import("@pages/dashboard/resident-management/ResidentManagement"));
-const VisitorManagement = lazy(() => import("@pages/dashboard/visitor-management/VisitorManagement"));
-const StaffManagement = lazy(() => import("@pages/dashboard/staff-management/StaffManagement"));
-const AddStaff = lazy(() => import("@/components/staff/AddStaff"));
-const EditStaff = lazy(() => import("@/components/staff/EditStaff"));
-const ViewStaff = lazy(() => import("@/components/staff/ViewStaff"));
-const DeptorsList = lazy(() => import("./pages/dashboard/deptors-list/DeptorsList"));
-const ApproveHostel = lazy(() => import("./pages/dashboard/approvals/Approve-Hostel"));
-const ProfileForm = lazy(() => import("./pages/dashboard/profile/Profile"));
-const CalendarYear = lazy(() => import("./pages/dashboard/calendarYear/CalendarYear"));
-const CalendarYearDetail = lazy(() => import("./pages/dashboard/calendarYear/CalendarYearDetail"));
-const Transactions = lazy(() => import("./pages/dashboard/transactions/Transactions"));
-const Users = lazy(() => import("./pages/dashboard/users/Users"));
-const HostelManagement = lazy(() => import("./pages/dashboard/hostelManagement/HostelManagement"));
-const Settings = lazy(() => import("./pages/dashboard/settings/Settings"));
-const ResidentLookup = lazy(() => import("./pages/dashboard/resident-management/Resident-lookup"));
-const EditResident = lazy(() => import("./components/resident/EditResident"));
-const Report = lazy(() => import('./pages/dashboard/report/Report'));
+// Dashboard routes
+import Dashboard from "@pages/dashboard/Dashboard";
+import RoomManagementTab from "@pages/dashboard/room-management/RoomManagementTab";
+import RoomAssignmentAndPayment from "@/components/rooms/room-assignment/RoomAssignmentAndPayment";
+import ResidentManagement from "@pages/dashboard/resident-management/ResidentManagement";
+import VisitorManagement from "@pages/dashboard/visitor-management/VisitorManagement";
+import StaffManagement from "@pages/dashboard/staff-management/StaffManagement";
+import AddStaff from "@/components/staff/AddStaff";
+import EditStaff from "@/components/staff/EditStaff";
+import ViewStaff from "@/components/staff/ViewStaff";
+import DeptorsList from "./pages/dashboard/deptors-list/DeptorsList";
+import ApproveHostel from "./pages/dashboard/approvals/Approve-Hostel";
+import ProfileForm from "./pages/dashboard/profile/Profile";
+import CalendarYear from "./pages/dashboard/calendarYear/CalendarYear";
+import CalendarYearDetail from "./pages/dashboard/calendarYear/CalendarYearDetail";
+import Transactions from "./pages/dashboard/transactions/Transactions";
+import Users from "./pages/dashboard/users/Users";
+import HostelManagement from "./pages/dashboard/hostelManagement/HostelManagement";
+import Settings from "./pages/dashboard/settings/Settings";
+import ResidentLookup from "./pages/dashboard/resident-management/Resident-lookup";
+import EditResident from "./components/resident/EditResident";
+import Report from './pages/dashboard/report/Report';
 
-// Component routes - lazy loaded
-const PaymentSummaryForm = lazy(() => import("./components/payment/PaymentSummaryForm"));
-const TopUpPaymentForm = lazy(() => import("./components/payment/TopUpPaymentForm"));
-const CashPaymentConfirmation = lazy(() => import("./components/payment/CashPaymentConfirmation"));
-const AddResident = lazy(() => import("./components/resident/AddResident"));
-const ViewRoom = lazy(() => import("./components/rooms/ViewRoom"));
-const PaymentSuccess = lazy(() => import('@components/payment-success'));
-const TermsAndCondition = lazy(() => import("./components/TermsAndConditions"));
+// Component routes
+import PaymentSummaryForm from "./components/payment/PaymentSummaryForm";
+import TopUpPaymentForm from "./components/payment/TopUpPaymentForm";
+import CashPaymentConfirmation from "./components/payment/CashPaymentConfirmation";
+import AddResident from "./components/resident/AddResident";
+import ViewRoom from "./components/rooms/ViewRoom";
+import PaymentSuccess from '@components/payment-success';
+import TermsAndCondition from "./components/TermsAndConditions";
+import MapPage from "./pages/landing-page/component/map/MapPage";
 
-// Resident portal routes - lazy loaded
-const ResidentRoomDetails = lazy(() => import("./pages/dashboard/resident-management/ResidentRoomDetails"));
-const ViewResident = lazy(() => import("./pages/dashboard/resident-management/ViewResident"));
-const MakeRequest = lazy(() => import("./pages/dashboard/resident-management/MakeRequest"));
-const PaymentBilling = lazy(() => import("./pages/dashboard/resident-management/PaymentBilling"));
-const Announcements = lazy(() => import("./pages/dashboard/resident-management/Announcements"));
-const Documents = lazy(() => import("./pages/dashboard/resident-management/Documents"));
-const Feedback = lazy(() => import("./pages/dashboard/resident-management/Feedback"));
-const AllocationDetails = lazy(() => import("./pages/dashboard/resident-management/AllocationDetails"));
-const ReceiptPage = lazy(() => import("./pages/dashboard/resident-management/ReceiptPage"));
-const PaymentResult = lazy(() => import("./pages/dashboard/payment-result/PaymentResult"));
+// Resident portal routes
+import ResidentRoomDetails from "./pages/dashboard/resident-management/ResidentRoomDetails";
+import ViewResident from "./pages/dashboard/resident-management/ViewResident";
+import MakeRequest from "./pages/dashboard/resident-management/MakeRequest";
+import PaymentBilling from "./pages/dashboard/resident-management/PaymentBilling";
+import Announcements from "./pages/dashboard/resident-management/Announcements";
+import Documents from "./pages/dashboard/resident-management/Documents";
+import Feedback from "./pages/dashboard/resident-management/Feedback";
+import AllocationDetails from "./pages/dashboard/resident-management/AllocationDetails";
+import ReceiptPage from "./pages/dashboard/resident-management/ReceiptPage";
+import PaymentResult from "./pages/dashboard/payment-result/PaymentResult";
 
-// Admin routes - lazy loaded
-const AnnouncementDashboard = lazy(() => import("./pages/dashboard/admin/AnnouncementDashboard"));
-const MaintenanceManagement = lazy(() => import("./pages/dashboard/admin/MaintenanceManagement"));
+// Admin routes
+import AnnouncementDashboard from "./pages/dashboard/admin/AnnouncementDashboard";
+import MaintenanceManagement from "./pages/dashboard/admin/MaintenanceManagement";
 
 function App() {
   return (
-    <Suspense
-      fallback={
-        <div className="grid w-screen h-screen place-items-center">
-          <Loader className="w-10 h-10 animate-spin" />
-        </div>
-      }
-    >
-      <Routes>
-        <Route path="login" element={<LoginForm />} />
-        <Route path="register" element={<RegisterForm />} />
-        <Route path="hostel-listing" element={<HostelListingForm />} />
-        <Route path='terms-and-conditions' element={<TermsAndCondition />} />
-        <Route path="forget-password" element={<ForgetPassword />} />
-        <Route path="reset-password" element={<ResetPassword />} />
-        <Route path="change-password" element={<ChangePassword />} />
+    <Routes>
+      <Route path="login" element={<LoginForm />} />
+      <Route path="register" element={<RegisterForm />} />
+      <Route path="hostel-listing" element={<HostelListingForm />} />
+      <Route path='terms-and-conditions' element={<TermsAndCondition />} />
+      <Route path="forget-password" element={<ForgetPassword />} />
+      <Route path="reset-password" element={<ResetPassword />} />
+      <Route path="change-password" element={<ChangePassword />} />
 
-        {/* Protected Booking Routes - Require Authentication */}
-        <Route element={<ProtectedBookingRoute />}>
-          <Route path="resident-form" element={<ResidentForm />} />
-          <Route path="find/:id/room" element={<FindRoom />} />
+      {/* Protected Booking Routes - Require Authentication */}
+      <Route element={<ProtectedBookingRoute />}>
+        <Route path="resident-form" element={<ResidentForm />} />
+        <Route path="find/:id/room" element={<FindRoom />} />
+        <Route path="payment" element={<PaymentSummaryForm />} />
+        <Route path="payment-success" element={<PaymentSuccess />} />
+        <Route path="payment-cash" element={<CashPaymentConfirmation />} />
+      </Route>
+
+      {/* Landing Routes */}
+      <Route element={<LandingPageLayout />}>
+        <Route index element={<Home />} />
+        <Route path="about" element={<About />} />
+        <Route path="contact" element={<Contact />} />
+        <Route path="services" element={<Services />} />
+        <Route path="find-hostel" element={<FindHostel />} />
+        <Route path="map" element={<MapPage />} />
+      </Route>
+
+      {/* Protected Dashboard Routes */}
+      <Route element={<PrivateRoute />}>
+        <Route path="/dashboard" element={<Layout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="room-management" element={<RoomManagementTab />} />
+          <Route path="calendar-year-management" element={<CalendarYear />} />
+          <Route path="calendar-year/:id" element={<CalendarYearDetail />} />
+          <Route path="room-assignment" element={<RoomAssignmentAndPayment />} />
+          <Route path="resident-management" element={<ResidentManagement />} />
+          <Route path="resident-management/add-resident" element={<AddResident />} />
+          <Route path="view-resident" element={<ViewResident />} />
+          <Route path="deptors-list" element={<DeptorsList />} />
           <Route path="payment" element={<PaymentSummaryForm />} />
-          <Route path="payment-success" element={<PaymentSuccess />} />
-          <Route path="payment-cash" element={<CashPaymentConfirmation />} />
+          <Route path="top-up" element={<TopUpPaymentForm />} />
+          <Route path="visitor-management" element={<VisitorManagement />} />
+          <Route path="staff-management" element={<StaffManagement />} />
+          <Route path="staff-management/add" element={<AddStaff />} />
+          <Route path="staff-management/view/:id" element={<ViewStaff />} />
+          <Route path="staff-management/edit/:id" element={<EditStaff />} />
+          <Route path="approve-hostel" element={<ApproveHostel />} />
+          <Route path="profile" element={<ProfileForm />} />
+          <Route path="transactions" element={<Transactions />} />
+          <Route path="users" element={<Users />} />
+          <Route path="view-room/:id" element={<ViewRoom />} />
+          <Route path="view-room-details" element={<ResidentRoomDetails />} />
+          <Route path="allocation-details" element={<AllocationDetails />} />
+          <Route path="make-request" element={<MakeRequest />} />
+          <Route path="payment-billing" element={<PaymentBilling />} />
+          <Route path="view-announcements" element={<Announcements />} />
+          <Route path="documents" element={<Documents />} />
+          <Route path="receipt/:reference" element={<ReceiptPage />} />
+          <Route path="payment-result" element={<PaymentResult />} />
+          <Route path="feedback" element={<Feedback />} />
+          <Route path="hostel-management" element={<HostelManagement />} />
+          <Route path="maintenance" element={<MaintenanceManagement />} />
+          <Route path="announcement-dashboard" element={<AnnouncementDashboard />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="resident-lookup" element={<ResidentLookup />} />
+          <Route path="edit-resident" element={<EditResident />} />
+          <Route path="report" element={<Report />} />
         </Route>
+      </Route>
 
-        {/* Landing Routes */}
-        <Route element={<LandingPageLayout />}>
-          <Route index element={<Home />} />
-          <Route path="about" element={<About />} />
-          <Route path="contact" element={<Contact />} />
-          <Route path="services" element={<Services />} />
-          <Route path="find-hostel" element={<FindHostel />} />
-        </Route>
-
-        {/* Protected Dashboard Routes */}
-        <Route element={<PrivateRoute />}>
-          <Route path="/dashboard" element={<Layout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="room-management" element={<RoomManagementTab />} />
-            <Route path="calendar-year-management" element={<CalendarYear />} />
-            <Route path="calendar-year/:id" element={<CalendarYearDetail />} />
-            <Route path="room-assignment" element={<RoomAssignmentAndPayment />} />
-            <Route path="resident-management" element={<ResidentManagement />} />
-            <Route path="resident-management/add-resident" element={<AddResident />} />
-            <Route path="view-resident" element={<ViewResident />} />
-            <Route path="deptors-list" element={<DeptorsList />} />
-            <Route path="payment" element={<PaymentSummaryForm />} />
-            <Route path="top-up" element={<TopUpPaymentForm />} />
-            <Route path="visitor-management" element={<VisitorManagement />} />
-            <Route path="staff-management" element={<StaffManagement />} />
-            <Route path="staff-management/add" element={<AddStaff />} />
-            <Route path="staff-management/view/:id" element={<ViewStaff />} />
-            <Route path="staff-management/edit/:id" element={<EditStaff />} />
-            <Route path="approve-hostel" element={<ApproveHostel />} />
-            <Route path="profile" element={<ProfileForm />} />
-            <Route path="transactions" element={<Transactions />} />
-            <Route path="users" element={<Users />} />
-            <Route path="view-room/:id" element={<ViewRoom />} />
-            <Route path="view-room-details" element={<ResidentRoomDetails />} />
-            <Route path="allocation-details" element={<AllocationDetails />} />
-            <Route path="make-request" element={<MakeRequest />} />
-            <Route path="payment-billing" element={<PaymentBilling />} />
-            <Route path="view-announcements" element={<Announcements />} />
-            <Route path="documents" element={<Documents />} />
-            <Route path="receipt/:reference" element={<ReceiptPage />} />
-            <Route path="payment-result" element={<PaymentResult />} />
-            <Route path="feedback" element={<Feedback />} />
-            <Route path="hostel-management" element={<HostelManagement />} />
-            <Route path="maintenance" element={<MaintenanceManagement />} />
-            <Route path="announcement-dashboard" element={<AnnouncementDashboard />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="resident-lookup" element={<ResidentLookup />} />
-            <Route path="edit-resident" element={<EditResident />} />
-            <Route path="report" element={<Report />} />
-          </Route>
-        </Route>
-
-        {/* Catch-All Redirect */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </Suspense>
+      {/* Catch-All Redirect */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }
 
