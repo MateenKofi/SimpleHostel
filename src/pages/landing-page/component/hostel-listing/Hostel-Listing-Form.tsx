@@ -53,7 +53,6 @@ const steps = [
 const HostelListingForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [images, setImages] = useState<ImageFile[]>([]);
-  const [region, setRegion] = useState("");
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [logo, setLogo] = useState<ImageFile | null>(null);
   const [direction, setDirection] = useState<'forward' | 'backward'>('forward');
@@ -256,8 +255,6 @@ const HostelListingForm = () => {
                       >
                         <BasicInfoStep
                           form={form}
-                          region={region}
-                          onRegionChange={setRegion}
                         />
                       </motion.div>
                     )}

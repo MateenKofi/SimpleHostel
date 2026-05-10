@@ -15,9 +15,44 @@ interface LocationPickerProps {
   onLocationChange?: (lat: number, lng: number) => void;
   address?: string;
   onAddressChange?: (address: string) => void;
+  onRegionDetected?: (region: string) => void;
   height?: string;
   disabled?: boolean;
 }
+
+const GHANA_REGION_MAP: Record<string, string> = {
+  "Ashanti": "ASHANTI",
+  "Ashanti Region": "ASHANTI",
+  "Greater Accra": "GREATER ACCRA",
+  "Greater Accra Region": "GREATER ACCRA",
+  "Central": "CENTRAL",
+  "Central Region": "CENTRAL",
+  "Eastern": "EASTERN",
+  "Eastern Region": "EASTERN",
+  "Western": "WESTERN",
+  "Western Region": "WESTERN",
+  "Western North": "WESTERN NORTH",
+  "Western North Region": "WESTERN NORTH",
+  "Volta": "VOLTA",
+  "Volta Region": "VOLTA",
+  "Oti": "OTI",
+  "Oti Region": "OTI",
+  "Northern": "NORTHERN",
+  "Northern Region": "NORTHERN",
+  "Savannah": "SAVANNAH",
+  "Savannah Region": "SAVANNAH",
+  "Upper East": "UPPER EAST",
+  "Upper East Region": "UPPER EAST",
+  "Upper West": "UPPER WEST",
+  "Upper West Region": "UPPER WEST",
+  "Bono": "BONO",
+  "Bono Region": "BONO",
+  "Bono East": "BONO EAST",
+  "Bono East Region": "BONO EAST",
+  "Ahafo": "AHAFO",
+  "Ahafo Region": "AHAFO",
+  "Oti Volta": "OTI",
+};
 
 const GHANA_CENTER: [number, number] = [-1.0232, 7.9465]; // [lng, lat]
 const DEFAULT_ZOOM = 10;
@@ -28,6 +63,7 @@ export function LocationPicker({
   onLocationChange,
   address,
   onAddressChange,
+  onRegionDetected,
   height = "300px",
   disabled = false,
 }: LocationPickerProps) {
@@ -108,6 +144,12 @@ export function LocationPicker({
     reverseGeocode(lat, lng);
   };
 
+  const normalizeRegion = (state: string): string | null => {
+    if (!state) return null;
+    const normalized = GHANA_REGION_MAP[state];
+    return normalized || null;
+  };
+
   const reverseGeocode = async (lat: number, lng: number) => {
     try {
       const response = await fetch(
@@ -122,6 +164,12 @@ export function LocationPicker({
       if (data?.display_name && onAddressChange) {
         onAddressChange(data.display_name);
         setSearchQuery(data.display_name);
+      }
+      if (data?.address?.state && onRegionDetected) {
+        const region = normalizeRegion(data.address.state);
+        if (region) {
+          onRegionDetected(region);
+        }
       }
     } catch (error) {
       console.error("Reverse geocode error:", error);
@@ -277,6 +325,7 @@ interface LocationPickerInputProps {
   onLocationChange?: (lat: number, lng: number) => void;
   address?: string;
   onAddressChange?: (address: string) => void;
+  onRegionDetected?: (region: string) => void;
   error?: string;
   disabled?: boolean;
 }
@@ -288,6 +337,7 @@ export function LocationPickerInput({
   onLocationChange,
   address,
   onAddressChange,
+  onRegionDetected,
   error,
   disabled = false,
 }: LocationPickerInputProps) {
@@ -362,6 +412,7 @@ export function LocationPickerInput({
                 onLocationChange={onLocationChange}
                 address={address}
                 onAddressChange={onAddressChange}
+                onRegionDetected={onRegionDetected}
                 height="400px"
                 disabled={disabled}
               />

@@ -1,19 +1,17 @@
 import { Building2, Info } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
-import { RegionDropdown } from "react-country-region-selector";
 import { TextInput, CustomTextarea } from "@/components/form";
 import { HostelListingFormValues } from "@/schemas/hostelListingSchema";
-import { cn } from "@/lib/utils";
 import { LocationPicker } from "@/components/maps/LocationPicker";
-import { ReverseGeocodeResult } from "@/components/maps/map-utils";
 
 interface BasicInfoStepProps {
     form: UseFormReturn<HostelListingFormValues>;
-    region: string;
-    onRegionChange: (val: string) => void;
 }
 
-export const BasicInfoStep = ({ form, region, onRegionChange }: BasicInfoStepProps) => {
+export const BasicInfoStep = ({ form }: BasicInfoStepProps) => {
+    const hasLocation = form.watch("latitude") && form.watch("longitude");
+    const hasRegion = form.watch("location");
+
     return (
         <div className="space-y-6">
             {/* Step Header */}
@@ -36,39 +34,8 @@ export const BasicInfoStep = ({ form, region, onRegionChange }: BasicInfoStepPro
                 error={form.formState.errors.hostelName?.message}
             />
 
-            {/* Region and Address */}
+            {/* Address */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                <div className="space-y-1.5">
-                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                        Region/Location <span className="text-forest-green-600">*</span>
-                    </label>
-                    <div className="relative">
-                        <RegionDropdown
-                            country={"Ghana"}
-                            onChange={(val) => {
-                                onRegionChange(val);
-                                form.setValue("location", val, { shouldValidate: true });
-                            }}
-                            value={region}
-                            className={cn(
-                                "flex h-11 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200",
-                                form.formState.errors.location ? "border-destructive focus-visible:ring-destructive" : "border-input"
-                            )}
-                            name="region-field"
-                        />
-                        <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-muted-foreground">
-                            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                            </svg>
-                        </div>
-                    </div>
-                    {form.formState.errors.location && (
-                        <p className="text-xs font-medium text-destructive">
-                            {form.formState.errors.location.message}
-                        </p>
-                    )}
-                </div>
-
                 <TextInput
                     label="Address"
                     placeholder="GC-123-4567 or Street Name"
@@ -105,30 +72,38 @@ export const BasicInfoStep = ({ form, region, onRegionChange }: BasicInfoStepPro
                 </div>
             </div>
 
-            {/* Location Picker */}
-            <div className="space-y-1.5">
-                <label className="text-sm font-medium leading-none">
-                    Pinpoint Location on Map <span className="text-forest-green-600">*</span>
-                </label>
-                <LocationPicker
-                    latitude={form.watch("latitude")}
-                    longitude={form.watch("longitude")}
-                    onLocationChange={(lat: number, lng: number) => {
-                        form.setValue("latitude", lat, { shouldValidate: true });
-                        form.setValue("longitude", lng, { shouldValidate: true });
-                    }}
-                    onAddressChange={(address: string) => {
-                        if (!form.getValues("address")) {
-                            form.setValue("address", address, { shouldValidate: true });
-                        }
-                    }}
-                />
-                {(form.formState.errors.latitude || form.formState.errors.longitude) && (
-                    <p className="text-xs font-medium text-destructive">
-                        {form.formState.errors.latitude?.message || form.formState.errors.longitude?.message}
-                    </p>
-                )}
-            </div>
+{/* Location Picker */}
+                <div className="space-y-1.5">
+                    <label className="text-sm font-medium leading-none">
+                        Pinpoint Location on Map <span className="text-forest-green-600">*</span>
+                    </label>
+                    <LocationPicker
+                        latitude={form.watch("latitude")}
+                        longitude={form.watch("longitude")}
+                        onLocationChange={(lat: number, lng: number) => {
+                            form.setValue("latitude", lat, { shouldValidate: true });
+                            form.setValue("longitude", lng, { shouldValidate: true });
+                        }}
+                        onAddressChange={(address: string) => {
+                            if (!form.getValues("address")) {
+                                form.setValue("address", address, { shouldValidate: true });
+                            }
+                        }}
+                        onRegionDetected={(region) => {
+                            form.setValue("location", region, { shouldValidate: true });
+                        }}
+                    />
+                    {hasLocation && !hasRegion && (
+                        <p className="text-xs font-medium text-destructive">
+                            Please select a location within Ghana to enable region filtering
+                        </p>
+                    )}
+                    {(form.formState.errors.latitude || form.formState.errors.longitude) && (
+                        <p className="text-xs font-medium text-destructive">
+                            {form.formState.errors.latitude?.message || form.formState.errors.longitude?.message}
+                        </p>
+                    )}
+                </div>
         </div>
     );
 };
