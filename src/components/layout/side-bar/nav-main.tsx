@@ -76,6 +76,15 @@ export function NavMain() {
       { title: "Documents", icon: BookOpenCheck, path: "/dashboard/documents" },
       { title: "Feedback", icon: Megaphone, path: "/dashboard/feedback" },
     ]
+  } else if (userRole === "staff") {
+    navItems = [
+      { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
+      { title: "Residents", icon: BookOpenCheck, path: "/dashboard/resident-management" },
+      { title: "Maintenance", icon: Wrench, path: "/dashboard/maintenance" },
+      { title: "Visitors", icon: CalendarCheck, path: "/dashboard/visitor-management" },
+      { title: "Transactions", icon: Wallet2, path: "/dashboard/transactions" },
+      { title: "Announcements", icon: Megaphone, path: "/dashboard/announcement-dashboard" },
+    ]
   }
 
   return (

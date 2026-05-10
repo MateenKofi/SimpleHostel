@@ -1,5 +1,6 @@
 import Admin from "@/components/dashboard/Admin";
 import SuperAdmin from "@/components/dashboard/SuperAdmin";
+import Staff from "@/components/dashboard/Staff";
 import SEOHelmet from "@/components/SEOHelmet";
 import { useAuthStore } from "@/stores/useAuthStore";
 import Resident from "@/components/dashboard/Resident";
@@ -9,6 +10,7 @@ import { LayoutDashboard } from "lucide-react";
 const Dashboard = () => {
   const { user } = useAuthStore();
   const isResident = user?.role === 'resident';
+  const isStaff = user?.role === 'staff';
 
   return (
     <main className="flex-1 overflow-y-auto bg-white">
@@ -29,6 +31,7 @@ const Dashboard = () => {
       <div>
         {user && user.role === 'super_admin' && <SuperAdmin />}
         {user && user.role === 'admin' && <Admin />}
+        {user && user.role === 'staff' && <Staff />}
         {user && user.role === 'resident' && <Resident />}
       </div>
     </main>
