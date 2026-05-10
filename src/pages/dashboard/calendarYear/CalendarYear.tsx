@@ -44,13 +44,23 @@ const CalendarYear = () => {
     isLoading: isCurrentYearLoading,
     isError: isCurrentYearError,
     refetch: refetchCurrentYear,
-  } = useQuery<CalendarYearT>({
+  } = useQuery<CalendarYearT | null>({
     queryKey: ["currentYear"],
     queryFn: async () => {
       const hostelId = localStorage.getItem("hostelId");
-if (!hostelId) return null;
-      const responseData = await getCurrentCalendarYear(hostelId);
-      return responseData?.data;
+      if (!hostelId) return null;
+      try {
+        const responseData = await getCurrentCalendarYear(hostelId);
+        return responseData?.data;
+      } catch (error: any) {
+        if (
+          error.response?.status === 404 &&
+          error.response?.data?.message === "No active calendar year found"
+        ) {
+          return null;
+        }
+        throw error;
+      }
     },
     retry: 1,
   });
@@ -67,7 +77,14 @@ if (!hostelId) return null;
       if (!hostelId) {
         throw new Error("Hostel ID is not available in local storage.");
       }
-      return await getHistoricalCalendarYears(hostelId);
+      try {
+        return await getHistoricalCalendarYears(hostelId);
+      } catch (error: any) {
+        if (error.response?.status === 404) {
+          return { data: [] };
+        }
+        throw error;
+      }
     },
     retry: 1,
   });
@@ -152,7 +169,7 @@ if (!hostelId) return null;
 
           <motion.div variants={itemVariants}>
             <CalendarYearTable
-              currentYear={currentYear}
+              currentYear={currentYear || undefined}
               historicalYears={historicalYears}
               isLoading={isLoading}
               isError={isError}

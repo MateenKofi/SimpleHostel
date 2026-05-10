@@ -28,8 +28,15 @@ const AdminReport = () => {
     queryKey: ["currentYear", hostelId],
     queryFn: async () => {
       if (!hostelId) return null;
-      const responseData = await getCurrentCalendarYear(hostelId);
-      return responseData.data;
+      try {
+        const responseData = await getCurrentCalendarYear(hostelId);
+        return responseData.data;
+      } catch (error: any) {
+        if (error.response?.status === 404) {
+          return null;
+        }
+        throw error;
+      }
     },
     enabled: !!hostelId,
   });
@@ -43,8 +50,15 @@ const AdminReport = () => {
     queryKey: ["historicalYears", hostelId],
     queryFn: async () => {
       if (!hostelId) return null;
-      const responseData = await getHistoricalCalendarYears(hostelId);
-      return responseData.data;
+      try {
+        const responseData = await getHistoricalCalendarYears(hostelId);
+        return responseData.data;
+      } catch (error: any) {
+        if (error.response?.status === 404) {
+          return { data: [] };
+        }
+        throw error;
+      }
     },
     enabled: !!hostelId,
   });
@@ -86,10 +100,12 @@ const AdminReport = () => {
     );
   }
 
-  const yearOptions: SelectOption[] = AcademicYears.map((year) => ({
-    value: year?.id || "",
-    label: year?.name || "",
-  }));
+  const yearOptions: SelectOption[] = AcademicYears
+    .filter(year => year && year.id)
+    .map((year) => ({
+      value: year.id,
+      label: year.name || "Unnamed Year",
+    }));
 
   // Empty state when no year is selected
   if (!isReportDataLoading && !selectedYear && AcademicYears.length > 0) {

@@ -114,7 +114,9 @@ const SelectInput = React.forwardRef<HTMLButtonElement, SelectInputProps>(
                   {groupLabel}
                 </div>
               )}
-              {options.map((option) => (
+              {options
+                .filter(option => option.value !== "")
+                .map((option) => (
                 <SelectItem
                   key={option.value}
                   value={option.value}

@@ -41,8 +41,15 @@ const SuperAdminReport = () => {
     queryKey: ["currentYear", selectedHostel],
     queryFn: async () => {
       if (!selectedHostel) return null;
-      const responseData = await getCurrentCalendarYear(selectedHostel);
-      return responseData.data;
+      try {
+        const responseData = await getCurrentCalendarYear(selectedHostel);
+        return responseData.data;
+      } catch (error: any) {
+        if (error.response?.status === 404) {
+          return null;
+        }
+        throw error;
+      }
     },
     enabled: !!selectedHostel,
   });
@@ -56,8 +63,15 @@ const SuperAdminReport = () => {
     queryKey: ["historicalYears", selectedHostel],
     queryFn: async () => {
       if (!selectedHostel) return null;
-      const responseData = await getHistoricalCalendarYears(selectedHostel);
-      return responseData.data;
+      try {
+        const responseData = await getHistoricalCalendarYears(selectedHostel);
+        return responseData.data;
+      } catch (error: any) {
+        if (error.response?.status === 404) {
+          return { data: [] };
+        }
+        throw error;
+      }
     },
     enabled: !!selectedHostel,
   });
@@ -100,15 +114,19 @@ const SuperAdminReport = () => {
     );
   }
 
-  const hostelOptions: SelectOption[] = ((Hostels || []) as Hostel[]).map((hostel) => ({
-    value: hostel?.id || "",
-    label: hostel?.name || "",
-  }));
-
-  const yearOptions: SelectOption[] = AcademicYears.map((year) => ({
-    value: year?.id || "",
-    label: year?.name || "",
-  }));
+  const hostelOptions: SelectOption[] = ((Hostels || []) as Hostel[])
+    .filter(hostel => hostel && hostel.id)
+    .map((hostel) => ({
+      value: hostel.id,
+      label: hostel.name || "Unnamed Hostel",
+    }));
+  
+  const yearOptions: SelectOption[] = AcademicYears
+    .filter(year => year && year.id)
+    .map((year) => ({
+      value: year.id,
+      label: year.name || "Unnamed Year",
+    }));
 
   // Empty state when no filters are selected
   if (!isReportDataLoading && !selectedYear && selectedHostel && AcademicYears.length > 0) {

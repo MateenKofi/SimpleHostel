@@ -158,7 +158,7 @@ export const ReservationsPage = () => {
       const matchesStatus =
         statusFilter === "all" || reservation.status === statusFilter;
       const matchesYear =
-        !yearFilter || reservation.calendarYearId === yearFilter;
+        yearFilter === "all" || !yearFilter || reservation.calendarYearId === yearFilter;
       const matchesSearch =
         !searchQuery ||
         reservation.room?.number.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -302,7 +302,7 @@ export const ReservationsPage = () => {
                       <SelectValue placeholder="All years" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Years</SelectItem>
+                      <SelectItem value="all">All Years</SelectItem>
                       {availableYears.map((year: CalendarYearDto) => (
                         <SelectItem key={year.id} value={year.id}>
                           {year.name}
