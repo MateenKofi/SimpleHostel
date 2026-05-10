@@ -27,3 +27,6 @@ export * from "./settingsSchema";
 
 // Visitor
 export * from "./VisitorForm.schema";
+
+// Staff
+export * from "./staffSchema";

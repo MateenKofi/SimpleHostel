@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Loader, User, Phone, Briefcase, Mail, MapPin, Calendar, IdCard, Home, GraduationCap, UserCircle } from "lucide-react";
+import { Loader, User, Phone, Briefcase, Mail, MapPin, Calendar, IdCard, Home, UserCircle } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { getStaffById, updateStaff } from "@/api/staff";
 import { toast } from "sonner";
 import dayjs from "dayjs";
@@ -12,37 +13,13 @@ import type { ApiError } from "@/types/dtos";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { TextInput, SelectInput } from "@/components/form";
+import { staffSchema, type StaffFormData } from "@/schemas/staffSchema";
 
 const roles = [
-  "Manager",
-  "Receptionist",
-  "Cleaner",
-  "Cook",
-  "Security",
-  "Accountant",
-  "Maintenance",
-  "Supervisor",
-  "Other"
+  "HOSTEL_MANAGER",
+  "WARDEN",
+  "CHIEF_WARDEN"
 ];
-
-interface StaffFormData {
-  name: string;
-  email: string;
-  phone: string;
-  role: string;
-  staffType: string;
-  middleName?: string;
-  dateOfBirth: string;
-  nationality: string;
-  gender: string;
-  religion: string;
-  maritalStatus: string;
-  ghanaCardNumber: string;
-  residence: string;
-  qualification: string;
-  block?: string;
-  dateOfAppointment: string;
-}
 
 const EditStaff: React.FC = () => {
   const { id: staffId } = useParams();
@@ -55,9 +32,14 @@ const EditStaff: React.FC = () => {
     register,
     handleSubmit,
     setValue,
+    control,
     formState: { errors },
     reset,
-  } = useForm<StaffFormData>();
+    setError,
+  } = useForm<StaffFormData>({
+    resolver: zodResolver(staffSchema),
+    mode: "onChange",
+  });
 
   const {
     data: staff_details,
@@ -112,22 +94,28 @@ const EditStaff: React.FC = () => {
       try {
         const formData = new FormData();
         formData.append("hostelId", hostelId || "");
-        formData.append("name", data.name);
+        
+        const nameParts = data.name.trim().split(/\s+/);
+        const firstName = nameParts[0] || "";
+        const lastName = nameParts.slice(1).join(" ") || firstName;
+        
+        formData.append("firstName", firstName);
+        formData.append("lastName", lastName);
         formData.append("email", data.email);
-        formData.append("phone", data.phone);
-        formData.append("maritalStatus", data.maritalStatus?.toUpperCase());
-        formData.append("religion", data.religion?.toUpperCase());
-        formData.append("gender", data.gender?.toUpperCase());
+        formData.append("phoneNumber", data.phone);
+        formData.append("maritalStatus", data.maritalStatus.toUpperCase());
+        formData.append("religion", data.religion.toUpperCase());
+        formData.append("gender", data.gender.toUpperCase());
         formData.append("nationality", data.nationality);
         formData.append("dateOfBirth", data.dateOfBirth);
         formData.append("middleName", data.middleName || "");
         formData.append("ghanaCardNumber", data.ghanaCardNumber);
         formData.append("residence", data.residence);
         formData.append("qualification", data.qualification);
-        formData.append("staffRole", data.role);
+        formData.append("role", data.role);
         formData.append("block", data.block || "");
         formData.append("dateOfAppointment", data.dateOfAppointment);
-        formData.append("type", data.staffType?.toUpperCase());
+        formData.append("type", data.staffType.toUpperCase());
 
         if (image) {
           formData.append("photo", image);
@@ -142,6 +130,16 @@ const EditStaff: React.FC = () => {
       } catch (error: unknown) {
         const err = error as ApiError;
         const errorMessage = err.response?.data?.message || err.message || "Failed to update staff";
+        
+        // Map backend unique constraint errors to form fields
+        if (errorMessage.toLowerCase().includes("email")) {
+          setError("email", { message: "Email already registered" });
+        } else if (errorMessage.toLowerCase().includes("ghana card")) {
+          setError("ghanaCardNumber", { message: "Ghana Card number already registered" });
+        } else if (errorMessage.toLowerCase().includes("phone")) {
+          setError("phone", { message: "Phone number already registered" });
+        }
+
         toast.error(errorMessage);
         throw error;
       }
@@ -149,30 +147,9 @@ const EditStaff: React.FC = () => {
   });
 
   const onSubmit = (data: StaffFormData) => {
-    const dateOfBirthValid = dayjs(
-      data.dateOfBirth,
-      "YYYY-MM-DD",
-      true
-    ).isValid();
-    const dateOfAppointmentValid = dayjs(
-      data.dateOfAppointment,
-      "YYYY-MM-DD",
-      true
-    ).isValid();
-
-    if (!dateOfBirthValid || !dateOfAppointmentValid) {
-      toast.error(
-        "Date of birth and Date of appointment must be in the format YYYY-MM-DD"
-      );
-      return;
-    }
-
-    const formattedDOB = dayjs(data.dateOfBirth).format(
-      "YYYY-MM-DDTHH:mm:ss[Z]"
-    );
-    const formattedDateOfAppointment = dayjs(data.dateOfAppointment).format(
-      "YYYY-MM-DDTHH:mm:ss[Z]"
-    );
+    const formattedDOB = dayjs(data.dateOfBirth).toISOString();
+    const formattedDateOfAppointment = dayjs(data.dateOfAppointment).toISOString();
+    
     EditStaffMutation.mutate({
       ...data,
       dateOfBirth: formattedDOB,
@@ -225,13 +202,11 @@ const EditStaff: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <TextInput
-                {...register("name", {
-                  required: "Full name is required",
-                })}
+                {...register("name")}
                 label="Full Name *"
                 placeholder="Enter full name"
                 leftIcon={User}
-                error={errors.name?.message?.toString()}
+                error={errors.name?.message}
               />
 
               <TextInput
@@ -239,74 +214,91 @@ const EditStaff: React.FC = () => {
                 label="Middle Name"
                 placeholder="Enter middle name"
                 leftIcon={UserCircle}
+                error={errors.middleName?.message}
               />
 
               <TextInput
-                {...register("dateOfBirth", {
-                  required: "Date of birth is required",
-                })}
+                {...register("dateOfBirth")}
                 type="date"
                 label="Date of Birth *"
                 leftIcon={Calendar}
-                error={errors.dateOfBirth?.message?.toString()}
+                error={errors.dateOfBirth?.message}
               />
 
               <TextInput
-                {...register("nationality", {
-                  required: "Nationality is required",
-                })}
+                {...register("nationality")}
                 label="Nationality *"
                 placeholder="e.g. Ghanaian"
                 leftIcon={MapPin}
-                error={errors.nationality?.message?.toString()}
+                error={errors.nationality?.message}
               />
 
-              <SelectInput
-                {...register("gender", { required: "Gender is required" })}
-                label="Gender *"
-                placeholder="Select Gender"
-                options={[
-                  { value: "MALE", label: "Male" },
-                  { value: "FEMALE", label: "Female" },
-                ]}
-                error={errors.gender?.message?.toString()}
+              <Controller
+                name="gender"
+                control={control}
+                render={({ field }) => (
+                  <SelectInput
+                    label="Gender *"
+                    placeholder="Select Gender"
+                    options={[
+                      { value: "MALE", label: "Male" },
+                      { value: "FEMALE", label: "Female" },
+                    ]}
+                    error={errors.gender?.message}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    name={field.name}
+                  />
+                )}
               />
 
-              <SelectInput
-                {...register("religion", { required: "Religion is required" })}
-                label="Religion *"
-                placeholder="Select Religion"
-                options={[
-                  { value: "CHRISTIAN", label: "Christian" },
-                  { value: "MUSLIM", label: "Muslim" },
-                  { value: "TRADITIONALIST", label: "Traditionalist" },
-                ]}
-                error={errors.religion?.message?.toString()}
+              <Controller
+                name="religion"
+                control={control}
+                render={({ field }) => (
+                  <SelectInput
+                    label="Religion *"
+                    placeholder="Select Religion"
+                    options={[
+                      { value: "CHRISTIAN", label: "Christian" },
+                      { value: "MUSLIM", label: "Muslim" },
+                      { value: "TRADITIONALIST", label: "Traditionalist" },
+                    ]}
+                    error={errors.religion?.message}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    name={field.name}
+                  />
+                )}
               />
 
-              <SelectInput
-                {...register("maritalStatus", {
-                  required: "Marital status is required",
-                })}
-                label="Marital Status *"
-                placeholder="Select Marital Status"
-                options={[
-                  { value: "SINGLE", label: "Single" },
-                  { value: "MARRIED", label: "Married" },
-                  { value: "DIVORCED", label: "Divorced" },
-                  { value: "WIDOWED", label: "Widowed" },
-                ]}
-                error={errors.maritalStatus?.message?.toString()}
+              <Controller
+                name="maritalStatus"
+                control={control}
+                render={({ field }) => (
+                  <SelectInput
+                    label="Marital Status *"
+                    placeholder="Select Marital Status"
+                    options={[
+                      { value: "SINGLE", label: "Single" },
+                      { value: "MARRIED", label: "Married" },
+                      { value: "DIVORCED", label: "Divorced" },
+                      { value: "WIDOWED", label: "Widowed" },
+                    ]}
+                    error={errors.maritalStatus?.message}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    name={field.name}
+                  />
+                )}
               />
 
               <TextInput
-                {...register("ghanaCardNumber", {
-                  required: "Ghana card number is required",
-                })}
+                {...register("ghanaCardNumber")}
                 label="Ghana Card Number *"
                 placeholder="GHA-XXXX-XXXX-XXXX"
                 leftIcon={IdCard}
-                error={errors.ghanaCardNumber?.message?.toString()}
+                error={errors.ghanaCardNumber?.message}
               />
             </div>
           </div>
@@ -320,37 +312,27 @@ const EditStaff: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               <TextInput
-                {...register("phone", {
-                  required: "Phone number is required",
-                })}
+                {...register("phone")}
                 type="tel"
                 label="Phone Number *"
-                placeholder="Enter Phone Number"
+                placeholder="024 123 4567"
                 leftIcon={Phone}
-                error={errors.phone?.message?.toString()}
+                error={errors.phone?.message}
               />
               <TextInput
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Invalid email address",
-                  },
-                })}
+                {...register("email")}
                 type="email"
                 label="Email *"
-                placeholder="someone@something.com"
+                placeholder="someone@example.com"
                 leftIcon={Mail}
-                error={errors.email?.message?.toString()}
+                error={errors.email?.message}
               />
               <TextInput
-                {...register("residence", {
-                  required: "Residence is required",
-                })}
+                {...register("residence")}
                 label="Residence *"
                 placeholder="Enter Residence"
                 leftIcon={Home}
-                error={errors.residence?.message?.toString()}
+                error={errors.residence?.message}
               />
             </div>
           </div>
@@ -363,50 +345,80 @@ const EditStaff: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <SelectInput
-                {...register("role", { required: "Role is required" })}
-                label="Role/Position *"
-                placeholder="Select Role"
-                leftIcon={Briefcase}
-                options={roles.map((role) => ({ value: role, label: role }))}
-                error={errors.role?.message?.toString()}
+              <Controller
+                name="role"
+                control={control}
+                render={({ field }) => (
+                  <SelectInput
+                    label="Role/Position *"
+                    placeholder="Select Role"
+                    leftIcon={Briefcase}
+                    options={roles.map((role) => ({ value: role, label: role }))}
+                    error={errors.role?.message}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    name={field.name}
+                  />
+                )}
               />
 
-              <SelectInput
-                {...register("staffType", { required: "Staff type is required" })}
-                label="Staff Type *"
-                placeholder="Select Staff Type"
-                options={[
-                  { value: "ADMIN", label: "Admin" },
-                  { value: "OTHERS", label: "Others" },
-                ]}
-                error={errors.staffType?.message?.toString()}
+              <Controller
+                name="staffType"
+                control={control}
+                render={({ field }) => (
+                  <SelectInput
+                    label="Staff Type *"
+                    placeholder="Select Staff Type"
+                    options={[
+                      { value: "ADMIN", label: "Admin" },
+                      { value: "OTHERS", label: "Others" },
+                    ]}
+                    error={errors.staffType?.message}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    name={field.name}
+                  />
+                )}
               />
 
-              <TextInput
-                {...register("qualification", {
-                  required: "Qualification is required",
-                })}
-                label="Qualification *"
-                placeholder="Enter Qualification"
-                leftIcon={GraduationCap}
-                error={errors.qualification?.message?.toString()}
+              <Controller
+                name="qualification"
+                control={control}
+                render={({ field }) => (
+                  <SelectInput
+                    label="Qualification *"
+                    placeholder="Select Qualification"
+                    options={[
+                      { value: "WASCE", label: "WASCE (High School)" },
+                      { value: "BECE", label: "BECE (JHS)" },
+                      { value: "TVET", label: "TVET / Certificate" },
+                      { value: "HND", label: "HND" },
+                      { value: "DIPLOMA", label: "Diploma" },
+                      { value: "BSC", label: "Bachelor's Degree (BSc)" },
+                      { value: "MSC", label: "Master's Degree (MSc)" },
+                      { value: "PHD", label: "Doctorate (PhD)" },
+                    ]}
+                    error={errors.qualification?.message}
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    name={field.name}
+                  />
+                )}
               />
 
               <TextInput
                 {...register("block")}
                 label="Block (Optional)"
                 placeholder="Enter Block"
+                error={errors.block?.message}
               />
 
               <TextInput
-                {...register("dateOfAppointment", {
-                  required: "Date of appointment is required",
-                })}
+                {...register("dateOfAppointment")}
                 type="date"
                 label="Date of Appointment *"
                 leftIcon={Calendar}
-                error={errors.dateOfAppointment?.message?.toString()}
+                error={errors.dateOfAppointment?.message}
               />
             </div>
           </div>
