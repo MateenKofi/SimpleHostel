@@ -44,6 +44,7 @@ import Settings from "./pages/dashboard/settings/Settings";
 import ResidentLookup from "./pages/dashboard/resident-management/Resident-lookup";
 import EditResident from "./components/resident/EditResident";
 import Report from './pages/dashboard/report/Report';
+import PermissionsPage from './pages/dashboard/admin/PermissionsPage';
 
 // Component routes
 import PaymentSummaryForm from "./components/payment/PaymentSummaryForm";
@@ -70,6 +71,8 @@ import PaymentResult from "./pages/dashboard/payment-result/PaymentResult";
 // Admin routes
 import AnnouncementDashboard from "./pages/dashboard/admin/AnnouncementDashboard";
 import MaintenanceManagement from "./pages/dashboard/admin/MaintenanceManagement";
+import DisbursementManagement from "./pages/dashboard/admin/DisbursementManagement";
+import AdminDisbursement from "./pages/dashboard/admin/AdminDisbursement";
 
 function App() {
   return (
@@ -138,6 +141,9 @@ function App() {
           <Route path="maintenance" element={<MaintenanceManagement />} />
           <Route path="announcement-dashboard" element={<AnnouncementDashboard />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="permissions" element={<PermissionsPage />} />
+          <Route path="disbursement-management" element={<DisbursementManagement />} />
+          <Route path="disbursements" element={<AdminDisbursement />} />
           <Route path="resident-lookup" element={<ResidentLookup />} />
           <Route path="edit-resident" element={<EditResident />} />
           <Route path="report" element={<Report />} />

@@ -9,7 +9,8 @@ import {
   BedDouble,
     BarChart3,
   Users,
-  List
+  List,
+  Wallet
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -22,11 +23,8 @@ const Sidebar = () => {
     { title: 'Deptors List', icon: List, path: '/dashboard/deptors-list' },
     { title: 'Visitor Management', icon: CalendarCheck, path: '/dashboard/visitor-management' },
     { title: 'Reports & Analytics', icon: BarChart3, path: '/dashboard/report-and-analytics' },
-    {
-      title: 'Staff Management',
-      icon: Users,
-      path: '/dashboard/staff-management',
-    },
+    { title: 'Staff Management', icon: Users, path: '/dashboard/staff-management' },
+    { title: 'Disbursements', icon: Wallet, path: '/dashboard/disbursements' },
   ];
 
   return (

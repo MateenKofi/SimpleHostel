@@ -14,6 +14,7 @@ type DecodedToken = {
     iat: number;
     exp: number;
     jti?: string;
+    permissions?: string[];
 };
 
 type UserStore = {
@@ -26,6 +27,7 @@ type UserStore = {
     tokenExpiry: number | null; // Track when token expires
     role: string | null;
     hostelId: string | null;
+    permissions: string[] | undefined;
     isProcessing: boolean;
     user: UserDto | null;
     changedPassword: boolean | undefined;
@@ -50,6 +52,7 @@ export const useAuthStore = create<UserStore>()(
             tokenExpiry: null,
             role: null,
             hostelId: null,
+            permissions: undefined,
             isProcessing: false,
             user: null,
             changedPassword: undefined,
@@ -74,6 +77,7 @@ export const useAuthStore = create<UserStore>()(
                         token,
                         role: decoded.role,
                         hostelId: decoded.hostelId,
+                        permissions: decoded.permissions,
                         tokenExpiry: expiryTime,
                         isAuthenticated: true,
                         isProcessing: false,
@@ -145,6 +149,7 @@ export const useAuthStore = create<UserStore>()(
                         tokenExpiry: null,
                         role: null,
                         hostelId: null,
+                        permissions: undefined,
                         isProcessing: false,
                         user: null,
                         changedPassword: undefined,
@@ -222,6 +227,7 @@ export const useAuthStore = create<UserStore>()(
                 imageUrl: state.imageUrl,
                 role: state.role,
                 hostelId: state.hostelId,
+                permissions: state.permissions,
                 user: state.user,
                 changedPassword: state.changedPassword,
                 isAuthenticated: state.isAuthenticated,

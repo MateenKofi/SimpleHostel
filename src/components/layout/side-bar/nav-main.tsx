@@ -26,6 +26,7 @@ import {
   Wrench,
   AlertCircle,
 } from "lucide-react"
+import { Shield } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 type NavItem = {
@@ -52,17 +53,21 @@ export function NavMain() {
       { title: "Announcements", icon: Megaphone, path: "/dashboard/announcement-dashboard" },
       { title: "Visitors", icon: CalendarCheck, path: "/dashboard/visitor-management" },
       { title: "Staff", icon: Users, path: "/dashboard/staff-management" },
+      { title: "Disbursements", icon: HandCoins, path: "/dashboard/disbursements" },
       { title: "Transactions", icon: Wallet2, path: "/dashboard/transactions" },
       { title: "Settings", icon: Settings, path: "/dashboard/settings" },
+      { title: "Permissions", icon: Shield, path: "/dashboard/permissions" },
       { title: "Reports", icon: Axis3D, path: "/dashboard/report" },
     ]
   } else if (userRole === "super_admin") {
     navItems = [
       { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
       { title: "Approve Hostel", icon: CheckSquare, path: "/dashboard/approve-hostel" },
+      { title: "Disbursements", icon: HandCoins, path: "/dashboard/disbursement-management" },
       { title: "Transactions", icon: Wallet2, path: "/dashboard/transactions" },
       { title: "Users", icon: UserCog, path: "/dashboard/users" },
       { title: "Hostel Management", icon: Hotel, path: "/dashboard/hostel-management" },
+      { title: "Permissions", icon: Shield, path: "/dashboard/permissions" },
       { title: "Reports", icon: Axis3D, path: "/dashboard/report" },
     ]
   } else if (userRole === "resident") {

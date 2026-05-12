@@ -23,7 +23,7 @@ const Transactions = () => {
       <main className="flex-1 p-4 md:p-8">
         <div className="max-w-6xl mx-auto">
           {user && user.role === 'super_admin' && <SuperAdminTransaction />}
-          {user && user.role === 'admin' && <AdminTransactions />}
+          {(user && user.role === 'admin' || user?.role === 'staff') && <AdminTransactions />}
         </div>
       </main>
     </div>
