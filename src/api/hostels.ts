@@ -1,12 +1,12 @@
 import axiosInstance from "./axiosInstance";
-import type { UpdateHostelRequest } from "@/types/dtos";
+import type { UpdateHostelRequest, HostelDto } from "@/types/dtos";
 
 export const getHostels = async (bounds?: {
   minLat?: number;
   maxLat?: number;
   minLng?: number;
   maxLng?: number;
-}) => {
+}): Promise<any> => {
   const params = new URLSearchParams();
   if (bounds) {
     if (bounds.minLat !== undefined) params.append("minLat", bounds.minLat.toString());
@@ -19,7 +19,7 @@ export const getHostels = async (bounds?: {
   return response.data;
 };
 
-export const getHostelById = async (hostelId: string) => {
+export const getHostelById = async (hostelId: string): Promise<any> => {
     const response = await axiosInstance.get(`/hostels/get/${hostelId}`);
     return response.data;
 };

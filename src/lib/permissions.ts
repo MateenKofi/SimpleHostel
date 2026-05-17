@@ -11,7 +11,8 @@ export type PermissionCategory =
   | 'settings'
   | 'users'
   | 'announcements'
-  | 'services';
+  | 'services'
+  | 'disbursements';
 
 export type PermissionAction =
   | 'view'
@@ -111,6 +112,12 @@ export const PERMISSIONS = {
   SERVICES_CREATE: 'services.create',
   SERVICES_EDIT: 'services.edit',
   SERVICES_DELETE: 'services.delete',
+  
+  DISBURSEMENTS_VIEW: 'disbursements.view',
+  DISBURSEMENTS_VIEW_ALL: 'disbursements.view_all',
+  DISBURSEMENTS_CREATE: 'disbursements.create',
+  DISBURSEMENTS_APPROVE: 'disbursements.approve',
+  DISBURSEMENTS_PROCESS: 'disbursements.process',
 } as const;
 
 export const CATEGORIES: Record<PermissionCategory, { label: string; description: string }> = {
@@ -127,6 +134,7 @@ export const CATEGORIES: Record<PermissionCategory, { label: string; description
   users: { label: 'Users', description: 'Manage users' },
   announcements: { label: 'Announcements', description: 'Manage announcements' },
   services: { label: 'Services', description: 'Manage services' },
+  disbursements: { label: 'Disbursements', description: 'Manage disbursement requests' },
 };
 
 export function can(userPermissions: Permission[] | undefined, required: Permission): boolean {
@@ -163,6 +171,7 @@ export function getPermissionsByCategory(permissions: Permission[]): Record<Perm
     users: [],
     announcements: [],
     services: [],
+    disbursements: [],
   };
 
   for (const permission of permissions) {

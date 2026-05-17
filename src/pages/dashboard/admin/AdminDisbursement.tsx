@@ -1,19 +1,6 @@
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { Loader2, Wallet, TrendingUp, Send, AlertCircle } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
+import { Wallet, TrendingUp, Send, AlertCircle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import {
   getDisbursementBalance,
@@ -25,17 +12,28 @@ import { toast } from "sonner"
 import SEOHelmet from "@/components/SEOHelmet"
 import { PageHeader } from "@/components/layout/PageHeader"
 import { format } from "date-fns"
+import { BankSelector } from "@/components/bank/BankSelector"
+import { AccountVerifier } from "@/components/bank/AccountVerifier"
+import { TextInput } from "@/components/form/TextInput"
+import { CustomTextarea } from "@/components/form/CustomTextarea"
+import { FormButton, buttonVariants } from "@/components/form/FormButton"
+import { StatCard } from "@/components/stat-card"
+import CustomDataTable from "@/components/CustomDataTable"
+import type { TableColumn } from "react-data-table-component"
 
 const AdminDisbursement = () => {
   const queryClient = useQueryClient()
 
   const [formData, setFormData] = useState({
     amount: "",
+    bankCode: "",
     bankName: "",
     accountNumber: "",
     accountName: "",
     notes: "",
   })
+  const [verificationError, setVerificationError] = useState("")
+  const [isVerified, setIsVerified] = useState(false)
 
   const { data: balance, isLoading: balanceLoading } = useQuery({
     queryKey: ["disbursement-balance"],
@@ -51,7 +49,9 @@ const AdminDisbursement = () => {
     mutationFn: requestDisbursement,
     onSuccess: () => {
       toast.success("Disbursement request submitted successfully")
-      setFormData({ amount: "", bankName: "", accountNumber: "", accountName: "", notes: "" })
+      setFormData({ amount: "", bankCode: "", bankName: "", accountNumber: "", accountName: "", notes: "" })
+      setIsVerified(false)
+      setVerificationError("")
       queryClient.invalidateQueries({ queryKey: ["my-disbursement-requests"] })
       queryClient.invalidateQueries({ queryKey: ["disbursement-balance"] })
     },
@@ -60,6 +60,25 @@ const AdminDisbursement = () => {
     },
   })
 
+  const handleBankChange = (bankCode: string, bankName: string) => {
+    setFormData(prev => ({ ...prev, bankCode, bankName }))
+    setIsVerified(false)
+    setVerificationError("")
+  }
+
+  const handleAccountVerified = (accountName: string) => {
+    setFormData(prev => ({ ...prev, accountName }))
+    setIsVerified(true)
+    setVerificationError("")
+  }
+
+  const handleVerificationError = (error: string) => {
+    setVerificationError(error)
+    if (error) {
+      setIsVerified(false)
+    }
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     const amount = parseFloat(formData.amount)
@@ -67,15 +86,22 @@ const AdminDisbursement = () => {
       toast.error("Please enter a valid amount")
       return
     }
-    if (!formData.bankName || !formData.accountNumber || !formData.accountName) {
-      toast.error("Please fill in all bank details")
-      return
+    if (formData.bankCode || formData.accountNumber) {
+      if (!formData.bankCode || !formData.accountNumber || !formData.accountName) {
+        toast.error("Please fill in all bank details and verify your account")
+        return
+      }
+      if (verificationError) {
+        toast.error("Please enter a valid account number")
+        return
+      }
     }
     requestMutation.mutate({
       amount,
-      bankName: formData.bankName,
-      accountNumber: formData.accountNumber,
-      accountName: formData.accountName,
+      bankCode: formData.bankCode || undefined,
+      bankName: formData.bankName || undefined,
+      accountNumber: formData.accountNumber || undefined,
+      accountName: formData.accountName || undefined,
       notes: formData.notes || undefined,
     })
   }
@@ -95,6 +121,48 @@ const AdminDisbursement = () => {
     }
   }
 
+  const isFormValid = formData.amount && Number(formData.amount) >= 100
+
+  const handleUseTestAccount = () => {
+    setFormData(prev => ({
+      ...prev,
+      bankCode: "MTN",
+      bankName: "MTN",
+      accountNumber: "0000000000",
+    }))
+  }
+
+  const tableColumns: TableColumn<DisbursementRequest>[] = [
+    {
+      name: "Date",
+      selector: (row: DisbursementRequest) => format(new Date(row.createdAt), "MMM d, yyyy"),
+      sortable: true,
+    },
+    {
+      name: "Amount",
+      selector: (row: DisbursementRequest) => `GHS ${Number(row.amount).toFixed(2)}`,
+      sortable: true,
+      cell: (row: DisbursementRequest) => <span className="font-medium">GHS {Number(row.amount).toFixed(2)}</span>,
+    },
+    {
+      name: "Bank Details",
+      sortable: false,
+      cell: (row: DisbursementRequest) => (
+        <div>
+          <p className="text-sm">{row.bankName}</p>
+          <p className="text-xs text-muted-foreground">
+            {row.accountNumber} - {row.accountName}
+          </p>
+        </div>
+      ),
+    },
+    {
+      name: "Status",
+      sortable: true,
+      cell: (row: DisbursementRequest) => getStatusBadge(row.status),
+    },
+  ]
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <SEOHelmet title="Disbursements - Admin" />
@@ -109,187 +177,131 @@ const AdminDisbursement = () => {
 
           {/* Balance Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="bg-forest-green-50 dark:bg-forest-green-950/20 border-forest-green-200">
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="p-2 bg-forest-green-100 dark:bg-forest-green-900/40 rounded-lg">
-                  <Wallet className="w-5 h-5 text-forest-green-600" />
-                </div>
-                <div>
-                  <p className="text-xs text-forest-green-600">Available Balance</p>
-                  <p className="text-2xl font-bold text-forest-green-700">
-                    {balanceLoading ? "..." : `GHS ${Number(balance?.availableBalance || 0).toFixed(2)}`}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="bg-blue-50 dark:bg-blue-950/20 border-blue-200">
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="p-2 bg-blue-100 dark:bg-blue-900/40 rounded-lg">
-                  <TrendingUp className="w-5 h-5 text-blue-600" />
-                </div>
-                <div>
-                  <p className="text-xs text-blue-600">Total Collected</p>
-                  <p className="text-2xl font-bold text-blue-700">
-                    {balanceLoading ? "..." : `GHS ${Number(balance?.totalPayments || 0).toFixed(2)}`}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-            <Card className="bg-muted dark:bg-muted/20">
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="p-2 bg-muted-foreground/10 dark:bg-muted-foreground/20 rounded-lg">
-                  <Send className="w-5 h-5 text-muted-foreground" />
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground">Already Disbursed</p>
-                  <p className="text-2xl font-bold text-muted-foreground">
-                    {balanceLoading ? "..." : `GHS ${Number(balance?.totalDisbursements || 0).toFixed(2)}`}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <StatCard
+              icon={Wallet}
+              title="Available Balance"
+              content={balanceLoading ? "..." : `GHS ${Number(balance?.availableBalance || 0).toFixed(2)}`}
+              backgroundColor="bg-forest-green-50 dark:bg-forest-green-950/20"
+              titleColor="text-forest-green-600"
+              contentColor="text-forest-green-700"
+            />
+            <StatCard
+              icon={TrendingUp}
+              title="Total Collected"
+              content={balanceLoading ? "..." : `GHS ${Number(balance?.totalPayments || 0).toFixed(2)}`}
+              backgroundColor="bg-blue-50 dark:bg-blue-950/20"
+              titleColor="text-blue-600"
+              contentColor="text-blue-700"
+            />
+            <StatCard
+              icon={Send}
+              title="Already Disbursed"
+              content={balanceLoading ? "..." : `GHS ${Number(balance?.totalDisbursements || 0).toFixed(2)}`}
+              backgroundColor="bg-muted"
+              titleColor="text-muted-foreground"
+              contentColor="text-muted-foreground"
+            />
           </div>
 
           {/* Request Form */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Request Disbursement</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="amount">Amount (GHS)</Label>
-                    <Input
-                      id="amount"
-                      type="number"
-                      step="0.01"
-                      min="0.01"
-                      placeholder="0.00"
-                      value={formData.amount}
-                      onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                      className="mt-1"
-                      disabled={requestMutation.isPending}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="bankName">Bank Name</Label>
-                    <Input
-                      id="bankName"
-                      placeholder="e.g. Ghana Commercial Bank"
-                      value={formData.bankName}
-                      onChange={(e) => setFormData({ ...formData, bankName: e.target.value })}
-                      className="mt-1"
-                      disabled={requestMutation.isPending}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="accountNumber">Account Number</Label>
-                    <Input
-                      id="accountNumber"
-                      placeholder="0000000000"
-                      value={formData.accountNumber}
-                      onChange={(e) => setFormData({ ...formData, accountNumber: e.target.value })}
-                      className="mt-1"
-                      disabled={requestMutation.isPending}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="accountName">Account Name</Label>
-                    <Input
-                      id="accountName"
-                      placeholder="Account holder name"
-                      value={formData.accountName}
-                      onChange={(e) => setFormData({ ...formData, accountName: e.target.value })}
-                      className="mt-1"
-                      disabled={requestMutation.isPending}
-                    />
-                  </div>
-                </div>
+          <StatCard
+            title="Request Disbursement"
+            content=""
+            className="w-full"
+          >
+            <div className="flex justify-end mb-4">
+              <FormButton
+                variant="outline"
+                size="sm"
+                onClick={handleUseTestAccount}
+              >
+                Use Test Account
+              </FormButton>
+            </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="notes">Notes (optional)</Label>
-                  <Textarea
-                    id="notes"
-                    placeholder="Any additional notes for this disbursement..."
-                    value={formData.notes}
-                    onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    className="mt-1"
+                  <BankSelector
+                    value={formData.bankCode}
+                    onChange={handleBankChange}
                     disabled={requestMutation.isPending}
                   />
                 </div>
-                {balance && Number(balance.availableBalance) <= 0 && (
-                  <div className="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <AlertCircle className="w-4 h-4 text-yellow-600 shrink-0" />
-                    <p className="text-sm text-yellow-700">
-                      No available balance for disbursement at this time.
-                    </p>
-                  </div>
-                )}
-                <Button
-                  type="submit"
-                  disabled={requestMutation.isPending || !formData.amount || !formData.bankName || !formData.accountNumber || !formData.accountName}
-                >
-                  {requestMutation.isPending ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Submitting...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4 mr-2" />
-                      Submit Request
-                    </>
-                  )}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+                <TextInput
+                  id="accountNumber"
+                  label="Account Number"
+                  placeholder="0000000000"
+                  value={formData.accountNumber}
+                  onChange={(e) => setFormData(prev => ({ ...prev, accountNumber: e.target.value }))}
+                  disabled={requestMutation.isPending || !formData.bankCode}
+                />
+              </div>
+
+              <AccountVerifier
+                bankCode={formData.bankCode}
+                accountNumber={formData.accountNumber}
+                onVerified={handleAccountVerified}
+                onVerificationError={handleVerificationError}
+                disabled={requestMutation.isPending || !formData.bankCode || formData.accountNumber.length < 10}
+              />
+
+              <TextInput
+                id="amount"
+                label="Amount (GHS)"
+                type="number"
+                step="0.01"
+                min="0.01"
+                placeholder="0.00"
+                value={formData.amount}
+                onChange={(e) => setFormData(prev => ({ ...prev, amount: e.target.value }))}
+                disabled={requestMutation.isPending}
+              />
+
+              <CustomTextarea
+                id="notes"
+                label="Notes (optional)"
+                placeholder="Any additional notes for this disbursement..."
+                value={formData.notes}
+                onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+                disabled={requestMutation.isPending}
+              />
+
+              {balance && Number(balance.availableBalance) <= 0 && (
+                <div className="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <AlertCircle className="w-4 h-4 text-yellow-600 shrink-0" />
+                  <p className="text-sm text-yellow-700">
+                    No available balance for disbursement at this time.
+                  </p>
+                </div>
+              )}
+
+              <FormButton
+                type="submit"
+                disabled={requestMutation.isPending || !isFormValid}
+                loading={requestMutation.isPending}
+                loadingText="Submitting..."
+                leftIcon={Send}
+              >
+                Submit Request
+              </FormButton>
+            </form>
+          </StatCard>
 
           {/* My Requests Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>My Requests</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {requestsLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                </div>
-              ) : !requests || requests.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  No disbursement requests yet
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Bank Details</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {requests.map((request: DisbursementRequest) => (
-                      <TableRow key={request.id}>
-                        <TableCell>{format(new Date(request.createdAt), "MMM d, yyyy")}</TableCell>
-                        <TableCell className="font-medium">GHS {Number(request.amount).toFixed(2)}</TableCell>
-                        <TableCell>
-                          <div>
-                            <p className="text-sm">{request.bankName}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {request.accountNumber} - {request.accountName}
-                            </p>
-                          </div>
-                        </TableCell>
-                        <TableCell>{getStatusBadge(request.status)}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
+          <StatCard
+            title="My Requests"
+            content=""
+            className="w-full"
+          >
+            <CustomDataTable
+              columns={tableColumns}
+              data={requests || []}
+              isLoading={requestsLoading}
+              searchable={false}
+              showEmptyState={!requests || requests.length === 0}
+              emptyStateMessage="No disbursement requests yet"
+            />
+          </StatCard>
 
         </div>
       </main>

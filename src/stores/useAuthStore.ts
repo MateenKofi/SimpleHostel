@@ -7,6 +7,8 @@ import { loginUser, logoutUser, getCurrentUser } from "@/api/auth";
 import { getUserById } from "@/api/users";
 import axios from "axios";
 
+import { Permission } from "@/lib/permissions";
+
 type DecodedToken = {
     id: string;
     role: string;
@@ -14,7 +16,7 @@ type DecodedToken = {
     iat: number;
     exp: number;
     jti?: string;
-    permissions?: string[];
+    permissions?: Permission[];
 };
 
 type UserStore = {
@@ -27,7 +29,7 @@ type UserStore = {
     tokenExpiry: number | null; // Track when token expires
     role: string | null;
     hostelId: string | null;
-    permissions: string[] | undefined;
+    permissions: Permission[] | undefined;
     isProcessing: boolean;
     user: UserDto | null;
     changedPassword: boolean | undefined;

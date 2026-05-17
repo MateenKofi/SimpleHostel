@@ -275,16 +275,6 @@ const AdminTransactions = () => {
     transactions,
   ]);
 
-  // Handle sorting (kept if needed elsewhere, but CustomDataTable handles its own sorting usually)
-  const handleSort = (key: keyof Transaction) => {
-    setSortConfig((prevConfig) => ({
-      key,
-      direction:
-        prevConfig.key === key && prevConfig.direction === "asc"
-          ? "desc"
-          : "asc",
-    }));
-  };
 
   const columns: TableColumn<Transaction>[] = [
     {
@@ -315,9 +305,6 @@ const AdminTransactions = () => {
       cell: (row) => (
         <div className="flex flex-col">
           <span>{safeFormat(row.date, "MMM d, yyyy")}</span>
-          <span className="text-xs text-muted-foreground">
-            {safeFormat(row.date, "h:mm a")}
-          </span>
         </div>
       ),
       sortable: true,

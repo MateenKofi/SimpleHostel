@@ -1,10 +1,9 @@
 import AdminReport from "@/components/report/AdminReport";
 import SuperAdminReport from "@/components/report/SuperAdminReport";
 import SEOHelmet from "@/components/SEOHelmet";
-import { useAuthStore } from "@/stores/useAuthStore";
+import { Can } from "@/components/auth/Can";
 
 const Report = () => {
-  const { user } = useAuthStore();
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <SEOHelmet
@@ -14,8 +13,14 @@ const Report = () => {
       />
       <main className="flex-1 p-3 md:p-6 lg:p-8">
         <div className="max-w-7xl mx-auto">
-          {user && user.role === 'super_admin' && <SuperAdminReport />}
-          {user && user.role === 'admin' && <AdminReport />}
+          {/* Super admin report spans all hostels */}
+          <Can permission="reports.view_all">
+            <SuperAdminReport />
+          </Can>
+          {/* Admin report is scoped to their hostel */}
+          <Can permission="reports.view">
+            <AdminReport />
+          </Can>
         </div>
       </main>
     </div>

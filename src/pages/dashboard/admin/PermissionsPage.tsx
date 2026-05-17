@@ -91,7 +91,7 @@ export default function PermissionsPage() {
     if (userRole === "super_admin") {
       return ["super_admin", "admin", "staff", "resident"]
     }
-    return ["staff", "resident"]
+    return ["staff"]
   }
 
   const accessibleRoles = getAccessibleRoles()

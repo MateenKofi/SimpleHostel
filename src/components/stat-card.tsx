@@ -5,13 +5,14 @@ import { cn } from "@/lib/utils"
 interface StatCardProps {
   icon?: LucideIcon
   title: string
-  content: string
+  content?: string
   description?: string
   backgroundColor?: string
   titleColor?: string
   contentColor?: string
   descriptionColor?: string
   className?: string
+  children?: React.ReactNode
 }
 
 export function StatCard({
@@ -24,16 +25,18 @@ export function StatCard({
   contentColor = "text-foreground",
   descriptionColor = "text-muted-foreground",
   className,
+  children,
 }: StatCardProps) {
   return (
     <Card
       className={cn(
-        "w-full rounded-2xl border border-border/50 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-xl",
+        "w-full rounded-2xl border border-border/50 shadow-lg transition-all duration-300",
+        content ? "hover:scale-[1.02] hover:shadow-xl" : "",
         backgroundColor,
         className
       )}
     >
-      <CardContent className="pt-6">
+      <CardContent className={content ? "pt-6" : "p-6"}>
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             {Icon && (
@@ -43,11 +46,14 @@ export function StatCard({
             )}
             <p className={cn("text-lg font-semibold", titleColor)}>{title}</p>
           </div>
-          <div className="flex flex-col gap-1">
-            <p className={cn("text-5xl font-extrabold tracking-tight", contentColor)}>{content}</p>
-            {description && <p className={cn("text-sm", descriptionColor)}>{description}</p>}
-          </div>
+          {content && (
+            <div className="flex flex-col gap-1">
+              <p className={cn("text-5xl font-extrabold tracking-tight", contentColor)}>{content}</p>
+              {description && <p className={cn("text-sm", descriptionColor)}>{description}</p>}
+            </div>
+          )}
         </div>
+        {children && <div className="mt-4">{children}</div>}
       </CardContent>
     </Card>
   )

@@ -1,7 +1,7 @@
 import axiosInstance from "./axiosInstance";
-import type { UpdateUserRequest } from "@/types/dtos";
+import type { UpdateUserRequest, UserDto } from "@/types/dtos";
 
-export const getUserById = async (userId: string) => {
+export const getUserById = async (userId: string): Promise<any> => {
     const response = await axiosInstance.get(`/users/get/${userId}`);
     return response.data;
 };
@@ -14,7 +14,7 @@ export const updateUser = async (userId: string, data: UpdateUserRequest | FormD
     return response.data;
 };
 
-export const getAllUsers = async () => {
+export const getAllUsers = async (): Promise<any> => {
     const response = await axiosInstance.get("/users/get");
     return response.data;
 };

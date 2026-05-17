@@ -4,6 +4,7 @@ import Layout from "@components/layout/Layout";
 import LandingPageLayout from "./components/layout/LandingPageLayout";
 import PrivateRoute from "./components/routes/PrivateRoute";
 import ProtectedBookingRoute from "./components/routes/ProtectedBookingRoute";
+import RoleRoute from "./components/routes/RoleRoute";
 
 // Landing page routes
 import Home from './pages/landing-page/page';
@@ -107,46 +108,65 @@ function App() {
       {/* Protected Dashboard Routes */}
       <Route element={<PrivateRoute />}>
         <Route path="/dashboard" element={<Layout />}>
+
+          {/* === Routes accessible by ALL authenticated roles === */}
           <Route index element={<Dashboard />} />
-          <Route path="room-management" element={<RoomManagementTab />} />
-          <Route path="calendar-year-management" element={<CalendarYear />} />
-          <Route path="calendar-year/:id" element={<CalendarYearDetail />} />
-          <Route path="room-assignment" element={<RoomAssignmentAndPayment />} />
-          <Route path="resident-management" element={<ResidentManagement />} />
-          <Route path="resident-management/add-resident" element={<AddResident />} />
-          <Route path="view-resident" element={<ViewResident />} />
-          <Route path="deptors-list" element={<DeptorsList />} />
-          <Route path="payment" element={<PaymentSummaryForm />} />
-          <Route path="top-up" element={<TopUpPaymentForm />} />
-          <Route path="visitor-management" element={<VisitorManagement />} />
-          <Route path="staff-management" element={<StaffManagement />} />
-          <Route path="staff-management/add" element={<AddStaff />} />
-          <Route path="staff-management/view/:id" element={<ViewStaff />} />
-          <Route path="staff-management/edit/:id" element={<EditStaff />} />
-          <Route path="approve-hostel" element={<ApproveHostel />} />
           <Route path="profile" element={<ProfileForm />} />
-          <Route path="transactions" element={<Transactions />} />
-          <Route path="users" element={<Users />} />
-          <Route path="view-room/:id" element={<ViewRoom />} />
-          <Route path="view-room-details" element={<ResidentRoomDetails />} />
-          <Route path="allocation-details" element={<AllocationDetails />} />
-          <Route path="make-request" element={<MakeRequest />} />
-          <Route path="payment-billing" element={<PaymentBilling />} />
-          <Route path="view-announcements" element={<Announcements />} />
-          <Route path="documents" element={<Documents />} />
-          <Route path="receipt/:reference" element={<ReceiptPage />} />
+          <Route path="payment" element={<PaymentSummaryForm />} />
           <Route path="payment-result" element={<PaymentResult />} />
-          <Route path="feedback" element={<Feedback />} />
-          <Route path="hostel-management" element={<HostelManagement />} />
-          <Route path="maintenance" element={<MaintenanceManagement />} />
-          <Route path="announcement-dashboard" element={<AnnouncementDashboard />} />
-          <Route path="settings" element={<Settings />} />
-          <Route path="permissions" element={<PermissionsPage />} />
-          <Route path="disbursement-management" element={<DisbursementManagement />} />
-          <Route path="disbursements" element={<AdminDisbursement />} />
-          <Route path="resident-lookup" element={<ResidentLookup />} />
-          <Route path="edit-resident" element={<EditResident />} />
-          <Route path="report" element={<Report />} />
+          <Route path="receipt/:reference" element={<ReceiptPage />} />
+          <Route path="view-room/:id" element={<ViewRoom />} />
+
+          {/* === Admin + Super Admin only === */}
+          <Route element={<RoleRoute allowedRoles={["admin", "super_admin"]} />}>
+            <Route path="room-management" element={<RoomManagementTab />} />
+            <Route path="calendar-year-management" element={<CalendarYear />} />
+            <Route path="calendar-year/:id" element={<CalendarYearDetail />} />
+            <Route path="room-assignment" element={<RoomAssignmentAndPayment />} />
+            <Route path="resident-management" element={<ResidentManagement />} />
+            <Route path="resident-management/add-resident" element={<AddResident />} />
+            <Route path="view-resident" element={<ViewResident />} />
+            <Route path="deptors-list" element={<DeptorsList />} />
+            <Route path="top-up" element={<TopUpPaymentForm />} />
+            <Route path="staff-management" element={<StaffManagement />} />
+            <Route path="staff-management/add" element={<AddStaff />} />
+            <Route path="staff-management/view/:id" element={<ViewStaff />} />
+            <Route path="staff-management/edit/:id" element={<EditStaff />} />
+            <Route path="transactions" element={<Transactions />} />
+            <Route path="announcement-dashboard" element={<AnnouncementDashboard />} />
+            <Route path="maintenance" element={<MaintenanceManagement />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="permissions" element={<PermissionsPage />} />
+            <Route path="disbursements" element={<AdminDisbursement />} />
+            <Route path="resident-lookup" element={<ResidentLookup />} />
+            <Route path="edit-resident" element={<EditResident />} />
+            <Route path="report" element={<Report />} />
+          </Route>
+
+          {/* === Super Admin only === */}
+          <Route element={<RoleRoute allowedRoles={["super_admin"]} />}>
+            <Route path="approve-hostel" element={<ApproveHostel />} />
+            <Route path="users" element={<Users />} />
+            <Route path="hostel-management" element={<HostelManagement />} />
+            <Route path="disbursement-management" element={<DisbursementManagement />} />
+          </Route>
+
+          {/* === Staff only (scoped to operational tasks) === */}
+          <Route element={<RoleRoute allowedRoles={["staff"]} />}>
+            <Route path="visitor-management" element={<VisitorManagement />} />
+          </Route>
+
+          {/* === Resident only === */}
+          <Route element={<RoleRoute allowedRoles={["resident"]} />}>
+            <Route path="view-room-details" element={<ResidentRoomDetails />} />
+            <Route path="allocation-details" element={<AllocationDetails />} />
+            <Route path="make-request" element={<MakeRequest />} />
+            <Route path="payment-billing" element={<PaymentBilling />} />
+            <Route path="view-announcements" element={<Announcements />} />
+            <Route path="documents" element={<Documents />} />
+            <Route path="feedback" element={<Feedback />} />
+          </Route>
+
         </Route>
       </Route>
 

@@ -1,12 +1,14 @@
 import SEOHelmet from "@/components/SEOHelmet";
 import AdminTransactions from "@/components/transactions/AdminTransactions";
 import SuperAdminTransaction from "@/components/transactions/SuperAdminTransaction";
-import { useAuthStore } from "@/stores/useAuthStore";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { BadgeCent } from "lucide-react";
+import { useAuthStore } from "@/stores/useAuthStore";
 
 const Transactions = () => {
-  const { user } = useAuthStore();
+  const role = useAuthStore((state) => state.role);
+  const isSuperAdmin = role === "super_admin";
+
   return (
     <div className="min-h-screen bg-white flex flex-col">
       <SEOHelmet
@@ -22,8 +24,13 @@ const Transactions = () => {
       />
       <main className="flex-1 p-4 md:p-8">
         <div className="max-w-6xl mx-auto">
-          {user && user.role === 'super_admin' && <SuperAdminTransaction />}
-          {(user && user.role === 'admin' || user?.role === 'staff') && <AdminTransactions />}
+          {/* Super admin sees system-wide transaction overview */}
+          {isSuperAdmin ? (
+            <SuperAdminTransaction />
+          ) : (
+            /* Admin and staff see their hostel's transactions */
+            <AdminTransactions />
+          )}
         </div>
       </main>
     </div>

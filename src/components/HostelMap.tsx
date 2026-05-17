@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useAuthStore } from "@/stores/useAuthStore";
 import { getHostels } from "@/api/hostels";
 import { useQuery } from "@tanstack/react-query";
+import { HostelDto } from "@/types/dtos";
 
 interface HostelMapProps {
   center?: [number, number];
@@ -43,17 +44,17 @@ export function HostelMap({
   const hostels = hostelsData || []
 
   const filteredHostels = useMemo(() => {
-    let filtered = hostels.filter(h => h.latitude !== null && h.longitude !== null && h.latitude !== undefined && h.longitude !== undefined)
+    let filtered = hostels.filter((h: any) => h.latitude !== null && h.longitude !== null && h.latitude !== undefined && h.longitude !== undefined)
     
     if (userRole === "admin" && userHostelId) {
-      filtered = filtered.filter(h => h.id === userHostelId)
+      filtered = filtered.filter((h: any) => h.id === userHostelId)
     }
     
     return filtered
   }, [hostels, userRole, userHostelId])
 
   const markers: MarkerData[] = useMemo(() => {
-    return filteredHostels.map(h => ({
+    return filteredHostels.map((h: any) => ({
       id: h.id,
       name: h.name,
       lng: h.longitude!,
@@ -67,7 +68,7 @@ export function HostelMap({
     if (propCenter) return propCenter
     
     if (userRole === "admin" && userHostelId) {
-      const adminHostel = filteredHostels.find(h => h.id === userHostelId)
+      const adminHostel = filteredHostels.find((h: any) => h.id === userHostelId)
       if (adminHostel && adminHostel.latitude && adminHostel.longitude) {
         return [adminHostel.longitude, adminHostel.latitude]
       }

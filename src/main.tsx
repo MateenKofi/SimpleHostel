@@ -15,9 +15,9 @@ createRoot(document.getElementById('root')!).render(
     <HelmetProvider>
     <QueryClientProvider client={queryClient}>
      <ToastProvider>
-    <BrowserRouter>
+      <BrowserRouter>
       <App />
-    <ReactQueryDevtools initialIsOpen={false} buttonPosition='bottom-right'/>
+      {import.meta.env.DEV && <ReactQueryDevtools initialIsOpen={false} buttonPosition='bottom-right'/>}
     </BrowserRouter>
      </ToastProvider>
     </QueryClientProvider>

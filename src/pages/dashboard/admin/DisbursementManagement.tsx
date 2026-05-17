@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { Loader2, Check, X, Clock, AlertCircle } from "lucide-react"
+import { Loader2, Check, X, Clock, AlertCircle, Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -223,7 +223,7 @@ const DisbursementManagement = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {requests.map((request) => (
+                    {requests.map((request: DisbursementRequest) => (
                       <TableRow key={request.id}>
                         <TableCell>{format(new Date(request.createdAt), "MMM d, yyyy")}</TableCell>
                         <TableCell>
@@ -272,8 +272,17 @@ const DisbursementManagement = () => {
                               onClick={() => processMutation.mutate(request.id)}
                               disabled={processMutation.isPending}
                             >
-                              {processMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : null}
-                              Mark Processed
+                              {processMutation.isPending ? (
+                                <>
+                                  <Loader2 className="w-3 h-3 animate-spin mr-1" />
+                                  Initiating...
+                                </>
+                              ) : (
+                                <>
+                                  <Send className="w-3 h-3 mr-1" />
+                                  Initiate Transfer
+                                </>
+                              )}
                             </Button>
                           )}
                         </TableCell>

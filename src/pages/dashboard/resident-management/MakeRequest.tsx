@@ -76,30 +76,6 @@ const MakeRequest = () => {
     }, [editMode, selectedRequest, setValue])
     const queryClient = useQueryClient()
 
-    // Show loading state while fetching user data
-    if (isUserLoading) {
-        return (
-            <div className="flex items-center justify-center h-[50vh]">
-                <Loader className="w-8 h-8 animate-spin text-primary" />
-            </div>
-        )
-    }
-
-    // Show error state if user data fetch fails
-    if (isUserError) {
-        return (
-            <div className="flex flex-col items-center justify-center h-[50vh] space-y-4">
-                <AlertCircle className="w-12 h-12 text-destructive" />
-                <p className="text-muted-foreground">Failed to load user data.</p>
-            </div>
-        )
-    }
-
-    // Show NoHostelAssigned if user has no hostel assigned
-    if (!user?.hostel) {
-        return <NoHostelAssigned />
-    }
-
     // Fetch Requests History
     const { data: requestHistory, isLoading: isLoadingHistory } = useQuery<MaintenanceRequest[]>({
         queryKey: ['maintenance-requests'],
@@ -107,7 +83,7 @@ const MakeRequest = () => {
             const responseData = await getResidentRequests()
             return responseData?.data || []
         },
-        // Fallback or error handling can be better, but for now standard query
+        enabled: !!user?.hostel,
     })
 
     // Mutation for creating request
@@ -146,6 +122,30 @@ const MakeRequest = () => {
             toast.error(msg)
         }
     })
+
+    // Show loading state while fetching user data
+    if (isUserLoading) {
+        return (
+            <div className="flex items-center justify-center h-[50vh]">
+                <Loader className="w-8 h-8 animate-spin text-primary" />
+            </div>
+        )
+    }
+
+    // Show error state if user data fetch fails
+    if (isUserError) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[50vh] space-y-4">
+                <AlertCircle className="w-12 h-12 text-destructive" />
+                <p className="text-muted-foreground">Failed to load user data.</p>
+            </div>
+        )
+    }
+
+    // Show NoHostelAssigned if user has no hostel assigned
+    if (!user?.hostel) {
+        return <NoHostelAssigned />
+    }
 
     const onSubmit: SubmitHandler<CreateMaintenanceRequestDto> = (data) => {
         if (editMode && selectedRequest) {
