@@ -1,5 +1,7 @@
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2, Check, X, Clock, AlertCircle, Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -38,6 +40,7 @@ import {
   DisbursementRequest,
   DisbursementStats,
 } from "@/api/disbursements"
+import { rejectDisbursementSchema, RejectDisbursementInput } from "@/schemas/disbursementSchema"
 import { toast } from "sonner"
 import SEOHelmet from "@/components/SEOHelmet"
 import { PageHeader } from "@/components/layout/PageHeader"
@@ -49,7 +52,15 @@ const DisbursementManagement = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false)
   const [selectedRequest, setSelectedRequest] = useState<DisbursementRequest | null>(null)
-  const [rejectReason, setRejectReason] = useState("")
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<RejectDisbursementInput>({
+    resolver: zodResolver(rejectDisbursementSchema),
+  })
 
   const { data, isLoading } = useQuery({
     queryKey: ["all-disbursement-requests", statusFilter],
@@ -76,7 +87,7 @@ const DisbursementManagement = () => {
       toast.success("Disbursement rejected")
       setRejectDialogOpen(false)
       setSelectedRequest(null)
-      setRejectReason("")
+      reset()
       queryClient.invalidateQueries({ queryKey: ["all-disbursement-requests"] })
     },
     onError: (error: any) => {
@@ -98,11 +109,12 @@ const DisbursementManagement = () => {
   const handleRejectClick = (request: DisbursementRequest) => {
     setSelectedRequest(request)
     setRejectDialogOpen(true)
+    reset()
   }
 
-  const handleConfirmReject = () => {
-    if (!selectedRequest || !rejectReason) return
-    rejectMutation.mutate({ id: selectedRequest.id, reason: rejectReason })
+  const onSubmitReject = (data: RejectDisbursementInput) => {
+    if (!selectedRequest) return
+    rejectMutation.mutate({ id: selectedRequest.id, reason: data.reason })
   }
 
   const getStatusBadge = (status: string) => {
@@ -297,7 +309,12 @@ const DisbursementManagement = () => {
       </main>
 
       {/* Reject Dialog */}
-      <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+      <Dialog open={rejectDialogOpen} onOpenChange={(open) => {
+        setRejectDialogOpen(open)
+        if (!open) {
+          reset()
+        }
+      }}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Reject Disbursement Request</DialogTitle>
@@ -305,31 +322,35 @@ const DisbursementManagement = () => {
               Please provide a reason for rejecting this disbursement request. This will be visible to the hostel admin.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmitReject)} className="space-y-4">
             <div>
               <Label htmlFor="rejectReason">Rejection Reason</Label>
               <Textarea
                 id="rejectReason"
                 placeholder="Enter reason for rejection..."
-                value={rejectReason}
-                onChange={(e) => setRejectReason(e.target.value)}
+                {...register("reason")}
                 className="mt-1"
               />
+              {errors.reason && (
+                <p className="text-sm text-destructive mt-1">
+                  {errors.reason.message}
+                </p>
+              )}
             </div>
-          </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setRejectDialogOpen(false)}>
+            <Button variant="outline" type="button" onClick={() => setRejectDialogOpen(false)}>
               Cancel
             </Button>
             <Button
               variant="destructive"
-              onClick={handleConfirmReject}
-              disabled={!rejectReason || rejectMutation.isPending}
+              type="submit"
+              disabled={rejectMutation.isPending}
             >
               {rejectMutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
               Confirm Rejection
             </Button>
           </DialogFooter>
+          </form>
         </DialogContent>
       </Dialog>
     </div>

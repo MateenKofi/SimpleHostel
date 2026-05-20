@@ -66,7 +66,8 @@ const KeyMetrics = ({ reportData }: { reportData: ReportData }) => {
             className="mt-2 md:mt-3 h-2 w-full max-w-[100px] md:max-w-[120px]"
           />
           <p className="text-xs text-muted-foreground mt-1.5 md:mt-2">
-            {reportData?.occupiedRooms}/{reportData?.totalRooms} rooms
+            {/* BUG-3 FIX: occupancyRate = occupiedRooms / activeRooms — use activeRooms to be consistent */}
+            {reportData?.occupiedRooms}/{reportData?.activeRooms} rooms
           </p>
         </div>
       </BentoCard>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getCurrentCalendarYear, getHistoricalCalendarYears } from "@/api/calendar";
 import { getCalendarYearReport } from "@/api/analytics";
@@ -86,6 +86,14 @@ const AdminReport = () => {
     (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
   );
 
+  useEffect(() => {
+    if (currentYear?.id && !selectedYear) {
+      setSelectedYear(currentYear.id);
+    }
+  }, [currentYear]);
+
+  const hasCalendarYears = AcademicYears.length > 0;
+
   if (
     isCurrentYearError || isHistoricalYearsError || isReportDataError
   ) {
@@ -107,8 +115,8 @@ const AdminReport = () => {
       label: year.name || "Unnamed Year",
     }));
 
-  // Empty state when no year is selected
-  if (!isReportDataLoading && !selectedYear && AcademicYears.length > 0) {
+  // Empty state only when there are no calendar years at all
+  if (!isReportDataLoading && !selectedYear && !hasCalendarYears) {
     return (
       <div className="w-full min-h-[60vh] flex items-center justify-center">
         <div className="text-center p-8 max-w-md border-2 border-dashed border-border/60 hover:border-primary/60 bg-muted/20 rounded-2xl transition-all duration-300">

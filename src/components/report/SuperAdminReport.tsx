@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getHostels } from "@/api/hostels";
 import { getCurrentCalendarYear, getHistoricalCalendarYears } from "@/api/calendar";
@@ -99,6 +99,14 @@ const SuperAdminReport = () => {
     (a, b) => new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
   );
 
+  useEffect(() => {
+    if (selectedHostel && currentYear?.id && !selectedYear) {
+      setSelectedYear(currentYear.id);
+    }
+  }, [selectedHostel, currentYear]);
+
+  const hasCalendarYears = AcademicYears.length > 0;
+
   if (
     isHostelsError || isCurrentYearError || isHistoricalYearsError || isReportDataError
   ) {
@@ -127,34 +135,6 @@ const SuperAdminReport = () => {
       value: year.id,
       label: year.name || "Unnamed Year",
     }));
-
-  // Empty state when no filters are selected
-  if (!isReportDataLoading && !selectedYear && selectedHostel && AcademicYears.length > 0) {
-    return (
-      <div className="w-full min-h-[60vh] flex items-center justify-center">
-        <div className="text-center p-8 max-w-md border-2 border-dashed border-border/60 hover:border-primary/60 bg-muted/20 rounded-2xl transition-all duration-300">
-          <div className="inline-flex p-4 rounded-2xl bg-gradient-to-br from-forest-green-50 to-sage-green-50 dark:from-forest-green-950/20 dark:to-sage-green-950/10 mb-6">
-            <BarChart3 className="h-10 w-10 text-forest-green-600 dark:text-forest-green-400" />
-          </div>
-          <h2 className="text-2xl font-bold text-foreground mb-2">
-            Select Calendar Year
-          </h2>
-          <p className="text-muted-foreground mb-6 max-w-xs mx-auto">
-            Choose an academic year to view comprehensive performance reports for this hostel
-          </p>
-          <SelectInput
-            placeholder="Select Calendar Year"
-            options={yearOptions}
-            value={undefined}
-            onValueChange={setSelectedYear}
-            loading={isHistoricalYearsLoading || isCurrentYearLoading}
-            disabled={AcademicYears.length === 0}
-            containerClassName="w-full sm:w-[280px]"
-          />
-        </div>
-      </div>
-    );
-  }
 
   // Empty state when no hostel is selected
   if (!isReportDataLoading && !selectedHostel && hostelOptions.length > 0) {

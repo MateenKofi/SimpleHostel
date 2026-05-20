@@ -107,6 +107,75 @@ const SettingsSkeleton = () => {
         <div className="flex justify-end">
           <Skeleton className="w-32 h-11" />
         </div>
+
+        {/* Payment Settings Card */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <Skeleton className="w-5 h-5 rounded" />
+              <div className="space-y-1">
+                <Skeleton className="w-36 h-5" />
+                <Skeleton className="w-48 h-3" />
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between p-4 border rounded-lg">
+              <div className="space-y-1">
+                <Skeleton className="w-40 h-4" />
+                <Skeleton className="w-64 h-3" />
+              </div>
+              <Skeleton className="w-11 h-6 rounded-full" />
+            </div>
+            <div className="flex justify-end">
+              <Skeleton className="w-44 h-9" />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Rules & Regulations Card */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <Skeleton className="w-5 h-5 rounded" />
+              <div className="space-y-1">
+                <Skeleton className="w-44 h-5" />
+                <Skeleton className="w-72 h-3" />
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Skeleton className="w-full h-[120px] rounded-xl" />
+          </CardContent>
+        </Card>
+
+        {/* Official Documents Card */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <Skeleton className="w-5 h-5 rounded" />
+              <div className="space-y-1">
+                <Skeleton className="w-40 h-5" />
+                <Skeleton className="w-80 h-3" />
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-3">
+                <Skeleton className="w-32 h-4" />
+                <Skeleton className="w-full h-[120px] rounded-xl" />
+              </div>
+              <div className="space-y-3">
+                <Skeleton className="w-24 h-4" />
+                <Skeleton className="w-full h-[120px] rounded-xl" />
+              </div>
+            </div>
+            <div className="flex justify-end pt-2">
+              <Skeleton className="w-36 h-9" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   )

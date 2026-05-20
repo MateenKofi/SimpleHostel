@@ -56,11 +56,12 @@ export interface DisbursementAccount {
   isVerified: boolean;
 }
 
-export const getDisbursementBalance = async (hostelId?: string): Promise<DisbursementBalance> => {
-  const response = await axiosInstance.get("/disbursements/balance", {
-    params: hostelId ? { hostelId } : {},
-  });
-  return response.data.data;
+export const getDisbursementBalance = async (hostelId?: string, year?: number): Promise<DisbursementBalance> => {
+  const params: Record<string, string> = {}
+  if (hostelId) params.hostelId = hostelId
+  if (year) params.year = year.toString()
+  const response = await axiosInstance.get("/disbursements/balance", { params })
+  return response.data.data
 };
 
 export const getMyDisbursementRequests = async (): Promise<DisbursementRequest[]> => {
