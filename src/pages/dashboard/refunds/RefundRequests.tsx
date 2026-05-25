@@ -8,6 +8,7 @@ import {
   rejectRefund,
   instantRefund,
   RefundRequestDto,
+  RefundCalculationDto,
 } from "@/api/refunds"
 import { getHostelTransactions } from "@/api/payments"
 import {
@@ -38,10 +39,40 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { format } from "date-fns"
+import { useAuthStore } from "@/stores/useAuthStore"
+
+type RefundTransaction = {
+  id: string
+  amountPaid: number
+  refundedAmount?: number | null
+  status: string
+  reference: string
+  residentProfile?: {
+    user?: {
+      name?: string | null
+    } | null
+  } | null
+}
+
+type ApiErrorLike = {
+  response?: {
+    data?: {
+      message?: string
+    }
+  }
+}
+
+const getApiErrorMessage = (error: unknown, fallback: string) => {
+  const apiError = error as ApiErrorLike
+  return apiError.response?.data?.message || fallback
+}
 
 export default function RefundRequests() {
   const queryClient = useQueryClient()
-  const hostelId = localStorage.getItem("hostelId") || ""
+  const { role, hostelId: storeHostelId } = useAuthStore()
+  const isSuperAdmin = role === "super_admin"
+  const hostelId = storeHostelId || localStorage.getItem("hostelId") || ""
+  const refundScopeKey = isSuperAdmin ? "all-hostels" : hostelId
 
   // Active filters and query keys
   const [activeTab, setActiveTab] = useState<string>("all")
@@ -60,28 +91,28 @@ export default function RefundRequests() {
   const [instantReason, setInstantReason] = useState("")
   const [customRefundAmount, setCustomRefundAmount] = useState("")
   const [isCalculatingInstant, setIsCalculatingInstant] = useState(false)
-  const [instantCalc, setInstantCalc] = useState<any>(null)
+  const [instantCalc, setInstantCalc] = useState<RefundCalculationDto | null>(null)
   const [isProcessingInstant, setIsProcessingInstant] = useState(false)
 
   // Fetch refund requests
   const { data: requests, isLoading: isRequestsLoading, refetch } = useQuery<RefundRequestDto[]>({
-    queryKey: ["refund-requests", hostelId],
+    queryKey: ["refund-requests", refundScopeKey],
     queryFn: async () => {
-      const res = await getRefundRequests({ hostelId })
+      const res = await getRefundRequests(isSuperAdmin ? undefined : { hostelId })
       return res.data || res || []
     },
-    enabled: !!hostelId,
+    enabled: isSuperAdmin || !!hostelId,
   })
 
   // Fetch confirmed payments for instant refund dropdown
-  const { data: transactions } = useQuery({
+  const { data: transactions } = useQuery<RefundTransaction[]>({
     queryKey: ["confirmed-transactions", hostelId],
     queryFn: async () => {
       const res = await getHostelTransactions(hostelId)
-      const data = res?.data || []
+      const data: RefundTransaction[] = res?.data || []
       // Only return confirmed/success payments that haven't been fully refunded yet
       return data.filter(
-        (t: any) =>
+        (t) =>
           (t.status === "confirmed" || t.status === "success") &&
           (!t.refundedAmount || t.refundedAmount < t.amountPaid)
       )
@@ -101,7 +132,7 @@ export default function RefundRequests() {
       const res = await calculateRefund(paymentId)
       setInstantCalc(res.data)
       setCustomRefundAmount(res.data.refundableAmount.toString())
-    } catch (e) {
+    } catch {
       toast.error("Failed to calculate pro-rata refund details")
     } finally {
       setIsCalculatingInstant(false)
@@ -116,11 +147,11 @@ export default function RefundRequests() {
       await approveRefund(approvingRequest.id)
       toast.success("Refund approved and processed successfully")
       setApprovingRequest(null)
-      queryClient.invalidateQueries({ queryKey: ["refund-requests", hostelId] })
+      queryClient.invalidateQueries({ queryKey: ["refund-requests", refundScopeKey] })
       queryClient.invalidateQueries({ queryKey: ["confirmed-transactions", hostelId] })
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error)
-      const msg = error?.response?.data?.message || "Failed to process refund"
+      const msg = getApiErrorMessage(error, "Failed to process refund")
       toast.error("Approval Failed", { description: msg })
     } finally {
       setIsApproving(false)
@@ -139,10 +170,10 @@ export default function RefundRequests() {
       toast.success("Refund request rejected")
       setRejectingRequest(null)
       setRejectionReason("")
-      queryClient.invalidateQueries({ queryKey: ["refund-requests", hostelId] })
-    } catch (error: any) {
+      queryClient.invalidateQueries({ queryKey: ["refund-requests", refundScopeKey] })
+    } catch (error: unknown) {
       console.error(error)
-      const msg = error?.response?.data?.message || "Failed to reject refund"
+      const msg = getApiErrorMessage(error, "Failed to reject refund")
       toast.error("Rejection Failed", { description: msg })
     } finally {
       setIsRejecting(false)
@@ -174,11 +205,11 @@ export default function RefundRequests() {
       setInstantReason("")
       setCustomRefundAmount("")
       setInstantCalc(null)
-      queryClient.invalidateQueries({ queryKey: ["refund-requests", hostelId] })
+      queryClient.invalidateQueries({ queryKey: ["refund-requests", refundScopeKey] })
       queryClient.invalidateQueries({ queryKey: ["confirmed-transactions", hostelId] })
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error)
-      const msg = error?.response?.data?.message || "Failed to process instant refund"
+      const msg = getApiErrorMessage(error, "Failed to process instant refund")
       toast.error("Instant Refund Failed", { description: msg })
     } finally {
       setIsProcessingInstant(false)
@@ -532,7 +563,7 @@ export default function RefundRequests() {
                 onChange={(e) => handlePaymentChange(e.target.value)}
               >
                 <option value="">-- Choose confirmed payment --</option>
-                {transactions?.map((t: any) => (
+                {transactions?.map((t) => (
                   <option key={t.id} value={t.id}>
                     {t.residentProfile?.user?.name || "Unknown Resident"} - GHS {t.amountPaid} ({t.reference.slice(0, 10)}...)
                   </option>

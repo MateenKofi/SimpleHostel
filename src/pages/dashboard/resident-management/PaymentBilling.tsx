@@ -1,10 +1,10 @@
 "use client"
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { getResidentBilling, getPaymentReceipt, downloadAllocationLetterPDF, downloadPaymentReceiptPDF } from "@/api/residents"
 import { retryPayment, cancelPayment } from "@/api/payments"
 import { calculateRefund, requestRefund, RefundCalculationDto } from "@/api/refunds"
-import { Loader, Download, CreditCard, History, Wallet, AlertCircle, FileText, Printer, RefreshCw, X } from "lucide-react"
+import { Loader, Download, CreditCard, History, AlertCircle, FileText, Printer, RefreshCw, X } from "lucide-react"
 import { toast } from "sonner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import {
@@ -24,8 +24,6 @@ import { format } from "date-fns"
 import { useNavigate } from "react-router-dom"
 import SEOHelmet from "@/components/SEOHelmet"
 import { PaymentReceipt } from "@/helper/types/types"
-import jsPDF from "jspdf"
-import html2canvas from "html2canvas"
 import ReceiptTemplate from "@/components/payment/ReceiptTemplate"
 import { useAuthStore } from "@/stores/useAuthStore"
 import { useCurrentUser } from "@/hooks/useCurrentUser"
@@ -61,41 +59,31 @@ interface BillingSummary {
     }
 }
 
+type ApiErrorLike = {
+    message?: string
+    response?: {
+        data?: {
+            message?: string
+        }
+    }
+}
+
+const getApiErrorMessage = (error: unknown, fallback: string) => {
+    const apiError = error as ApiErrorLike
+    return apiError.response?.data?.message || apiError.message || fallback
+}
+
 
 
 const PaymentBilling = () => {
     const navigate = useNavigate()
-    const { user: authUser, hostelId: storeHostelId } = useAuthStore()
+    const { user: authUser } = useAuthStore()
     const { user, isLoading: isUserLoading, isError: isUserError } = useCurrentUser()
     const userId = user?.id || authUser?.id
     const hostel = user?.hostel
     const queryClient = useQueryClient()
 
     const [processingPayment, setProcessingPayment] = useState<string | null>(null)
-
-    // Show loading state while fetching user data
-    if (isUserLoading) {
-        return (
-            <div className="flex items-center justify-center h-[50vh]">
-                <Loader className="w-8 h-8 animate-spin text-primary" />
-            </div>
-        )
-    }
-
-    // Show error state if user data fetch fails
-    if (isUserError) {
-        return (
-            <div className="flex flex-col items-center justify-center h-[50vh] space-y-4">
-                <AlertCircle className="w-12 h-12 text-destructive" />
-                <p className="text-muted-foreground">Failed to load user data.</p>
-            </div>
-        )
-    }
-
-    // Show NoHostelAssigned if user has no hostel assigned
-    if (!hostel) {
-        return <NoHostelAssigned />
-    }
 
     const { data: billingData, isLoading, isError, refetch } = useQuery<BillingSummary>({
         queryKey: ['resident-billing', userId],
@@ -177,35 +165,6 @@ const PaymentBilling = () => {
         documentTitle: `Receipt-${viewReceiptId}`,
     });
 
-    const handleDownloadPDF = async () => {
-        if (!receiptRef.current) return
-
-        const loadingToast = toast.loading("Generating PDF...")
-        try {
-            const canvas = await html2canvas(receiptRef.current, {
-                scale: 2,
-                useCORS: true,
-                logging: false,
-            })
-            const imgData = canvas.toDataURL("image/png")
-            const pdf = new jsPDF({
-                orientation: "portrait",
-                unit: "mm",
-                format: "a4",
-            })
-
-            const imgWidth = 210
-            const imgHeight = (canvas.height * imgWidth) / canvas.width
-
-            pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight)
-            pdf.save(`Receipt-${viewReceiptId}.pdf`)
-            toast.success("Receipt downloaded successfully", { id: loadingToast })
-        } catch (error) {
-            console.error("PDF generation failed:", error)
-            toast.error("Failed to generate PDF", { id: loadingToast })
-        }
-    }
-
     const { data: receiptData, isLoading: isReceiptLoading } = useQuery<PaymentReceipt>({
         queryKey: ['receipt', viewReceiptId],
         queryFn: async () => {
@@ -245,10 +204,11 @@ const PaymentBilling = () => {
             })
             // Redirect to Paystack authorization URL
             window.location.href = result.authorizationUrl
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Retry payment error:", error)
-            const errorMessage = error?.response?.data?.message || error?.message || "Failed to retry payment"
-            toast.error("Retry Failed", { description: errorMessage })
+            toast.error("Retry Failed", {
+                description: getApiErrorMessage(error, "Failed to retry payment"),
+            })
         } finally {
             setProcessingPayment(null)
         }
@@ -265,10 +225,11 @@ const PaymentBilling = () => {
             })
             // Refresh the payment list
             queryClient.invalidateQueries({ queryKey: ['resident-billing', userId] })
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Cancel payment error:", error)
-            const errorMessage = error?.response?.data?.message || error?.message || "Failed to cancel payment"
-            toast.error("Cancel Failed", { description: errorMessage })
+            toast.error("Cancel Failed", {
+                description: getApiErrorMessage(error, "Failed to cancel payment"),
+            })
         } finally {
             setProcessingPayment(null)
         }
@@ -306,14 +267,39 @@ const PaymentBilling = () => {
             });
             setRefundPaymentId(null);
             queryClient.invalidateQueries({ queryKey: ['resident-billing', userId] });
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Failed to submit refund request:", error);
-            const msg = error?.response?.data?.message || "Failed to submit refund request";
-            toast.error("Refund Request Failed", { description: msg });
+            toast.error("Refund Request Failed", {
+                description: getApiErrorMessage(error, "Failed to submit refund request"),
+            });
         } finally {
             setSubmittingRefund(false);
         }
     };
+
+    // Show loading state while fetching user data after all hooks have been declared.
+    if (isUserLoading) {
+        return (
+            <div className="flex items-center justify-center h-[50vh]">
+                <Loader className="w-8 h-8 animate-spin text-primary" />
+            </div>
+        )
+    }
+
+    // Show error state if user data fetch fails
+    if (isUserError) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[50vh] space-y-4">
+                <AlertCircle className="w-12 h-12 text-destructive" />
+                <p className="text-muted-foreground">Failed to load user data.</p>
+            </div>
+        )
+    }
+
+    // Show NoHostelAssigned if user has no hostel assigned
+    if (!hostel) {
+        return <NoHostelAssigned />
+    }
 
     if (isLoading) {
         return (
