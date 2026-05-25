@@ -1,37 +1,23 @@
-import { useState } from "react";
 import {
-  ArrowUpDown,
   BadgeCent,
-  Search,
   CheckCircle2,
   Clock,
   XCircle,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import TransactionsSkeleton from "../loaders/TransactionLoader";
 import { getDisbursementSummary, getSystemTransactionMetrics } from "@/api/analytics";
 import { useQuery } from "@tanstack/react-query";
 import CustomeRefetch from "../CustomRefetch";
-import { Avatar, AvatarFallback } from "../ui/avatar";
 import { formatCurrency } from "@/utils";
+import CustomDataTable from "../CustomDataTable";
+import type { TableColumn } from "react-data-table-component";
 
 interface Hostel {
   hostelId: string;
@@ -47,12 +33,6 @@ interface DisbursementData {
 }
 
 const SuperAdminTransaction = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [sortConfig, setSortConfig] = useState<{
-    key: string;
-    direction: "ascending" | "descending";
-  } | null>(null);
-
   const {
     data: transactionData,
     isLoading,
@@ -86,49 +66,49 @@ const SuperAdminTransaction = () => {
     cancelledTransactions: 0,
   };
 
-  // Filter hostels based on search term
-  const filteredHostels =
-    transactionData?.disbursements.filter(
-      (hostel) =>
-        hostel.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        hostel.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        hostel.phone?.includes(searchTerm)
-    ) || [];
+  const hostelColumns: TableColumn<Hostel>[] = [
+    {
+      name: "Hostel Name",
+      selector: (hostel) => hostel.name || "",
+      sortable: true,
+      minWidth: "250px",
+      cell: (hostel) => (
+        <div className="flex items-center gap-2">
 
-  // Sort hostels based on sort config
-  const sortedHostels = [...filteredHostels].sort((a, b) => {
-    if (!sortConfig) return 0;
-
-    const key = sortConfig.key as keyof Hostel;
-
-    if (key === "amountCollected") {
-      return sortConfig.direction === "ascending"
-        ? a[key] - b[key]
-        : b[key] - a[key];
-    } else {
-      const aValue = String(a[key]).toLowerCase();
-      const bValue = String(b[key]).toLowerCase();
-
-      return sortConfig.direction === "ascending"
-        ? aValue.localeCompare(bValue)
-        : bValue.localeCompare(aValue);
-    }
-  });
-
-  // Handle sorting
-  const requestSort = (key: string) => {
-    let direction: "ascending" | "descending" = "ascending";
-
-    if (
-      sortConfig &&
-      sortConfig.key === key &&
-      sortConfig.direction === "ascending"
-    ) {
-      direction = "descending";
-    }
-
-    setSortConfig({ key, direction });
-  };
+          <span className="font-medium">{hostel.name}</span>
+          {hostel.amountCollected > 0 && (
+            <Badge
+              variant="outline"
+              className="ml-2 border-forest-green-200 bg-forest-green-100 text-forest-green-800 dark:border-forest-green-800 dark:bg-forest-green-900 dark:text-forest-green-100"
+            >
+              Active
+            </Badge>
+          )}
+        </div>
+      ),
+    },
+    {
+      name: "Phone",
+      selector: (hostel) => hostel.phone || "",
+      sortable: true,
+    },
+    {
+      name: "Email",
+      selector: (hostel) => hostel.email || "",
+      sortable: true,
+    },
+    {
+      name: "Amount",
+      selector: (hostel) => hostel.amountCollected,
+      sortable: true,
+      right: true,
+      cell: (hostel) => (
+        <span className="font-medium">
+          {formatCurrency(hostel.amountCollected)}
+        </span>
+      ),
+    },
+  ];
 
   if (isLoading) {
     return <TransactionsSkeleton />;
@@ -138,20 +118,18 @@ const SuperAdminTransaction = () => {
   }
 
   return (
-    <Card className="w-full max-w-6xl mx-auto">
-      <CardHeader>
-        <div>
-          <CardTitle className="text-2xl">
-            System Transaction Overview
-          </CardTitle>
-          <CardDescription>
-            Transaction metrics across all hostels
-          </CardDescription>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {/* Transaction Metrics Cards */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-4 mb-6">
+    <div className="w-full max-w-6xl mx-auto space-y-6">
+      <section className="space-y-1">
+        <h2 className="text-2xl font-semibold tracking-tight">
+          System Transaction Overview
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          Transaction metrics across all hostels
+        </p>
+      </section>
+
+      <section className="space-y-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">
@@ -177,8 +155,8 @@ const SuperAdminTransaction = () => {
             </CardHeader>
             <CardContent>
               <div className="flex items-center">
-                <CheckCircle2 className="w-5 h-5 mr-2 text-green-500" />
-                <div className="text-2xl font-bold text-green-600">
+                <CheckCircle2 className="w-5 h-5 mr-2 text-forest-green-500" />
+                <div className="text-2xl font-bold text-forest-green-600">
                   GH¢{metrics.successfulAmount.toFixed(2)}
                 </div>
               </div>
@@ -215,8 +193,8 @@ const SuperAdminTransaction = () => {
             </CardHeader>
             <CardContent>
               <div className="flex items-center">
-                <XCircle className="w-5 h-5 mr-2 text-red-500" />
-                <div className="text-2xl font-bold text-red-600">
+                <XCircle className="w-5 h-5 mr-2 text-destructive" />
+                <div className="text-2xl font-bold text-destructive">
                   GH¢{metrics.cancelledAmount.toFixed(2)}
                 </div>
               </div>
@@ -227,148 +205,35 @@ const SuperAdminTransaction = () => {
           </Card>
         </div>
 
-        <div className="mb-4 border-t pt-4">
-          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
+        <div className="flex flex-col justify-between gap-4 rounded-lg border border-border bg-card p-4 md:flex-row md:items-center">
+          <div>
+            <h3 className="text-xl font-semibold tracking-tight">
+              Hostel Disbursement Summary
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Disbursement breakdown by hostel
+            </p>
+          </div>
+          <div className="flex items-center gap-2 rounded-lg bg-forest-green-50 px-4 py-2 text-forest-green-700 dark:bg-forest-green-950 dark:text-forest-green-300">
+            <BadgeCent className="w-5 h-5" />
             <div>
-              <CardTitle className="text-xl">
-                Hostel Disbursement Summary
-              </CardTitle>
-              <CardDescription>
-                Disbursement breakdown by hostel
-              </CardDescription>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="flex items-center gap-2 px-4 py-2 text-green-700 rounded-lg bg-green-50 dark:bg-green-950 dark:text-green-300">
-                <BadgeCent className="w-5 h-5" />
-                <div>
-                  <p className="text-xs font-medium">Total Collected</p>
-                  <p className="text-lg font-bold">
-                    {formatCurrency(transactionData?.totalCollected || 0)}
-                  </p>
-                </div>
-              </div>
+              <p className="text-xs font-medium">Total Collected</p>
+              <p className="text-lg font-bold">
+                {formatCurrency(transactionData?.totalCollected || 0)}
+              </p>
             </div>
           </div>
         </div>
-      </CardContent>
-      <CardContent>
-        <div className="flex items-center mb-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search hostels..."
-              className="pl-8"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </div>
+      </section>
 
-        <div className="overflow-hidden border rounded-md">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[250px]">
-                  <Button
-                    variant="ghost"
-                    className="flex items-center p-0 font-medium"
-                    onClick={() => requestSort("name")}
-                  >
-                    Hostel Name
-                    <ArrowUpDown className="w-4 h-4 ml-2" />
-                  </Button>
-                </TableHead>
-                <TableHead>
-                  <Button
-                    variant="ghost"
-                    className="flex items-center p-0 font-medium"
-                    onClick={() => requestSort("phone")}
-                  >
-                    Phone
-                    <ArrowUpDown className="w-4 h-4 ml-2" />
-                  </Button>
-                </TableHead>
-                <TableHead className="hidden md:table-cell">
-                  <Button
-                    variant="ghost"
-                    className="flex items-center p-0 font-medium"
-                    onClick={() => requestSort("email")}
-                  >
-                    Email
-                    <ArrowUpDown className="w-4 h-4 ml-2" />
-                  </Button>
-                </TableHead>
-                <TableHead className="text-right">
-                  <Button
-                    variant="ghost"
-                    className="flex items-center p-0 ml-auto font-medium"
-                    onClick={() => requestSort("amountCollected")}
-                  >
-                    Amount
-                    <ArrowUpDown className="w-4 h-4 ml-2" />
-                  </Button>
-                </TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sortedHostels.length > 0 ? (
-                sortedHostels.map((hostel) => (
-                  <TableRow
-                    key={hostel.hostelId}
-                    className={
-                      hostel.amountCollected > 0
-                        ? "bg-green-50 dark:bg-green-950/20"
-                        : ""
-                    }
-                  >
-                    <TableCell className="font-medium">
-                      <div className="flex items-center gap-2">
-                        <Avatar className="w-8 h-8 *:rounded-full">
-                          <AvatarFallback>
-                            {hostel.name
-                              ?.split(" ")
-                              .map((n) => n[0])
-                              .join("") || "H"}
-                          </AvatarFallback>
-                        </Avatar>
-                        {hostel.name}
-                        {hostel.amountCollected > 0 && (
-                          <Badge
-                            variant="outline"
-                            className="ml-2 text-green-800 bg-green-100 border-green-200 dark:bg-green-900 dark:text-green-100 dark:border-green-800"
-                          >
-                            Active
-                          </Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>{hostel.phone}</TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      {hostel.email}
-                    </TableCell>
-                    <TableCell className="font-medium text-right">
-                      {formatCurrency(hostel.amountCollected)}
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={4} className="h-24 text-center">
-                    No hostels found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </CardContent>
-      <CardFooter className="flex justify-between">
-        <p className="text-sm text-muted-foreground">
-          Showing {sortedHostels.length} of{" "}
-          {transactionData?.disbursements.length || 0} hostels
-        </p>
-      </CardFooter>
-    </Card>
+      <CustomDataTable
+        title="Hostel Disbursement Summary"
+        columns={hostelColumns}
+        data={transactionData?.disbursements || []}
+        exportFilename="hostel-disbursement-summary.csv"
+        emptyStateMessage="No hostels found."
+      />
+    </div>
   );
 };
 

@@ -4,17 +4,9 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2, Check, X, Clock, AlertCircle, Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
 import {
   Select,
   SelectContent,
@@ -45,6 +37,8 @@ import { PageHeader } from "@/components/layout/PageHeader"
 import { Wallet } from "lucide-react"
 import { format } from "date-fns"
 import { getDisbursementStatusBadge } from "@/utils"
+import CustomDataTable from "@/components/CustomDataTable"
+import type { TableColumn } from "react-data-table-component"
 
 const DisbursementManagement = () => {
   const queryClient = useQueryClient()
@@ -116,6 +110,99 @@ const DisbursementManagement = () => {
     if (!selectedRequest) return
     rejectMutation.mutate({ id: selectedRequest.id, reason: data.reason })
   }
+
+  const tableColumns: TableColumn<DisbursementRequest>[] = [
+    {
+      name: "Date",
+      selector: (request) => format(new Date(request.createdAt), "MMM d, yyyy"),
+      sortable: true,
+    },
+    {
+      name: "Hostel",
+      selector: (request) => request.hostel?.name || "",
+      sortable: true,
+      cell: (request) => (
+        <div>
+          <p className="font-medium">{request.hostel?.name}</p>
+          <p className="text-xs text-muted-foreground">{request.hostel?.location}</p>
+        </div>
+      ),
+    },
+    {
+      name: "Amount",
+      selector: (request) => Number(request.amount),
+      sortable: true,
+      cell: (request) => <span className="font-medium">GHS {Number(request.amount).toFixed(2)}</span>,
+    },
+    {
+      name: "Bank Details",
+      selector: (request) => `${request.bankName} ${request.accountNumber} ${request.accountName}`,
+      cell: (request) => (
+        <div>
+          <p className="text-sm">{request.bankName}</p>
+          <p className="text-xs text-muted-foreground">
+            {request.accountNumber} - {request.accountName}
+          </p>
+        </div>
+      ),
+    },
+    {
+      name: "Status",
+      selector: (request) => request.status,
+      sortable: true,
+      cell: (request) => getDisbursementStatusBadge(request.status),
+    },
+    {
+      name: "Actions",
+      right: true,
+      cell: (request) => (
+        <div className="flex items-center justify-end gap-2">
+          {request.status === "PENDING" && (
+            <>
+              <Button
+                size="sm"
+                variant="outline"
+                className="border-green-500 text-green-600 hover:bg-green-50"
+                onClick={() => approveMutation.mutate(request.id)}
+                disabled={approveMutation.isPending}
+              >
+                {approveMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : "Approve"}
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="border-red-500 text-red-600 hover:bg-red-50"
+                onClick={() => handleRejectClick(request)}
+                disabled={rejectMutation.isPending}
+              >
+                Reject
+              </Button>
+            </>
+          )}
+          {request.status === "APPROVED" && (
+            <Button
+              size="sm"
+              className="bg-forest-green-600 hover:bg-forest-green-700"
+              onClick={() => processMutation.mutate(request.id)}
+              disabled={processMutation.isPending}
+            >
+              {processMutation.isPending ? (
+                <>
+                  <Loader2 className="w-3 h-3 animate-spin mr-1" />
+                  Initiating...
+                </>
+              ) : (
+                <>
+                  <Send className="w-3 h-3 mr-1" />
+                  Initiate Transfer
+                </>
+              )}
+            </Button>
+          )}
+        </div>
+      ),
+    },
+  ]
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -193,103 +280,14 @@ const DisbursementManagement = () => {
             </Select>
           </div>
 
-          {/* Requests Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>All Requests</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {isLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                </div>
-              ) : requests.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  No disbursement requests found
-                </div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Date</TableHead>
-                      <TableHead>Hostel</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Bank Details</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {requests.map((request: DisbursementRequest) => (
-                      <TableRow key={request.id}>
-                        <TableCell>{format(new Date(request.createdAt), "MMM d, yyyy")}</TableCell>
-                        <TableCell>
-                          <div>
-                            <p className="font-medium">{request.hostel?.name}</p>
-                            <p className="text-xs text-muted-foreground">{request.hostel?.location}</p>
-                          </div>
-                        </TableCell>
-                        <TableCell className="font-medium">GHS {Number(request.amount).toFixed(2)}</TableCell>
-                        <TableCell>
-                          <div>
-                            <p className="text-sm">{request.bankName}</p>
-                            <p className="text-xs text-muted-foreground">
-                              {request.accountNumber} - {request.accountName}
-                            </p>
-                          </div>
-                        </TableCell>
-                        <TableCell>{getDisbursementStatusBadge(request.status)}</TableCell>
-                        <TableCell className="text-right">
-                          {request.status === "PENDING" && (
-                            <div className="flex items-center justify-end gap-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="border-green-500 text-green-600 hover:bg-green-50"
-                                onClick={() => approveMutation.mutate(request.id)}
-                                disabled={approveMutation.isPending}
-                              >
-                                {approveMutation.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : "Approve"}
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                className="border-red-500 text-red-600 hover:bg-red-50"
-                                onClick={() => handleRejectClick(request)}
-                                disabled={rejectMutation.isPending}
-                              >
-                                Reject
-                              </Button>
-                            </div>
-                          )}
-                          {request.status === "APPROVED" && (
-                            <Button
-                              size="sm"
-                              className="bg-forest-green-600 hover:bg-forest-green-700"
-                              onClick={() => processMutation.mutate(request.id)}
-                              disabled={processMutation.isPending}
-                            >
-                              {processMutation.isPending ? (
-                                <>
-                                  <Loader2 className="w-3 h-3 animate-spin mr-1" />
-                                  Initiating...
-                                </>
-                              ) : (
-                                <>
-                                  <Send className="w-3 h-3 mr-1" />
-                                  Initiate Transfer
-                                </>
-                              )}
-                            </Button>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
+          <CustomDataTable
+            title="All Requests"
+            columns={tableColumns}
+            data={requests}
+            isLoading={isLoading}
+            searchable={false}
+            emptyStateMessage="No disbursement requests found"
+          />
         </div>
       </main>
 

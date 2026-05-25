@@ -18,7 +18,7 @@ import {
     AlertTriangle,
     CheckCircle2
 } from "lucide-react"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Card, CardHeader } from "@/components/ui/card"
 import { StatCard } from "@/components/stat-card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -51,6 +51,8 @@ import { format } from "date-fns"
 import SEOHelmet from "@/components/SEOHelmet"
 import { PageHeader } from "@/components/layout/PageHeader"
 import { getMaintenanceStatusBadge, getPriorityBadge } from "@/utils"
+import CustomDataTable from "@/components/CustomDataTable"
+import type { TableColumn } from "react-data-table-component"
 
 interface UpdateMaintenanceData {
     status?: string;
@@ -119,6 +121,74 @@ const MaintenanceManagement = () => {
         req.resident?.user?.name?.toLowerCase().includes(searchQuery.toLowerCase())
     )
 
+    const tableColumns: TableColumn<MaintenanceRequestDto>[] = [
+        {
+            name: "Title",
+            selector: (req) => req.title || "",
+            sortable: true,
+            cell: (req) => <span className="font-medium">{req.title}</span>,
+        },
+        {
+            name: "Resident",
+            selector: (req) => req.residentName || req.resident?.user?.name || "N/A",
+            sortable: true,
+        },
+        {
+            name: "Room No",
+            selector: (req) => req.roomNumber || req.resident?.room?.number || "N/A",
+            sortable: true,
+        },
+        {
+            name: "Priority",
+            selector: (req) => req.priority,
+            sortable: true,
+            cell: (req) => getPriorityBadge(req.priority),
+        },
+        {
+            name: "Status",
+            selector: (req) => req.status,
+            sortable: true,
+            cell: (req) => getMaintenanceStatusBadge(req.status),
+        },
+        {
+            name: "Date",
+            selector: (req) => format(new Date(req.createdAt), "MMM d, yyyy"),
+            sortable: true,
+            cell: (req) => (
+                <span className="text-muted-foreground">
+                    {format(new Date(req.createdAt), "MMM d, yyyy")}
+                </span>
+            ),
+        },
+        {
+            name: "Actions",
+            right: true,
+            cell: (req) => (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="w-8 h-8 p-0">
+                            <MoreHorizontal className="w-4 h-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuItem onClick={() => handleUpdateClick(req)}>
+                            <Eye className="w-4 h-4 mr-2" /> View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                            className="text-green-600"
+                            onClick={() => updateMutation.mutate({ id: req.id, data: { status: "resolved" } })}
+                            disabled={req.status === "resolved"}
+                        >
+                            Mark as Resolved
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            ),
+        },
+    ]
+
     return (
         <div className="min-h-screen bg-white flex flex-col">
             <SEOHelmet title="Maintenance Management - Admin" />
@@ -177,7 +247,7 @@ const MaintenanceManagement = () => {
                         />
                     </div>
 
-                    {/* Filters and List */}
+                    {/* Filters */}
                     <Card>
                         <CardHeader>
                             <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
@@ -218,73 +288,16 @@ const MaintenanceManagement = () => {
                                 </div>
                             </div>
                         </CardHeader>
-                        <CardContent>
-                            {isLoading ? (
-                                <div className="flex items-center justify-center py-20">
-                                    <Loader className="w-10 h-10 animate-spin text-primary" />
-                                </div>
-                            ) : filteredRequests.length > 0 ? (
-                                <div className="overflow-x-auto">
-                                    <table className="w-full text-sm text-left border-collapse">
-                                        <thead>
-                                            <tr className="border-b bg-muted/50">
-                                                <th className="p-4 font-semibold">Title</th>
-                                                <th className="p-4 font-semibold">Resident</th>
-                                                <th className="p-4 font-semibold">Room No</th>
-                                                <th className="p-4 font-semibold">Priority</th>
-                                                <th className="p-4 font-semibold">Status</th>
-                                                <th className="p-4 font-semibold">Date</th>
-                                                <th className="p-4 font-semibold text-right">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {filteredRequests.map((req) => (
-                                                <tr key={req.id} className="border-b hover:bg-muted/30 transition-colors">
-                                                    <td className="p-4 font-medium">{req.title}</td>
-                                                    <td className="p-4">{req.residentName || req.resident?.user?.name || "N/A"}</td>
-                                                    <td className="p-4">{req.roomNumber || req.resident?.room?.number || "N/A"}</td>
-                                                    <td className="p-4">{getPriorityBadge(req.priority)}</td>
-                                                    <td className="p-4">{getMaintenanceStatusBadge(req.status)}</td>
-                                                    <td className="p-4 text-muted-foreground">{format(new Date(req.createdAt), 'MMM d, yyyy')}</td>
-                                                    <td className="p-4 text-right">
-                                                        <DropdownMenu>
-                                                            <DropdownMenuTrigger asChild>
-                                                                <Button variant="ghost" className="w-8 h-8 p-0">
-                                                                    <MoreHorizontal className="w-4 h-4" />
-                                                                </Button>
-                                                            </DropdownMenuTrigger>
-                                                            <DropdownMenuContent align="end">
-                                                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                                <DropdownMenuItem onClick={() => handleUpdateClick(req)}>
-                                                                    <Eye className="w-4 h-4 mr-2" /> View Details
-                                                                </DropdownMenuItem>
-                                                                <DropdownMenuSeparator />
-                                                                <DropdownMenuItem
-                                                                    className="text-green-600"
-                                                                    onClick={() => updateMutation.mutate({ id: req.id, data: { status: 'resolved' } })}
-                                                                    disabled={req.status === 'resolved'}
-                                                                >
-                                                                    Mark as Resolved
-                                                                </DropdownMenuItem>
-                                                            </DropdownMenuContent>
-                                                        </DropdownMenu>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            ) : (
-                                <div className="flex flex-col items-center justify-center py-20 space-y-3">
-                                    <div className="p-4 rounded-full bg-muted">
-                                        <Search className="w-8 h-8 text-muted-foreground" />
-                                    </div>
-                                    <h3 className="text-lg font-medium">No requests found</h3>
-                                    <p className="text-muted-foreground">Try adjusting your filters or search query.</p>
-                                </div>
-                            )}
-                        </CardContent>
                     </Card>
+
+                    <CustomDataTable
+                        title="Maintenance Requests"
+                        columns={tableColumns}
+                        data={filteredRequests}
+                        isLoading={isLoading}
+                        searchable={false}
+                        emptyStateMessage="No requests found. Try adjusting your filters or search query."
+                    />
 
                     {/* Update Modal */}
                     <Dialog open={isUpdateModalOpen} onOpenChange={setIsUpdateModalOpen}>
