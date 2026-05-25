@@ -2,10 +2,20 @@ import { motion } from "framer-motion"
 import { useInView } from "react-intersection-observer"
 import { Building2, Calendar, Users, CreditCard, Shield, HeadphonesIcon, Zap, Globe } from "lucide-react"
 import SEOHelmet from "@/components/SEOHelmet"
+import { getSeoRoute, softwareApplicationJsonLd } from "@/config/seo"
+
+const servicesSeo = getSeoRoute("/services")
 
 export default function ServicesPage() {
   return (
     <div className="min-h-screen">
+      <SEOHelmet
+        title={servicesSeo?.title}
+        description={servicesSeo?.description}
+        keywords={servicesSeo?.keywords}
+        canonicalPath="/services"
+        jsonLd={softwareApplicationJsonLd}
+      />
       <main>
         {/* Hero Section */}
         <section className="relative py-20 text-white bg-gradient-to-b from-zinc-900 to-zinc-800 md:py-28">
@@ -164,11 +174,6 @@ function WhyChooseUsSection() {
 
   return (
     <section ref={ref} className="py-16 md:py-24 bg-zinc-50 dark:bg-zinc-800">
-      <SEOHelmet
-        title="Services - Fuse"
-        description="Explore our comprehensive hostel management services including listings, booking, resident management, and payment processing."
-        keywords="services, hostels, booking, management, Fuse"
-      />
       <div className="container">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

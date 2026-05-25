@@ -2,12 +2,19 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { FileText, Shield, Eye, Cookie} from "lucide-react"
+import SEOHelmet from "./SEOHelmet"
 
 
 const TermsAndCondition = () => {
 
   return (
     <div className="grid w-full max-w-3xl p-6 mx-auto space-y-6">
+      <SEOHelmet
+        title="Terms and Conditions | Fuse"
+        description="Review Fuse terms, privacy information, cookie practices, and data usage policies for hostel booking and management."
+        keywords="Fuse terms, privacy policy, hostel booking terms"
+        canonicalPath="/terms-and-conditions"
+      />
       {/* Header */}
       <div className="space-y-2 text-center">
         <h1 className="flex items-center justify-center gap-2 text-3xl font-bold">

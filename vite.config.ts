@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import Sitemap from 'vite-plugin-sitemap';
 import { visualizer } from 'rollup-plugin-visualizer';
 import viteCompression from 'vite-plugin-compression';
+import { PUBLIC_SEO_ROUTES, SEO_CONFIG } from './src/config/seo';
 
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -12,7 +13,56 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   plugins: [
     react(),
-    Sitemap({ hostname: 'https://simple-hostel.vercel.app' }),
+    Sitemap({
+      hostname: SEO_CONFIG.siteUrl,
+      dynamicRoutes: PUBLIC_SEO_ROUTES
+        .filter((route) => route.path !== '/')
+        .map((route) => route.path),
+      exclude: [
+        '/dashboard/**',
+        '/payment',
+        '/payment-success',
+        '/payment-cash',
+        '/payment-result',
+        '/resident-form',
+        '/receipt/**',
+        '/find/**/room',
+      ],
+      changefreq: PUBLIC_SEO_ROUTES
+        .filter((route) => route.path !== '/')
+        .reduce<Record<string, string>>((acc, route) => {
+        acc[route.path] = route.changefreq || 'weekly';
+        return acc;
+      }, {}),
+      priority: PUBLIC_SEO_ROUTES
+        .filter((route) => route.path !== '/')
+        .reduce<Record<string, number>>((acc, route) => {
+        acc[route.path] = route.priority || 0.7;
+        return acc;
+      }, {}),
+      generateRobotsTxt: true,
+      robots: [
+        {
+          userAgent: '*',
+          allow: '/',
+          disallow: [
+            '/login',
+            '/register',
+            '/forget-password',
+            '/reset-password',
+            '/change-password',
+            '/dashboard',
+            '/payment',
+            '/payment-success',
+            '/payment-cash',
+            '/payment-result',
+            '/resident-form',
+            '/receipt',
+            '/find/*/room',
+          ],
+        },
+      ],
+    }),
     visualizer({ open: false, gzipSize: true, brotliSize: true, filename: 'stats.html' }),
     viteCompression({
       algorithm: 'gzip',

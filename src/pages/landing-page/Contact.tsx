@@ -7,10 +7,61 @@ import { Input } from "@components/ui/input";
 import { Textarea } from "@components/ui/textarea";
 import { MapPin, Phone, Mail, Clock, Send, CheckCircle, Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
 import SEOHelmet from "@/components/SEOHelmet";
+import { getSeoRoute, organizationJsonLd } from "@/config/seo";
+
+const contactSeo = getSeoRoute("/contact");
+
+const CONTACT_FAQS = [
+  {
+    question: "How do I book a hostel through Fuse?",
+    answer:
+      "Booking a hostel is simple. Search for your destination, browse available hostels, select your room, and complete the booking process.",
+  },
+  {
+    question: "Can I cancel or modify my booking?",
+    answer:
+      "You can cancel or modify eligible bookings according to the hostel cancellation policy from your account or by contacting support.",
+  },
+  {
+    question: "How do I list my hostel on Fuse?",
+    answer:
+      "Use the List Your Hostel page to submit your hostel details, contact information, location, and media for review.",
+  },
+  {
+    question: "Is there a mobile app available?",
+    answer:
+      "Fuse is currently available as a responsive web application for phones, tablets, and desktop browsers.",
+  },
+  {
+    question: "How can I contact customer support?",
+    answer:
+      "You can contact Fuse through the contact form, by emailing fusehostel01@gmail.com, or by calling +233 54 3983 427.",
+  },
+];
+
+const contactFaqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: CONTACT_FAQS.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.answer,
+    },
+  })),
+};
 
 export default function ContactPage() {
   return (
     <div className="min-h-screen">
+      <SEOHelmet
+        title={contactSeo?.title}
+        description={contactSeo?.description}
+        keywords={contactSeo?.keywords}
+        canonicalPath="/contact"
+        jsonLd={[organizationJsonLd, contactFaqJsonLd]}
+      />
       <main>
         {/* Hero Section */}
         <section className="relative py-20 text-white bg-gradient-to-b from-zinc-900 to-zinc-800 md:py-28">
@@ -385,34 +436,6 @@ function FAQSection() {
 
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const faqs = [
-    {
-      question: "How do I book a hostel through Fuse?",
-      answer:
-        "Booking a hostel is simple! Search for your destination, browse available hostels, select your dates, and complete the booking process. You'll receive a confirmation email with all the details.",
-    },
-    {
-      question: "Can I cancel or modify my booking?",
-      answer:
-        "Yes, you can cancel or modify your booking according to the hostel's cancellation policy. Log in to your account, go to 'My Bookings', and follow the instructions for cancellation or modification.",
-    },
-    {
-      question: "How do I list my hostel on Fuse?",
-      answer:
-        "To list your hostel, click on 'List Your Hostel' in the navigation menu. You'll need to create an account, provide details about your property, and follow our verification process.",
-    },
-    {
-      question: "Is there a mobile app available?",
-      answer:
-        "Yes! Our mobile app is available for both iOS and Android devices. You can download it from the App Store or Google Play Store to manage your bookings on the go.",
-    },
-    {
-      question: "How can I contact customer support?",
-      answer:
-        "You can reach our customer support team through this contact form, by emailing fusesupport@gmail.com, or by calling (+233 543 983 427). We're available Monday through Friday from 9am to 6pm.",
-    },
-  ];
-
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
   };
@@ -420,11 +443,6 @@ function FAQSection() {
   return (
     <section ref={ref} className="py-16 bg-white md:py-24 dark:bg-zinc-900">
       <div className="container">
-        <SEOHelmet
-          title="Contact Us - Fuse"
-          description="Get in touch with Fuse for any inquiries or support."
-          keywords="contact, support, Fuse"
-        />
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -441,7 +459,7 @@ function FAQSection() {
         </motion.div>
 
         <div className="max-w-3xl mx-auto">
-          {faqs.map((faq, index) => (
+          {CONTACT_FAQS.map((faq, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 20 }}

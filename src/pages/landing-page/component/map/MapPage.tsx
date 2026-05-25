@@ -7,9 +7,28 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { HostelMap } from "@/components/maps/HostelMap";
 import type { Hostel } from "@/helper/types/types";
+import SEOHelmet from "@/components/SEOHelmet";
+import { getSeoRoute } from "@/config/seo";
 
 const GHANA_CENTER: [number, number] = [-1.0232, 7.9465];
 const DEFAULT_ZOOM = 7;
+const mapSeo = getSeoRoute("/map");
+type MappedHostel = Hostel & {
+  lat?: number;
+  lng?: number;
+};
+
+const getHostelCoordinates = (hostel: MappedHostel) => ({
+  lat: hostel.latitude ?? hostel.lat,
+  lng: hostel.longitude ?? hostel.lng,
+});
+
+const mapJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Map",
+  name: "Fuse Hostel Map",
+  description: "Map view for finding student hostels by location in Ghana.",
+};
 
 export default function MapPage() {
   const navigate = useNavigate();
@@ -81,8 +100,7 @@ export default function MapPage() {
 
   useEffect(() => {
     if (selectedHostel && hasInitialized && !hasMoved) {
-      const lat = selectedHostel.latitude ?? (selectedHostel as any).lat;
-      const lng = selectedHostel.longitude ?? (selectedHostel as any).lng;
+      const { lat, lng } = getHostelCoordinates(selectedHostel);
       if (lat !== undefined && lat !== null && lng !== undefined && lng !== null) {
         setViewport((prev) => ({ ...prev, center: [lng, lat], zoom: 15 }));
       }
@@ -111,7 +129,7 @@ export default function MapPage() {
     const initialBounds = calculateBounds(viewport);
     setPendingBounds(initialBounds);
     // Do NOT setActiveBounds here — we want to fetch ALL hostels on first load
-  }, []);
+  }, [calculateBounds, viewport]);
 
   // Handle "Search this area" button click
   const handleSearchArea = useCallback(() => {
@@ -125,14 +143,12 @@ export default function MapPage() {
     navigate(`/find/${hostel.id}/room`);
   }, [navigate]);
 
-  const hostelCount = hostels.length;
   const showSearchButton = hasMoved && !isLoading;
 
   // Filter hostels with coordinates and search query
   const filteredHostels = useMemo(
-    () => hostels.filter((h: any) => {
-      const lat = h.latitude ?? h.lat;
-      const lng = h.longitude ?? h.lng;
+    () => hostels.filter((h) => {
+      const { lat, lng } = getHostelCoordinates(h);
       const hasCoords = lat !== undefined && lat !== null && lng !== undefined && lng !== null;
       
       if (!hasCoords) return false;
@@ -153,6 +169,13 @@ export default function MapPage() {
 
   return (
     <div className="relative w-full h-screen bg-background overflow-hidden">
+      <SEOHelmet
+        title={mapSeo?.title}
+        description={mapSeo?.description}
+        keywords={mapSeo?.keywords}
+        canonicalPath="/map"
+        jsonLd={mapJsonLd}
+      />
       {/* Search Panel */}
       <div className="absolute top-4 left-4 z-10 w-72">
         <div className="bg-card rounded-lg shadow-lg border p-4 space-y-3">

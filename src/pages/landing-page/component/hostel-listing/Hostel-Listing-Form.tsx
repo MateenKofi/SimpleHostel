@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  FormButton,
   type ImageFile,
 } from "@/components/form";
 import { useMutation } from "@tanstack/react-query";
@@ -202,9 +201,10 @@ const HostelListingForm = () => {
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-gradient-to-br from-slate-50 via-forest-green-50/20 to-slate-100/50">
       <SEOHelmet
-        title="List Your Hostel - Fuse"
-        description="List your hostel on Fuse and reach more students."
-        keywords="list hostel, Fuse, student accommodation"
+        title="List Your Hostel | Join Fuse Hostel Management Platform"
+        description="List your hostel on Fuse to reach students, manage bookings, track payments, and organize hostel operations."
+        keywords="list hostel Ghana, hostel management software, hostel owners, student accommodation"
+        canonicalPath="/hostel-listing"
       />
 
       <div className="w-full max-w-4xl space-y-4 p-3 md:p-6 md:space-y-6">

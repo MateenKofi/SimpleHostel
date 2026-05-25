@@ -3,10 +3,20 @@ import { useInView } from "react-intersection-observer"
 import { ContactSection } from "./component/contact-section"
 import { Users, Target, Clock, Award } from "lucide-react"
 import SEOHelmet from "@/components/SEOHelmet"
+import { getSeoRoute, organizationJsonLd } from "@/config/seo"
+
+const aboutSeo = getSeoRoute("/about")
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen">
+      <SEOHelmet
+        title={aboutSeo?.title}
+        description={aboutSeo?.description}
+        keywords={aboutSeo?.keywords}
+        canonicalPath="/about"
+        jsonLd={organizationJsonLd}
+      />
       <main>
         {/* Hero Section */}
         <section className="relative py-20 text-white bg-gradient-to-b from-zinc-900 to-zinc-800 md:py-28">

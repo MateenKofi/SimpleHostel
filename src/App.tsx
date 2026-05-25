@@ -1,10 +1,12 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 import Layout from "@components/layout/Layout";
 import LandingPageLayout from "./components/layout/LandingPageLayout";
 import PrivateRoute from "./components/routes/PrivateRoute";
 import ProtectedBookingRoute from "./components/routes/ProtectedBookingRoute";
 import RoleRoute from "./components/routes/RoleRoute";
+import SEOHelmet from "./components/SEOHelmet";
+import { getSeoRoute } from "./config/seo";
 
 // Landing page routes
 import Home from './pages/landing-page/page';
@@ -76,16 +78,32 @@ import MaintenanceManagement from "./pages/dashboard/admin/MaintenanceManagement
 import DisbursementManagement from "./pages/dashboard/admin/DisbursementManagement";
 import AdminDisbursement from "./pages/dashboard/admin/AdminDisbursement";
 
+function RouteSEO() {
+  const { pathname } = useLocation();
+  const routeSeo = getSeoRoute(pathname);
+
+  return (
+    <SEOHelmet
+      title={routeSeo?.title}
+      description={routeSeo?.description}
+      keywords={routeSeo?.keywords}
+      canonicalPath={routeSeo?.path || pathname}
+    />
+  );
+}
+
 function App() {
   return (
-    <Routes>
-      <Route path="login" element={<LoginForm />} />
-      <Route path="register" element={<RegisterForm />} />
-      <Route path="hostel-listing" element={<HostelListingForm />} />
-      <Route path='terms-and-conditions' element={<TermsAndCondition />} />
-      <Route path="forget-password" element={<ForgetPassword />} />
-      <Route path="reset-password" element={<ResetPassword />} />
-      <Route path="change-password" element={<ChangePassword />} />
+    <>
+      <RouteSEO />
+      <Routes>
+        <Route path="login" element={<LoginForm />} />
+        <Route path="register" element={<RegisterForm />} />
+        <Route path="hostel-listing" element={<HostelListingForm />} />
+        <Route path='terms-and-conditions' element={<TermsAndCondition />} />
+        <Route path="forget-password" element={<ForgetPassword />} />
+        <Route path="reset-password" element={<ResetPassword />} />
+        <Route path="change-password" element={<ChangePassword />} />
 
       {/* Protected Booking Routes - Require Authentication */}
       <Route element={<ProtectedBookingRoute />}>
@@ -172,9 +190,10 @@ function App() {
         </Route>
       </Route>
 
-      {/* Catch-All Redirect */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        {/* Catch-All Redirect */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
   );
 }
 

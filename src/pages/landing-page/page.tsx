@@ -8,17 +8,27 @@ import { HowItWorksSection } from "./component/HowItWorks"
 import { NewsletterSection } from "./component/NewsLetter"
 import { BlogSection } from "./component/BlogSection"
 import { PartnersSection } from "./component/PartnersSections"
-import SEOHelment from '@components/SEOHelmet'
+import SEOHelmet from '@components/SEOHelmet'
+import {
+  getSeoRoute,
+  organizationJsonLd,
+  softwareApplicationJsonLd,
+  websiteJsonLd,
+} from "@/config/seo"
 import PopularDestinations from "./component/PopularDestinations"
 import FeaturedHostels from "./component/FeaturedHostels"
 import { Clock, MapPin } from "lucide-react"
+const homeSeo = getSeoRoute("/")
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen overflow-hidden">
-      <SEOHelment
-        title="Home Page - Fuse"
-        description="Discover the best hostels with Fuse"
-        keywords="hostels, budget travel, Fuse"
+      <SEOHelmet
+        title={homeSeo?.title}
+        description={homeSeo?.description}
+        keywords={homeSeo?.keywords}
+        canonicalPath="/"
+        jsonLd={[organizationJsonLd, websiteJsonLd, softwareApplicationJsonLd]}
       />
       <main>
         <HeroCarousel />
