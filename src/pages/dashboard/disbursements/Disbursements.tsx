@@ -27,6 +27,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useAuthStore } from "@/stores/useAuthStore"
+import { getDisbursementStatusBadge } from "@/utils"
 import {
   getDisbursementBalance,
   getMyDisbursementRequests,
@@ -203,21 +204,6 @@ const Disbursements = () => {
 
   const handleDeleteAccount = () => {
     deleteAccountMutation.mutate()
-  }
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "PENDING":
-        return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">Pending</Badge>
-      case "APPROVED":
-        return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Approved</Badge>
-      case "PROCESSED":
-        return <Badge className="bg-green-500">Processed</Badge>
-      case "REJECTED":
-        return <Badge variant="destructive">Rejected</Badge>
-      default:
-        return <Badge variant="secondary">{status}</Badge>
-    }
   }
 
   const hasBankDetails = formData.bankCode && formData.bankName && formData.accountNumber && formData.accountName
@@ -541,7 +527,7 @@ const Disbursements = () => {
                             </p>
                           </div>
                         </TableCell>
-                        <TableCell>{getStatusBadge(request.status)}</TableCell>
+                        <TableCell>{getDisbursementStatusBadge(request.status)}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

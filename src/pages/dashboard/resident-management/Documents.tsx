@@ -13,12 +13,20 @@ import NoHostelAssigned from "@/components/resident/NoHostelAssigned"
 import { PageHeader } from "@/components/layout/PageHeader"
 
 const Documents = () => {
-    const userId = localStorage.getItem("userId")
     const { user, isLoading: isUserLoading, isError: isUserError } = useCurrentUser()
-    const hostel = user?.hostel
     const navigate = useNavigate();
 
-    // Show loading state while fetching user data
+    const { data: allocation, isLoading: isAllocationLoading } = useQuery({
+        queryKey: ['allocationDetails'],
+        queryFn: async () => {
+            const responseData = await getResidentAllocationDetails();
+            return responseData?.data;
+        },
+        enabled: !!user?.hostel?.id
+    })
+
+    const hostel = user?.hostel
+
     if (isUserLoading) {
         return (
             <div className="flex items-center justify-center h-[50vh]">
@@ -27,7 +35,6 @@ const Documents = () => {
         )
     }
 
-    // Show error state if user data fetch fails
     if (isUserError) {
         return (
             <div className="flex flex-col items-center justify-center h-[50vh] space-y-4">
@@ -37,20 +44,9 @@ const Documents = () => {
         )
     }
 
-    // Show NoHostelAssigned if user has no hostel assigned
     if (!hostel) {
         return <NoHostelAssigned />
     }
-
-    // Fetch allocation details which contains rulesUrl
-    const { data: allocation, isLoading: isAllocationLoading } = useQuery({
-        queryKey: ['allocationDetails'],
-        queryFn: async () => {
-            const responseData = await getResidentAllocationDetails();
-            return responseData?.data;
-        },
-        enabled: !!hostel?.id
-    })
 
     const documents = [
         {

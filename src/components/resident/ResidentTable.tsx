@@ -32,7 +32,7 @@ import { useAddedResidentStore } from "@/stores/useAddedResidentStore"
 import type { ResidentDto } from "@/types/dtos"
 import type { ApiError } from "@/types/dtos"
 import { useState, useMemo } from "react"
-import { isResidentVerified, getVerificationBadge } from "@/utils"
+import { getResidentStatusBadgeVariant, getResidentStatusLabel, isResidentVerified, getVerificationBadge } from "@/utils"
 
 type VerificationTab = "all" | "verified" | "unverified"
 
@@ -134,24 +134,6 @@ const ResidentTable = () => {
     }
   }
 
-  const getStatusBadge = (status: string) => {
-    const variant: "default" | "secondary" | "outline" | "destructive" =
-      status.toLowerCase() === "active" || status.toLowerCase() === "checked_in"
-        ? "default"
-        : status.toLowerCase() === "inactive" || status.toLowerCase() === "checked_out"
-          ? "secondary"
-          : "outline"
-
-    const label =
-      status.toLowerCase() === "active" || status.toLowerCase() === "checked_in"
-        ? "Active"
-        : status.toLowerCase() === "inactive" || status.toLowerCase() === "checked_out"
-          ? "Inactive"
-          : "Pending"
-
-    return <Badge variant={variant}>{label}</Badge>
-  }
-
   const columns = [
     {
       name: "Resident",
@@ -208,7 +190,11 @@ const ResidentTable = () => {
       name: "Status",
       sortable: true,
       selector: (row: ResidentDto) => row.status,
-      cell: (row: ResidentDto) => getStatusBadge(row.status),
+      cell: (row: ResidentDto) => (
+        <Badge variant={getResidentStatusBadgeVariant(row.status)}>
+          {getResidentStatusLabel(row.status)}
+        </Badge>
+      ),
     },
     {
       name: "Verification",

@@ -5,7 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2, Check, X, Clock, AlertCircle, Send } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import {
@@ -16,7 +15,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
 import {
   Select,
   SelectContent,
@@ -46,6 +44,7 @@ import SEOHelmet from "@/components/SEOHelmet"
 import { PageHeader } from "@/components/layout/PageHeader"
 import { Wallet } from "lucide-react"
 import { format } from "date-fns"
+import { getDisbursementStatusBadge } from "@/utils"
 
 const DisbursementManagement = () => {
   const queryClient = useQueryClient()
@@ -98,11 +97,12 @@ const DisbursementManagement = () => {
   const processMutation = useMutation({
     mutationFn: processDisbursement,
     onSuccess: () => {
-      toast.success("Disbursement marked as processed")
+      toast.success("Transfer initiated")
       queryClient.invalidateQueries({ queryKey: ["all-disbursement-requests"] })
     },
     onError: (error: any) => {
-      toast.error(error.response?.data?.error || "Failed to process")
+      toast.error(error.response?.data?.message || error.response?.data?.error || "Failed to process")
+      queryClient.invalidateQueries({ queryKey: ["all-disbursement-requests"] })
     },
   })
 
@@ -115,21 +115,6 @@ const DisbursementManagement = () => {
   const onSubmitReject = (data: RejectDisbursementInput) => {
     if (!selectedRequest) return
     rejectMutation.mutate({ id: selectedRequest.id, reason: data.reason })
-  }
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "PENDING":
-        return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">Pending</Badge>
-      case "APPROVED":
-        return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Approved</Badge>
-      case "PROCESSED":
-        return <Badge className="bg-green-500">Processed</Badge>
-      case "REJECTED":
-        return <Badge variant="destructive">Rejected</Badge>
-      default:
-        return <Badge variant="secondary">{status}</Badge>
-    }
   }
 
   return (
@@ -253,7 +238,7 @@ const DisbursementManagement = () => {
                             </p>
                           </div>
                         </TableCell>
-                        <TableCell>{getStatusBadge(request.status)}</TableCell>
+                        <TableCell>{getDisbursementStatusBadge(request.status)}</TableCell>
                         <TableCell className="text-right">
                           {request.status === "PENDING" && (
                             <div className="flex items-center justify-end gap-2">

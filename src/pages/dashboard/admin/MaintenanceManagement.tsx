@@ -21,7 +21,6 @@ import {
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { StatCard } from "@/components/stat-card"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import {
     Select,
@@ -51,6 +50,7 @@ import { toast } from "sonner"
 import { format } from "date-fns"
 import SEOHelmet from "@/components/SEOHelmet"
 import { PageHeader } from "@/components/layout/PageHeader"
+import { getMaintenanceStatusBadge, getPriorityBadge } from "@/utils"
 
 interface UpdateMaintenanceData {
     status?: string;
@@ -111,27 +111,6 @@ const MaintenanceManagement = () => {
             id: selectedRequest.id,
             data: { status: newStatus, priority: newPriority }
         })
-    }
-
-    // Helpers
-    const getStatusBadge = (status: string) => {
-        switch (status) {
-            case 'pending': return <Badge variant="outline" className="border-yellow-500 text-yellow-600 bg-yellow-50">Pending</Badge>
-            case 'in_progress': return <Badge variant="outline" className="border-blue-500 text-blue-600 bg-blue-50">In Progress</Badge>
-            case 'resolved': return <Badge variant="outline" className="border-green-500 text-green-600 bg-green-50">Resolved</Badge>
-            case 'rejected':
-            case 'cancelled': return <Badge variant="destructive">Cancelled</Badge>
-            default: return <Badge variant="secondary">{status}</Badge>
-        }
-    }
-
-    const getPriorityBadge = (priority: string) => {
-        switch (priority) {
-            case 'critical': return <Badge className="bg-red-600">CRITICAL</Badge>
-            case 'high': return <Badge className="bg-orange-500">HIGH</Badge>
-            case 'medium': return <Badge className="bg-blue-500">MEDIUM</Badge>
-            default: return <Badge variant="secondary">LOW</Badge>
-        }
     }
 
     const filteredRequests = (requests as MaintenanceRequestDto[]).filter((req) =>
@@ -265,7 +244,7 @@ const MaintenanceManagement = () => {
                                                     <td className="p-4">{req.residentName || req.resident?.user?.name || "N/A"}</td>
                                                     <td className="p-4">{req.roomNumber || req.resident?.room?.number || "N/A"}</td>
                                                     <td className="p-4">{getPriorityBadge(req.priority)}</td>
-                                                    <td className="p-4">{getStatusBadge(req.status)}</td>
+                                                    <td className="p-4">{getMaintenanceStatusBadge(req.status)}</td>
                                                     <td className="p-4 text-muted-foreground">{format(new Date(req.createdAt), 'MMM d, yyyy')}</td>
                                                     <td className="p-4 text-right">
                                                         <DropdownMenu>

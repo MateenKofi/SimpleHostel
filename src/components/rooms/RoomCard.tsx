@@ -1,7 +1,7 @@
 import { Room } from "@/helper/types/types";
 import { Users, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useEffect } from "react";
-import { backendRoomTypeToDisplay } from "@/utils";
+import { backendRoomTypeToDisplay, formatStatusLabel, getRoomStatusSolidClass } from "@/utils";
 
 type RoomCardProps = {
   room: Room;
@@ -33,28 +33,6 @@ const RoomCard = ({ room, onBookRoom }: RoomCardProps) => {
   };
 
   const currentImage = images[currentImageIndex] || "/logo.png";
-
-  // Status colors
-  const getStatusColor = () => {
-    switch (room.status) {
-      case "available":
-        return "bg-green-500";
-      case "maintenance":
-        return "bg-yellow-500";
-      case "occupied":
-        return "bg-red-500";
-      default:
-        return "bg-gray-500";
-    }
-  };
-
-
-  // Gender label
-  const getGenderLabel = () => {
-    return room.gender
-      ? room.gender.charAt(0).toUpperCase() + room.gender.slice(1).toLowerCase()
-      : "N/A";
-  };
 
   return (
     <div
@@ -105,7 +83,7 @@ const RoomCard = ({ room, onBookRoom }: RoomCardProps) => {
       {/* Status Badge */}
       <div className="absolute top-3 left-3">
         <span
-          className={`${getStatusColor()} px-2.5 py-1 rounded-full text-xs font-semibold text-white shadow-sm`}
+          className={`${getRoomStatusSolidClass(room.status)} px-2.5 py-1 rounded-full text-xs font-semibold text-white shadow-sm`}
         >
           {room.status}
         </span>
@@ -138,7 +116,7 @@ const RoomCard = ({ room, onBookRoom }: RoomCardProps) => {
           </div>
           <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-lg">
             <span className="text-xs">Gender</span>
-            <span className="text-xs font-semibold">{getGenderLabel()}</span>
+            <span className="text-xs font-semibold">{formatStatusLabel(room.gender || "N/A")}</span>
           </div>
           <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm px-2.5 py-1 rounded-lg">
             <Users className="w-3.5 h-3.5" />

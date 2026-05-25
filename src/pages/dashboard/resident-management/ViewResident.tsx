@@ -14,7 +14,7 @@ import SEOHelmet from "@/components/SEOHelmet"
 import { useAddedResidentStore } from "@/stores/useAddedResidentStore"
 import type { ResidentDto } from "@/types/dtos"
 import { getResidentById } from "@/api/residents"
-import { backendRoomTypeToDisplay, formatDate } from "@/utils"
+import { backendRoomTypeToDisplay, formatDate, getResidentStatusBadgeVariant, getResidentStatusLabel } from "@/utils"
 
 const ViewResident = () => {
   const navigate = useNavigate()
@@ -39,36 +39,6 @@ const ViewResident = () => {
       navigate("/dashboard/resident-management")
     }
   }, [storedResident, navigate])
-
-  const getStatusVariant = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "active":
-      case "checked_in":
-        return "default"
-      case "inactive":
-      case "checked_out":
-        return "secondary"
-      case "pending":
-        return "outline"
-      default:
-        return "secondary"
-    }
-  }
-
-  const getStatusLabel = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "active":
-      case "checked_in":
-        return "Active"
-      case "inactive":
-      case "checked_out":
-        return "Inactive"
-      case "pending":
-        return "Pending"
-      default:
-        return status
-    }
-  }
 
   if (isLoading) {
     return (
@@ -238,8 +208,8 @@ const ViewResident = () => {
               <CardTitle>{user?.name || resident.name || "N/A"}</CardTitle>
               <CardDescription>{resident.studentId || "No Student ID"}</CardDescription>
               <div className="flex justify-center mt-3">
-                <Badge variant={getStatusVariant(resident.status)}>
-                  {getStatusLabel(resident.status)}
+                <Badge variant={getResidentStatusBadgeVariant(resident.status)}>
+                  {getResidentStatusLabel(resident.status)}
                 </Badge>
               </div>
             </CardHeader>

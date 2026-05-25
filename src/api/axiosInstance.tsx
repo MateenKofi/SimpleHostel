@@ -1,8 +1,13 @@
 import axios from "axios";
 import { toast } from "sonner";
 
+const apiBaseUrl =
+    import.meta.env.VITE_API_BASE_URL ||
+    import.meta.env.VITE_API_URL ||
+    "/api";
+
 const axiosInstance = axios.create({
-    baseURL: import.meta.env.VITE_API_BASE_URL || '/api', // Fallback to /api if env not set
+    baseURL: apiBaseUrl,
     headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',

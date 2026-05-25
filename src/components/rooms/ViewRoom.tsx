@@ -1,7 +1,7 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
-import { backendRoomTypeToDisplay, formatDate } from '@/utils'
+import { backendRoomTypeToDisplay, formatDate, getGenderBadgeClass, getRoomStatusBadgeVariant } from '@/utils'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -15,8 +15,6 @@ import { getRoomDetails } from "@/api/rooms"
 import ViewRoomSkeleton from "@components/loaders/ViewRoomSkeleton"
 import { Room, RoomResident } from "@/helper/types/types"
 import { cn } from "@/lib/utils"
-
-type BadgeVariant = "default" | "secondary" | "destructive" | "outline"
 
 const ViewRoom = () => {
   const { id: paramId } = useParams<{ id: string }>()
@@ -37,35 +35,6 @@ const ViewRoom = () => {
 
   // Residents are now included in the room response
   const roomResidents: RoomResident[] = room?.residents || []
-
-
-  // Get status badge variant based on room status
-  const getStatusVariant = (status: string): BadgeVariant => {
-    switch (status?.toLowerCase()) {
-      case "available":
-        return "default"
-      case "occupied":
-        return "secondary"
-      case "maintenance":
-        return "destructive"
-      default:
-        return "outline"
-    }
-  }
-
-  // Get gender badge class with themed colors
-  const getGenderClass = (gender: string) => {
-    switch (gender?.toUpperCase()) {
-      case "MALE":
-        return "bg-blue-500/10 text-blue-700 border-blue-200"
-      case "FEMALE":
-        return "bg-pink-500/10 text-pink-700 border-pink-200"
-      case "MIXED":
-        return "bg-purple-500/10 text-purple-700 border-purple-200"
-      default:
-        return "bg-muted text-muted-foreground"
-    }
-  }
 
   // Get amenity icon based on name
   const getAmenityIcon = (name: string) => {
@@ -163,7 +132,7 @@ const ViewRoom = () => {
                     Block {room?.block}, Floor {room?.floor}
                   </CardDescription>
                 </div>
-                <Badge variant={getStatusVariant(room?.status || "UNKNOWN")}>
+                <Badge variant={getRoomStatusBadgeVariant(room?.status || "UNKNOWN")}>
                   {room?.status || "UNKNOWN"}
                 </Badge>
               </div>
@@ -184,7 +153,7 @@ const ViewRoom = () => {
                 </div>
                 <div className="flex flex-col">
                   <span className="text-sm text-muted-foreground">Gender</span>
-                  <Badge className={cn("w-fit border", getGenderClass(room?.gender || "UNKNOWN"))}>
+                  <Badge className={cn("w-fit border", getGenderBadgeClass(room?.gender || "UNKNOWN"))}>
                     {room?.gender || "UNKNOWN"}
                   </Badge>
                 </div>
@@ -325,7 +294,7 @@ const ViewRoom = () => {
                       </TableCell>
                       <TableCell>{resident.phone || "N/A"}</TableCell>
                       <TableCell>
-                        <Badge className={cn("border", getGenderClass(resident.gender || "UNKNOWN"))}>
+                        <Badge className={cn("border", getGenderBadgeClass(resident.gender || "UNKNOWN"))}>
                           {resident.gender || "N/A"}
                         </Badge>
                       </TableCell>

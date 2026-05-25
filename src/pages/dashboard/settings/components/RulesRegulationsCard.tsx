@@ -92,7 +92,11 @@ export function RulesRegulationsCard({
                     <p className="text-sm font-semibold">Current Rules Document</p>
                     <button
                       type="button"
-                      onClick={() => window.open(hostelData.rulesUrl, "_blank")}
+                      onClick={() => {
+                        if (hostelData.rulesUrl) {
+                          window.open(hostelData.rulesUrl, "_blank");
+                        }
+                      }}
                       className="text-xs text-primary font-medium hover:underline flex items-center gap-1"
                     >
                       View current version <LucideCircleArrowOutUpRight size={10} />

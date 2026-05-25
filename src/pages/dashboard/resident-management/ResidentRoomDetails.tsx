@@ -4,8 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Home, Info, MapPin, Users, Phone, Mail } from "lucide-react"
+import { Home, MapPin, Users, Phone, Mail, MessageCircle } from "lucide-react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { useQuery } from "@tanstack/react-query"
@@ -13,7 +12,7 @@ import { getResidentRoomDetails } from "@/api/residents"
 import ViewRoomSkeleton from "@components/loaders/ViewRoomSkeleton"
 import { ResidentDto } from "@/types/dtos"
 import { PageHeader } from "@/components/layout/PageHeader"
-import { formatDate } from "@/utils"
+import { formatDate, getGenderBadgeClass, getRoomStatusBadgeClass } from "@/utils"
 
 // Define interface for images if needed for legacy compatibility
 interface ImageObject {
@@ -34,36 +33,8 @@ const ResidentRoomDetails = () => {
         }
     })
 
-    const room = roomData?.Room || (roomData as any)?.room
+    const room = roomData?.Room ?? roomData?.room
     const roommates = roomData?.roommates || []
-
-    // Get status color based on room status
-    const getStatusColor = (status: string) => {
-        switch (status?.toLowerCase()) {
-            case "available":
-                return "bg-green-100 text-green-800 hover:bg-green-100"
-            case "occupied":
-                return "bg-orange-100 text-orange-800 hover:bg-orange-100"
-            case "maintenance":
-                return "bg-red-100 text-red-800 hover:bg-red-100"
-            default:
-                return "bg-gray-100 text-gray-800 hover:bg-gray-100"
-        }
-    }
-
-    // Get gender badge color
-    const getGenderColor = (gender: string) => {
-        switch (gender?.toUpperCase()) {
-            case "MALE":
-                return "bg-blue-100 text-blue-800 hover:bg-blue-100"
-            case "FEMALE":
-                return "bg-pink-100 text-pink-800 hover:bg-pink-100"
-            case "MIXED":
-                return "bg-purple-100 text-purple-800 hover:bg-purple-100"
-            default:
-                return "bg-gray-100 text-gray-800 hover:bg-gray-100"
-        }
-    }
 
     if (isRoomLoading) {
         return <ViewRoomSkeleton />
@@ -160,7 +131,7 @@ const ResidentRoomDetails = () => {
                                         Block {room.block || "N/A"}, Floor {room.floor || "N/A"}
                                     </CardDescription>
                                 </div>
-                                <Badge className={getStatusColor(room.status || "UNKNOWN")}>{room.status || "UNKNOWN"}</Badge>
+                                <Badge className={getRoomStatusBadgeClass(room.status || "UNKNOWN")}>{room.status || "UNKNOWN"}</Badge>
                             </div>
                         </CardHeader>
                         <CardContent className="space-y-4">
@@ -179,7 +150,7 @@ const ResidentRoomDetails = () => {
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="text-sm text-muted-foreground">Gender</span>
-                                    <Badge className={`w-fit ${getGenderColor(room.gender || "UNKNOWN")}`}>{room.gender || "UNKNOWN"}</Badge>
+                                    <Badge className={`w-fit border ${getGenderBadgeClass(room.gender || "UNKNOWN")}`}>{room.gender || "UNKNOWN"}</Badge>
                                 </div>
                                 <div className="flex flex-col">
                                     <span className="text-sm text-muted-foreground">Occupancy</span>
@@ -211,17 +182,36 @@ const ResidentRoomDetails = () => {
                                                             {mate.course && <p className="text-[11px] text-muted-foreground">{mate.course}</p>}
                                                         </div>
                                                     </div>
-                                                    <div className="pl-11 space-y-1 text-xs text-muted-foreground">
+                                                    <div className="pl-11 space-y-1">
                                                         {mate.user?.phone && (
                                                             <div className="flex items-center gap-2">
-                                                                <Phone className="w-3 h-3" />
-                                                                <span>{mate.user.phone}</span>
+                                                                <Phone className="w-3 h-3 text-muted-foreground" />
+                                                                <a 
+                                                                    href={`tel:${mate.user.phone}`}
+                                                                    className="text-xs text-primary hover:underline"
+                                                                >
+                                                                    {mate.user.phone}
+                                                                </a>
+                                                                <a
+                                                                    href={`https://wa.me/${mate.user.phone.replace(/[^0-9]/g, '')}`}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="text-green-600 hover:text-green-700"
+                                                                    title="Chat on WhatsApp"
+                                                                >
+                                                                    <MessageCircle className="w-3.5 h-3.5" />
+                                                                </a>
                                                             </div>
                                                         )}
                                                         {mate.user?.email && (
                                                             <div className="flex items-center gap-2">
-                                                                <Mail className="w-3 h-3" />
-                                                                <span>{mate.user.email}</span>
+                                                                <Mail className="w-3 h-3 text-muted-foreground" />
+                                                                <a 
+                                                                    href={`mailto:${mate.user.email}`}
+                                                                    className="text-xs text-primary hover:underline"
+                                                                >
+                                                                    {mate.user.email}
+                                                                </a>
                                                             </div>
                                                         )}
                                                     </div>

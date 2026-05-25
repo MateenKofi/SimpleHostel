@@ -1,7 +1,6 @@
 import { useState, useMemo } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { Wallet, TrendingUp, Send, AlertCircle, Save, Trash2 } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
+import { Wallet, TrendingUp, Send, AlertCircle, Save, Trash2, Pencil } from "lucide-react"
 import {
   getDisbursementBalance,
   getMyDisbursementRequests,
@@ -10,7 +9,6 @@ import {
   saveDisbursementAccount,
   deleteDisbursementAccount,
   DisbursementRequest,
-  DisbursementAccount,
 } from "@/api/disbursements"
 import { toast } from "sonner"
 import SEOHelmet from "@/components/SEOHelmet"
@@ -20,9 +18,10 @@ import { BankSelector } from "@/components/bank/BankSelector"
 import { AccountVerifier } from "@/components/bank/AccountVerifier"
 import { TextInput } from "@/components/form/TextInput"
 import { CustomTextarea } from "@/components/form/CustomTextarea"
-import { FormButton, buttonVariants } from "@/components/form/FormButton"
+import { FormButton } from "@/components/form/FormButton"
 import { StatCard } from "@/components/stat-card"
 import CustomDataTable from "@/components/CustomDataTable"
+import { getDisbursementStatusBadge, getTransferStatusBadge } from "@/utils"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import type { TableColumn } from "react-data-table-component"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -33,10 +32,12 @@ const years = Array.from({ length: 5 }, (_, i) => currentYear - i)
 
 const AdminDisbursement = () => {
   const queryClient = useQueryClient()
+  const canUseTestAccount = import.meta.env.DEV || import.meta.env.VITE_ENABLE_TEST_DISBURSEMENT_ACCOUNT === "true"
 
   const [selectedYear, setSelectedYear] = useState<number>(currentYear)
-  const [useSavedAccount, setUseSavedAccount] = useState(false)
   const [saveAccount, setSaveAccount] = useState(false)
+  const [showSavedAccountRequest, setShowSavedAccountRequest] = useState(false)
+  const [isEditingAccount, setIsEditingAccount] = useState(false)
 
   const [formData, setFormData] = useState({
     amount: "",
@@ -46,10 +47,14 @@ const AdminDisbursement = () => {
     accountName: "",
     notes: "",
   })
+  const [savedAccountRequest, setSavedAccountRequest] = useState({
+    amount: "",
+    notes: "",
+  })
   const [verificationError, setVerificationError] = useState("")
   const [isVerified, setIsVerified] = useState(false)
 
-  const { data: savedAccount, isLoading: savedAccountLoading } = useQuery({
+  const { data: savedAccount } = useQuery({
     queryKey: ["disbursement-account"],
     queryFn: getDisbursementAccount,
   })
@@ -72,17 +77,6 @@ const AdminDisbursement = () => {
     })
   }, [requests, selectedYear])
 
-  const saveAccountMutation = useMutation({
-    mutationFn: saveDisbursementAccount,
-    onSuccess: () => {
-      toast.success("Bank account saved successfully")
-      queryClient.invalidateQueries({ queryKey: ["disbursement-account"] })
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.error || "Failed to save account")
-    },
-  })
-
   const deleteAccountMutation = useMutation({
     mutationFn: deleteDisbursementAccount,
     onSuccess: () => {
@@ -91,6 +85,21 @@ const AdminDisbursement = () => {
     },
     onError: (error: any) => {
       toast.error(error.response?.data?.error || "Failed to remove account")
+    },
+  })
+
+  const saveAccountMutation = useMutation({
+    mutationFn: saveDisbursementAccount,
+    onSuccess: () => {
+      toast.success("Bank account updated")
+      setIsEditingAccount(false)
+      setFormData({ amount: "", bankCode: "", bankName: "", accountNumber: "", accountName: "", notes: "" })
+      setIsVerified(false)
+      setVerificationError("")
+      queryClient.invalidateQueries({ queryKey: ["disbursement-account"] })
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.error || "Failed to save account")
     },
   })
 
@@ -113,9 +122,11 @@ const AdminDisbursement = () => {
         toast.success("Bank account saved for future use")
       }
       setFormData({ amount: "", bankCode: "", bankName: "", accountNumber: "", accountName: "", notes: "" })
+      setSavedAccountRequest({ amount: "", notes: "" })
       setIsVerified(false)
       setVerificationError("")
       setSaveAccount(false)
+      setShowSavedAccountRequest(false)
       queryClient.invalidateQueries({ queryKey: ["my-disbursement-requests"] })
       queryClient.invalidateQueries({ queryKey: ["disbursement-balance"] })
       queryClient.invalidateQueries({ queryKey: ["disbursement-account"] })
@@ -151,6 +162,10 @@ const AdminDisbursement = () => {
       toast.error("Please enter a valid amount")
       return
     }
+    if (selectedYear !== currentYear) {
+      toast.error(`Switch to ${currentYear} before submitting a new disbursement request`)
+      return
+    }
     if (formData.bankCode || formData.accountNumber) {
       if (!formData.bankCode || !formData.accountNumber || !formData.accountName) {
         toast.error("Please fill in all bank details and verify your account")
@@ -176,22 +191,47 @@ const AdminDisbursement = () => {
     })
   }
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "PENDING":
-        return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">Pending</Badge>
-      case "APPROVED":
-        return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Approved</Badge>
-      case "PROCESSED":
-        return <Badge className="bg-green-500">Processed</Badge>
-      case "REJECTED":
-        return <Badge variant="destructive">Rejected</Badge>
-      default:
-        return <Badge variant="secondary">{status}</Badge>
+  const handleSavedAccountRequestSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    const amount = parseFloat(savedAccountRequest.amount)
+    if (!savedAccount) {
+      toast.error("Please add a disbursement account first")
+      return
     }
+    if (!amount || amount <= 0) {
+      toast.error("Please enter a valid amount")
+      return
+    }
+    if (selectedYear !== currentYear) {
+      toast.error(`Switch to ${currentYear} before submitting a new disbursement request`)
+      return
+    }
+    requestMutation.mutate({
+      amount,
+      notes: savedAccountRequest.notes || undefined,
+    })
   }
 
-  const isFormValid = formData.amount && Number(formData.amount) >= 100
+  const handleSaveAccountSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!formData.bankCode || !formData.bankName || !formData.accountNumber || !formData.accountName) {
+      toast.error("Please fill in all bank details and verify your account")
+      return
+    }
+    const isTestAccount = formData.bankCode === "MTN" && formData.accountNumber === "0000000000"
+    if (!isTestAccount && (verificationError || !isVerified)) {
+      toast.error("Please verify the account before saving")
+      return
+    }
+    saveAccountMutation.mutate({
+      bankCode: formData.bankCode,
+      bankName: formData.bankName,
+      accountNumber: formData.accountNumber,
+      accountName: formData.accountName,
+    })
+  }
+
+  const isFormValid = formData.amount && Number(formData.amount) >= 100 && selectedYear === currentYear
 
   const handleUseTestAccount = () => {
     setFormData(prev => ({
@@ -200,38 +240,36 @@ const AdminDisbursement = () => {
       bankName: "MTN",
       accountNumber: "0000000000",
     }))
-    setUseSavedAccount(false)
   }
 
   const handleUseSavedAccount = () => {
     if (savedAccount) {
-      setFormData(prev => ({
-        ...prev,
-        bankCode: savedAccount.bankCode,
-        bankName: savedAccount.bankName,
-        accountNumber: savedAccount.accountNumber,
-        accountName: savedAccount.accountName,
-      }))
-      setIsVerified(savedAccount.isVerified)
+      setIsEditingAccount(false)
+      setShowSavedAccountRequest(true)
     }
+  }
+
+  const handleEditSavedAccount = () => {
+    if (!savedAccount) return
+    setShowSavedAccountRequest(false)
+    setIsEditingAccount(true)
+    setFormData({
+      amount: "",
+      bankCode: savedAccount.bankCode,
+      bankName: savedAccount.bankName,
+      accountNumber: savedAccount.accountNumber,
+      accountName: savedAccount.accountName,
+      notes: "",
+    })
+    setIsVerified(savedAccount.isVerified)
+    setVerificationError("")
   }
 
   const handleDeleteSavedAccount = () => {
     if (confirm("Are you sure you want to remove your saved bank account?")) {
+      setShowSavedAccountRequest(false)
+      setIsEditingAccount(false)
       deleteAccountMutation.mutate()
-    }
-  }
-
-  const getTransferStatusBadge = (status: string | null) => {
-    switch (status) {
-      case "SUCCESS":
-        return <Badge className="bg-green-500 text-white">Transfer Success</Badge>
-      case "PENDING":
-        return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 border-yellow-200">Transfer Pending</Badge>
-      case "FAILED":
-        return <Badge variant="destructive">Transfer Failed</Badge>
-      default:
-        return null
     }
   }
 
@@ -262,7 +300,7 @@ const AdminDisbursement = () => {
     {
       name: "Status",
       sortable: true,
-      cell: (row: DisbursementRequest) => getStatusBadge(row.status),
+      cell: (row: DisbursementRequest) => getDisbursementStatusBadge(row.status),
     },
     {
       name: "Transfer",
@@ -272,7 +310,7 @@ const AdminDisbursement = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-white flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col">
       <SEOHelmet title="Disbursements - Admin" />
       <PageHeader
         title="Disbursements"
@@ -349,9 +387,19 @@ const AdminDisbursement = () => {
                     size="sm"
                     onClick={handleUseSavedAccount}
                     leftIcon={Save}
-                    className="bg-white"
+                    className="bg-card"
                   >
                     Use This Account
+                  </FormButton>
+                  <FormButton
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleEditSavedAccount}
+                    leftIcon={Pencil}
+                    className="bg-card"
+                  >
+                    Edit
                   </FormButton>
                   <FormButton
                     type="button"
@@ -369,7 +417,134 @@ const AdminDisbursement = () => {
             </Card>
           )}
 
+          {savedAccount && showSavedAccountRequest && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Request Disbursement</CardTitle>
+                <CardDescription>
+                  This request will use your saved disbursement account.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSavedAccountRequestSubmit} className="space-y-5">
+                  <TextInput
+                    id="saved-account-amount"
+                    label="Amount (GHS)"
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    placeholder="0.00"
+                    value={savedAccountRequest.amount}
+                    onChange={(e) => setSavedAccountRequest(prev => ({ ...prev, amount: e.target.value }))}
+                    disabled={requestMutation.isPending}
+                  />
+
+                  <CustomTextarea
+                    id="saved-account-notes"
+                    label="Notes (optional)"
+                    placeholder="Any additional notes for this disbursement..."
+                    value={savedAccountRequest.notes}
+                    onChange={(e) => setSavedAccountRequest(prev => ({ ...prev, notes: e.target.value }))}
+                    disabled={requestMutation.isPending}
+                  />
+
+                  {selectedYear !== currentYear && (
+                    <div className="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                      <AlertCircle className="w-4 h-4 text-yellow-600 shrink-0" />
+                      <p className="text-sm text-yellow-700">
+                        New disbursement requests can only be submitted for {currentYear}.
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <FormButton
+                      type="submit"
+                      disabled={requestMutation.isPending || !savedAccountRequest.amount || Number(savedAccountRequest.amount) < 100 || selectedYear !== currentYear}
+                      loading={requestMutation.isPending}
+                      loadingText="Submitting..."
+                      leftIcon={Send}
+                    >
+                      Submit Request
+                    </FormButton>
+                    <FormButton
+                      type="button"
+                      variant="outline"
+                      onClick={() => setShowSavedAccountRequest(false)}
+                      disabled={requestMutation.isPending}
+                    >
+                      Cancel
+                    </FormButton>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          )}
+
+          {savedAccount && isEditingAccount && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Edit Disbursement Account</CardTitle>
+                <CardDescription>
+                  Update and verify the bank account used for future disbursement requests.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSaveAccountSubmit} className="space-y-5">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <BankSelector
+                      value={formData.bankCode}
+                      onChange={handleBankChange}
+                      disabled={saveAccountMutation.isPending}
+                    />
+                    <TextInput
+                      id="edit-account-number"
+                      label="Account Number"
+                      placeholder="0000000000"
+                      value={formData.accountNumber}
+                      onChange={(e) => {
+                        setFormData(prev => ({ ...prev, accountNumber: e.target.value, accountName: "" }))
+                        setIsVerified(false)
+                        setVerificationError("")
+                      }}
+                      disabled={saveAccountMutation.isPending || !formData.bankCode}
+                    />
+                  </div>
+
+                  <AccountVerifier
+                    bankCode={formData.bankCode}
+                    accountNumber={formData.accountNumber}
+                    onVerified={handleAccountVerified}
+                    onVerificationError={handleVerificationError}
+                    disabled={saveAccountMutation.isPending || !formData.bankCode || formData.accountNumber.length < 10}
+                  />
+
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <FormButton
+                      type="submit"
+                      disabled={saveAccountMutation.isPending || !formData.bankCode || !formData.accountNumber || !formData.accountName}
+                      loading={saveAccountMutation.isPending}
+                      loadingText="Saving..."
+                      leftIcon={Save}
+                    >
+                      Save Account
+                    </FormButton>
+                    <FormButton
+                      type="button"
+                      variant="outline"
+                      onClick={() => setIsEditingAccount(false)}
+                      disabled={saveAccountMutation.isPending}
+                    >
+                      Cancel
+                    </FormButton>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Request Form */}
+          {!savedAccount && (
           <Card>
             <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-4">
               <div className="space-y-1">
@@ -380,14 +555,16 @@ const AdminDisbursement = () => {
                     : "Enter the amount and confirm the bank account for this disbursement"}
                 </CardDescription>
               </div>
-              <FormButton
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleUseTestAccount}
-              >
-                Use Test Account
-              </FormButton>
+              {canUseTestAccount && (
+                <FormButton
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={handleUseTestAccount}
+                >
+                  Use Test Account
+                </FormButton>
+              )}
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-5">
@@ -404,7 +581,11 @@ const AdminDisbursement = () => {
                   label="Account Number"
                   placeholder="0000000000"
                   value={formData.accountNumber}
-                  onChange={(e) => setFormData(prev => ({ ...prev, accountNumber: e.target.value }))}
+                  onChange={(e) => {
+                    setFormData(prev => ({ ...prev, accountNumber: e.target.value, accountName: "" }))
+                    setIsVerified(false)
+                    setVerificationError("")
+                  }}
                   disabled={requestMutation.isPending || !formData.bankCode}
                 />
               </div>
@@ -447,6 +628,15 @@ const AdminDisbursement = () => {
                 </div>
               )}
 
+              {selectedYear !== currentYear && (
+                <div className="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <AlertCircle className="w-4 h-4 text-yellow-600 shrink-0" />
+                  <p className="text-sm text-yellow-700">
+                    New disbursement requests can only be submitted for {currentYear}.
+                  </p>
+                </div>
+              )}
+
               {!savedAccount && isVerified && (
                 <div className="flex items-center gap-2">
                   <Checkbox
@@ -475,6 +665,7 @@ const AdminDisbursement = () => {
             </form>
             </CardContent>
           </Card>
+          )}
 
           {/* My Requests Table */}
           <Card>

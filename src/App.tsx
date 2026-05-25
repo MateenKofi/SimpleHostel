@@ -46,6 +46,7 @@ import ResidentLookup from "./pages/dashboard/resident-management/Resident-looku
 import EditResident from "./components/resident/EditResident";
 import Report from './pages/dashboard/report/Report';
 import PermissionsPage from './pages/dashboard/admin/PermissionsPage';
+import RefundRequests from "./pages/dashboard/refunds/RefundRequests";
 
 // Component routes
 import PaymentSummaryForm from "./components/payment/PaymentSummaryForm";
@@ -138,6 +139,7 @@ function App() {
             <Route path="settings" element={<Settings />} />
             <Route path="permissions" element={<PermissionsPage />} />
             <Route path="disbursements" element={<AdminDisbursement />} />
+            <Route path="refunds" element={<RefundRequests />} />
             <Route path="resident-lookup" element={<ResidentLookup />} />
             <Route path="edit-resident" element={<EditResident />} />
             <Route path="report" element={<Report />} />

@@ -9,54 +9,59 @@ import {
 import { useQuery } from "@tanstack/react-query"
 import { getHostelById } from "@/api/hostels"
 import { cn } from "@/lib/utils"
+import { BadgeCheck } from "lucide-react"
 
 export function TeamSwitcher() {
   const user_role = localStorage.getItem("role")
-  if (user_role !== "ADMIN") return null
-
   const hostelId = localStorage.getItem("hostelId")
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { data } = useQuery({
     queryKey: ["hostel"],
     queryFn: async () => {
       const responseData = await getHostelById(hostelId!)
       return responseData?.data
     },
-    enabled: !!hostelId,
+    enabled: user_role === "admin" && !!hostelId,
   })
 
   const calendarYearId = data?.CalendarYear?.[0]?.id || null
-  localStorage.setItem("calendarYear", calendarYearId)
+  if (calendarYearId) {
+    localStorage.setItem("calendarYear", calendarYearId)
+  }
+
+  const roleLabel = (user_role || "dashboard").replace("_", " ")
+  const displayName = data?.name || "Fuse"
+  const displaySubtext = data?.email || roleLabel
 
   return (
-    <div className="px-3 py-3">
+    <div className="px-2 py-2">
       <SidebarMenu className="gap-1.5">
         <SidebarMenuItem>
           <DropdownMenu>
             <SidebarMenuButton
               size="lg"
               className={cn(
-                "w-full rounded-xl transition-all duration-200 py-3 px-4 h-auto",
-                "hover:!bg-forest-green-100 hover:!shadow-sm",
+                "w-full rounded-xl border border-border/60 bg-background/70 px-3 py-3 h-auto shadow-sm transition-all duration-200",
+                "hover:!bg-forest-green-50 hover:!shadow-md",
                 "dark:hover:!bg-forest-green-900",
-                "data-[state=open]:bg-forest-green-200 data-[state=open]:shadow-sm",
+                "data-[state=open]:bg-forest-green-100 data-[state=open]:shadow-md",
                 "dark:data-[state=open]:bg-forest-green-800"
               )}
             >
-              <div className="flex items-center justify-center size-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 dark:from-primary/30 dark:to-primary/10">
+              <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 ring-1 ring-primary/15">
                 <img
                   src={data?.logoUrl || "/logo.png"}
                   alt="logo"
-                  className="size-6 rounded-md object-cover"
+                  className="size-7 rounded-md object-cover"
                 />
               </div>
               <div className="grid flex-1 text-sm leading-tight text-left">
-                <span className="font-semibold truncate text-foreground">
-                  {data?.name || "Fuse"}
+                <span className="flex items-center gap-1.5 font-semibold truncate text-foreground">
+                  {displayName}
+                  {data?.isVerified && <BadgeCheck className="h-3.5 w-3.5 text-primary" />}
                 </span>
                 <span className="text-xs truncate text-muted-foreground">
-                  {data?.email || "Dashboard"}
+                  {displaySubtext}
                 </span>
               </div>
             </SidebarMenuButton>

@@ -3,6 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { getResidentBilling, getPaymentReceipt, downloadAllocationLetterPDF, downloadPaymentReceiptPDF } from "@/api/residents"
 import { retryPayment, cancelPayment } from "@/api/payments"
+import { calculateRefund, requestRefund, RefundCalculationDto } from "@/api/refunds"
 import { Loader, Download, CreditCard, History, Wallet, AlertCircle, FileText, Printer, RefreshCw, X } from "lucide-react"
 import { toast } from "sonner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
@@ -117,6 +118,13 @@ const PaymentBilling = () => {
     const [downloadingReceipt, setDownloadingReceipt] = useState<string | null>(null);
     const [downloadingAllocation, setDownloadingAllocation] = useState(false);
     const receiptRef = useRef<HTMLDivElement>(null)
+
+    // Refund states
+    const [refundPaymentId, setRefundPaymentId] = useState<string | null>(null);
+    const [refundReason, setRefundReason] = useState("");
+    const [isCalculatingRefund, setIsCalculatingRefund] = useState(false);
+    const [refundCalculation, setRefundCalculation] = useState<RefundCalculationDto | null>(null);
+    const [submittingRefund, setSubmittingRefund] = useState(false);
 
     // Download Allocation Letter PDF
     const handleDownloadAllocationLetter = async () => {
@@ -269,6 +277,44 @@ const PaymentBilling = () => {
     const isPending = (status: string) => status.toLowerCase() === "pending"
     const isProcessing = (reference: string) => processingPayment === reference
 
+    const handleOpenRefundModal = async (paymentId: string) => {
+        setRefundPaymentId(paymentId);
+        setIsCalculatingRefund(true);
+        setRefundCalculation(null);
+        setRefundReason("");
+        try {
+            const res = await calculateRefund(paymentId);
+            setRefundCalculation(res.data);
+        } catch (error) {
+            console.error("Failed to calculate refund:", error);
+            toast.error("Could not calculate refund details");
+        } finally {
+            setIsCalculatingRefund(false);
+        }
+    };
+
+    const handleSubmitRefund = async () => {
+        if (!refundPaymentId || !refundReason.trim()) {
+            toast.error("Please provide a reason for the refund");
+            return;
+        }
+        setSubmittingRefund(true);
+        try {
+            await requestRefund(refundPaymentId, refundReason);
+            toast.success("Refund request submitted successfully", {
+                description: "The hostel administrator will review your request shortly.",
+            });
+            setRefundPaymentId(null);
+            queryClient.invalidateQueries({ queryKey: ['resident-billing', userId] });
+        } catch (error: any) {
+            console.error("Failed to submit refund request:", error);
+            const msg = error?.response?.data?.message || "Failed to submit refund request";
+            toast.error("Refund Request Failed", { description: msg });
+        } finally {
+            setSubmittingRefund(false);
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="flex items-center justify-center h-[50vh]">
@@ -396,8 +442,8 @@ const PaymentBilling = () => {
                                                 GHS {tx.amount.toLocaleString()}
                                             </td>
                                             <td className="px-4 py-3">
-                                                <Badge variant={tx.status === 'confirmed' || tx.status === 'success' ? 'default' : tx.status === 'pending' ? 'secondary' : 'destructive'}
-                                                    className={`text-[10px] px-2 py-0 h-5 ${(tx.status === 'confirmed' || tx.status === 'success') ? 'bg-green-100 text-green-800 hover:bg-green-100' : ''}`}
+                                                <Badge variant={tx.status === 'confirmed' || tx.status === 'success' ? 'default' : tx.status === 'pending' ? 'secondary' : tx.status === 'refunded' ? 'outline' : 'destructive'}
+                                                    className={`text-[10px] px-2 py-0 h-5 ${(tx.status === 'confirmed' || tx.status === 'success') ? 'bg-green-100 text-green-800 hover:bg-green-100' : tx.status === 'refunded' ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 hover:bg-amber-100' : ''}`}
                                                 >
                                                     {tx.status}
                                                 </Badge>
@@ -406,16 +452,28 @@ const PaymentBilling = () => {
                                                 <div className="flex items-center justify-end gap-1">
                                                     {/* Download receipt for confirmed payments */}
                                                     {(tx.status === 'confirmed' || tx.status === 'success') && (
-                                                        <Button
-                                                            variant="ghost"
-                                                            size="sm"
-                                                            onClick={() => handleViewReceipt(tx.id)}
-                                                            className="h-8 gap-1"
-                                                            title="Download Receipt"
-                                                        >
-                                                            <Download className="w-3.5 h-3.5" />
-                                                            <span className="sr-only sm:not-sr-only">Receipt</span>
-                                                        </Button>
+                                                        <div className="flex items-center justify-end gap-1">
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                onClick={() => handleViewReceipt(tx.id)}
+                                                                className="h-8 gap-1"
+                                                                title="Download Receipt"
+                                                            >
+                                                                <Download className="w-3.5 h-3.5" />
+                                                                <span className="sr-only sm:not-sr-only">Receipt</span>
+                                                            </Button>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="sm"
+                                                                onClick={() => handleOpenRefundModal(tx.id)}
+                                                                className="h-8 gap-1 text-amber-600 hover:text-amber-700 hover:bg-amber-50 dark:hover:bg-amber-950/20"
+                                                                title="Request Refund"
+                                                            >
+                                                                <RefreshCw className="w-3.5 h-3.5" />
+                                                                <span className="sr-only sm:not-sr-only">Refund</span>
+                                                            </Button>
+                                                        </div>
                                                     )}
                                                     {/* Retry and Cancel buttons for pending payments */}
                                                     {isPending(tx.status) && (
@@ -509,6 +567,91 @@ const PaymentBilling = () => {
                             </div>
                         )}
                     </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Refund Request Modal */}
+            <Dialog open={!!refundPaymentId} onOpenChange={(open) => !open && setRefundPaymentId(null)}>
+                <DialogContent className="max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Request Room Refund</DialogTitle>
+                        <DialogDescription>
+                            Submit a request to refund your room payment. Calculations are based on your stay duration.
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    {isCalculatingRefund ? (
+                        <div className="flex flex-col items-center justify-center py-10 space-y-4">
+                            <Loader className="w-8 h-8 animate-spin text-primary" />
+                            <p className="text-sm text-muted-foreground animate-pulse">Calculating refund amount...</p>
+                        </div>
+                    ) : refundCalculation ? (
+                        <div className="space-y-4 py-4">
+                            <div className="rounded-lg bg-muted/50 p-4 space-y-3 text-sm">
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Original Payment:</span>
+                                    <span className="font-medium">GHS {refundCalculation.paymentAmount.toLocaleString()}</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Stay Status:</span>
+                                    <span className="font-medium">
+                                        {refundCalculation.checkedIn 
+                                            ? `Checked in (${refundCalculation.daysStayed} days stayed)` 
+                                            : "No show (Not checked in)"}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Refund Rule:</span>
+                                    <span className="font-medium">Pro-rata calculation</span>
+                                </div>
+                                <Separator />
+                                <div className="flex justify-between text-destructive">
+                                    <span>Non-refundable penalty ({refundCalculation.nonRefundablePercentage}%):</span>
+                                    <span>- GHS {((refundCalculation.paymentAmount * (refundCalculation.checkedIn ? (1 - refundCalculation.daysStayed / refundCalculation.totalDays) : 1)) * (refundCalculation.nonRefundablePercentage / 100)).toFixed(2)}</span>
+                                </div>
+                                <div className="flex justify-between text-destructive">
+                                    <span>Admin Refund Fee:</span>
+                                    <span>- GHS {refundCalculation.adminRefundFee.toFixed(2)}</span>
+                                </div>
+                                <Separator />
+                                <div className="flex justify-between font-bold text-base text-forest-green-700 dark:text-forest-green-300">
+                                    <span>Estimated Refund:</span>
+                                    <span>GHS {refundCalculation.refundableAmount.toLocaleString()}</span>
+                                </div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label htmlFor="refund-reason" className="text-sm font-medium">
+                                    Reason for refund request <span className="text-destructive">*</span>
+                                </label>
+                                <textarea
+                                    id="refund-reason"
+                                    placeholder="Explain why you are requesting a refund (e.g., leaving the hostel, double payment...)"
+                                    className="w-full min-h-[80px] px-3 py-2 border border-input bg-background rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                                    value={refundReason}
+                                    onChange={(e) => setRefundReason(e.target.value)}
+                                    maxLength={250}
+                                />
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="py-6 text-center text-destructive">
+                            Failed to compute refund estimate.
+                        </div>
+                    )}
+
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setRefundPaymentId(null)} disabled={submittingRefund}>
+                            Cancel
+                        </Button>
+                        <Button 
+                            className="bg-forest-green-600 hover:bg-forest-green-700 text-white"
+                            onClick={handleSubmitRefund} 
+                            disabled={submittingRefund || isCalculatingRefund || !refundCalculation || !refundReason.trim()}
+                        >
+                            {submittingRefund ? "Submitting..." : "Submit Request"}
+                        </Button>
+                    </DialogFooter>
                 </DialogContent>
             </Dialog>
         </div >

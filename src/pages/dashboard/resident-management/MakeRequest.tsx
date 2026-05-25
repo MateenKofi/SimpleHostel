@@ -4,12 +4,11 @@ import { useState } from "react"
 import { useForm, SubmitHandler } from "react-hook-form"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { getResidentRequests, createResidentRequest } from "@/api/residents"
-import { Loader, Plus, Wrench, AlertCircle, CheckCircle, Clock, MoreHorizontal, Eye } from "lucide-react"
+import { Loader, Plus, Wrench, AlertCircle, CheckCircle, MoreHorizontal, Eye } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { TextField } from "@/components/TextField"
-import { Badge } from "@/components/ui/badge"
 import { Textarea } from "@/components/ui/textarea"
 import {
     Select,
@@ -33,6 +32,7 @@ import { format } from "date-fns"
 import UploadMultipleImages from "@/components/UploadMultipleImages"
 import { useEffect } from "react"
 import { PageHeader } from "@/components/layout/PageHeader"
+import { getMaintenanceStatusBadge, getPriorityTextClass } from "@/utils"
 
 // Types based on the API guide
 type RequestType = "maintenance" | "room_change" | "item_replacement" | "misconduct" | "emergency" | "other"
@@ -181,27 +181,6 @@ const MakeRequest = () => {
         })
 
         createRequestMutation.mutate(formData)
-    }
-
-    // Helper for status colors
-    const getStatusBadge = (status: string) => {
-        switch (status) {
-            case 'pending': return <Badge variant="outline" className="border-yellow-500 text-yellow-600 bg-yellow-50"><Clock className="w-3 h-3 mr-1" /> Pending</Badge>
-            case 'in_progress': return <Badge variant="outline" className="border-blue-500 text-blue-600 bg-blue-50"><Wrench className="w-3 h-3 mr-1" /> In Progress</Badge>
-            case 'resolved': return <Badge variant="outline" className="border-green-500 text-green-600 bg-green-50"><CheckCircle className="w-3 h-3 mr-1" /> Resolved</Badge>
-            case 'rejected':
-            case 'cancelled': return <Badge variant="destructive"><AlertCircle className="w-3 h-3 mr-1" /> Cancelled</Badge>
-            default: return <Badge variant="secondary">{status}</Badge>
-        }
-    }
-
-    const getPriorityColor = (priority: string) => {
-        switch (priority) {
-            case 'critical': return 'text-red-600 font-bold'
-            case 'high': return 'text-orange-600 font-bold'
-            case 'medium': return 'text-blue-600'
-            default: return 'text-gray-600'
-        }
     }
 
     return (
@@ -367,7 +346,7 @@ const MakeRequest = () => {
                                                     <span className="text-xs text-muted-foreground capitalize">{req.type?.replace('_', ' ') || 'Maintenance'}</span>
                                                 </div>
                                                 <div className="flex items-start gap-2">
-                                                    {getStatusBadge(req.status)}
+                                                    {getMaintenanceStatusBadge(req.status, { showIcon: true })}
                                                     <DropdownMenu>
                                                         <DropdownMenuTrigger asChild>
                                                             <Button variant="ghost" className="w-8 h-8 p-0">
@@ -400,7 +379,7 @@ const MakeRequest = () => {
                                             </p>
                                             <div className="flex items-center justify-between text-xs text-muted-foreground mt-auto">
                                                 <div className="flex items-center gap-2">
-                                                    <span>Priority: <span className={getPriorityColor(req.priority)}>{req.priority.toUpperCase()}</span></span>
+                                                    <span>Priority: <span className={getPriorityTextClass(req.priority)}>{req.priority.toUpperCase()}</span></span>
                                                 </div>
                                                 <span>Submitted: {req.createdAt ? format(new Date(req.createdAt), 'PPP') : 'N/A'}</span>
                                             </div>

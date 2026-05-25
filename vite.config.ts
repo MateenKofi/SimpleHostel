@@ -25,6 +25,12 @@ export default defineConfig({
   ],
   server: {
     port: 5173,        // Frontend port (Vite default)
+    proxy: {
+      '/api': {
+        target: 'http://localhost:2020',
+        changeOrigin: true,
+      },
+    },
   },
   resolve: {
     alias: {

@@ -14,6 +14,7 @@ import { Receipt, RefreshCw, X } from "lucide-react";
 import { retryPayment, cancelPayment } from "@/api/payments";
 import { toast } from "sonner";
 import { useState } from "react";
+import { getPaymentStatusBadgeVariant, getPaymentStatusLabel } from "@/utils";
 
 interface PaymentHistoryProps {
   payments: PaymentDto[];
@@ -66,36 +67,6 @@ const PaymentHistory: React.FC<PaymentHistoryProps> = ({ payments, onViewReceipt
 
   const isPending = (status: string) => status.toLowerCase() === "pending";
   const isProcessing = (reference: string) => processingPayment === reference;
-  const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
-    switch (status.toLowerCase()) {
-      case "confirmed":
-      case "success":
-        return "default";
-      case "pending":
-        return "secondary";
-      case "failed":
-      case "cancelled":
-        return "destructive";
-      default:
-        return "outline";
-    }
-  };
-
-  const getStatusLabel = (status: string): string => {
-    switch (status.toLowerCase()) {
-      case "confirmed":
-        return "Completed";
-      case "pending":
-        return "Pending";
-      case "failed":
-        return "Failed";
-      case "cancelled":
-        return "Cancelled";
-      default:
-        return status;
-    }
-  };
-
   const formatDate = (dateString: string): string => {
     const date = new Date(dateString);
     return date.toLocaleDateString("en-US", {
@@ -166,8 +137,8 @@ const PaymentHistory: React.FC<PaymentHistoryProps> = ({ payments, onViewReceipt
                     </span>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={getStatusVariant(payment.status)}>
-                      {getStatusLabel(payment.status)}
+                    <Badge variant={getPaymentStatusBadgeVariant(payment.status)}>
+                      {getPaymentStatusLabel(payment.status)}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
