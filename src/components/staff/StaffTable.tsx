@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { Staff } from "@/helper/types/types";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getHostelStaff, deleteStaff } from "@/api/staff";
-import { Edit, Trash2, Eye, MoreHorizontal } from "lucide-react";
+import { Edit, Trash2, Eye, Shield, MoreHorizontal } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import CustomDataTable from "@/components/CustomDataTable";
@@ -17,10 +18,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { TableColumn } from "react-data-table-component";
+import { StaffPermissionDialog } from "./StaffPermissionDialog";
 
 const StaffTable = () => {
   const navigate = useNavigate();
   const hostelId = localStorage.getItem("hostelId") || "";
+  const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
+  const [permissionDialogOpen, setPermissionDialogOpen] = useState(false);
 
   const {
     data: staffs,
@@ -115,6 +119,15 @@ const StaffTable = () => {
               <Edit className="mr-2 h-4 w-4" />
               <span>Edit</span>
             </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                setSelectedStaff(row);
+                setPermissionDialogOpen(true);
+              }}
+            >
+              <Shield className="mr-2 h-4 w-4" />
+              <span>Permissions</span>
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
               onClick={() => handleDelete(row.id)}
@@ -137,6 +150,14 @@ const StaffTable = () => {
         refetch={refetchStaff}
         isLoading={isLoading}
         isError={isError}
+      />
+      <StaffPermissionDialog
+        staff={selectedStaff}
+        open={permissionDialogOpen}
+        onOpenChange={(open) => {
+          setPermissionDialogOpen(open);
+          if (!open) setSelectedStaff(null);
+        }}
       />
     </div>
   );

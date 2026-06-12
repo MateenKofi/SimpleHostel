@@ -171,8 +171,8 @@ function App() {
             <Route path="disbursement-management" element={<DisbursementManagement />} />
           </Route>
 
-          {/* === Staff only (scoped to operational tasks) === */}
-          <Route element={<RoleRoute allowedRoles={["staff"]} />}>
+          {/* === Staff & Admin (operational tasks) === */}
+          <Route element={<RoleRoute allowedRoles={["staff", "admin"]} />}>
             <Route path="visitor-management" element={<VisitorManagement />} />
           </Route>
 

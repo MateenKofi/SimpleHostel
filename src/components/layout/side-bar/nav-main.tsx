@@ -96,7 +96,6 @@ export function NavMain() {
         items: [
           { title: "Staff", icon: Users, path: "/dashboard/staff-management" },
           { title: "Settings", icon: Settings, path: "/dashboard/settings" },
-          { title: "Permissions", icon: Shield, path: "/dashboard/permissions" },
         ],
       },
     ]

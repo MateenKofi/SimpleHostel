@@ -37,3 +37,19 @@ export const togglePermission = async (role: string, permission: string, hostelI
   });
   return response.data;
 };
+// ---- User-specific permission API ----
+
+export const getUserPermissions = async (userId: string) => {
+  const response = await axiosInstance.get(`/permissions/user/${userId}`);
+  return response.data?.data;
+};
+
+export const assignUserPermissions = async (userId: string, permissions: string[]) => {
+  const response = await axiosInstance.put(`/permissions/user/${userId}`, { permissions });
+  return response.data;
+};
+
+export const toggleUserPermission = async (userId: string, permission: string) => {
+  const response = await axiosInstance.patch(`/permissions/user/${userId}/toggle`, { permission });
+  return response.data;
+};
