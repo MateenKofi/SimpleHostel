@@ -16,13 +16,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import Select from "react-select";
+import type { StylesConfig } from "react-select";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { VisitorFormSchema, type VisitorFormInputs } from "@/schemas/VisitorForm.schema";
@@ -60,6 +55,70 @@ const AddVisitorModal = ({ open, onOpenChange }: AddVisitorModalProps) => {
     },
     enabled: !!hostelId && open,
   });
+
+  interface ResidentOption {
+    value: string;
+    label: string;
+    subLabel: string;
+    isDisabled: boolean;
+  }
+
+  const residentOptions: ResidentOption[] = residents?.map((resident: ResidentDto) => ({
+    value: resident.id,
+    label: resident.user?.name || resident.name || "Unknown",
+    subLabel: resident.room
+      ? `${resident.room.block ? `Block ${resident.room.block}, ` : ""}Room ${resident.room.number || resident.roomNumber}`
+      : "No room assigned",
+    isDisabled: !resident.roomId,
+  })) ?? [];
+
+  const selectStyles: StylesConfig<ResidentOption, false> = {
+    control: (provided, state) => ({
+      ...provided,
+      backgroundColor: "hsl(var(--background))",
+      borderColor: state.isFocused ? "hsl(var(--ring))" : "hsl(var(--input))",
+      boxShadow: state.isFocused ? "0 0 0 1px hsl(var(--ring))" : "none",
+      "&:hover": {
+        borderColor: "hsl(var(--ring))",
+      },
+      minHeight: "40px",
+      borderRadius: "calc(var(--radius) - 2px)",
+    }),
+    menu: (provided) => ({
+      ...provided,
+      backgroundColor: "hsl(var(--popover))",
+      border: "1px solid hsl(var(--border))",
+      boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+      zIndex: 100,
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isFocused ? "hsl(var(--muted))" : "transparent",
+      color: "hsl(var(--foreground))",
+      cursor: state.isDisabled ? "not-allowed" : "pointer",
+      opacity: state.isDisabled ? 0.5 : 1,
+      fontSize: "0.875rem",
+      display: "flex",
+      alignItems: "center",
+    }),
+    singleValue: (provided) => ({
+      ...provided,
+      color: "hsl(var(--foreground))",
+    }),
+    input: (provided) => ({
+      ...provided,
+      color: "hsl(var(--foreground))",
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: "hsl(var(--muted-foreground))",
+      fontSize: "0.875rem",
+    }),
+    menuList: (provided) => ({
+      ...provided,
+      padding: "4px",
+    }),
+  };
 
   // Add visitor mutation
   const addVisitorMutation = useMutation({
@@ -188,54 +247,45 @@ const AddVisitorModal = ({ open, onOpenChange }: AddVisitorModalProps) => {
             <label htmlFor="residentId" className="font-medium text-sm text-foreground">
               Visiting Resident*
             </label>
-            <Controller
-              name="residentId"
-              control={control}
-              render={({ field }) => (
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className="h-10 mt-2">
-                    {isLoadingResidents ? (
-                      <SelectValue placeholder="Loading residents..." />
-                    ) : (
-                      <SelectValue placeholder="Select a resident" />
-                    )}
-                  </SelectTrigger>
-                  <SelectContent>
-                    {residents?.map((resident: ResidentDto) => (
-                      <SelectItem
-                        key={resident.id}
-                        value={resident.id}
-                        disabled={!resident.roomId}
-                      >
-                        <div className="flex items-center gap-2">
-                          <Users className="w-3.5 h-3.5 text-muted-foreground" />
-                          <span>
-                            {resident.user?.name || resident.name}
-                            {resident.room ? (
-                              <span className="text-muted-foreground">
-                                {" "}
-                                - {resident.room.block && `Block ${resident.room.block}, `}
-                                {resident.room.number || resident.roomNumber}
-                              </span>
-                            ) : (
-                              <span className="text-muted-foreground text-xs">
-                                {" "}
-                                (No room assigned)
-                              </span>
-                            )}
+            <div className="mt-2">
+              <Controller
+                name="residentId"
+                control={control}
+                render={({ field }) => (
+                  <Select<ResidentOption, false>
+                    options={residentOptions}
+                    value={residentOptions.find((o) => o.value === field.value) || null}
+                    onChange={(option) => field.onChange(option?.value)}
+                    isLoading={isLoadingResidents}
+                    isDisabled={isLoadingResidents}
+                    placeholder={isLoadingResidents ? "Loading residents..." : "Search resident..."}
+                    noOptionsMessage={({ inputValue }) =>
+                      inputValue
+                        ? "No residents match your search"
+                        : residents?.length === 0
+                          ? "No residents found"
+                          : "Type to search..."
+                    }
+                    isOptionDisabled={(option) => option.isDisabled}
+                    styles={selectStyles}
+                    formatOptionLabel={(option, { context }) => {
+                      if (context === "value") {
+                        return <span>{option.label}</span>;
+                      }
+                      return (
+                        <div className="flex items-center gap-2 py-0.5">
+                          <Users className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                          <span>{option.label}</span>
+                          <span className="text-muted-foreground text-xs ml-auto">
+                            {option.subLabel}
                           </span>
                         </div>
-                      </SelectItem>
-                    ))}
-                    {!residents?.length && !isLoadingResidents && (
-                      <div className="px-2 py-1.5 text-sm text-muted-foreground">
-                        No residents found
-                      </div>
-                    )}
-                  </SelectContent>
-                </Select>
-              )}
-            />
+                      );
+                    }}
+                  />
+                )}
+              />
+            </div>
             {touchedFields.residentId && errors.residentId && (
               <p className="mt-1.5 text-sm text-destructive flex items-center gap-1">
                 <Info className="w-3.5 h-3.5" />
