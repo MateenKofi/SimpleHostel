@@ -30,21 +30,17 @@ const ForgetPassword = () => {
       try {
         const result = await requestPasswordReset(data);
 
-        // Show success regardless of whether email exists
-        // (prevents user enumeration)
         setEmailSent(true);
         setSentToEmail(data.email);
 
-        toast.success(
-          "If an account exists with this email, a password reset link has been sent."
-        );
+        toast.success("Password reset link has been sent to your email.");
 
         return result;
       } catch (error: unknown) {
         const err = error as ApiError;
-        const errorMessage =
-          err.response?.data?.message || "Failed to request password reset";
-        toast.error(errorMessage);
+        toast.error(
+          err.response?.data?.message || "Failed to request password reset"
+        );
         throw error;
       }
     },
