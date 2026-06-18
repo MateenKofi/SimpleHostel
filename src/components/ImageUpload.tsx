@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useCallback, useEffect } from "react";
-import { useDropzone } from "react-dropzone";
+import { useDropzone, type FileRejection } from "react-dropzone";
 import { X, Upload } from "lucide-react";
 import { toast } from "sonner";
 
@@ -31,7 +31,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     [images, onImagesChange, defaultImages.length]
   );
 
-  const handleDropRejected = useCallback((rejectedFiles: { file: File; errors: { code: string; message: string }[] }[]) => {
+  const handleDropRejected = useCallback((rejectedFiles: FileRejection[]) => {
     for (const { file, errors } of rejectedFiles) {
       const messages = errors.map(e => {
         if (e.code === "file-too-large") return `${file.name} exceeds the maximum size of 5MB`;
