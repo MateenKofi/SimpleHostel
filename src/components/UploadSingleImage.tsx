@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { UploadCloud, X, Home } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 type UploadSingleImageProps = {
@@ -36,9 +37,15 @@ const UploadSingleImage: React.FC<UploadSingleImageProps> = ({
     }
   }, [image, previewImage]);
 
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error(`${file.name} exceeds the maximum size of 5MB`);
+        return;
+      }
       setImage(file);
     }
   };
@@ -48,6 +55,10 @@ const UploadSingleImage: React.FC<UploadSingleImageProps> = ({
     setIsDragging(false);
     const file = e.dataTransfer.files?.[0];
     if (file && file.type.startsWith("image/")) {
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error(`${file.name} exceeds the maximum size of 5MB`);
+        return;
+      }
       setImage(file);
     }
   };

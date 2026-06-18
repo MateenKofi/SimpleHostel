@@ -94,7 +94,7 @@ const HostelStatus = ({ analyticsData }: { analyticsData: analyticsData }) => {
             </div>
           </div>
 
-          <div className="flex flex-col items-center p-3 rounded-xl bg-sage-green-50/50 dark:bg-sage-green-950/20">
+          <div className="flex flex-col items-center p-3 rounded-xl bg-forest-green-50/50 dark:bg-forest-green-950/20">
             <div className="flex items-center gap-2 mb-2">
               <div
                 className="h-3 w-3 rounded-full shadow-sm"
@@ -104,7 +104,7 @@ const HostelStatus = ({ analyticsData }: { analyticsData: analyticsData }) => {
                 Verified<br/>(Unpublished)
               </span>
             </div>
-            <div className="text-xl font-bold text-sage-green-700 dark:text-sage-green-400">
+            <div className="text-xl font-bold text-forest-green-700 dark:text-forest-green-400">
               <AnimatedValue value={verifiedButNotPublished} format="number" duration={400} />
             </div>
           </div>

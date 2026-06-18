@@ -96,8 +96,8 @@ export function StatisticsSection() {
       label: "Hostels Listed",
       description: "Verified & trusted",
       delay: 0.1,
-      gradient: "bg-gradient-to-br from-forest-green-500/10 to-sage-green-500/10",
-      iconBg: "bg-gradient-to-br from-forest-green-50 to-sage-green-50 dark:from-forest-green-950/30 dark:to-sage-green-950/20",
+      gradient: "bg-gradient-to-br from-forest-green-500/10 to-forest-green-500/10",
+      iconBg: "bg-gradient-to-br from-forest-green-50 to-forest-green-50 dark:from-forest-green-950/30 dark:to-forest-green-950/20",
       trend: 8,
     },
     {

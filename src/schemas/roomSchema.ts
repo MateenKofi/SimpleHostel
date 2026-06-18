@@ -21,7 +21,7 @@ export const roomSchema = z.object({
   }),
   description: z.string().optional(),
   amenities: z.array(z.string()).optional(),
-  images: z.array(z.any()).optional(),
+  images: z.array(z.any()).max(10, "Maximum 10 images allowed").optional(),
 });
 
 export type RoomFormData = z.infer<typeof roomSchema>;

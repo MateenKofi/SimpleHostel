@@ -120,7 +120,7 @@ const AdminReport = () => {
     return (
       <div className="w-full min-h-[60vh] flex items-center justify-center">
         <div className="text-center p-8 max-w-md border-2 border-dashed border-border/60 hover:border-primary/60 bg-muted/20 rounded-2xl transition-all duration-300">
-          <div className="inline-flex p-4 rounded-2xl bg-gradient-to-br from-forest-green-50 to-sage-green-50 dark:from-forest-green-950/20 dark:to-sage-green-950/10 mb-6">
+          <div className="inline-flex p-4 rounded-2xl bg-gradient-to-br from-forest-green-50 to-forest-green-50 dark:from-forest-green-950/20 dark:to-forest-green-950/10 mb-6">
             <BarChart3 className="h-10 w-10 text-forest-green-600 dark:text-forest-green-400" />
           </div>
           <h2 className="text-2xl font-bold text-foreground mb-2">
@@ -146,7 +146,7 @@ const AdminReport = () => {
   return (
     <div className="w-full space-y-4 md:space-y-6">
       {/* Modern Filter Section */}
-      <div className="bg-gradient-to-br from-forest-green-50 to-sage-green-50 dark:from-forest-green-950/20 dark:to-sage-green-950/10 rounded-2xl border border-forest-green-200/50 dark:border-forest-green-800/30 p-4 md:p-6">
+      <div className="bg-gradient-to-br from-forest-green-50 to-forest-green-50 dark:from-forest-green-950/20 dark:to-forest-green-950/10 rounded-2xl border border-forest-green-200/50 dark:border-forest-green-800/30 p-4 md:p-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6">
           <div className="flex-1">
             <div className="flex items-center gap-3">

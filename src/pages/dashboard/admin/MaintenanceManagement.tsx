@@ -210,10 +210,10 @@ const MaintenanceManagement = () => {
                             title="Resolved Today"
                             content={String(stats?.data?.resolved || 0)}
                             description="Completed requests"
-                            backgroundColor="bg-gradient-to-br from-sage-green-50 to-sage-green-100/30"
-                            titleColor="text-sage-green-700"
-                            contentColor="text-sage-green-600"
-                            descriptionColor="text-sage-green-600/70"
+                            backgroundColor="bg-gradient-to-br from-forest-green-50 to-forest-green-100/30"
+                            titleColor="text-forest-green-700"
+                            contentColor="text-forest-green-600"
+                            descriptionColor="text-forest-green-600/70"
                         />
                         <StatCard
                             icon={Wrench}

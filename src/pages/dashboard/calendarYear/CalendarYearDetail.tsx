@@ -267,7 +267,7 @@ const CalendarYearDetail = () => {
           className="max-w-6xl mx-auto space-y-4 sm:space-y-6"
         >
           <motion.div variants={itemVariants}>
-            <Card className="bg-gradient-to-br from-forest-green-50 to-sage-green-50 dark:from-forest-green-950/20 dark:to-sage-green-950/10 border-forest-green-200/50 dark:border-forest-green-800/30">
+            <Card className="bg-gradient-to-br from-forest-green-50 to-forest-green-50 dark:from-forest-green-950/20 dark:to-forest-green-950/10 border-forest-green-200/50 dark:border-forest-green-800/30">
               <CardHeader>
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
                   <div>

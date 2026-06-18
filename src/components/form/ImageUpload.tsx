@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Upload, X, Image as ImageIcon, Loader2 } from "lucide-react"
+import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
 export type ImageFile = {
@@ -110,7 +111,7 @@ const ImageUpload = React.forwardRef<HTMLDivElement, ImageUploadProps>(
 
         // Validate file size
         if (file.size > maxSize * 1024 * 1024) {
-          console.error(`File ${file.name} exceeds maximum size of ${maxSize}MB`)
+          toast.error(`${file.name} exceeds the maximum size of ${maxSize}MB`)
           continue
         }
 
@@ -351,7 +352,7 @@ const SingleImageUpload = React.forwardRef<HTMLDivElement, SingleImageUploadProp
       if (!file) return
 
       if (file.size > maxSize * 1024 * 1024) {
-        console.error(`File exceeds maximum size of ${maxSize}MB`)
+        toast.error(`File exceeds the maximum size of ${maxSize}MB`)
         return
       }
 

@@ -22,7 +22,7 @@ const getCategoryColor = (category: string) => {
   const colors: Record<string, string> = {
     locations: "bg-forest-green-100 text-forest-green-800 hover:bg-forest-green-200 dark:bg-forest-green-900 dark:text-forest-green-100",
     gender: "bg-teal-green-100 text-teal-green-800 hover:bg-teal-green-200 dark:bg-teal-green-900 dark:text-teal-green-100",
-    roomType: "bg-sage-green-100 text-sage-green-800 hover:bg-sage-green-200 dark:bg-sage-green-900 dark:text-sage-green-100",
+    roomType: "bg-forest-green-100 text-forest-green-800 hover:bg-forest-green-200 dark:bg-forest-green-900 dark:text-forest-green-100",
     priceRange: "bg-warm-red-50 text-warm-red-700 hover:bg-warm-red-100 dark:bg-warm-red-950 dark:text-warm-red-300",
   };
   return colors[category] || "bg-muted text-muted-foreground hover:bg-muted/80";

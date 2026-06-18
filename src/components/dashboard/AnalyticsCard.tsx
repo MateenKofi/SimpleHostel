@@ -10,9 +10,9 @@ type analyticsData = Analytics
 // Icon container gradients by type
 const iconContainers = {
   revenue: "p-2.5 rounded-xl bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/20",
-  occupancy: "p-2.5 rounded-xl bg-gradient-to-br from-forest-green-50 to-sage-green-50 dark:from-forest-green-950/30 dark:to-sage-green-950/20",
+  occupancy: "p-2.5 rounded-xl bg-gradient-to-br from-forest-green-50 to-forest-green-50 dark:from-forest-green-950/30 dark:to-forest-green-950/20",
   debt: "p-2.5 rounded-xl bg-gradient-to-br from-amber-50 to-warm-red-50 dark:from-amber-950/30 dark:to-warm-red-950/20",
-  residents: "p-2.5 rounded-xl bg-gradient-to-br from-sage-green-50 to-teal-green-50 dark:from-sage-green-950/30 dark:to-teal-green-950/20",
+  residents: "p-2.5 rounded-xl bg-gradient-to-br from-forest-green-50 to-teal-green-50 dark:from-forest-green-950/30 dark:to-teal-green-950/20",
   staff: "p-2.5 rounded-xl bg-gradient-to-br from-teal-green-50 to-forest-green-50 dark:from-teal-green-950/30 dark:to-forest-green-950/20",
   default: "p-2.5 rounded-xl bg-gradient-to-br from-muted to-muted/50",
 }
@@ -21,7 +21,7 @@ const iconClasses = {
   revenue: "text-emerald-600 dark:text-emerald-400",
   occupancy: "text-forest-green-700 dark:text-forest-green-400",
   debt: "text-amber-600 dark:text-amber-400",
-  residents: "text-sage-green-700 dark:text-sage-green-400",
+  residents: "text-forest-green-700 dark:text-forest-green-400",
   staff: "text-teal-green-600 dark:text-teal-green-400",
   default: "text-muted-foreground",
 }
@@ -199,7 +199,7 @@ const AnalyticsCard = ({ analyticsData }: { analyticsData: analyticsData }) => {
           <div className="flex items-start justify-between gap-3">
             <div className="flex-1 min-w-0">
               <p className={labelClass}>Total Residents</p>
-              <p className={`${valueClass} mt-3 text-sage-green-700 dark:text-sage-green-400`}>
+              <p className={`${valueClass} mt-3 text-forest-green-700 dark:text-forest-green-400`}>
                 <AnimatedValue value={analyticsData?.totalResidents || 0} format="number" duration={700} />
               </p>
             </div>

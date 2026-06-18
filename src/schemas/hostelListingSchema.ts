@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const hostelListingFormSchema = z.object({
-  hostelImage: z.string().optional(),
+  hostelImage: z.string().url("Invalid image URL").optional().or(z.literal("")),
   description: z.string().optional(),
   hostelName: z.string().min(2, "Hostel name must be at least 2 characters"),
   location: z.string().min(1, "Please select a location"),

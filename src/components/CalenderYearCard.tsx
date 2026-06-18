@@ -63,12 +63,12 @@ const CurrentYearCard = ({ currentYear }: { currentYear: CalendarYearT | undefin
               </div>
 
               {/* Occupancy Rate - Current year only */}
-              <div className="bg-sage-green-50 dark:bg-sage-green-950/20 border border-sage-green-200 dark:border-sage-green-800/30 rounded-lg p-4">
+              <div className="bg-forest-green-50 dark:bg-forest-green-950/20 border border-forest-green-200 dark:border-forest-green-800/30 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <PieChart className="h-5 w-5 text-sage-green-700 dark:text-sage-green-400" />
+                  <PieChart className="h-5 w-5 text-forest-green-700 dark:text-forest-green-400" />
                   <span className="text-sm font-medium text-muted-foreground">Occupancy</span>
                 </div>
-                <p className="text-2xl font-bold text-sage-green-700 dark:text-sage-green-400">
+                <p className="text-2xl font-bold text-forest-green-700 dark:text-forest-green-400">
                   {metrics.occupancyRate}%
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">Of {metrics.totalRooms} rooms</p>

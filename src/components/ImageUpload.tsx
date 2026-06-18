@@ -3,6 +3,7 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { X, Upload } from "lucide-react";
+import { toast } from "sonner";
 
 interface ImageUploadProps {
   onImagesChange?: (images: File[]) => void;
@@ -30,13 +31,25 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     [images, onImagesChange, defaultImages.length]
   );
 
+  const handleDropRejected = useCallback((rejectedFiles: { file: File; errors: { code: string; message: string }[] }[]) => {
+    for (const { file, errors } of rejectedFiles) {
+      const messages = errors.map(e => {
+        if (e.code === "file-too-large") return `${file.name} exceeds the maximum size of 5MB`;
+        if (e.code === "file-invalid-type") return `${file.name} has an invalid file type. Only JPEG, JPG, PNG are allowed`;
+        return `${file.name}: ${e.message}`;
+      });
+      messages.forEach(msg => toast.error(msg));
+    }
+  }, []);
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
+    onDropRejected: handleDropRejected,
     accept: {
       "image/jpeg": [".jpeg", ".jpg"],
       "image/png": [".png"],
     },
-    maxSize: 15 * 1024 * 1024, // 15MB
+    maxSize: 5 * 1024 * 1024, // 5MB
     multiple: true,
   });
 

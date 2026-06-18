@@ -10,11 +10,11 @@ import { formatCurrency, getMethodIcon, getMethodIconSimple } from "@/utils";
 import { CreditCard, Wallet, Landmark } from "lucide-react";
 
 const FOREST_GREEN_COLORS = [
-  "#4a9c7c", // Forest green primary
-  "#3b7d63", // Darker forest green
-  "#5cad8f", // Lighter forest green
-  "#2d6350", // Even darker
-  "#7bc4a8", // Light accent
+  "#4a9c7c", // Forest green 500
+  "#3b7d63", // Forest green 600
+  "#7bd5a5", // Forest green 400
+  "#2c5e4a", // Forest green 700
+  "#a9e3c5", // Forest green 300
 ];
 
 const PaymentMethodBreakDown = ({ reportData }: { reportData: ReportData }) => {
@@ -22,7 +22,7 @@ const PaymentMethodBreakDown = ({ reportData }: { reportData: ReportData }) => {
     <Card className="border-forest-green-200/50 dark:border-forest-green-800/30 bg-gradient-to-br from-forest-green-50/20 to-card">
       <CardHeader className="pb-4">
         <div className="flex items-center gap-2">
-          <div className="p-2 rounded-lg bg-gradient-to-br from-sage-green-500 to-teal-green-600 shrink-0">
+          <div className="p-2 rounded-lg bg-gradient-to-br from-forest-green-500 to-teal-green-600 shrink-0">
             <CreditCard className="h-4 w-4 text-white" />
           </div>
           <div className="min-w-0">

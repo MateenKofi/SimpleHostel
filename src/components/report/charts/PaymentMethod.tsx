@@ -15,11 +15,11 @@ import { Method, ReportData } from "@/helper/types/types";
 import { CreditCard } from "lucide-react";
 
 const FOREST_GREEN_COLORS = [
-  "#4a9c7c", // Forest green primary
-  "#3b7d63", // Darker forest green
-  "#5cad8f", // Lighter forest green
-  "#2d6350", // Even darker
-  "#7bc4a8", // Light accent
+  "#4a9c7c", // Forest green 500
+  "#3b7d63", // Forest green 600
+  "#7bd5a5", // Forest green 400
+  "#2c5e4a", // Forest green 700
+  "#a9e3c5", // Forest green 300
   "#e8f5f0", // Very light (background)
 ];
 

@@ -116,7 +116,7 @@ export function HowItWorksSection() {
                 </div>
 
                 <div className="bg-card border border-border rounded-xl p-5 flex flex-col items-center gap-3 hover:shadow-lg hover:border-primary/30 transition-all cursor-pointer group">
-                  <div className="w-12 h-12 bg-gradient-to-br from-forest-green-50 to-sage-green-50 dark:from-forest-green-950/30 dark:to-sage-green-950/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <div className="w-12 h-12 bg-gradient-to-br from-forest-green-50 to-forest-green-50 dark:from-forest-green-950/30 dark:to-forest-green-950/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Shield className="w-6 h-6 text-forest-green-600 dark:text-forest-green-400" />
                   </div>
                   <span className="text-sm font-medium text-muted-foreground">Security</span>
@@ -130,8 +130,8 @@ export function HowItWorksSection() {
                 </div>
 
                 <div className="bg-card border border-border rounded-xl p-5 flex flex-col items-center gap-3 hover:shadow-lg hover:border-primary/30 transition-all cursor-pointer group">
-                  <div className="w-12 h-12 bg-gradient-to-br from-sage-green-50 to-emerald-50 dark:from-sage-green-950/30 dark:to-emerald-950/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Home className="w-6 h-6 text-sage-green-600 dark:text-sage-green-400" />
+                  <div className="w-12 h-12 bg-gradient-to-br from-forest-green-50 to-emerald-50 dark:from-forest-green-950/30 dark:to-emerald-950/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Home className="w-6 h-6 text-forest-green-600 dark:text-forest-green-400" />
                   </div>
                   <span className="text-sm font-medium text-muted-foreground">Comfort</span>
                 </div>

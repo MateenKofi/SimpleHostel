@@ -24,7 +24,6 @@ import {
   GraduationCap,
   Ticket,
   CheckCircle2,
-  AlertCircle
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { registrationSchema, type RegistrationFormValues } from "@/schemas/registrationSchema";
@@ -56,7 +55,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
   const registerMutation = useMutation({
     mutationFn: async (values: RegistrationFormValues) => {
       // Omit confirmPassword before sending
-      const { confirmPassword, ...payload } = values;
+      const { confirmPassword: _confirmPassword, ...payload } = values;
       const registrationResponse = await registerResident(payload);
 
       // If reservation code exists, claim it

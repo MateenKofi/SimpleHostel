@@ -36,8 +36,8 @@ const RevenueOverView = ({ analyticsData }: { analyticsData: analyticsData }) =>
               <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: 'hsl(var(--muted-foreground))' }} />
               <YAxis axisLine={false} tickLine={false} tick={{ fill: 'hsl(var(--muted-foreground))' }} />
               <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(var(--muted) / 0.2)' }} />
-              <Bar dataKey="Collected" fill={CHART_COLORS.forest_light} radius={[4, 4, 0, 0]} />
-              <Bar dataKey="Potential" fill={CHART_COLORS.sage} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Collected" fill={CHART_COLORS.forest} radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Potential" fill={CHART_COLORS.forest} radius={[4, 4, 0, 0]} />
               <Bar dataKey="Outstanding" fill={CHART_COLORS.forest_dark} radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -49,9 +49,9 @@ const RevenueOverView = ({ analyticsData }: { analyticsData: analyticsData }) =>
               GH₵<AnimatedValue value={analyticsData?.currentYearStats?.collectedRevenue ?? 0} format="currency" decimals={2} duration={600} />
             </div>
           </div>
-          <div className="text-center p-3 rounded-xl bg-sage-green-50/50 dark:bg-sage-green-950/20">
+          <div className="text-center p-3 rounded-xl bg-forest-green-50/50 dark:bg-forest-green-950/20">
             <div className="text-sm font-medium text-muted-foreground mb-1">Potential</div>
-            <div className="text-lg font-bold text-sage-green-700 dark:text-sage-green-400">
+            <div className="text-lg font-bold text-forest-green-700 dark:text-forest-green-400">
               GH₵<AnimatedValue value={analyticsData?.currentYearStats?.expectedRevenue ?? 0} format="currency" decimals={2} duration={600} />
             </div>
           </div>

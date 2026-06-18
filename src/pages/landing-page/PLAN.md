@@ -22,7 +22,7 @@ This document outlines the plan for implementing and maintaining the landing pag
 ## Design System & Guidelines
 
 ### Color Palette
-The application uses a **forest-green centered** color scheme. See `CLAUDE.md` for full color specifications.
+The application uses a **sage-green centered** color scheme. See `CLAUDE.md` for full color specifications.
 
 ### Component Standards
 - Use theme variables (never hardcode colors)
@@ -36,7 +36,7 @@ The application uses a **forest-green centered** color scheme. See `CLAUDE.md` f
 
 ### DO:
 - Use the approved tech stack (React, Tailwind, Shadcn UI)
-- Follow the forest-green color scheme with theme variables
+- Follow the sage-green color scheme with theme variables
 - Make all components mobile-responsive
 - Use semantic HTML elements
 - Follow accessibility best practices (ARIA labels, keyboard navigation)

@@ -36,11 +36,11 @@ const KeyMetrics = ({ reportData }: { reportData: ReportData }) => {
       {/* Total Residents Card */}
       <BentoCard variant="residents" delay={75}>
         <div className="flex flex-col items-center text-center">
-          <div className="p-2 md:p-2.5 rounded-xl bg-gradient-to-br from-sage-green-50 to-teal-green-50 dark:from-sage-green-950/30 dark:to-teal-green-950/20 mb-2 md:mb-3">
-            <Users className="h-4 w-4 md:h-5 md:w-5 text-sage-green-700 dark:text-sage-green-400" />
+          <div className="p-2 md:p-2.5 rounded-xl bg-gradient-to-br from-forest-green-50 to-teal-green-50 dark:from-forest-green-950/30 dark:to-teal-green-950/20 mb-2 md:mb-3">
+            <Users className="h-4 w-4 md:h-5 md:w-5 text-forest-green-700 dark:text-forest-green-400" />
           </div>
           <p className="text-xs md:text-sm font-medium text-muted-foreground">Residents</p>
-          <p className="text-xl sm:text-2xl md:text-3xl font-bold text-sage-green-700 dark:text-sage-green-400 mt-1 md:mt-2">
+          <p className="text-xl sm:text-2xl md:text-3xl font-bold text-forest-green-700 dark:text-forest-green-400 mt-1 md:mt-2">
             {reportData?.totalResidents}
           </p>
           <div className="mt-2 md:mt-3 pt-2 md:pt-3 border-t border-border/60 w-full">
@@ -54,7 +54,7 @@ const KeyMetrics = ({ reportData }: { reportData: ReportData }) => {
       {/* Room Occupancy Card */}
       <BentoCard variant="occupancy" delay={150}>
         <div className="flex flex-col items-center text-center">
-          <div className="p-2 md:p-2.5 rounded-xl bg-gradient-to-br from-forest-green-50 to-sage-green-50 dark:from-forest-green-950/30 dark:to-sage-green-950/20 mb-2 md:mb-3">
+          <div className="p-2 md:p-2.5 rounded-xl bg-gradient-to-br from-forest-green-50 to-forest-green-50 dark:from-forest-green-950/30 dark:to-forest-green-950/20 mb-2 md:mb-3">
             <Building className="h-4 w-4 md:h-5 md:w-5 text-forest-green-700 dark:text-forest-green-400" />
           </div>
           <p className="text-xs md:text-sm font-medium text-muted-foreground">Occupancy</p>

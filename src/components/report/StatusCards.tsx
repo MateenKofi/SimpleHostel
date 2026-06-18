@@ -38,7 +38,7 @@ const StatusCards = ({reportData}: {reportData: ReportData}) => {
                 {reportData?.isActive ? "Active" : "Inactive"}
               </Badge>
             </div>
-            <div className="p-2 md:p-2.5 rounded-xl bg-gradient-to-br from-forest-green-50 to-sage-green-50 dark:from-forest-green-950/30 dark:to-sage-green-950/20 shrink-0">
+            <div className="p-2 md:p-2.5 rounded-xl bg-gradient-to-br from-forest-green-50 to-forest-green-50 dark:from-forest-green-950/30 dark:to-forest-green-950/20 shrink-0">
               <CalendarDays className="h-4 w-4 md:h-5 md:w-5 text-forest-green-600 dark:text-forest-green-400" />
             </div>
           </div>
@@ -89,7 +89,7 @@ const StatusCards = ({reportData}: {reportData: ReportData}) => {
             <div className={`p-2 md:p-2.5 rounded-xl shrink-0 ${
               isGrowthPositive && reportData?.historicalRevenue > 0
                 ? "bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950/30 dark:to-teal-950/20"
-                : "bg-gradient-to-br from-sage-green-50 to-teal-green-50 dark:from-sage-green-950/30 dark:to-teal-green-950/20"
+                : "bg-gradient-to-br from-forest-green-50 to-teal-green-50 dark:from-forest-green-950/30 dark:to-teal-green-950/20"
             }`}>
               {reportData?.historicalRevenue > 0 ? (
                 isGrowthPositive ? (
@@ -98,7 +98,7 @@ const StatusCards = ({reportData}: {reportData: ReportData}) => {
                   <TrendingDown className="h-4 w-4 md:h-5 md:w-5 text-amber-600 dark:text-amber-400" />
                 )
               ) : (
-                <TrendingUp className="h-4 w-4 md:h-5 md:w-5 text-sage-green-600 dark:text-sage-green-400" />
+                <TrendingUp className="h-4 w-4 md:h-5 md:w-5 text-forest-green-600 dark:text-forest-green-400" />
               )}
             </div>
           </div>

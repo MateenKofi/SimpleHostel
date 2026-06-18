@@ -1,25 +1,47 @@
 import React, { useMemo } from "react";
 import { UploadCloud, X, Image as ImageIcon } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 type UploadMultipleImagesProps = {
   images: File[];
   setImages: (files: File[]) => void;
   maxImages?: number;
+  maxSize?: number;
 };
+
+const ALLOWED_TYPES = new Set(["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"]);
 
 const UploadMultipleImages: React.FC<UploadMultipleImagesProps> = ({
   images,
   setImages,
   maxImages = 5,
+  maxSize = 5,
 }) => {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files && files.length > 0) {
+      const maxBytes = maxSize * 1024 * 1024;
       const availableSlots = Math.max(0, maxImages - images.length);
-      const newImages = Array.from(files).slice(0, availableSlots);
-      setImages([...images, ...newImages]);
+      const validFiles: File[] = [];
+
+      for (const file of Array.from(files)) {
+        if (!ALLOWED_TYPES.has(file.type)) {
+          toast.error(`${file.name} has an invalid file type. Only JPEG, PNG, WEBP, GIF are allowed`);
+          continue;
+        }
+        if (file.size > maxBytes) {
+          toast.error(`${file.name} exceeds the maximum size of ${maxSize}MB`);
+          continue;
+        }
+        validFiles.push(file);
+      }
+
+      const newImages = validFiles.slice(0, availableSlots);
+      if (newImages.length > 0) {
+        setImages([...images, ...newImages]);
+      }
     }
   };
 

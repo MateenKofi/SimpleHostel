@@ -22,7 +22,7 @@ const HistoricalComparison = ({ reportData }: { reportData: ReportData }) => {
     <Card className="border-forest-green-200/50 dark:border-forest-green-800/30 bg-gradient-to-br from-forest-green-50/20 to-card">
       <CardHeader className="pb-4">
         <div className="flex items-center gap-2">
-          <div className="p-2 rounded-lg bg-gradient-to-br from-teal-green-500 to-sage-green-600 shrink-0">
+          <div className="p-2 rounded-lg bg-gradient-to-br from-teal-green-500 to-forest-green-600 shrink-0">
             <Calendar className="h-4 w-4 text-white" />
           </div>
           <div className="min-w-0">
@@ -58,12 +58,12 @@ const HistoricalComparison = ({ reportData }: { reportData: ReportData }) => {
           </div>
 
           {/* Historical Period */}
-          <div className="p-4 md:p-5 rounded-2xl bg-gradient-to-br from-sage-green-50/80 to-forest-green-50/60 dark:from-sage-green-950/30 dark:to-forest-green-950/20 border border-sage-green-200/50 dark:border-sage-green-800/30">
+          <div className="p-4 md:p-5 rounded-2xl bg-gradient-to-br from-forest-green-50/80 to-forest-green-50/60 dark:from-forest-green-950/30 dark:to-forest-green-950/20 border border-forest-green-200/50 dark:border-forest-green-800/30">
             <div className="flex items-center gap-2 mb-3 md:mb-4">
-              <div className="p-1.5 rounded-lg bg-sage-green-100 dark:bg-sage-green-900/30 shrink-0">
-                <Calendar className="h-3.5 w-3.5 md:h-4 md:w-4 text-sage-green-600 dark:text-sage-green-400" />
+              <div className="p-1.5 rounded-lg bg-forest-green-100 dark:bg-forest-green-900/30 shrink-0">
+                <Calendar className="h-3.5 w-3.5 md:h-4 md:w-4 text-forest-green-600 dark:text-forest-green-400" />
               </div>
-              <p className="text-xs md:text-sm font-semibold text-sage-green-700 dark:text-sage-green-400">
+              <p className="text-xs md:text-sm font-semibold text-forest-green-700 dark:text-forest-green-400">
                 {hasHistoricalData ? "Historical" : "N/A"}
               </p>
             </div>
@@ -74,7 +74,7 @@ const HistoricalComparison = ({ reportData }: { reportData: ReportData }) => {
                 </p>
                 <p className="text-xs md:text-sm text-muted-foreground">Previous Revenue</p>
               </div>
-              <div className="flex items-center gap-2 pt-2 border-t border-sage-green-200/50 dark:border-sage-green-800/30">
+              <div className="flex items-center gap-2 pt-2 border-t border-forest-green-200/50 dark:border-forest-green-800/30">
                 <Users className="h-3.5 w-3.5 md:h-4 md:w-4 text-muted-foreground shrink-0" />
                 <p className="text-xs md:text-sm text-muted-foreground">
                   {hasHistoricalData
