@@ -35,7 +35,7 @@ export const BasicInfoStep = ({ form }: BasicInfoStepProps) => {
             />
 
             {/* Address */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <div className="hidden">
                 <TextInput
                     label="Address"
                     placeholder="GC-123-4567 or Street Name"
@@ -85,9 +85,7 @@ export const BasicInfoStep = ({ form }: BasicInfoStepProps) => {
                             form.setValue("longitude", lng, { shouldValidate: true });
                         }}
                         onAddressChange={(address: string) => {
-                            if (!form.getValues("address")) {
-                                form.setValue("address", address, { shouldValidate: true });
-                            }
+                            form.setValue("address", address, { shouldValidate: true });
                         }}
                         onRegionDetected={(region) => {
                             form.setValue("location", region, { shouldValidate: true });
