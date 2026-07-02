@@ -95,6 +95,7 @@ const Feedback = () => {
                 subtitle="Help us improve your hostel experience."
                 icon={MessageSquare}
                 sticky={true}
+                backgroundImage="https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?auto=format&fit=crop&w=1200&q=80"
             />
 
             <Card>

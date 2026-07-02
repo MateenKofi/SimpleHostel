@@ -128,6 +128,7 @@ const CalendarYear = () => {
         subtitle="Manage academic calendar years and track resident history"
         icon={Calendar}
         sticky={true}
+        backgroundImage="https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?auto=format&fit=crop&w=1200&q=80"
         actions={
           <motion.div
             whileHover={{ scale: 1.02 }}

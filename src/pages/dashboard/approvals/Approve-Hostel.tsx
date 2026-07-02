@@ -17,6 +17,7 @@ const ApproveHostel: React.FC = () => {
             title='Approve Hostels'
             subtitle='Review and approve hostel registration requests'
             icon={Building2}
+            backgroundImage="https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?auto=format&fit=crop&w=1200&q=80"
         />
         <ApproveHostelTable/>
        </div>

@@ -102,7 +102,7 @@ export function HowItWorksSection() {
                   <div className="w-10 h-10 bg-gradient-to-br from-primary to-primary rounded-full flex items-center justify-center shadow-lg shadow-primary/30">
                     <Home className="w-5 h-5 text-white" />
                   </div>
-                  <span className="text-2xl font-bold text-primary">Fuse</span>
+                  <span className="text-2xl font-bold text-primary">Best Suit</span>
                 </div>
               </div>
 

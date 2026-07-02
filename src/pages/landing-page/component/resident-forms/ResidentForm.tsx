@@ -118,9 +118,9 @@ const ResidentForm = () => {
   return (
     <div className="flex flex-col items-center justify-center p-4 md:p-6 min-h-svh bg-slate-50 dark:bg-zinc-950">
       <SEOHelmet
-        title="Add Resident - Fuse"
+        title="Add Resident - Best Suit"
         description="Add a new resident to the system."
-        keywords="add resident, Fuse, hostel"
+        keywords="add resident, Best Suit, hostel"
       />
 
       <button

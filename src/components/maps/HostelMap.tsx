@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useId } from "react";
+import { useState, useMemo, useEffect, useId, useRef } from "react";
 import { AppMap } from "./AppMap";
 import { HostelMarker } from "./HostelMarker";
 import { useMap, MapPopup } from "@/components/ui/map";
@@ -26,6 +26,8 @@ function HostelsLayer({ hostels, onMarkerClick, focusedHostelId }: { hostels: Ho
   const sourceId = `hostels-source-${id}`;
   const layerId = `hostels-layer-${id}`;
   const [selectedHostel, setSelectedHostel] = useState<Hostel | null>(null);
+  const hostelsRef = useRef(hostels);
+  hostelsRef.current = hostels;
 
   useEffect(() => {
     if (focusedHostelId) {
@@ -54,6 +56,7 @@ function HostelsLayer({ hostels, onMarkerClick, focusedHostelId }: { hostels: Ho
     };
   }, [hostels]);
 
+  // Setup effect: create icon, source, layer, and event handlers once
   useEffect(() => {
     if (!map || !isLoaded) return;
 
@@ -89,7 +92,7 @@ function HostelsLayer({ hostels, onMarkerClick, focusedHostelId }: { hostels: Ho
       if (!e.features?.length) return;
       const feature = e.features[0];
       const clickedId = feature.properties?.hostelId;
-      const hostel = hostels.find(h => h.id === clickedId);
+      const hostel = hostelsRef.current.find(h => h.id === clickedId);
       if (hostel) {
         setSelectedHostel(hostel);
       }
@@ -119,7 +122,16 @@ function HostelsLayer({ hostels, onMarkerClick, focusedHostelId }: { hostels: Ho
         // ignore
       }
     };
-  }, [map, isLoaded, sourceId, layerId, geojsonData, hostels]);
+  }, [map, isLoaded, sourceId, layerId]);
+
+  // Data update effect: update GeoJSON data without destroying/recreating the layer
+  useEffect(() => {
+    if (!map || !isLoaded) return;
+    const source = map.getSource(sourceId) as maplibregl.GeoJSONSource | undefined;
+    if (source) {
+      source.setData(geojsonData);
+    }
+  }, [map, isLoaded, sourceId, geojsonData]);
 
   return (
     <>

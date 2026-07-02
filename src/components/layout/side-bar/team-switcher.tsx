@@ -30,7 +30,7 @@ export function TeamSwitcher() {
   }
 
   const roleLabel = (user_role || "dashboard").replace("_", " ")
-  const displayName = data?.name || "Fuse"
+  const displayName = data?.name || "Best Suit"
   const displaySubtext = data?.email || roleLabel
 
   return (

@@ -19,7 +19,8 @@ interface BentoCardProps {
   rowSpan?: 1 | 2 | 3
   noPadding?: boolean
   hover?: boolean
-  delay?: number // Animation delay in ms
+  delay?: number
+  backgroundImage?: string
 }
 
 /**
@@ -35,6 +36,7 @@ const BentoCard = ({
   noPadding = false,
   hover = true,
   delay = 0,
+  backgroundImage,
 }: BentoCardProps) => {
   const variantStyles: Record<BentoVariant, string> = {
     default: 'bg-card border-border/80 hover:border-primary/30',
@@ -50,20 +52,14 @@ const BentoCard = ({
   return (
     <div
       className={cn(
-        // Base styles
         'rounded-2xl border',
-        // Variant-specific styles
         variantStyles[variant],
-        // Hover effect
         hover && 'hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 hover:scale-[1.01]',
-        // Animation
         'opacity-0 animate-fade-in-up',
-        // Grid sizing
         colSpan > 1 && `md:col-span-${colSpan}`,
         rowSpan > 1 && `md:row-span-${rowSpan}`,
-        // Padding
         !noPadding && 'p-5',
-        // Custom
+        backgroundImage && 'relative overflow-hidden',
         className
       )}
       style={{
@@ -71,7 +67,13 @@ const BentoCard = ({
         animationFillMode: 'forwards',
       }}
     >
-      {children}
+      {backgroundImage && (
+        <div
+          className="absolute inset-0 opacity-[0.07] bg-cover bg-center bg-no-repeat pointer-events-none"
+          style={{ backgroundImage: `url(${backgroundImage})` }}
+        />
+      )}
+      <div className="relative z-10">{children}</div>
     </div>
   )
 }

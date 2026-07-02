@@ -8,7 +8,7 @@ const hostelSearchJsonLd = {
   "@context": "https://schema.org",
   "@type": "SearchResultsPage",
   name: "Find Hostels in Ghana",
-  description: "Search verified student hostels and compare available accommodation on Fuse.",
+  description: "Search verified student hostels and compare available accommodation on Best Suit.",
 };
 
 const FindHostelPage = () => {

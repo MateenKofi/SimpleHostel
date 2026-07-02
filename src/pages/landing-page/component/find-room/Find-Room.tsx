@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { ArrowLeft, FileText, MapPin, Users, Home, BedDouble, Map } from "lucide-react";
+import { ArrowLeft, FileText, MapPin, Users, Home, BedDouble, Map, Search, ArrowUpDown, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -8,6 +8,7 @@ import { useSelectedRoomStore } from "@/stores/useSelectedRoomStore";
 import FilterPanel from "@/components/FilterPanel";
 import { RoomFilterConfig } from "@/helper/room_filter_config";
 import { backendRoomTypeToDisplay, parseRange } from "@/utils";
+import { useDebounce } from "@/hooks";
 import FindHostelSkeleton from "@/components/loaders/HostelCardSkeleton";
 import CustomeRefetch from "@/components/CustomRefetch";
 import SEOHelmet from "@/components/SEOHelmet";
@@ -23,11 +24,12 @@ import {
   Dialog,
   DialogContent,
 } from "@/components/ui/dialog";
-import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import RoomCard from "@/components/rooms/RoomCard";
 import { FilterBar } from "@/components/filters/FilterBar";
+import { ActiveFilterChips } from "@/components/filters/ActiveFilterChips";
 import { SingleHostelMap } from "@/components/maps/HostelMap";
+import { TextInput, SelectInput } from "@/components/form";
 
 interface ActiveFilters {
   [key: string]: string[];
@@ -51,6 +53,12 @@ const FindRoom = () => {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [selectedBookingRoom, setSelectedBookingRoom] = useState<Room | null>(null);
   const calendarYear = useSelectedCalendarYearStore((state) => state.calendarYear);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedQuery = useDebounce(searchQuery, 500);
+
+  const [sortBy, setSortBy] = useState<"price" | "roomNumber" | "capacity">("price");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   // Get user's gender for filtering - use user.gender directly from auth store
   const userGender = user?.gender?.toLowerCase();
@@ -153,10 +161,12 @@ const FindRoom = () => {
     },
   });
 
-  const handleFilterChange = (category: string, value: string) => {
+  const handleFilterChange = (category: string, value: string, replace?: boolean) => {
     setActiveFilters((prev) => {
       const updated = { ...prev };
-      if (updated[category]?.includes(value)) {
+      if (replace) {
+        updated[category] = [value];
+      } else if (updated[category]?.includes(value)) {
         updated[category] = updated[category]?.filter((item) => item !== value);
       } else {
         updated[category] = [...(updated[category] || []), value];
@@ -167,51 +177,69 @@ const FindRoom = () => {
 
   const availableRooms = useMemo(() => {
     const rooms = RoomData?.rooms || [];
-    return rooms.filter((room: Room) => room.status === "available");
+    return rooms.filter(
+      (room: Room) => room.effectiveStatus === "available"
+    );
   }, [RoomData?.rooms]);
 
   const filteredRooms = useMemo(() => {
-    return availableRooms.filter((room: Room) => {
-      // AUTOMATIC GENDER FILTERING - Residents can only see rooms matching their gender or Mix rooms
-      // Room gender values from API are lowercase: "male", "female", "mix"
-      // User gender from API is also lowercase: "male", "female"
-      if (userGender) {
-        const roomGender = room.gender.toLowerCase();
-        const isGenderCompatible =
-          roomGender === "mix" ||
-          roomGender === userGender;
+    return availableRooms
+      .filter((room: Room) => {
+        // AUTOMATIC GENDER FILTERING - Residents can only see rooms matching their gender or Mix rooms
+        if (userGender) {
+          const roomGender = room.gender.toLowerCase();
+          const isGenderCompatible =
+            roomGender === "mix" ||
+            roomGender === userGender;
 
-        if (!isGenderCompatible) {
-          return false; // Skip rooms that don't match resident's gender
+          if (!isGenderCompatible) {
+            return false;
+          }
+        } else {
+          if (room.gender.toLowerCase() !== "mix") {
+            return false;
+          }
         }
-      } else {
-        // If resident gender is unknown, only show Mix rooms as safe fallback
-        if (room.gender.toLowerCase() !== "mix") {
-          return false;
+
+        // UI Filter: Gender (case-insensitive)
+        const matchesGender =
+          activeFilters.gender.length === 0 ||
+          activeFilters.gender.some((g) => g.toLowerCase() === room.gender.toLowerCase());
+
+        // UI Filter: Price Range
+        const matchesPriceRange =
+          activeFilters.priceRange.length === 0 ||
+          activeFilters.priceRange.some((range) => {
+            const { min, max } = parseRange(range);
+            return room.price >= min && room.price <= max;
+          });
+
+        // UI Filter: Room Type (case-insensitive)
+        const matchesRoomType =
+          activeFilters.roomType.length === 0 ||
+          activeFilters.roomType.some((t) => t.toLowerCase() === room.type.toLowerCase());
+
+        // Search filter: match room number, block, or floor
+        const matchesSearch =
+          !debouncedQuery ||
+          (room.roomNumber?.toLowerCase() || "").includes(debouncedQuery.toLowerCase()) ||
+          (room.block?.toLowerCase() || "").includes(debouncedQuery.toLowerCase()) ||
+          (room.floor?.toString() || "").includes(debouncedQuery.toLowerCase());
+
+        return matchesGender && matchesPriceRange && matchesRoomType && matchesSearch;
+      })
+      .sort((a: Room, b: Room) => {
+        let comparison = 0;
+        if (sortBy === "price") {
+          comparison = a.price - b.price;
+        } else if (sortBy === "roomNumber") {
+          comparison = (a.roomNumber || "").localeCompare(b.roomNumber || "", undefined, { numeric: true });
+        } else if (sortBy === "capacity") {
+          comparison = (a.currentResidentCount || 0) - (b.currentResidentCount || 0);
         }
-      }
-
-      // UI Filter: Gender
-      const matchesGender =
-        activeFilters.gender.length === 0 ||
-        activeFilters.gender.includes(room.gender);
-
-      // UI Filter: Price Range
-      const matchesPriceRange =
-        activeFilters.priceRange.length === 0 ||
-        activeFilters.priceRange.some((range) => {
-          const { min, max } = parseRange(range);
-          return room.price >= min && room.price <= max;
-        });
-
-      // UI Filter: Room Type
-      const matchesRoomType =
-        activeFilters.roomType.length === 0 ||
-        activeFilters.roomType.includes(room.type);
-
-      return matchesGender && matchesPriceRange && matchesRoomType;
-    });
-  }, [availableRooms, activeFilters, userGender]);
+        return sortOrder === "asc" ? comparison : -comparison;
+      });
+  }, [availableRooms, activeFilters, userGender, debouncedQuery, sortBy, sortOrder]);
 
   const handleRoomClick = (room: Room) => {
     if (!token || !user) {
@@ -264,9 +292,9 @@ const FindRoom = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <SEOHelmet
-        title="Find Room - Fuse"
-        description="Search for the best rooms on Fuse."
-        keywords="find room, Fuse, student accommodation"
+        title="Find Room - Best Suit"
+        description="Search for the best rooms on Best Suit."
+        keywords="find room, Best Suit, student accommodation"
       />
       <Button
         className="mb-4 bg-primary text-primary-foreground px-4 py-2 rounded-md flex items-center"
@@ -307,11 +335,59 @@ const FindRoom = () => {
             onClearAll={clearAllFilters}
             variant="sidebar"
             isOpen={isFilterOpen}
+            priceRangeConfig={{ min: 0, max: 5000, category: "priceRange" }}
           />
         </div>
 
         {/* Rooms Grid */}
         <div className="flex-1 space-y-4">
+          {/* Search and Sort */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
+            <TextInput
+              placeholder="Search room number, block, floor..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              leftIcon={Search}
+              containerClassName="flex-1"
+            />
+            <SelectInput
+              value={`${sortBy}-${sortOrder}`}
+              onValueChange={(value) => {
+                const [sort, order] = value.split("-");
+                setSortBy(sort as "price" | "roomNumber" | "capacity");
+                setSortOrder(order as "asc" | "desc");
+              }}
+              options={[
+                { value: "price-asc", label: "Price (Low to High)" },
+                { value: "price-desc", label: "Price (High to Low)" },
+                { value: "roomNumber-asc", label: "Room Number (A-Z)" },
+                { value: "roomNumber-desc", label: "Room Number (Z-A)" },
+                { value: "capacity-asc", label: "Capacity (Low to High)" },
+                { value: "capacity-desc", label: "Capacity (High to Low)" },
+              ]}
+              placeholder="Sort by"
+              leftIcon={ArrowUpDown}
+              containerClassName="w-full sm:w-48"
+            />
+          </div>
+
+          {/* Active filter chips inline */}
+          {activeFilterCount > 0 && (
+            <ActiveFilterChips
+              filters={(() => {
+                const chips: Array<{ category: string; value: string; label: string }> = [];
+                Object.entries(activeFilters).forEach(([category, values]) => {
+                  values.forEach((value) => {
+                    chips.push({ category, value, label: value });
+                  });
+                });
+                return chips;
+              })()}
+              onRemove={handleFilterChange}
+              onClearAll={clearAllFilters}
+            />
+          )}
+
           {filteredRooms.length === 0 ? (
             <div className="text-center py-12 bg-card border border-border rounded-lg">
               <p className="text-lg font-medium text-foreground mb-2">

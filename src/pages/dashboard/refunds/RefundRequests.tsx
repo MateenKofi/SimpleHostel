@@ -348,6 +348,7 @@ export default function RefundRequests() {
         subtitle="Process resident refund requests and issue pro-rata payouts."
         icon={RefreshCw}
         sticky={false}
+        backgroundImage="https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?auto=format&fit=crop&w=1200&q=80"
         actions={
           <Button
             className="w-full sm:w-auto bg-primary text-primary-foreground shrink-0 shadow-sm"

@@ -39,7 +39,7 @@ const Footer = () => {
       { name: "Partner with Us", href: "#" },
     ],
     contact: [
-      { icon: Mail, text: "support@fuse.com", href: "mailto:support@fuse.com" },
+      { icon: Mail, text: "support@best-suit.com", href: "mailto:support@best-suit.com" },
       { icon: Phone, text: "+233 54 3983427", href: "tel:+233201234567" },
       { icon: MapPin, text: "Accra, Ghana", href: "#" },
     ],
@@ -60,8 +60,8 @@ const Footer = () => {
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <Link to="/" className="inline-flex items-center space-x-2 mb-4">
-              <img src="/logo.png" alt="Fuse" className="w-10 h-10" />
-              <span className="text-2xl font-bold text-foreground">Fuse</span>
+              <img src="/logo.png" alt="Best Suit" className="w-10 h-10" />
+              <span className="text-2xl font-bold text-foreground">Best Suit</span>
             </Link>
             <p className="text-muted-foreground mb-6 max-w-md">
               Discover affordable and comfortable hostel accommodations across Ghana.
@@ -171,7 +171,7 @@ const Footer = () => {
         <div className="container px-4 py-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm text-muted-foreground">
-              &copy; {currentYear} Fuse. All rights reserved.
+              &copy; {currentYear} Best Suit. All rights reserved.
             </p>
             <p className="text-sm text-muted-foreground flex items-center gap-1">
               Made with <Heart className="w-4 h-4 fill-destructive text-destructive" /> in

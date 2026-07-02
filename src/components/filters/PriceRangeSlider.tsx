@@ -16,10 +16,10 @@ interface PriceRangeSliderProps {
 }
 
 const DEFAULT_PRESETS = [
-  { label: "Under 50", min: 0, max: 50 },
-  { label: "50 - 100", min: 50, max: 100 },
-  { label: "100 - 150", min: 100, max: 150 },
-  { label: "150+", min: 150, max: Infinity },
+  { label: "0 - 1000", min: 0, max: 1000 },
+  { label: "1001 - 2000", min: 1001, max: 2000 },
+  { label: "2001 - 3500", min: 2001, max: 3500 },
+  { label: "3500+", min: 3500, max: Infinity },
 ];
 
 export const PriceRangeSlider = ({

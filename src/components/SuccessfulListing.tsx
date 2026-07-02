@@ -39,7 +39,7 @@ const SuccessfulListing = () => {
         <div className="space-y-4 bg-secondary/30 p-4 rounded-xl backdrop-blur-sm">
           <p className="text-sm text-foreground/80 leading-relaxed">
             Your hostel will be reviewed and approved within 24 hours.{" "}
-            <span className="font-semibold text-primary">Fuse</span> will get in touch shortly.
+            <span className="font-semibold text-primary">Best Suit</span> will get in touch shortly.
           </p>
         </div>
 

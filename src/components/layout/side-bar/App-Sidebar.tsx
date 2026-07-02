@@ -2,7 +2,6 @@ import * as React from "react"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"
 import { NavLogout } from "./nav-logout"
-import { TeamSwitcher } from "./team-switcher"
 import {
   Sidebar,
   SidebarContent,
@@ -40,12 +39,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <ToggleIcon className="h-4 w-4" />
           </SidebarTrigger>
         </div>
-        <TeamSwitcher />
       </SidebarHeader>
       <SidebarContent className="py-2">
         <NavMain />
       </SidebarContent>
-      <SidebarFooter className="border-t border-border/60 px-2 pb-2 pt-3">
+      <SidebarFooter className="border-t border-border/60 px-2 py-1.5">
         <NavLogout />
         <NavUser />
       </SidebarFooter>

@@ -77,6 +77,7 @@ import AnnouncementDashboard from "./pages/dashboard/admin/AnnouncementDashboard
 import MaintenanceManagement from "./pages/dashboard/admin/MaintenanceManagement";
 import DisbursementManagement from "./pages/dashboard/admin/DisbursementManagement";
 import AdminDisbursement from "./pages/dashboard/admin/AdminDisbursement";
+import ReservationsPage from "@pages/dashboard/room-management/ReservationsPage";
 
 function RouteSEO() {
   const { pathname } = useLocation();
@@ -139,6 +140,7 @@ function App() {
           {/* === Admin + Super Admin only === */}
           <Route element={<RoleRoute allowedRoles={["admin", "super_admin"]} />}>
             <Route path="room-management" element={<RoomManagementTab />} />
+            <Route path="reservations" element={<ReservationsPage />} />
             <Route path="calendar-year-management" element={<CalendarYear />} />
             <Route path="calendar-year/:id" element={<CalendarYearDetail />} />
             <Route path="room-assignment" element={<RoomAssignmentAndPayment />} />

@@ -161,6 +161,7 @@ const AnnouncementDashboard = () => {
                 subtitle="Broadcast news, alerts, and events to all residents"
                 icon={Megaphone}
                 sticky={true}
+                backgroundImage="https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?auto=format&fit=crop&w=1200&q=80"
                 actions={
                     <Button size="sm" onClick={() => setIsCreateDialogOpen(true)}>
                         <Plus className="w-4 h-4 mr-2" /> Create Announcement

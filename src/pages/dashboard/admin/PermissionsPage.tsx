@@ -239,6 +239,7 @@ export default function PermissionsPage() {
           : "Configure staff and resident permissions for your hostel"}
         icon={Shield}
         sticky={true}
+        backgroundImage="https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?auto=format&fit=crop&w=1200&q=80"
         actions={
           <div className="flex gap-2">
             {hasChanges && (

@@ -60,6 +60,7 @@ const RoomManagementTab = () => {
         subtitle="Manage and plan your rooms for the semester. Add, edit, and organize rooms with amenities."
         icon={Building}
         sticky={true}
+        backgroundImage="https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?auto=format&fit=crop&w=1200&q=80"
       />
 
       {/* Tabs */}

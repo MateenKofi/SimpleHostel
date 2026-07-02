@@ -45,6 +45,7 @@ const VisitorManagement = () => {
         subtitle="Track and manage all visitor check-ins and check-outs"
         icon={Users}
         sticky={true}
+        backgroundImage="https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?auto=format&fit=crop&w=1200&q=80"
         actions={
           <Button size="sm" onClick={() => setIsAddModalOpen(true)}>
             <UserPlus className="w-4 h-4 mr-2" />

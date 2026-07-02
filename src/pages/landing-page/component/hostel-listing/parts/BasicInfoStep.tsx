@@ -39,7 +39,7 @@ export const BasicInfoStep = ({ form }: BasicInfoStepProps) => {
                 <TextInput
                     label="Address"
                     placeholder="GC-123-4567 or Street Name"
-                    {...form.register("address")}
+                      {...form.register("address")}
                     helperText="Ghana Post GPS address recommended"
                     required
                     error={form.formState.errors.address?.message}

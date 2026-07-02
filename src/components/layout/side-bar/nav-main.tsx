@@ -32,6 +32,7 @@ import {
   AlertCircle,
   RefreshCw,
   ChevronRight,
+  NotebookPen,
 } from "lucide-react"
 import { Shield } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -71,6 +72,7 @@ export function NavMain() {
         items: [
           { title: "Calendar Year", icon: Calendar, path: "/dashboard/calendar-year-management" },
           { title: "Room Management", icon: BedDouble, path: "/dashboard/room-management" },
+          { title: "Reservations", icon: NotebookPen, path: "/dashboard/reservations" },
           { title: "Residents", icon: BookOpenCheck, path: "/dashboard/resident-management" },
           { title: "Debtors List", icon: AlertCircle, path: "/dashboard/deptors-list" },
         ],
@@ -211,13 +213,13 @@ export function NavMain() {
                 "group/category relative flex w-full items-center justify-between overflow-hidden rounded-lg px-3 py-2 text-left",
                 "text-[0.68rem] font-bold uppercase tracking-[0.14em] text-muted-foreground/80",
                 "transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
-                "hover:bg-forest-green-50/70 hover:text-forest-green-800 hover:shadow-sm",
+                "hover:bg-forest-green-100/60 hover:text-forest-green-800 hover:shadow-sm",
                 "data-[state=open]:bg-muted/60 data-[state=open]:text-foreground",
                 "after:absolute after:inset-x-3 after:bottom-0 after:h-px after:origin-left after:scale-x-0",
                 "after:bg-gradient-to-r after:from-primary/70 after:via-forest-green-300 after:to-transparent",
                 "after:transition-transform after:duration-300 after:ease-[cubic-bezier(0.22,1,0.36,1)] after:motion-reduce:transition-none",
                 "hover:after:scale-x-100 data-[state=open]:after:scale-x-100 group-data-[collapsible=icon]:hidden",
-                isGroupActive && "bg-forest-green-50 text-forest-green-800 shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.12)] after:scale-x-100"
+                isGroupActive && "bg-forest-green-100/40 text-forest-green-800 shadow-[inset_0_0_0_1px_hsl(var(--primary)/0.12)] after:scale-x-100"
               )}
             >
               <span className="flex min-w-0 items-center gap-2">
@@ -248,9 +250,9 @@ export function NavMain() {
                           isActive={isActive}
                           className={cn(
                             "group/nav relative h-10 w-full rounded-lg px-3 py-2 transition-all duration-200",
-                            "hover:!bg-forest-green-50 hover:!text-forest-green-800 hover:!shadow-sm",
+                            "hover:!bg-forest-green-100/70 hover:!text-forest-green-800 hover:!shadow-sm",
                             "dark:hover:!bg-forest-green-900 dark:hover:!text-forest-green-100",
-                            "data-[active=true]:!bg-forest-green-100 data-[active=true]:!text-forest-green-900 data-[active=true]:!shadow-sm",
+                            "data-[active=true]:!bg-forest-green-200/70 data-[active=true]:!text-forest-green-900 data-[active=true]:!shadow-sm",
                             "dark:data-[active=true]:!bg-forest-green-800 dark:data-[active=true]:!text-forest-green-50",
                             "before:absolute before:left-0 before:top-2 before:h-6 before:w-1 before:rounded-r-full before:bg-transparent before:transition-colors",
                             "data-[active=true]:before:bg-primary"

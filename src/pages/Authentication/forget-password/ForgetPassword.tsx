@@ -116,7 +116,7 @@ const ForgetPassword = () => {
                     <div className="relative mb-4">
                       <img
                         src="/logo.png"
-                        alt="Fuse"
+                        alt="Best Suit"
                         className="object-cover h-20 w-22"
                       />
                     </div>

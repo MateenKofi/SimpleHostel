@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { SlidersHorizontal } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -8,6 +8,16 @@ import { CollapsibleFilterSection } from "@/components/filters/CollapsibleFilter
 import { PriceRangeSlider } from "@/components/filters/PriceRangeSlider";
 import { ActiveFilterChips } from "@/components/filters/ActiveFilterChips";
 import { cn } from "@/lib/utils";
+import { PRICE_RANGE_PRESETS } from "@/helper/room_filter_config";
+
+function parseRangeString(range: string, fallbackMin: number, fallbackMax: number): { min: number; max: number } {
+  const clean = range.trim();
+  if (clean.endsWith("+")) {
+    return { min: Number(clean.slice(0, -1)), max: fallbackMax };
+  }
+  const [a, b] = clean.split("-").map((s) => Number(s.trim()));
+  return { min: Number.isFinite(a) ? a : fallbackMin, max: Number.isFinite(b) ? b : fallbackMax };
+}
 
 type ActiveFilters = { [key: string]: string[] };
 
@@ -19,7 +29,7 @@ type FilterConfig = {
 
 type Props = {
   activeFilters: ActiveFilters;
-  handleFilterChange: (category: string, value: string) => void;
+  handleFilterChange: (category: string, value: string, replace?: boolean) => void;
   FilterConfig: FilterConfig[];
   onClearAll?: () => void;
   variant?: "sidebar" | "drawer";
@@ -70,13 +80,22 @@ const FilterPanel = ({
     return priceRangeConfig?.category === category;
   };
 
-  // Handle price range slider change
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handlePriceRangeChange = (_value: [number, number]) => {
-    // This converts the slider values to the checkbox-based filter format
-    // For now, we'll need to work with the existing checkbox-based approach
-    // but can add special handling if needed
-  };
+  const handlePriceRangeChange = useCallback(
+    (value: [number, number]) => {
+      const [min, max] = value;
+      const rangeStr = max >= priceRangeConfig!.max ? `${min}+` : `${min}-${max}`;
+      handleFilterChange(priceRangeConfig!.category, rangeStr, true);
+    },
+    [handleFilterChange, priceRangeConfig]
+  );
+
+  const sliderPriceValue = useMemo<[number, number]>(() => {
+    if (!priceRangeConfig) return [0, 0];
+    const range = activeFilters[priceRangeConfig.category]?.[0];
+    if (!range) return [priceRangeConfig.min, priceRangeConfig.max];
+    const { min, max } = parseRangeString(range, priceRangeConfig.min, priceRangeConfig.max);
+    return [min, max];
+  }, [activeFilters, priceRangeConfig]);
 
   const filterContent = (
     <div className="space-y-1">
@@ -104,14 +123,9 @@ const FilterPanel = ({
               <PriceRangeSlider
                 min={priceRangeConfig.min}
                 max={priceRangeConfig.max}
-                value={[0, priceRangeConfig.max]}
+                value={sliderPriceValue}
                 onChange={handlePriceRangeChange}
-                presets={[
-                  { label: "0 - 50", min: 0, max: 50 },
-                  { label: "51 - 100", min: 51, max: 100 },
-                  { label: "101 - 150", min: 101, max: 150 },
-                  { label: "150+", min: 150, max: Infinity },
-                ]}
+                presets={PRICE_RANGE_PRESETS}
               />
             </CollapsibleFilterSection>
           );

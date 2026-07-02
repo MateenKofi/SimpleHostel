@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   List,
   Users,
+  NotebookPen,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -32,6 +33,7 @@ const Header = ({ user }: HeaderProps) => {
   const menuItems = [
     { title: "Dashboard", icon: LayoutDashboard, path: "/" },
     { title: "Room Management", icon: BedDouble, path: "/room-management" },
+    { title: "Reservations", icon: NotebookPen, path: "/reservations" },
     {
       title: "Resident Management",
       icon: BookOpenCheck,

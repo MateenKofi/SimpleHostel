@@ -10,9 +10,9 @@ const TermsAndCondition = () => {
   return (
     <div className="grid w-full max-w-3xl p-6 mx-auto space-y-6">
       <SEOHelmet
-        title="Terms and Conditions | Fuse"
-        description="Review Fuse terms, privacy information, cookie practices, and data usage policies for hostel booking and management."
-        keywords="Fuse terms, privacy policy, hostel booking terms"
+        title="Terms and Conditions | Best Suit"
+        description="Review Best Suit terms, privacy information, cookie practices, and data usage policies for hostel booking and management."
+        keywords="Best Suit terms, privacy policy, hostel booking terms"
         canonicalPath="/terms-and-conditions"
       />
       {/* Header */}

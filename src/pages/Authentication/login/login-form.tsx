@@ -52,7 +52,7 @@ const LoginForm = ({ className, ...props }: React.ComponentProps<"div">) => {
                     </div>
                     <h1 className="text-2xl font-bold">Welcome back</h1>
                     <p className="text-balance text-muted-foreground">
-                      Login to your Fuse account
+                      Login to your Best Suit account
                     </p>
                   </div>
                   <EmailInput

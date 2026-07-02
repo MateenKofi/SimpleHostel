@@ -36,7 +36,7 @@ export default function AboutPage() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="mb-6 text-4xl font-bold md:text-5xl lg:text-6xl"
               >
-                About <span className="text-primary">Fuse</span>
+                About <span className="text-primary">Best Suit</span>
               </motion.h1>
               <motion.p
                 initial={{ opacity: 0, y: 20 }}
@@ -87,7 +87,7 @@ function StorySection() {
             <h2 className="mb-6 text-3xl font-bold md:text-4xl">Our Story</h2>
             <div className="space-y-4 text-zinc-700 dark:text-zinc-300">
               <p>
-                Fuse began with a simple idea: make hostel booking as easy as possible for travelers around the
+                Best Suit began with a simple idea: make hostel booking as easy as possible for travelers around the
                 world. Founded by a group of avid backpackers who were frustrated with existing booking platforms, we
                 set out to create something better.
               </p>
@@ -97,7 +97,7 @@ function StorySection() {
                 friendships across the globe.
               </p>
               <p>
-                Today, Fuse partners with over 10,000 hostels in more than 120 countries, but our mission
+                Today, Best Suit partners with over 10,000 hostels in more than 120 countries, but our mission
                 remains the same: to make travel accessible, social, and memorable for everyone.
               </p>
             </div>
@@ -195,7 +195,7 @@ function TimelineSection() {
   const timelineEvents = [
     {
       year: "2021",
-      title: "Fuse Founded",
+      title: "Best Suit Founded",
       description: "Started with just 100 hostels in 16 regions.",
     },
     {
@@ -231,7 +231,7 @@ function TimelineSection() {
         >
           <h2 className="mb-6 text-3xl font-bold md:text-4xl">Our Journey</h2>
           <p className="text-lg text-zinc-700 dark:text-zinc-300">
-            From humble beginnings to a global platform, here's how Fuse has evolved over the years.
+            From humble beginnings to a global platform, here's how Best Suit has evolved over the years.
           </p>
         </motion.div>
 

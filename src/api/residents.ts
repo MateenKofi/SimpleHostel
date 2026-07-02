@@ -27,6 +27,11 @@ export const getResidentBilling = async () => {
     return response.data;
 };
 
+export const getResidentPendingReservations = async () => {
+    const response = await axiosInstance.get("/resident/billing/reservations");
+    return response.data;
+};
+
 export const getPaymentReceipt = async (paymentId: string) => {
     const response = await axiosInstance.get(`/resident/receipt/${paymentId}`);
     return response.data;

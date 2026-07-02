@@ -27,7 +27,7 @@ export function NavLogout() {
   }
 
   return (
-    <div className="px-2 py-2">
+    <div className="px-2 py-0.5">
       <SidebarMenu className="gap-1.5">
         <SidebarMenuItem>
           <SidebarMenuButton
@@ -35,7 +35,7 @@ export function NavLogout() {
             disabled={isLoggingOut}
             tooltip="Log Out"
             className={cn(
-              "group/logout relative h-11 w-full overflow-hidden rounded-xl border border-transparent px-3 py-2",
+              "group/logout relative h-9 w-full overflow-hidden rounded-xl border border-transparent px-3 py-1",
               "text-muted-foreground transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none",
               "hover:border-destructive/15 hover:bg-destructive/10 hover:text-destructive hover:shadow-sm",
               "focus-visible:ring-2 focus-visible:ring-destructive/30",

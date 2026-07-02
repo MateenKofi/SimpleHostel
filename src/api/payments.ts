@@ -1,7 +1,7 @@
 import axiosInstance from "./axiosInstance";
 import type { TopupPaymentRequest } from "@/types/dtos";
 
-export const initPayment = async (payload: { roomId: string, residentId: string, initialPayment: number }) => {
+export const initPayment = async (payload: { roomId: string, residentId: string, initialPayment: number, reservationId?: string }) => {
     const response = await axiosInstance.post("/payments/init", payload);
     return response.data;
 };
@@ -102,6 +102,7 @@ export const initCashPayment = async (payload: {
     roomId: string;
     residentId: string;
     initialPayment: number;
+    reservationId?: string;
 }): Promise<{ reference: string; message: string }> => {
     const response = await axiosInstance.post("/payments/init-cash", payload);
     return response.data;

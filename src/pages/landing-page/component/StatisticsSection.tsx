@@ -189,7 +189,7 @@ export function StatisticsSection() {
           className="text-center max-w-3xl mx-auto mb-16"
         >
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 text-gradient">
-            Fuse by the Numbers
+            Best Suit by the Numbers
           </h2>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto">
             Join our global community of travelers and hostel owners

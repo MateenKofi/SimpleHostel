@@ -198,6 +198,7 @@ const MaintenanceManagement = () => {
                 subtitle="Monitor and manage all maintenance issues reported by residents"
                 icon={Wrench}
                 sticky={true}
+                backgroundImage="https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?auto=format&fit=crop&w=1200&q=80"
             />
 
             <main className="flex-1 p-4 md:p-8">

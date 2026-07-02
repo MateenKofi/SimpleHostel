@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { getReservationsByHostel, confirmReservation, cancelReservation } from "@/api/reservations";
 import { getCurrentCalendarYear, getHistoricalCalendarYears, startCalendarYear } from "@/api/calendar";
+import { getHostelRooms } from "@/api/rooms";
+import { ReserveRoomModal } from "@/components/reservations/ReserveRoomModal";
 import { toast } from "sonner";
 import type { ReservationDto, CalendarYearDto, RoomDto } from "@/types/dtos";
 import {
@@ -13,6 +15,7 @@ import {
   X,
   CalendarPlus,
   Filter,
+  Loader,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -36,7 +39,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Loader } from "lucide-react";
 
 const statusColors: Record<string, string> = {
   pending: "bg-amber-100 text-amber-800 border-amber-300",
@@ -64,6 +66,7 @@ export const ReservationsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [showNewYearDialog, setShowNewYearDialog] = useState(false);
   const [newYearName, setNewYearName] = useState("");
+  const [openCreateModal, setOpenCreateModal] = useState(false);
 
   // Fetch reservations
   const { data: reservationsData, refetch: refetchReservations } = useQuery({
@@ -72,6 +75,17 @@ export const ReservationsPage = () => {
       if (!hostelId) return [];
       const response = await getReservationsByHostel(hostelId);
       return response.data || [];
+    },
+    enabled: !!hostelId,
+  });
+
+  // Fetch rooms
+  const { data: rooms } = useQuery({
+    queryKey: ["hostelRooms", hostelId],
+    queryFn: async () => {
+      if (!hostelId) return [];
+      const response = await getHostelRooms(hostelId);
+      return response?.rooms || [];
     },
     enabled: !!hostelId,
   });
@@ -205,7 +219,7 @@ export const ReservationsPage = () => {
 
             {/* Create Reservation Button */}
             <Button
-              onClick={() => {/* Will open modal later */ }}
+              onClick={() => setOpenCreateModal(true)}
               className="bg-primary text-primary-foreground shadow-lg shadow-primary/20"
             >
               <Plus className="w-4 h-4 mr-2" />
@@ -551,6 +565,15 @@ export const ReservationsPage = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Create Reservation Modal */}
+      <ReserveRoomModal
+        hostelId={hostelId}
+        rooms={rooms || []}
+        open={openCreateModal}
+        onOpenChange={setOpenCreateModal}
+        onSuccess={refetchReservations}
+      />
 
       {/* TODO: Decline Reservation Dialog - needs state and handlers */}
       {/* 

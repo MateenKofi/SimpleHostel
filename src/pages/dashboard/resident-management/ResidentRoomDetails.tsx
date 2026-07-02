@@ -48,6 +48,7 @@ const ResidentRoomDetails = () => {
                     icon={Home}
                     showBackButton={true}
                     sticky={true}
+                    backgroundImage="https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?auto=format&fit=crop&w=1200&q=80"
                 />
                 <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
                     <div className="p-6 bg-yellow-50 rounded-full">
@@ -75,6 +76,7 @@ const ResidentRoomDetails = () => {
                 icon={Home}
                 showBackButton={true}
                 sticky={true}
+                backgroundImage="https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?auto=format&fit=crop&w=1200&q=80"
             />
 
             <div className="grid grid-cols-1 gap-6 md:grid-cols-3">

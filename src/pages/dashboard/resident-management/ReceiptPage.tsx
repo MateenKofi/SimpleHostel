@@ -125,6 +125,7 @@ const ReceiptPage = () => {
                 icon={Receipt}
                 showBackButton={true}
                 sticky={true}
+                backgroundImage="https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?auto=format&fit=crop&w=1200&q=80"
                 actions={
                     <div className="flex items-center gap-2">
                         <Button variant="outline" size="sm" onClick={handlePrint} className="flex-1 sm:flex-none">

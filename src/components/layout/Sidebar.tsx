@@ -10,7 +10,8 @@ import {
     BarChart3,
   Users,
   List,
-  Wallet
+  Wallet,
+  NotebookPen,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -19,6 +20,7 @@ const Sidebar = () => {
   const menuItems = [
     { title: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
     { title: 'Room Management', icon: BedDouble, path: '/dashboard/room-management' },
+    { title: 'Reservations', icon: NotebookPen, path: '/dashboard/reservations' },
     { title: 'Resident Management', icon: BookOpenCheck, path: '/dashboard/resident-management' },
     { title: 'Deptors List', icon: List, path: '/dashboard/deptors-list' },
     { title: 'Visitor Management', icon: CalendarCheck, path: '/dashboard/visitor-management' },

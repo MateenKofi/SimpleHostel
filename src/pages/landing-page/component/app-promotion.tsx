@@ -20,7 +20,7 @@ export function AppPromotion() {
           <div>
             <h2 className="mb-4 text-3xl font-bold md:text-4xl">Mobile App : Coming Soon</h2>
             <p className="text-lg text-muted-foreground">
-              Take Fuse with you everywhere. Book hostels on the go, manage your reservations, and connect with
+              Take Best Suit with you everywhere. Book hostels on the go, manage your reservations, and connect with
               fellow travelers - all from your pocket. Our mobile app makes your travel experience seamless and
               worry-free, so you can focus on what matters most - creating unforgettable memories.
             </p>

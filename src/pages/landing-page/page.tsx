@@ -35,7 +35,7 @@ export default function LandingPage() {
         <div className="grid w-full place-items-center">
           <section id="about" className="container py-16 md:py-24">
             <h2 className="mb-12 text-2xl sm:text-3xl md:text-4xl font-bold text-center px-4">
-              Why <span className="text-primary">Fuse</span> is The Right Choice for You
+              Why <span className="text-primary">Best Suit</span> is The Right Choice for You
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {/* Verified Hostels - Top Left */}
@@ -62,7 +62,7 @@ export default function LandingPage() {
                   </div>
                   <h3 className="text-xl sm:text-2xl font-bold">Flexible Booking Schedules</h3>
                   <p className="text-forest-green-50 leading-relaxed text-sm sm:text-base">
-                    At Fuse, we understand the importance of balancing your accommodation needs with your busy schedule. That's why our booking system is available on-demand, allowing you to reserve at your own pace, anytime and anywhere.
+                    At Best Suit, we understand the importance of balancing your accommodation needs with your busy schedule. That's why our booking system is available on-demand, allowing you to reserve at your own pace, anytime and anywhere.
                   </p>
                   <p className="text-forest-green-50 leading-relaxed text-sm sm:text-base">
                     Whether you're a working professional or a student, you can customize your booking schedule to fit your needs.
@@ -83,7 +83,7 @@ export default function LandingPage() {
                   <div className="space-y-2">
                     <h3 className="text-lg sm:text-xl font-bold text-foreground">100+ Verified Locations</h3>
                     <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
-                      Fuse offers over 100 verified hostel locations across essential cities and campuses. Whether you're a beginner or an experienced traveler, our locations cover prime areas in web development, data science, and cybersecurity, providing practical, hands-on accommodation to help you stay comfortably and competitively in your journey.
+                      Best Suit offers over 100 verified hostel locations across essential cities and campuses. Whether you're a beginner or an experienced traveler, our locations cover prime areas in web development, data science, and cybersecurity, providing practical, hands-on accommodation to help you stay comfortably and competitively in your journey.
                     </p>
                   </div>
                 </div>

@@ -21,6 +21,7 @@ const StaffManagement: React.FC = () => {
         subtitle="Manage all hostel staff information, roles, and statuses"
         icon={UserCog}
         sticky={true}
+        backgroundImage="https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?auto=format&fit=crop&w=1200&q=80"
         actions={
           <Button onClick={() => navigate('/dashboard/staff-management/add')}>
             Add Staff

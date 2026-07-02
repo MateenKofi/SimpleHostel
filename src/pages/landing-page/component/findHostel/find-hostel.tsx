@@ -74,7 +74,15 @@ export function FindHostel() {
     }));
   };
 
+  const addLocationFilter = (location: string) => {
+    setActiveFilters((prev) => {
+      if (prev.locations.includes(location)) return prev;
+      return { ...prev, locations: [...prev.locations, location] };
+    });
+  };
+
   const handleFindRoom = (hostel: Hostel) => {
+    if (hostel.location) addLocationFilter(hostel.location);
     setTimeout(() => {
       if (hostel.calendarYears) {
         setCalendarYear(hostel.calendarYears[0] || null);

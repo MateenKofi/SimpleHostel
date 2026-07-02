@@ -16,13 +16,13 @@ export type SeoRoute = {
 };
 
 export const SEO_CONFIG = {
-  siteName: "Fuse",
+  siteName: "Best Suit",
   siteUrl: "https://simple-hostel.vercel.app",
-  defaultTitle: "Fuse | Find and Manage Student Hostels in Ghana",
+  defaultTitle: "Best Suit | Find and Manage Student Hostels in Ghana",
   defaultDescription:
-    "Find verified student hostels, compare rooms, book accommodation, manage payments, and run hostel operations with Fuse.",
+    "Find verified student hostels, compare rooms, book accommodation, manage payments, and run hostel operations with Best Suit.",
   defaultKeywords:
-    "Fuse, student hostels Ghana, hostel booking, student accommodation, hostel management, room booking Ghana",
+    "Best Suit, student hostels Ghana, hostel booking, student accommodation, hostel management, room booking Ghana",
   defaultImage: "/logo.png",
   locale: "en_GH",
   twitterCard: "summary_large_image",
@@ -38,73 +38,73 @@ export const SEO_CONFIG = {
 export const PUBLIC_SEO_ROUTES: SeoRoute[] = [
   {
     path: "/",
-    title: "Fuse | Find and Manage Student Hostels in Ghana",
+    title: "Best Suit | Find and Manage Student Hostels in Ghana",
     description:
-      "Discover verified student hostels, compare rooms, book accommodation, and manage hostel payments through Fuse.",
-    keywords: "student hostels Ghana, hostel booking Ghana, verified hostels, Fuse hostel",
+      "Discover verified student hostels, compare rooms, book accommodation, and manage hostel payments through Best Suit.",
+    keywords: "student hostels Ghana, hostel booking Ghana, verified hostels, Best Suit hostel",
     priority: 1,
     changefreq: "weekly",
   },
   {
     path: "/about",
-    title: "About Fuse | Student Hostel Booking and Management Platform",
+    title: "About Best Suit | Student Hostel Booking and Management Platform",
     description:
-      "Learn how Fuse helps students find verified hostels and gives hostel operators tools for bookings, residents, payments, and operations.",
-    keywords: "about Fuse, hostel management platform, student accommodation Ghana",
+      "Learn how Best Suit helps students find verified hostels and gives hostel operators tools for bookings, residents, payments, and operations.",
+    keywords: "about Best Suit, hostel management platform, student accommodation Ghana",
     priority: 0.8,
     changefreq: "monthly",
   },
   {
     path: "/services",
-    title: "Fuse Services | Hostel Listings, Booking, Payments, and Management",
+    title: "Best Suit Services | Hostel Listings, Booking, Payments, and Management",
     description:
-      "Explore Fuse services for hostel discovery, room booking, resident management, secure payments, and hostel operations.",
+      "Explore Best Suit services for hostel discovery, room booking, resident management, secure payments, and hostel operations.",
     keywords: "hostel services, room booking, hostel payments, resident management",
     priority: 0.9,
     changefreq: "monthly",
   },
   {
     path: "/contact",
-    title: "Contact Fuse | Hostel Booking and Management Support",
+    title: "Contact Best Suit | Hostel Booking and Management Support",
     description:
-      "Contact Fuse for hostel booking support, hostel listing enquiries, and help with student accommodation management.",
-    keywords: "contact Fuse, hostel support Ghana, hostel booking support",
+      "Contact Best Suit for hostel booking support, hostel listing enquiries, and help with student accommodation management.",
+    keywords: "contact Best Suit, hostel support Ghana, hostel booking support",
     priority: 0.7,
     changefreq: "monthly",
   },
   {
     path: "/find-hostel",
-    title: "Find Hostels in Ghana | Verified Student Accommodation | Fuse",
+    title: "Find Hostels in Ghana | Verified Student Accommodation | Best Suit",
     description:
-      "Search verified student hostels, compare rooms, review amenities, and start your booking with Fuse.",
+      "Search verified student hostels, compare rooms, review amenities, and start your booking with Best Suit.",
     keywords: "find hostel Ghana, student accommodation, verified hostels, hostel rooms",
     priority: 0.95,
     changefreq: "daily",
   },
   {
     path: "/map",
-    title: "Hostel Map | Find Student Hostels by Location | Fuse",
+    title: "Hostel Map | Find Student Hostels by Location | Best Suit",
     description:
-      "Use the Fuse hostel map to find student accommodation by location, campus area, and nearby hostel options.",
+      "Use the Best Suit hostel map to find student accommodation by location, campus area, and nearby hostel options.",
     keywords: "hostel map Ghana, student hostels near me, hostel locations",
     priority: 0.75,
     changefreq: "weekly",
   },
   {
     path: "/hostel-listing",
-    title: "List Your Hostel | Join Fuse Hostel Management Platform",
+    title: "List Your Hostel | Join Best Suit Hostel Management Platform",
     description:
-      "List your hostel on Fuse to reach students, manage bookings, track payments, and organize hostel operations.",
+      "List your hostel on Best Suit to reach students, manage bookings, track payments, and organize hostel operations.",
     keywords: "list hostel Ghana, hostel management software, hostel owners",
     priority: 0.8,
     changefreq: "monthly",
   },
   {
     path: "/terms-and-conditions",
-    title: "Terms and Conditions | Fuse",
+    title: "Terms and Conditions | Best Suit",
     description:
-      "Review Fuse terms, privacy information, cookie practices, and data usage policies for hostel booking and management.",
-    keywords: "Fuse terms, privacy policy, hostel booking terms",
+      "Review Best Suit terms, privacy information, cookie practices, and data usage policies for hostel booking and management.",
+    keywords: "Best Suit terms, privacy policy, hostel booking terms",
     priority: 0.4,
     changefreq: "yearly",
   },

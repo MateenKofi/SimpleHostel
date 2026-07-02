@@ -26,7 +26,7 @@ const getHostelCoordinates = (hostel: MappedHostel) => ({
 const mapJsonLd = {
   "@context": "https://schema.org",
   "@type": "Map",
-  name: "Fuse Hostel Map",
+  name: "Best Suit Hostel Map",
   description: "Map view for finding student hostels by location in Ghana.",
 };
 

@@ -398,6 +398,7 @@ export interface ReservationDto {
     name: string | null;
     email: string | null;
     phone: string | null;
+    gender: "male" | "female" | "other" | null;
     secretCode: string | null;
     status: "pending" | "confirmed" | "cancelled" | "fulfilled";
     createdAt: string;
@@ -426,6 +427,7 @@ export interface CreateReservationRequest {
     name?: string | null;
     email?: string | null;
     phone?: string | null;
+    gender?: "male" | "female" | "other" | null;
 }
 
 export interface ClaimReservationRequest {

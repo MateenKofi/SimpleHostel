@@ -13,7 +13,7 @@ const contactSeo = getSeoRoute("/contact");
 
 const CONTACT_FAQS = [
   {
-    question: "How do I book a hostel through Fuse?",
+    question: "How do I book a hostel through Best Suit?",
     answer:
       "Booking a hostel is simple. Search for your destination, browse available hostels, select your room, and complete the booking process.",
   },
@@ -23,19 +23,19 @@ const CONTACT_FAQS = [
       "You can cancel or modify eligible bookings according to the hostel cancellation policy from your account or by contacting support.",
   },
   {
-    question: "How do I list my hostel on Fuse?",
+    question: "How do I list my hostel on Best Suit?",
     answer:
       "Use the List Your Hostel page to submit your hostel details, contact information, location, and media for review.",
   },
   {
     question: "Is there a mobile app available?",
     answer:
-      "Fuse is currently available as a responsive web application for phones, tablets, and desktop browsers.",
+      "Best Suit is currently available as a responsive web application for phones, tablets, and desktop browsers.",
   },
   {
     question: "How can I contact customer support?",
     answer:
-      "You can contact Fuse through the contact form, by emailing fusehostel01@gmail.com, or by calling +233 54 3983 427.",
+      "You can contact Best Suit through the contact form, by emailing fusehostel01@gmail.com, or by calling +233 54 3983 427.",
   },
 ];
 
@@ -453,7 +453,7 @@ function FAQSection() {
             Frequently Asked Questions
           </h2>
           <p className="text-lg text-zinc-700 dark:text-zinc-300">
-            Find quick answers to common questions about Fuse and our
+            Find quick answers to common questions about Best Suit and our
             services.
           </p>
         </motion.div>

@@ -138,6 +138,7 @@ export type Room = {
   block?: string;
   type: "single" | "double" | "suite" | "quad";
   status: "available" | "maintenance" | "occupied";
+  effectiveStatus?: "available" | "maintenance" | "occupied";
   capacity: number;
   currentStudentsCount: number;
   maxOccupancy: number;

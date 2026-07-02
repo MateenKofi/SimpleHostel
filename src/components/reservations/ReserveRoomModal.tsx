@@ -54,18 +54,19 @@ export const ReserveRoomModal = ({
     name: "",
     email: "",
     phone: "",
+    gender: "" as "" | "male" | "female" | "other",
   });
 
   // Fetch calendar years
   const { data: currentYear } = useQuery({
     queryKey: ["currentCalendar", hostelId],
-    queryFn: () => getCurrentCalendarYear(hostelId).then((r) => r.data.data),
+    queryFn: () => getCurrentCalendarYear(hostelId).then((r) => r.data),
     enabled: open && !!hostelId,
   });
 
   const { data: historicalYears } = useQuery({
     queryKey: ["historicalCalendarYears", hostelId],
-    queryFn: () => getHistoricalCalendarYears(hostelId).then((r) => r.data.data),
+    queryFn: () => getHistoricalCalendarYears(hostelId).then((r) => r.data),
     enabled: open && !!hostelId,
   });
 
@@ -87,20 +88,19 @@ export const ReserveRoomModal = ({
     enabled: open && residentMode === "existing" && !!hostelId,
   });
 
-  // Available calendar years (current + future historical years that are not ended)
+  // Available calendar years (only future historical years that are not started)
   const availableYears = useMemo(() => {
     const years: CalendarYearDto[] = [];
-    if (currentYear) years.push(currentYear);
     if (historicalYears) {
-      // Include historical years that might be future years
+      // Include historical years that might be future years (not started yet)
       historicalYears.forEach((year: CalendarYearDto) => {
-        if (!years.find((y) => y.id === year.id)) {
+        if (!year.endDate && !year.isActive && !years.find((y) => y.id === year.id)) {
           years.push(year);
         }
       });
     }
     return years;
-  }, [currentYear, historicalYears]);
+  }, [historicalYears]);
 
   // Calculate room capacity
   const roomCapacity = useMemo(() => {
@@ -160,6 +160,7 @@ export const ReserveRoomModal = ({
         name?: string;
         email?: string;
         phone?: string;
+        gender?: "male" | "female" | "other";
       } = {
         roomId: selectedRoom,
         calendarYearId: selectedYear,
@@ -171,6 +172,7 @@ export const ReserveRoomModal = ({
         payload.name = newResidentDetails.name;
         payload.email = newResidentDetails.email || undefined;
         payload.phone = newResidentDetails.phone || undefined;
+        payload.gender = newResidentDetails.gender || undefined;
       }
 
       return createReservation(payload);
@@ -194,7 +196,7 @@ export const ReserveRoomModal = ({
     setResidentMode("existing");
     setSelectedResidentId("");
     setSearchQuery("");
-    setNewResidentDetails({ name: "", email: "", phone: "" });
+    setNewResidentDetails({ name: "", email: "", phone: "", gender: "" });
     onOpenChange(false);
   };
 
@@ -222,8 +224,18 @@ export const ReserveRoomModal = ({
       return;
     }
 
-    if (!newResidentDetails.email && !newResidentDetails.phone) {
-      toast.error("Please provide at least email or phone");
+    if (residentMode === "new" && !newResidentDetails.email) {
+      toast.error("Please provide the resident's email");
+      return;
+    }
+
+    if (residentMode === "new" && !newResidentDetails.phone) {
+      toast.error("Please provide the resident's phone number");
+      return;
+    }
+
+    if (residentMode === "new" && !newResidentDetails.gender) {
+      toast.error("Please select the resident's gender");
       return;
     }
 
@@ -426,7 +438,9 @@ export const ReserveRoomModal = ({
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-2">
-                    <Label htmlFor="newResidentEmail">Email</Label>
+                    <Label htmlFor="newResidentEmail">
+                      Email <span className="text-destructive">*</span>
+                    </Label>
                     <Input
                       id="newResidentEmail"
                       type="email"
@@ -441,7 +455,9 @@ export const ReserveRoomModal = ({
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="newResidentPhone">Phone</Label>
+                    <Label htmlFor="newResidentPhone">
+                      Phone <span className="text-destructive">*</span>
+                    </Label>
                     <Input
                       id="newResidentPhone"
                       placeholder="024XXXXXXX"
@@ -454,6 +470,29 @@ export const ReserveRoomModal = ({
                       }
                     />
                   </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="newResidentGender">
+                    Gender <span className="text-destructive">*</span>
+                  </Label>
+                  <Select
+                    value={newResidentDetails.gender}
+                    onValueChange={(val) =>
+                      setNewResidentDetails({
+                        ...newResidentDetails,
+                        gender: val as "male" | "female" | "other",
+                      })
+                    }
+                  >
+                    <SelectTrigger id="newResidentGender">
+                      <SelectValue placeholder="Select gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <Alert className="bg-blue-50 border-blue-200">
                   <AlertCircle className="w-4 h-4 text-blue-600" />
@@ -500,7 +539,11 @@ export const ReserveRoomModal = ({
                 !selectedYear ||
                 !selectedRoom ||
                 (residentMode === "existing" && !selectedResidentId) ||
-                (residentMode === "new" && !newResidentDetails.name)
+                (residentMode === "new" &&
+                  (!newResidentDetails.name ||
+                    !newResidentDetails.email ||
+                    !newResidentDetails.phone ||
+                    !newResidentDetails.gender))
               }
             >
               {createReservationMutation.isPending ? (

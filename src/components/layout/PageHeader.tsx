@@ -14,6 +14,7 @@ interface PageHeaderProps {
   showBackButton?: boolean
   sticky?: boolean
   variant?: PageHeaderVariant
+  backgroundImage?: string
 }
 
 PageHeader.defaultProps = {
@@ -29,7 +30,8 @@ export function PageHeader({
   actions,
   showBackButton,
   sticky,
-  variant = "default"
+  variant = "default",
+  backgroundImage
 }: PageHeaderProps) {
   const navigate = useNavigate()
 
@@ -48,6 +50,49 @@ export function PageHeader({
   }
 
   const styles = variantStyles[variant]
+
+  if (backgroundImage) {
+    return (
+      <div
+        className="relative bg-cover bg-center bg-no-repeat mb-6 mx-2 sm:mx-4 rounded-lg overflow-hidden"
+        style={{ backgroundImage: `url(${backgroundImage})` }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-b from-forest-green-800/30 via-forest-green-900/50 to-forest-green-950/75" />
+        <div className="relative z-10 flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between px-4 sm:px-6 py-16 md:py-20">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+            {showBackButton && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => navigate(-1)}
+                className="shrink-0 border-white/30 text-white hover:bg-white/20 hover:text-white"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </Button>
+            )}
+            {Icon && (
+              <div className="p-2.5 bg-white/20 rounded-xl shrink-0 hidden sm:block">
+                <Icon className="w-5 h-5 text-white" />
+              </div>
+            )}
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl sm:text-2xl font-semibold text-white truncate">{title}</h1>
+              {(subtitle || description) && (
+                <p className="text-xs sm:text-sm text-white/80 mt-1 line-clamp-2">
+                  {subtitle || description}
+                </p>
+              )}
+            </div>
+          </div>
+          {actions && (
+            <div className="flex items-center gap-2 shrink-0">
+              {actions}
+            </div>
+          )}
+        </div>
+      </div>
+    )
+  }
 
   const content = (
     <div className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between px-4 sm:px-6 py-4 sm:py-5">

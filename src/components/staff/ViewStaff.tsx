@@ -98,6 +98,7 @@ const ViewStaff: React.FC = () => {
         subtitle="View staff member information"
         icon={User}
         showBackButton={true}
+        backgroundImage="https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?auto=format&fit=crop&w=1200&q=80"
         actions={
           <Button
             onClick={() => navigate(`/dashboard/staff-management/edit/${staffId}`)}

@@ -86,6 +86,7 @@ const Documents = () => {
                 subtitle="Access and download your official documents."
                 icon={FileText}
                 sticky={true}
+                backgroundImage="https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?auto=format&fit=crop&w=1200&q=80"
             />
 
             <div className="grid gap-6 md:grid-cols-2">

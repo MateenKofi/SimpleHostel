@@ -71,7 +71,7 @@ export function Header() {
               ease: "easeInOut",
             }}
           />
-          <span className="text-2xl font-bold text-foreground">Fuse</span>
+          <span className="text-2xl font-bold text-foreground">Best Suit</span>
         </motion.div>
 
         {/* Desktop Navigation */}

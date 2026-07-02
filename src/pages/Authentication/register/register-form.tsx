@@ -73,8 +73,10 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
     },
     onSuccess: () => {
       toast.success("Registration successful! Please log in.");
-      // Navigate first, don't reset to avoid flicker
-      navigate("/login");
+      const redirectPath = reservationCode && reservationData
+        ? "/login?redirect=/dashboard/resident-management/payment-billing"
+        : "/login";
+      navigate(redirectPath);
     },
     onError: (error: ApiError) => {
       const errorMessage = error.response?.data?.message || "Registration failed. Please try again.";
@@ -97,6 +99,7 @@ const RegisterForm = ({ className, ...props }: React.ComponentProps<"div">) => {
       if (response.data.name) setValue("name", response.data.name);
       if (response.data.email) setValue("email", response.data.email);
       if (response.data.phone) setValue("phone", response.data.phone);
+      if (response.data.gender) setValue("gender", response.data.gender as "male" | "female" | "other");
 
       toast.success("Reservation verified! Your details have been pre-filled.");
     } catch (error: unknown) {

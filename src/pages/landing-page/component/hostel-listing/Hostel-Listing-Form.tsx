@@ -201,8 +201,8 @@ const HostelListingForm = () => {
   return (
     <div className="flex flex-col items-center w-full min-h-screen bg-gradient-to-br from-slate-50 via-forest-green-50/20 to-slate-100/50">
       <SEOHelmet
-        title="List Your Hostel | Join Fuse Hostel Management Platform"
-        description="List your hostel on Fuse to reach students, manage bookings, track payments, and organize hostel operations."
+        title="List Your Hostel | Join Best Suit Hostel Management Platform"
+        description="List your hostel on Best Suit to reach students, manage bookings, track payments, and organize hostel operations."
         keywords="list hostel Ghana, hostel management software, hostel owners, student accommodation"
         canonicalPath="/hostel-listing"
       />

@@ -78,6 +78,7 @@ const Announcements = () => {
                 title="Announcements"
                 subtitle="Latest news, events, and updates from the hostel administration."
                 icon={Bell}
+                backgroundImage="https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?auto=format&fit=crop&w=1200&q=80"
             />
 
             <AnnouncementFilters

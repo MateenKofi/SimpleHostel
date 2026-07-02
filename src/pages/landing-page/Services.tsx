@@ -181,7 +181,7 @@ function WhyChooseUsSection() {
           transition={{ duration: 0.5 }}
           className="max-w-3xl mx-auto mb-16 text-center"
         >
-          <h2 className="mb-6 text-3xl font-bold md:text-4xl">Why Choose Fuse</h2>
+          <h2 className="mb-6 text-3xl font-bold md:text-4xl">Why Choose Best Suit</h2>
           <p className="text-lg text-zinc-700 dark:text-zinc-300">
             We're committed to providing the best hostel management and booking experience possible.
           </p>
@@ -228,7 +228,7 @@ function CTASection() {
             Ready to Get Started?
           </h2>
           <p className="mb-8 text-lg text-primary-foreground/80">
-            Whether you're looking for a place to stay or want to list your hostel, Fuse has you covered.
+            Whether you're looking for a place to stay or want to list your hostel, Best Suit has you covered.
           </p>
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
             <motion.a

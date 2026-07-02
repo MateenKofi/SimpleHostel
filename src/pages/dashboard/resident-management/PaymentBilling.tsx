@@ -331,6 +331,7 @@ const PaymentBilling = () => {
                 subtitle="View your payment history, receipts, and outstanding balance."
                 icon={CreditCard}
                 sticky={true}
+                backgroundImage="https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?auto=format&fit=crop&w=1200&q=80"
             />
 
             {/* Summary Cards */}

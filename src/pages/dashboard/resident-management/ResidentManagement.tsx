@@ -21,6 +21,7 @@ const ResidentManagement = () => {
         subtitle="Manage all hostel residents here. Add new residents, verify room assignments, and view resident details."
         icon={Users}
         sticky={true}
+        backgroundImage="https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?auto=format&fit=crop&w=1200&q=80"
         actions={
           <div className="flex gap-2">
             <Button

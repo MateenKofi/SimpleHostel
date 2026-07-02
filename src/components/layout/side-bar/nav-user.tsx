@@ -48,7 +48,7 @@ export function NavUser() {
   }
 
   return (
-    <div className="px-2 py-1">
+    <div className="px-2 py-0.5">
       <SidebarMenu>
         <SidebarMenuItem>
           <DropdownMenu>
@@ -56,7 +56,7 @@ export function NavUser() {
               <SidebarMenuButton
                 size="lg"
                 className={cn(
-                  "w-full rounded-xl border border-transparent px-3 py-3 h-auto transition-all duration-200",
+                  "w-full rounded-xl border border-transparent px-3 py-1.5 h-auto transition-all duration-200",
                   "hover:!bg-forest-green-50 hover:!shadow-sm hover:!border-border/60",
                   "dark:hover:!bg-forest-green-900",
                   "data-[state=open]:bg-forest-green-100 data-[state=open]:shadow-sm",

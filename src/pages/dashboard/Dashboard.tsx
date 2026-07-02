@@ -15,9 +15,9 @@ const Dashboard = () => {
   return (
     <main className="flex-1 overflow-y-auto bg-white">
       <SEOHelmet
-        title="Dashboard - Fuse"
-        description="Manage your account and settings on Fuse."
-        keywords="dashboard, Fuse, user account"
+        title="Dashboard - Best Suit"
+        description="Manage your account and settings on Best Suit."
+        keywords="dashboard, Best Suit, user account"
       />
       {/* Show header only for non-resident users (resident has its own in-component header) */}
       {!isResident && (
@@ -26,6 +26,7 @@ const Dashboard = () => {
           subtitle="This is your dashboard where you can manage your account and settings"
           icon={LayoutDashboard}
           sticky={true}
+          backgroundImage="https://images.unsplash.com/photo-1553095066-5014bc7b7f2d?auto=format&fit=crop&w=1200&q=80"
         />
       )}
       <div>
