@@ -1,14 +1,15 @@
 import { Room } from "@/helper/types/types";
-import { Users, MapPin, ChevronLeft, ChevronRight } from "lucide-react";
+import { Users, MapPin, ChevronLeft, ChevronRight, Lock } from "lucide-react";
 import { useState, useEffect } from "react";
 import { backendRoomTypeToDisplay, formatStatusLabel, getRoomStatusSolidClass } from "@/utils";
 
 type RoomCardProps = {
   room: Room;
   onBookRoom: (room: Room) => void;
+  bookable?: boolean;
 };
 
-const RoomCard = ({ room, onBookRoom }: RoomCardProps) => {
+const RoomCard = ({ room, onBookRoom, bookable = true }: RoomCardProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const images = room?.roomImages?.map((i) => i.imageUrl) || [];
 
@@ -80,13 +81,17 @@ const RoomCard = ({ room, onBookRoom }: RoomCardProps) => {
         </div>
       )}
 
-      {/* Status Badge */}
-      <div className="absolute top-3 left-3">
-        <span
-          className={`${getRoomStatusSolidClass(room.status)} px-2.5 py-1 rounded-full text-xs font-semibold text-white shadow-sm`}
-        >
-          {room.status}
+{/* Status / Restriction Badges */}
+      <div className="absolute top-3 left-3 flex flex-col items-start gap-1.5">
+        <span className={`${getRoomStatusSolidClass(room.effectiveStatus || room.status)} px-2.5 py-1 rounded-full text-xs font-semibold text-white shadow-sm`}>
+          {room.effectiveStatus || room.status}
         </span>
+        {!bookable && (
+          <span className="inline-flex items-center gap-1 bg-destructive/90 text-destructive-foreground px-2 py-0.5 rounded-full text-[10px] font-semibold shadow-sm">
+            <Lock className="w-2.5 h-2.5" />
+            For {formatStatusLabel(room.gender)} only
+          </span>
+        )}
       </div>
 
       {/* Gradient Overlay - starts lower to show more image */}

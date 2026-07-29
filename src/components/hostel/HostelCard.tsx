@@ -12,6 +12,8 @@ type HostelCardProps = {
 const HostelCard = ({ hostel, onFindRoom }: HostelCardProps) => {
   const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const hasCoordinates =
+    hostel.latitude != null && hostel.longitude != null;
   const images = hostel?.hostelImages?.map((i) => i.imageUrl) || [];
 
   // Helper function to get minimum room price
@@ -139,6 +141,12 @@ const HostelCard = ({ hostel, onFindRoom }: HostelCardProps) => {
         <div className="flex items-center gap-1.5 text-white/90 mb-2">
           <MapPin className="w-3.5 h-3.5" />
           <span className="text-sm truncate">{hostel.location}</span>
+          {!hasCoordinates && (
+            <span className="ml-auto shrink-0 inline-flex items-center gap-1 bg-white/10 backdrop-blur-sm text-white/80 text-[10px] px-1.5 py-0.5 rounded-full border border-white/15">
+              <MapPin className="w-2.5 h-2.5" />
+              No location set
+            </span>
+          )}
         </div>
 
         {/* Phone and Address - Quick Actions */}

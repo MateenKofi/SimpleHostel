@@ -15,6 +15,7 @@ interface HostelMapProps {
   onViewportChange?: (viewport: { center: [number, number]; zoom: number; bearing: number; pitch: number }) => void;
   viewport?: { center: [number, number]; zoom: number; bearing: number; pitch: number };
   focusedHostelId?: string | null;
+  autoFit?: boolean;
 }
 
 const GHANA_CENTER: [number, number] = [-1.0232, 7.9465]; // [lng, lat]
@@ -174,6 +175,33 @@ function HostelsLayer({ hostels, onMarkerClick, focusedHostelId }: { hostels: Ho
   );
 }
 
+function MapAutoFit({ hostels }: { hostels: Hostel[] }) {
+  const { map, isLoaded } = useMap();
+  const signature = hostels.map((h) => h.id).sort().join("|");
+
+  useEffect(() => {
+    if (!map || !isLoaded || hostels.length === 0) return;
+
+    const lats = hostels.map((h) => h.latitude!);
+    const lngs = hostels.map((h) => h.longitude!);
+    const minLat = Math.min(...lats);
+    const maxLat = Math.max(...lats);
+    const minLng = Math.min(...lngs);
+    const maxLng = Math.max(...lngs);
+
+    map.fitBounds(
+      [
+        [minLng, minLat],
+        [maxLng, maxLat],
+      ],
+      { padding: 40, maxZoom: 14, animate: true, duration: 600 }
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [map, isLoaded, signature]);
+
+  return null;
+}
+
 // The multi-hostel map (we'll keep it interactive for browsing)
 export function HostelMap({
   hostels,
@@ -185,6 +213,7 @@ export function HostelMap({
   onViewportChange,
   viewport: externalViewport,
   focusedHostelId,
+  autoFit = false,
 }: HostelMapProps) {
   const hostelsWithCoords = useMemo(
     () => hostels.filter((h: any) => {
@@ -225,6 +254,7 @@ export function HostelMap({
         height={height}
       >
         <HostelsLayer hostels={hostelsWithCoords} onMarkerClick={onMarkerClick} focusedHostelId={focusedHostelId} />
+        {autoFit && <MapAutoFit hostels={hostelsWithCoords} />}
       </AppMap>
 
       {hostelsWithCoords.length === 0 && (
@@ -241,7 +271,7 @@ export function HostelMap({
 }
 
 interface SingleHostelMapProps {
-  hostel: Hostel;
+  hostel: { latitude?: number | null; longitude?: number | null };
   height?: string;
 }
 

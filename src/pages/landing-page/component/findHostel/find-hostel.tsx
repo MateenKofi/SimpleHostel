@@ -148,14 +148,20 @@ export function FindHostel() {
 
   const filteredHostels = PublishedHostels?.filter((hostel: Hostel) => {
     // Search filter
-    const matchesSearch = hostel.name
-      .toLowerCase()
-      .includes(debouncedQuery.toLowerCase());
+    const q = debouncedQuery.toLowerCase();
+    const matchesSearch =
+      hostel.name.toLowerCase().includes(q) ||
+      (hostel.location ?? "").toLowerCase().includes(q) ||
+      (hostel.address ?? "").toLowerCase().includes(q);
 
     // Location filter
     const matchesLocation =
       activeFilters.locations.length === 0 ||
-      activeFilters.locations.includes(hostel.location);
+      activeFilters.locations.some(
+        (loc) =>
+          (hostel.location ?? "").trim().toUpperCase() ===
+          loc.trim().toUpperCase()
+      );
 
     return matchesSearch && matchesLocation;
   })
@@ -216,6 +222,7 @@ export function FindHostel() {
               <HostelMap
                 hostels={filteredHostels}
                 height="250px"
+                autoFit
                 onMarkerClick={(hostel) => handleFindRoom(hostel)}
               />
             </div>

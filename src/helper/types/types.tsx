@@ -173,6 +173,19 @@ export type Room = {
   } | null;
 };
 
+export type HostelRoomsResponse = {
+  rooms: Room[];
+  totalRooms?: number;
+  availableRoomsCount?: number;
+  occupiedRoomsCount?: number;
+  maintenanceRoomsCount?: number;
+  name?: string;
+  location?: string;
+  logoUrl?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+};
+
 export type images = {
   id: string;
   roomId?: string;

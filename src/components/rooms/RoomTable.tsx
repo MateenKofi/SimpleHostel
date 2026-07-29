@@ -41,7 +41,7 @@ const RoomTable = () => {
   } = useQuery({
     queryKey: ["rooms"],
     queryFn: async () => {
-      if (!hostelId) return [];
+      if (!hostelId) return { rooms: [] };
       return await getHostelRooms(hostelId);
     },
     enabled: !!hostelId,

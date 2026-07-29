@@ -13,12 +13,11 @@ import FindHostelSkeleton from "@/components/loaders/HostelCardSkeleton";
 import CustomeRefetch from "@/components/CustomRefetch";
 import SEOHelmet from "@/components/SEOHelmet";
 import { useAuthStore } from "@/stores/useAuthStore";
-import { useSelectedCalendarYearStore } from "@/stores/useSelectedCalendarYearStore";
 import { useAddedResidentStore } from "@/stores/useAddedResidentStore";
 import { useMutation } from "@tanstack/react-query";
 import { getHostelRooms } from "@/api/rooms";
 import { getResidentAnalytics } from "@/api/analytics";
-import { registerResident } from "@/api/residents";
+import { getResidentById } from "@/api/residents";
 import type { UserDto, ResidentDto } from "@/types/dtos";
 import {
   Dialog,
@@ -52,7 +51,6 @@ const FindRoom = () => {
   const setResident = useAddedResidentStore((state) => state.setResident);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [selectedBookingRoom, setSelectedBookingRoom] = useState<Room | null>(null);
-  const calendarYear = useSelectedCalendarYearStore((state) => state.calendarYear);
 
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedQuery = useDebounce(searchQuery, 500);
@@ -69,69 +67,47 @@ const FindRoom = () => {
         throw new Error("User or room not found");
       }
 
-      // Try to find existing resident profile first to skip registration
-      try {
-        const analyticsData = await getResidentAnalytics(user.id);
-        const existingResidentId = analyticsData?.data?.residentId;
-
-        if (existingResidentId) {
-          // Return a UserDto-like structure for existing residents
-          return {
-            data: {
-              id: user.id,
-              email: user.email,
-              name: user.name,
-              role: user.role as "resident" | "staff" | "admin" | "super_admin",
-              phone: user.phoneNumber || null,
-              gender: null,
-              avatar: null,
-              imageUrl: null,
-              accountStatus: "active",
-              hostelId: selectedBookingRoom.hostelId || null,
-              adminProfile: null,
-              staffProfile: null,
-              residentProfile: {
-                id: existingResidentId,
-                hostelId: selectedBookingRoom.hostelId || null,
-                roomId: selectedBookingRoom.id || null,
-                studentId: null,
-                course: null,
-                roomNumber: selectedBookingRoom.roomNumber || null,
-                status: "pending",
-                checkInDate: null,
-                checkOutDate: null,
-                hostel: null,
-                room: null
-              },
-              superAdminProfile: null,
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString()
-            }
-          };
-        }
-      } catch {
-        console.log("No existing resident profile found or error fetching analytics.");
+      const analyticsData = await getResidentAnalytics(user.id);
+      const residentId = analyticsData?.data?.residentId;
+      if (!residentId) {
+        throw new Error("Please complete your resident profile before booking.");
       }
 
-      // If no existing profile, we must register.
-      // Use user's gender for registration, not the room's gender (room may be "mix")
-      const genderForRegistration = userGender || selectedBookingRoom.gender.toLowerCase();
-      const payload = {
-        name: user.name,
-        email: user.email,
-        phone: user.phoneNumber || "0240000000",
-        gender: genderForRegistration,
-        studentId: "PENDING",
-        course: "PENDING",
-        emergencyContactName: "PENDING",
-        emergencyContactPhone: "0240000000",
-        emergencyContactRelationship: "Self",
-        hostelId: selectedBookingRoom.hostelId || "",
-        calendarYearId: calendarYear?.id || "",
-        roomId: selectedBookingRoom.id || ""
-      };
+      const residentRes = await getResidentById(residentId);
+      const resident = residentRes?.data;
 
-      return await registerResident(payload) as { data: UserDto | ResidentDto };
+      return {
+        data: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role as "resident" | "staff" | "admin" | "super_admin",
+          phone: user.phoneNumber || null,
+          gender: resident?.gender ?? null,
+          avatar: null,
+          imageUrl: null,
+          accountStatus: "active",
+          hostelId: selectedBookingRoom.hostelId || null,
+          adminProfile: null,
+          staffProfile: null,
+          residentProfile: {
+            id: residentId,
+            hostelId: selectedBookingRoom.hostelId || null,
+            roomId: selectedBookingRoom.id || null,
+            studentId: resident?.studentId ?? null,
+            course: resident?.course ?? null,
+            roomNumber: selectedBookingRoom.roomNumber || null,
+            status: resident?.status || "pending",
+            checkInDate: resident?.checkInDate ?? null,
+            checkOutDate: resident?.checkOutDate ?? null,
+            hostel: null,
+            room: null,
+          },
+          superAdminProfile: null,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        },
+      };
     },
     onSuccess: (res) => {
       setResident(res?.data || null);
@@ -142,10 +118,10 @@ const FindRoom = () => {
         navigate("/payment");
       }, 500);
     },
-    onError: (error: { response?: { data?: { message?: string; error?: string } } }) => {
-      const msg = error.response?.data?.message || error.response?.data?.error || "Failed to process booking";
+    onError: (error: { response?: { data?: { message?: string; error?: string } }; message?: string }) => {
+      const msg = error.response?.data?.message || error.response?.data?.error || error.message || "Failed to process booking";
       toast.error(msg);
-    }
+    },
   });
 
   const {
@@ -185,22 +161,6 @@ const FindRoom = () => {
   const filteredRooms = useMemo(() => {
     return availableRooms
       .filter((room: Room) => {
-        // AUTOMATIC GENDER FILTERING - Residents can only see rooms matching their gender or Mix rooms
-        if (userGender) {
-          const roomGender = room.gender.toLowerCase();
-          const isGenderCompatible =
-            roomGender === "mix" ||
-            roomGender === userGender;
-
-          if (!isGenderCompatible) {
-            return false;
-          }
-        } else {
-          if (room.gender.toLowerCase() !== "mix") {
-            return false;
-          }
-        }
-
         // UI Filter: Gender (case-insensitive)
         const matchesGender =
           activeFilters.gender.length === 0 ||
@@ -235,11 +195,11 @@ const FindRoom = () => {
         } else if (sortBy === "roomNumber") {
           comparison = (a.roomNumber || "").localeCompare(b.roomNumber || "", undefined, { numeric: true });
         } else if (sortBy === "capacity") {
-          comparison = (a.currentResidentCount || 0) - (b.currentResidentCount || 0);
+          comparison = a.maxCap - b.maxCap;
         }
         return sortOrder === "asc" ? comparison : -comparison;
       });
-  }, [availableRooms, activeFilters, userGender, debouncedQuery, sortBy, sortOrder]);
+  }, [availableRooms, activeFilters, debouncedQuery, sortBy, sortOrder]);
 
   const handleRoomClick = (room: Room) => {
     if (!token || !user) {
@@ -281,6 +241,14 @@ const FindRoom = () => {
     return Object.values(activeFilters).filter((arr) => arr.length > 0).length;
   }, [activeFilters]);
 
+  // Whether the current user is allowed to book a given room (gender rule).
+  // Logged-out users can attempt to book (login flow handles the rest).
+  const isRoomBookable = (room: Room) => {
+    if (!userGender) return true;
+    const rg = room.gender.toLowerCase();
+    return rg === "mix" || rg === userGender;
+  };
+
   if (isLoading) {
     return <FindHostelSkeleton />;
   }
@@ -304,15 +272,37 @@ const FindRoom = () => {
         Back
       </Button>
 
+      {/* Hostel Identity Header */}
+      {RoomData?.name && (
+        <div className="mb-6 flex items-center gap-4 bg-card border border-border rounded-lg p-4 shadow-sm">
+          <div className="w-14 h-14 rounded-full overflow-hidden bg-muted flex items-center justify-center border shrink-0">
+            {RoomData.logoUrl ? (
+              <img src={RoomData.logoUrl} alt={RoomData.name} className="w-full h-full object-cover" />
+            ) : (
+              <Home className="w-6 h-6 text-muted-foreground" />
+            )}
+          </div>
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-xl font-bold text-foreground truncate">{RoomData.name}</h1>
+            {RoomData.location && (
+              <p className="flex items-center gap-1 text-sm text-muted-foreground mt-0.5">
+                <MapPin className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">{RoomData.location}</span>
+              </p>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Hostel Map Section */}
-      {RoomData && (RoomData as any).latitude && (RoomData as any).longitude && (
+      {RoomData && RoomData.latitude && RoomData.longitude && (
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-3">
             <Map className="w-5 h-5 text-primary" />
             <h2 className="text-lg font-semibold">Location</h2>
           </div>
           <SingleHostelMap
-            hostel={RoomData as any}
+            hostel={RoomData}
             height="300px"
           />
         </div>
@@ -390,20 +380,31 @@ const FindRoom = () => {
 
           {filteredRooms.length === 0 ? (
             <div className="text-center py-12 bg-card border border-border rounded-lg">
-              <p className="text-lg font-medium text-foreground mb-2">
-                No rooms match your filters
-              </p>
-              <p className="text-sm text-muted-foreground mb-4">
-                Try adjusting your filter options
-              </p>
-              {activeFilterCount > 0 && (
-                <Button
-                  variant="outline"
-                  onClick={clearAllFilters}
-                  className="text-destructive border-destructive/30 hover:bg-destructive/10"
-                >
-                  Clear All Filters
-                </Button>
+              {activeFilterCount > 0 ? (
+                <>
+                  <p className="text-lg font-medium text-foreground mb-2">
+                    No rooms match your filters
+                  </p>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Try adjusting your filter options
+                  </p>
+                  <Button
+                    variant="outline"
+                    onClick={clearAllFilters}
+                    className="text-destructive border-destructive/30 hover:bg-destructive/10"
+                  >
+                    Clear All Filters
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <p className="text-lg font-medium text-foreground mb-2">
+                    This hostel currently has no available rooms
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Please check back later or browse another hostel
+                  </p>
+                </>
               )}
             </div>
           ) : (
@@ -428,6 +429,7 @@ const FindRoom = () => {
                   <RoomCard
                     key={room.id}
                     room={room}
+                    bookable={isRoomBookable(room)}
                     onBookRoom={handleRoomClick}
                   />
                 ))}

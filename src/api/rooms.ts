@@ -1,6 +1,7 @@
 import axiosInstance from "./axiosInstance";
+import type { HostelRoomsResponse } from "@/helper/types/types";
 
-export const getHostelRooms = async (hostelId: string) => {
+export const getHostelRooms = async (hostelId: string): Promise<HostelRoomsResponse> => {
     const response = await axiosInstance.get(`/rooms/get/hostel/${hostelId}`);
     return response.data?.data;
 };

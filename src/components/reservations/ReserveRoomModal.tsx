@@ -6,7 +6,8 @@ import { createReservation, getReservationsByHostel } from "@/api/reservations";
 import { getCurrentCalendarYear, getHistoricalCalendarYears } from "@/api/calendar";
 import { getHostelResidents } from "@/api/residents";
 import { toast } from "sonner";
-import type { RoomDto, CalendarYearDto, ResidentDto, ReservationDto } from "@/types/dtos";
+import type { CalendarYearDto, ResidentDto, ReservationDto } from "@/types/dtos";
+import type { Room } from "@/helper/types/types";
 import {
   Dialog,
   DialogContent,
@@ -30,7 +31,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface ReserveRoomModalProps {
   hostelId: string;
-  rooms: RoomDto[];
+  rooms: Room[];
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSuccess?: () => void;
