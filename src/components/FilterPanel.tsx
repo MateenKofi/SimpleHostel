@@ -1,23 +1,12 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo } from "react";
 import { SlidersHorizontal } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { CollapsibleFilterSection } from "@/components/filters/CollapsibleFilterSection";
-import { PriceRangeSlider } from "@/components/filters/PriceRangeSlider";
 import { ActiveFilterChips } from "@/components/filters/ActiveFilterChips";
 import { cn } from "@/lib/utils";
-import { PRICE_RANGE_PRESETS } from "@/helper/room_filter_config";
-
-function parseRangeString(range: string, fallbackMin: number, fallbackMax: number): { min: number; max: number } {
-  const clean = range.trim();
-  if (clean.endsWith("+")) {
-    return { min: Number(clean.slice(0, -1)), max: fallbackMax };
-  }
-  const [a, b] = clean.split("-").map((s) => Number(s.trim()));
-  return { min: Number.isFinite(a) ? a : fallbackMin, max: Number.isFinite(b) ? b : fallbackMax };
-}
 
 type ActiveFilters = { [key: string]: string[] };
 
@@ -34,11 +23,6 @@ type Props = {
   onClearAll?: () => void;
   variant?: "sidebar" | "drawer";
   isOpen?: boolean;
-  priceRangeConfig?: {
-    min: number;
-    max: number;
-    category: string;
-  };
 };
 
 const FilterPanel = ({
@@ -48,7 +32,6 @@ const FilterPanel = ({
   onClearAll,
   variant = "sidebar",
   isOpen: controlledOpen,
-  priceRangeConfig,
 }: Props) => {
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -75,28 +58,6 @@ const FilterPanel = ({
     handleFilterChange(category, value);
   };
 
-  // Check if a category is the price range category
-  const isPriceRangeCategory = (category: string) => {
-    return priceRangeConfig?.category === category;
-  };
-
-  const handlePriceRangeChange = useCallback(
-    (value: [number, number]) => {
-      const [min, max] = value;
-      const rangeStr = max >= priceRangeConfig!.max ? `${min}+` : `${min}-${max}`;
-      handleFilterChange(priceRangeConfig!.category, rangeStr, true);
-    },
-    [handleFilterChange, priceRangeConfig]
-  );
-
-  const sliderPriceValue = useMemo<[number, number]>(() => {
-    if (!priceRangeConfig) return [0, 0];
-    const range = activeFilters[priceRangeConfig.category]?.[0];
-    if (!range) return [priceRangeConfig.min, priceRangeConfig.max];
-    const { min, max } = parseRangeString(range, priceRangeConfig.min, priceRangeConfig.max);
-    return [min, max];
-  }, [activeFilters, priceRangeConfig]);
-
   const filterContent = (
     <div className="space-y-1">
       {/* Active Filters Chips */}
@@ -112,25 +73,6 @@ const FilterPanel = ({
 
       {/* Filter Sections */}
       {FilterConfig.map((filter) => {
-        // Skip price range if it's handled by slider
-        if (isPriceRangeCategory(filter.category) && priceRangeConfig) {
-          return (
-            <CollapsibleFilterSection
-              key={filter.category}
-              label={filter.label}
-              defaultOpen={true}
-            >
-              <PriceRangeSlider
-                min={priceRangeConfig.min}
-                max={priceRangeConfig.max}
-                value={sliderPriceValue}
-                onChange={handlePriceRangeChange}
-                presets={PRICE_RANGE_PRESETS}
-              />
-            </CollapsibleFilterSection>
-          );
-        }
-
         return (
           <CollapsibleFilterSection
             key={filter.category}

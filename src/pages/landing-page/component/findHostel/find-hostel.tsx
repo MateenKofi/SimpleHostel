@@ -181,24 +181,7 @@ export function FindHostel() {
   return (
     <div className="px-3 py-4 md:px-4 md:py-8 mx-auto">
       <div className="flex flex-col gap-4 lg:gap-6 lg:flex-row">
-        {/* Sidebar with FilterBar */}
-        <div className="w-full lg:w-72 space-y-3 md:space-y-4">
-          <FilterBar
-            activeFilterCount={activeFilterCount}
-            onToggleFilters={() => setIsFilterOpen(!isFilterOpen)}
-            onClearAll={clearAllFilters}
-            isOpen={isFilterOpen}
-          />
-          <FilterPanel
-            FilterConfig={HostetFilterConfig}
-            activeFilters={activeFilters}
-            handleFilterChange={handleFilterChange}
-            onClearAll={clearAllFilters}
-            variant="sidebar"
-            isOpen={isFilterOpen}
-          />
-        </div>
-
+    
         {/* Main Content */}
         <div className="flex-1 p-3 md:p-4 space-y-4 md:space-y-6 bg-card border border-border rounded-lg shadow-sm">
           {/* Map Section */}

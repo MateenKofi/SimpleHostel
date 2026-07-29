@@ -24,7 +24,6 @@ import { Button } from "@/components/ui/button";
 interface Filters {
   type: string;
   gender: string;
-  priceRange: string;
   block: string;
   minOccupancy: string;
 }
@@ -48,7 +47,6 @@ const RoomAssignment = () => {
   const [filters, setFilters] = useState<Filters>({
     type: "all",
     gender: "all",
-    priceRange: "all",
     block: "all",
     minOccupancy: "all",
   });
@@ -79,25 +77,6 @@ const RoomAssignment = () => {
       // Gender filter
       if (filters.gender !== "all" && room.gender.toLowerCase() !== filters.gender.toLowerCase()) {
         return false;
-      }
-
-      // Price Range filter
-      if (filters.priceRange !== "all") {
-        const price = room.price;
-        switch (filters.priceRange) {
-          case "0-1000":
-            if (price > 1000) return false;
-            break;
-          case "1001-2000":
-            if (price < 1001 || price > 2000) return false;
-            break;
-          case "2001-3000":
-            if (price < 2001 || price > 3000) return false;
-            break;
-          case "3000+":
-            if (price < 3001) return false;
-            break;
-        }
       }
 
       // Block filter
@@ -140,7 +119,6 @@ const RoomAssignment = () => {
     setFilters({
       type: "all",
       gender: "all",
-      priceRange: "all",
       block: "all",
       minOccupancy: "all",
     });
@@ -192,20 +170,6 @@ const RoomAssignment = () => {
             <SelectItem value="all">All Genders</SelectItem>
             <SelectItem value="male">Male</SelectItem>
             <SelectItem value="female">Female</SelectItem>
-          </SelectContent>
-        </Select>
-
-        {/* Price Range */}
-        <Select value={filters.priceRange} onValueChange={(v) => updateFilter("priceRange", v)}>
-          <SelectTrigger className="w-[150px]">
-            <SelectValue placeholder="Price Range" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Prices</SelectItem>
-            <SelectItem value="0-1000">GH¢ 0 - 1,000</SelectItem>
-            <SelectItem value="1001-2000">GH¢ 1,001 - 2,000</SelectItem>
-            <SelectItem value="2001-3000">GH¢ 2,001 - 3,000</SelectItem>
-            <SelectItem value="3000+">GH¢ 3,000+</SelectItem>
           </SelectContent>
         </Select>
 

@@ -7,7 +7,7 @@ import { Room } from "@/helper/types/types";
 import { useSelectedRoomStore } from "@/stores/useSelectedRoomStore";
 import FilterPanel from "@/components/FilterPanel";
 import { RoomFilterConfig } from "@/helper/room_filter_config";
-import { backendRoomTypeToDisplay, parseRange } from "@/utils";
+import { backendRoomTypeToDisplay } from "@/utils";
 import { useDebounce } from "@/hooks";
 import FindHostelSkeleton from "@/components/loaders/HostelCardSkeleton";
 import CustomeRefetch from "@/components/CustomRefetch";
@@ -39,7 +39,6 @@ const FindRoom = () => {
   const { id: hostelId } = useParams();
   const [activeFilters, setActiveFilters] = useState<ActiveFilters>({
     gender: [],
-    priceRange: [],
     roomType: [],
   });
 
@@ -166,14 +165,6 @@ const FindRoom = () => {
           activeFilters.gender.length === 0 ||
           activeFilters.gender.some((g) => g.toLowerCase() === room.gender.toLowerCase());
 
-        // UI Filter: Price Range
-        const matchesPriceRange =
-          activeFilters.priceRange.length === 0 ||
-          activeFilters.priceRange.some((range) => {
-            const { min, max } = parseRange(range);
-            return room.price >= min && room.price <= max;
-          });
-
         // UI Filter: Room Type (case-insensitive)
         const matchesRoomType =
           activeFilters.roomType.length === 0 ||
@@ -186,7 +177,7 @@ const FindRoom = () => {
           (room.block?.toLowerCase() || "").includes(debouncedQuery.toLowerCase()) ||
           (room.floor?.toString() || "").includes(debouncedQuery.toLowerCase());
 
-        return matchesGender && matchesPriceRange && matchesRoomType && matchesSearch;
+        return matchesGender && matchesRoomType && matchesSearch;
       })
       .sort((a: Room, b: Room) => {
         let comparison = 0;
@@ -231,7 +222,6 @@ const FindRoom = () => {
   const clearAllFilters = () => {
     setActiveFilters({
       gender: [],
-      priceRange: [],
       roomType: [],
     });
   };
@@ -325,7 +315,6 @@ const FindRoom = () => {
             onClearAll={clearAllFilters}
             variant="sidebar"
             isOpen={isFilterOpen}
-            priceRangeConfig={{ min: 0, max: 5000, category: "priceRange" }}
           />
         </div>
 
