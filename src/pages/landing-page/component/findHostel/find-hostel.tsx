@@ -7,15 +7,11 @@ import { Hostel } from "@/helper/types/types";
 import CustomeRefetch from "@/components/CustomRefetch";
 import HostelCard from "@/components/hostel/HostelCard";
 import { useDebounce } from "@/hooks";
-import FilterPanel from "@components/FilterPanel";
-import FindHostelSkeleton from "@components/loaders/HostelCardSkeleton";
-import { HostetFilterConfig } from "@/helper/hostel_filter_config";
 import { useSelectedCalendarYearStore } from "@/stores/useSelectedCalendarYearStore";
 import { useNavigate } from "react-router-dom";
-import { FilterBar } from "@/components/filters/FilterBar";
 import { LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { TextInput, SelectInput, type SelectOption } from "@/components/form";
+import { TextInput, SelectInput } from "@/components/form";
 import { HostelMap } from '@/components/maps/HostelMap';
 
 interface ActiveFilters {
@@ -34,8 +30,6 @@ export function FindHostel() {
     locations: [],
   });
 
-  // Filter panel open state (desktop)
-  const [isFilterOpen, setIsFilterOpen] = useState(true);
 
   const [sortBy, setSortBy] = useState<"name" | "price" | "rating">("name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
@@ -54,18 +48,6 @@ export function FindHostel() {
     },
     retry: false,
   });
-
-  const handleFilterChange = (category: string, value: string) => {
-    setActiveFilters((prev) => {
-      const updated = { ...prev };
-      if (updated[category].includes(value)) {
-        updated[category] = updated[category].filter((item) => item !== value);
-      } else {
-        updated[category] = [...updated[category], value];
-      }
-      return updated;
-    });
-  };
 
   const removeFilter = (category: string, value: string) => {
     setActiveFilters((prev) => ({
